@@ -1,0 +1,64 @@
+﻿# =========================
+# Unity generated folders
+# =========================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# Builds
+[Bb]uild/
+[Bb]uilds/
+
+# =========================
+# IDE / Visual Studio / Rider
+# =========================
+.vs/
+.vscode/
+.idea/
+.idea_modules/
+
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Rider
+*.sln.iml
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Unity crash / generated
+# =========================
+sysinfo.txt
+crashlytics-build.properties
+
+# =========================
+# Plastic SCM
+# =========================
+.plastic/
+
+# =========================
+# Misc
+# =========================
+*.tmp
+*.temp
+*.bak
+*.swp
