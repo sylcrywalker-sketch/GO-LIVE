@@ -37,7 +37,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Interact",
+                    "name": "Take",
                     "type": "Button",
                     "id": "1062637c-d1cb-486a-86fd-13b924064b1c",
                     "expectedControlType": "",
@@ -50,6 +50,36 @@
                     "name": "Pause",
                     "type": "Button",
                     "id": "4d0efedb-7340-43f5-bb6b-c9f763cbffaf",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Use",
+                    "type": "Button",
+                    "id": "c5810ff0-3cdd-4eac-93b1-ca4398866afc",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Special",
+                    "type": "Button",
+                    "id": "c84f4c2e-fcde-4b88-bbb1-139b1cd5a94d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Drop",
+                    "type": "Button",
+                    "id": "dd10733f-04c6-40e9-9c43-4e51829dd26e",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -142,7 +172,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Take",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -154,6 +184,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d5c61cf4-57fb-4f63-bcb4-c7959912e75c",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Use",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d19346c1-0ffb-4db5-9dfc-d7124c07551a",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Special",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e0bc8b6e-2ead-4c58-9d37-6c70bf9c7b5c",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

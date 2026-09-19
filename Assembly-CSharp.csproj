@@ -51,9 +51,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Game\Scripts\WASD\PlayerController.cs" />
+    <Compile Include="Assets\Game\Scripts\Items\ItemDefinition.cs" />
     <Compile Include="Assets\Game\Scripts\Interact\PlayerInteractor.cs" />
     <Compile Include="Assets\Game\Scripts\WASD\PlayerControlState.cs" />
     <Compile Include="Assets\Game\Scripts\Interact\IInteractable.cs" />
+    <Compile Include="Assets\Game\Scripts\Items\ItemInstance.cs" />
+    <Compile Include="Assets\Game\Scripts\Items\PlayerCarry.cs" />
+    <Compile Include="Assets\Game\Scripts\Items\WorldItem.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.6.0f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

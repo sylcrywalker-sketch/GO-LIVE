@@ -46,9 +46,9 @@ namespace GoLive.Player
 
         private void OnEnable()
         {
-            moveAction.action.Enable();
-            lookAction.action.Enable();
-            jumpAction.action.Enable();
+            SetActionEnabled(moveAction, true);
+            SetActionEnabled(lookAction, true);
+            SetActionEnabled(jumpAction, true);
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -56,9 +56,9 @@ namespace GoLive.Player
 
         private void OnDisable()
         {
-            moveAction.action.Disable();
-            lookAction.action.Disable();
-            jumpAction.action.Disable();
+            SetActionEnabled(moveAction, false);
+            SetActionEnabled(lookAction, false);
+            SetActionEnabled(jumpAction, false);
         }
 
         private void Update()
@@ -118,6 +118,20 @@ namespace GoLive.Player
             return true;
         }
 
-        private static bool HasAction(InputActionReference reference) => reference != null && reference.action != null;
+        private static bool HasAction(InputActionReference reference)
+        {
+            return reference != null && reference.action != null;
+        }
+
+        private static void SetActionEnabled(InputActionReference reference, bool enabled)
+        {
+            if (!HasAction(reference))
+                return;
+
+            if (enabled)
+                reference.action.Enable();
+            else
+                reference.action.Disable();
+        }
     }
 }
