@@ -8,12 +8,51 @@ namespace GoLive.Items
         TwoHanded
     }
 
+    public enum ItemCategory
+    {
+        Food,
+        Electronics,
+        Household
+    }
+
     [CreateAssetMenu(fileName = "ItemDefinition", menuName = "GO! LIVE/Items/Item Definition")]
     public sealed class ItemDefinition : ScriptableObject
     {
-        [field: SerializeField] public string ItemId { get; private set; }
-        [field: SerializeField] public ItemCarryStyle CarryStyle { get; private set; } = ItemCarryStyle.OneHanded;
-        [field: SerializeField] public Vector3 CarryLocalPosition { get; private set; }
-        [field: SerializeField] public Vector3 CarryLocalEulerAngles { get; private set; }
+        [SerializeField] private string itemId;
+        [SerializeField] private ItemCategory category;
+        [SerializeField] private GameObject worldPrefab;
+        [SerializeField] private Sprite iconOverride;
+        [SerializeField, HideInInspector] private Sprite generatedIcon;
+        [SerializeField] private bool canStoreInInventory = true;
+        [SerializeField] private ItemCarryStyle carryStyle = ItemCarryStyle.OneHanded;
+        [SerializeField] private Vector3 carryLocalPosition;
+        [SerializeField] private Vector3 carryLocalEulerAngles;
+
+        public string ItemId => itemId;
+        public ItemCategory Category => category;
+        public GameObject WorldPrefab => worldPrefab;
+        public Sprite InventoryIcon => iconOverride != null ? iconOverride : generatedIcon;
+        public bool CanStoreInInventory => canStoreInInventory;
+        public ItemCarryStyle CarryStyle => carryStyle;
+        public Vector3 CarryLocalPosition => carryLocalPosition;
+        public Vector3 CarryLocalEulerAngles => carryLocalEulerAngles;
+
+        public static bool IsValidItemId(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length > 80)
+                return false;
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                char character = value[i];
+
+                if (character is >= 'a' and <= 'z' or >= '0' and <= '9' or '-' or '_')
+                    continue;
+
+                return false;
+            }
+
+            return true;
+        }
     }
 }

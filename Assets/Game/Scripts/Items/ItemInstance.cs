@@ -33,9 +33,13 @@ namespace GoLive.Items
             return new ItemInstance(Guid.NewGuid().ToString("N"), definitionId, ItemLocation.World);
         }
 
-        internal void MoveTo(ItemLocation location)
+        public bool TryMove(ItemLocation expectedLocation, ItemLocation destination)
         {
-            Location = location;
+            if (Location != expectedLocation || destination == expectedLocation)
+                return false;
+
+            Location = destination;
+            return true;
         }
     }
 }

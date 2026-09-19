@@ -9,9 +9,11 @@ namespace GoLive.Items
     public sealed class WorldItem : MonoBehaviour
     {
         [SerializeField] private ItemDefinition definition;
+        [SerializeField, HideInInspector] private string authoredInstanceId;
 
         public ItemDefinition Definition => definition;
         public ItemInstance Instance { get; private set; }
+        public string AuthoredInstanceId => authoredInstanceId;
         public bool CanBeCarried => isActiveAndEnabled && Instance != null && Instance.Location == ItemLocation.World;
 
         private readonly List<MonoBehaviour> _interactionCandidates = new();
@@ -37,7 +39,26 @@ namespace GoLive.Items
             for (int i = 0; i < _colliders.Length; i++)
                 _colliderEnabledStates[i] = _colliders[i].enabled;
 
-            Instance = ItemInstance.CreateNew(definition.ItemId);
+            if (!string.IsNullOrWhiteSpace(authoredInstanceId))
+                Instance = new ItemInstance(authoredInstanceId, definition.ItemId, ItemLocation.World);
+        }
+
+        private void Start()
+        {
+            if (Instance != null)
+                return;
+
+            Debug.LogError($"{nameof(WorldItem)} on {name} has no persistent scene ID and was not initialized as a runtime item.", this);
+            enabled = false;
+        }
+
+        public bool TryInitializeRuntime(ItemInstance instance)
+        {
+            if (Instance != null || instance == null || instance.DefinitionId != definition.ItemId)
+                return false;
+
+            Instance = instance;
+            return true;
         }
 
         public bool TryInteract(in InteractionContext context)
@@ -53,24 +74,49 @@ namespace GoLive.Items
             if (!CanBeCarried || anchor == null)
                 return false;
 
-            _body.linearVelocity = Vector3.zero;
-            _body.angularVelocity = Vector3.zero;
-            _body.isKinematic = true;
-            _body.useGravity = false;
+            if (!Instance.TryMove(ItemLocation.World, ItemLocation.Carried))
+                return false;
 
-            SetCollidersEnabled(false);
+            AttachToCarry(anchor);
+            return true;
+        }
 
-            transform.SetParent(anchor, true);
-            transform.localPosition = definition.CarryLocalPosition;
-            transform.localRotation = Quaternion.Euler(definition.CarryLocalEulerAngles);
+        internal bool TryBeginCarryFromInventory(Transform anchor)
+        {
+            if (Instance == null || Instance.Location != ItemLocation.Inventory || anchor == null)
+                return false;
 
-            Instance.MoveTo(ItemLocation.Carried);
+            if (!Instance.TryMove(ItemLocation.Inventory, ItemLocation.Carried))
+                return false;
+
+            gameObject.SetActive(true);
+            AttachToCarry(anchor);
+
+            return true;
+        }
+
+        internal bool TryStoreInInventory(Transform storageRoot)
+        {
+            if (Instance == null || Instance.Location != ItemLocation.Carried || storageRoot == null)
+                return false;
+
+            if (!Instance.TryMove(ItemLocation.Carried, ItemLocation.Inventory))
+                return false;
+
+            transform.SetParent(storageRoot, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            gameObject.SetActive(false);
+
             return true;
         }
 
         internal bool TryDrop(Vector3 velocity)
         {
             if (Instance == null || Instance.Location != ItemLocation.Carried)
+                return false;
+
+            if (!Instance.TryMove(ItemLocation.Carried, ItemLocation.World))
                 return false;
 
             transform.SetParent(null, true);
@@ -82,8 +128,21 @@ namespace GoLive.Items
 
             RestoreColliderStates();
 
-            Instance.MoveTo(ItemLocation.World);
             return true;
+        }
+
+        private void AttachToCarry(Transform anchor)
+        {
+            _body.linearVelocity = Vector3.zero;
+            _body.angularVelocity = Vector3.zero;
+            _body.isKinematic = true;
+            _body.useGravity = false;
+
+            SetCollidersEnabled(false);
+
+            transform.SetParent(anchor, false);
+            transform.localPosition = definition.CarryLocalPosition;
+            transform.localRotation = Quaternion.Euler(definition.CarryLocalEulerAngles);
         }
 
         private void SetCollidersEnabled(bool value)
@@ -106,9 +165,9 @@ namespace GoLive.Items
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(definition.ItemId))
+            if (!ItemDefinition.IsValidItemId(definition.ItemId))
             {
-                Debug.LogError($"{nameof(ItemDefinition)} assigned to {name} requires a stable Item ID.", definition);
+                Debug.LogError($"{nameof(ItemDefinition)} assigned to {name} has an invalid Item ID.", definition);
                 return false;
             }
 

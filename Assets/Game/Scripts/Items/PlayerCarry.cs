@@ -58,5 +58,35 @@ namespace GoLive.Player
 
             return _carriedItem.TryInteract(in context);
         }
+
+        internal bool TryStoreCarriedItem(Transform storageRoot, out WorldItem storedItem)
+        {
+            storedItem = null;
+
+            if (!HasItem)
+                return false;
+
+            WorldItem item = _carriedItem;
+
+            if (!item.TryStoreInInventory(storageRoot))
+                return false;
+
+            _carriedItem = null;
+            storedItem = item;
+
+            return true;
+        }
+
+        internal bool TryCarryFromInventory(WorldItem item)
+        {
+            if (HasItem || item == null)
+                return false;
+
+            if (!item.TryBeginCarryFromInventory(carryAnchor))
+                return false;
+
+            _carriedItem = item;
+            return true;
+        }
     }
 }

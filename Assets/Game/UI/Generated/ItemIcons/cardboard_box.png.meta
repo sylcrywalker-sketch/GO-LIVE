@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7a4d8953d4039ef479e5e53276108ebb
+guid: cc8f3d9f74c516e4fb098e3fc2e04532
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 350341356906426757
-    second: RoundedBorder_0
+      213: -953023481888459661
+    second: cardboard_box_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 8, y: 8, z: 8, w: 8}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -74,10 +74,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 512
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 2
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -102,13 +102,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RoundedBorder_0
+      name: cardboard_box_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +117,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5813980ab99acd400800000000000000
-      internalID: 350341356906426757
+      spriteID: 374be6b413e26c2f0800000000000000
+      internalID: -953023481888459661
       vertices: []
       indices: 
       edges: []
