@@ -1,0 +1,127 @@
+{
+  "origin": "Original deterministic GO! LIVE synthesis; no external audio source",
+  "generator": "Docs/PhoneV2/AudioSource/generate_phone_audio.py",
+  "clips": [
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneActivation.wav",
+      "durationSeconds": 0.18,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -22.999,
+      "rmsDbfs": -29.048,
+      "clippedSamples": 0,
+      "bytes": 17324,
+      "sha256": "d2d9145b57d1f5dc8dcbe749a0b1eaefbf0fa9b8e0824f7f86e44c288a31a783"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneNavigate.wav",
+      "durationSeconds": 0.055,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -22.999,
+      "rmsDbfs": -30.275,
+      "clippedSamples": 0,
+      "bytes": 5324,
+      "sha256": "4dd832b4e43688e10dfa71723186179e20c7deb53a62b3e64616bf4af622eb94"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneConfirm.wav",
+      "durationSeconds": 0.145,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -22.0,
+      "rmsDbfs": -28.493,
+      "clippedSamples": 0,
+      "bytes": 13964,
+      "sha256": "3d70a6986ad548caa8c7a8a023e1c8c5a15d2a8b3a9e775d361bf4e7cbed7933"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneBack.wav",
+      "durationSeconds": 0.105,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -24.002,
+      "rmsDbfs": -27.904,
+      "clippedSamples": 0,
+      "bytes": 10124,
+      "sha256": "d290c1500c670545769dc48ce884e9cfa5b8dde8553e72af243da6fbaeb53ab4"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneIncomingBuzz.wav",
+      "durationSeconds": 0.34,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -22.999,
+      "rmsDbfs": -30.049,
+      "clippedSamples": 0,
+      "bytes": 32684,
+      "sha256": "870f434f301af841c00d42bd957b97ed5bb1791af1da8e8b94f00aabd82d6ece"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneIncomingTone.wav",
+      "durationSeconds": 0.43,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -18.999,
+      "rmsDbfs": -24.813,
+      "clippedSamples": 0,
+      "bytes": 41324,
+      "sha256": "5477f09ca742de1edf8f949aeff98d106f724c8e6a99e954df5c9c7c62bd324c"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneSend.wav",
+      "durationSeconds": 0.155,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -22.999,
+      "rmsDbfs": -26.595,
+      "clippedSamples": 0,
+      "bytes": 14924,
+      "sha256": "becd776cb6bb3c7ba58951020fdce896a87062a9c8e9f8d11d913d51e91f0bb3"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhoneShutter.wav",
+      "durationSeconds": 0.135,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -21.001,
+      "rmsDbfs": -36.954,
+      "clippedSamples": 0,
+      "bytes": 13004,
+      "sha256": "e6cf5453d437c19fc6c2bfba6db1dac1f3ac7284b29b06637b9735d191d1c8dd"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhonePaymentSuccess.wav",
+      "durationSeconds": 0.24,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -21.001,
+      "rmsDbfs": -29.37,
+      "clippedSamples": 0,
+      "bytes": 23084,
+      "sha256": "2bcd478c6994958dba780f869f6766d88cad31778542d5d4190625581f97c576"
+    },
+    {
+      "file": "Assets/Game/Art/Audio/PhoneV2/PhonePaymentFailed.wav",
+      "durationSeconds": 0.19,
+      "sampleRate": 48000,
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -24.002,
+      "rmsDbfs": -29.855,
+      "clippedSamples": 0,
+      "bytes": 18284,
+      "sha256": "7b3f31e73130619b5050040c8204c135cc5913b908096d38cf6de4b440ab79c0"
+    }
+  ],
+  "subjectiveAuditionPerformed": false
+}
