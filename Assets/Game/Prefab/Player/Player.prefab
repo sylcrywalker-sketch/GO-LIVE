@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 5974975994150366338}
   - component: {fileID: 1676404514041095576}
   - component: {fileID: 1057632342457024488}
+  - component: {fileID: 1822905998515294160}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -181,6 +182,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Food.PlayerFoodConsumption
   _playerNeeds: {fileID: 0}
   _gameClock: {fileID: 0}
+--- !u!114 &1822905998515294160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2380015013011542929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df63110d7d75da24fa3b9ead072b4ea5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Sleep.PlayerSleepController
+  _gameClock: {fileID: 0}
+  _playerNeeds: {fileID: 0}
+  _config: {fileID: 11400000, guid: b4142d9bd13c5504f82adf7bca91960b, type: 2}
 --- !u!1 &3954921313998548385
 GameObject:
   m_ObjectHideFlags: 0
