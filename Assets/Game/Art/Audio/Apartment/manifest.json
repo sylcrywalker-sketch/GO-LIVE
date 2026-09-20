@@ -1,0 +1,940 @@
+{
+  "schemaVersion": 1,
+  "preparedOnUtc": "2026-09-12T09:43:27.571774+03:00",
+  "directory": "Assets/Game/Art/Audio/Apartment",
+  "status": "Prepared production candidates; technical verification passed; parent will audition and integrate.",
+  "totalAudioFiles": 18,
+  "totalAudioBytes": 13262127.0,
+  "formats": "16 PCM16 mono 48000 Hz WAVs plus five unchanged official stereo 44100 Hz OGG footsteps.",
+  "noAdditionalLossyEncoding": true,
+  "subjectiveAuditionPerformed": false,
+  "unityImported": true,
+  "loopNote": "WAV loops are used to avoid another lossy encode from the available HQ MP3 previews and keep the whole subset below 20 MB.",
+  "integrationNotes": [
+    "All volume recommendations are starting points; use listening in the apartment as the final mix check.",
+    "Keep room/city loops diffuse; spatialize the mono fan at the PC, and radiator one-shots at the radiator.",
+    "Footsteps are byte-identical originals, intentionally retaining their original 44.1 kHz stereo format. Unity can force mono at import if appropriate.",
+    "Use SwitchClick for a physical PC power button and fan gain envelope for power state. No synthetic boot or confirmation tones were created.",
+    "Use sparse radiator events, with a cooldown of at least 30 seconds, and disable random events when not appropriate to the scene.",
+    "DoorOpen and DoorClose follow the original uploader sequence; check the action timing during audition.",
+    "ChairScrape, Fabric and WindSoft_Loop are optional and should correspond to visible activity or a useful outdoor layer."
+  ],
+  "clips": [
+    {
+      "filename": "RoomTone_Loop.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/RoomTone_Loop.wav",
+      "role": "ambient loop",
+      "loop": true,
+      "optional": false,
+      "source": {
+        "id": "489443",
+        "title": "Room Tone.wav",
+        "creator": "Soapuel",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/Soapuel/sounds/489443/",
+        "downloadUrl": "https://cdn.freesound.org/previews/489/489443_10448599-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\489443__soapuel__room-tone-hq.mp3",
+        "sourceSha256": "58c39be166d0ada090a10dba337ef4b3d02a18261393fd51fe7a10eb73fe8e66",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-489443-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded source to floating-point PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=35,lowpass=f=6000",
+        "Selected 16.000–76.000 s; made 58.000 s circular loop with a 2 s equal-power tail/head overlap.",
+        "Removed DC offset; applied +23.6497 dB gain toward RMS -32.0 dBFS with -3 dBFS peak ceiling.",
+        "Final output is PCM16 WAV with TPDF dither; no additional lossy encode."
+      ],
+      "sourceSectionSeconds": [
+        16.0,
+        76.0
+      ],
+      "overlapSeconds": 2.0,
+      "targetRmsDbfs": -32,
+      "gainDb": 23.64966,
+      "suggestedUnityVolume": 0.12,
+      "predictedRmsAtSuggestedVolumeDbfs": -50.416,
+      "analysis": {
+        "durationSeconds": 58.0,
+        "sizeBytes": 5568044,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -32.0,
+        "samplePeakDbfs": -15.658,
+        "oversampled4xPeakDbfs": -15.658,
+        "clippedSampleCount": 0,
+        "dcOffset": 1E-09,
+        "decoderExitCode": 0,
+        "sha256": "ae7636dd2f16ce8be3bb0ac6f7ac93f00a5370e6efa511b944e7c1ce9967dd7f",
+        "loopSeam": {
+          "boundaryStepDbfs": -58.713,
+          "interiorDeltaRmsDbfs": -57.623,
+          "interiorDelta999PercentileDbfs": -46.845,
+          "boundaryBelowInterior999Percentile": true,
+          "firstVsLast100msRmsDifferenceDb": 3.83
+        }
+      }
+    },
+    {
+      "filename": "OutsideCity_Loop.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/OutsideCity_Loop.wav",
+      "role": "ambient loop",
+      "loop": true,
+      "optional": false,
+      "source": {
+        "id": "135077",
+        "title": "Residential Street Distant Traffic Quiet Skyline.wav",
+        "creator": "mzui",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/mzui/sounds/135077/",
+        "downloadUrl": "https://cdn.freesound.org/previews/135/135077_658546-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\135077__mzui__residential-street-distant-traffic-quiet-skyline-hq.mp3",
+        "sourceSha256": "157b39bea8ca97f4fcdf619b92c6f0f34e1e7480cd83c0ea053ad0941066af9a",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-135077-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded source to floating-point PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=65,lowpass=f=4200",
+        "Selected 6.000–68.000 s; made 60.000 s circular loop with a 2 s equal-power tail/head overlap.",
+        "Removed DC offset; applied +14.7257 dB gain toward RMS -24.0 dBFS with -3 dBFS peak ceiling.",
+        "Final output is PCM16 WAV with TPDF dither; no additional lossy encode."
+      ],
+      "sourceSectionSeconds": [
+        6.0,
+        68.0
+      ],
+      "overlapSeconds": 2.0,
+      "targetRmsDbfs": -24,
+      "gainDb": 14.72566,
+      "suggestedUnityVolume": 0.12,
+      "predictedRmsAtSuggestedVolumeDbfs": -42.416,
+      "analysis": {
+        "durationSeconds": 60.0,
+        "sizeBytes": 5760044,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -24.0,
+        "samplePeakDbfs": -5.856,
+        "oversampled4xPeakDbfs": -5.849,
+        "clippedSampleCount": 0,
+        "dcOffset": 0.0,
+        "decoderExitCode": 0,
+        "sha256": "d6d954b7ce058de858cdcfe62ecc9f28ae32f02198c9aa86ef4678445c010c47",
+        "loopSeam": {
+          "boundaryStepDbfs": -57.844,
+          "interiorDeltaRmsDbfs": -42.821,
+          "interiorDelta999PercentileDbfs": -29.387,
+          "boundaryBelowInterior999Percentile": true,
+          "firstVsLast100msRmsDifferenceDb": -0.056
+        }
+      }
+    },
+    {
+      "filename": "PCFan_Loop.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/PCFan_Loop.wav",
+      "role": "ambient loop",
+      "loop": true,
+      "optional": false,
+      "source": {
+        "id": "242042",
+        "title": "Computer Fan Loop",
+        "creator": "Ezcah",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/Ezcah/sounds/242042/",
+        "downloadUrl": "https://cdn.freesound.org/previews/242/242042_1900515-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\242042__ezcah__computer-fan-loop-hq.mp3",
+        "sourceSha256": "1324b8b6b2b251577f2a51d644b7ad2984900e4583474440cb4edf0754aaf290",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-242042-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded source to floating-point PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=45,lowpass=f=6000",
+        "Selected 12.000–30.000 s; made 16.000 s circular loop with a 2 s equal-power tail/head overlap.",
+        "Removed DC offset; applied +2.8940 dB gain toward RMS -22.0 dBFS with -3 dBFS peak ceiling.",
+        "Final output is PCM16 WAV with TPDF dither; no additional lossy encode."
+      ],
+      "sourceSectionSeconds": [
+        12.0,
+        30.0
+      ],
+      "overlapSeconds": 2.0,
+      "targetRmsDbfs": -22,
+      "gainDb": 2.89399,
+      "suggestedUnityVolume": 0.035,
+      "predictedRmsAtSuggestedVolumeDbfs": -51.119,
+      "analysis": {
+        "durationSeconds": 16.0,
+        "sizeBytes": 1536044,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -22.0,
+        "samplePeakDbfs": -8.587,
+        "oversampled4xPeakDbfs": -8.583,
+        "clippedSampleCount": 0,
+        "dcOffset": 7E-09,
+        "decoderExitCode": 0,
+        "sha256": "83403dcaa8ee21b1ff541343c6ca18781d511d53104855e677f3c2d5629a9947",
+        "loopSeam": {
+          "boundaryStepDbfs": -58.945,
+          "interiorDeltaRmsDbfs": -47.0,
+          "interiorDelta999PercentileDbfs": -36.594,
+          "boundaryBelowInterior999Percentile": true,
+          "firstVsLast100msRmsDifferenceDb": 0.804
+        }
+      }
+    },
+    {
+      "filename": "Footstep_wood_01.ogg",
+      "path": "Assets/Game/Art/Audio/Apartment/Footstep_wood_01.ogg",
+      "role": "wood-floor footstep",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\footstep_wood_000.ogg",
+        "sourceSha256": "5f1c252942a220d658121bd9417448cd19649ded9fff2ff15f6e50899373ce8e",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Byte-for-byte copy of the official original OGG; no decoding, trimming, normalization or transcoding."
+      ],
+      "byteIdenticalToSource": true,
+      "analysis": {
+        "durationSeconds": 0.271383,
+        "sizeBytes": 5949,
+        "codec": "vorbis",
+        "sampleRate": 44100,
+        "channels": 2,
+        "bitsPerSample": null,
+        "rmsDbfs": -21.156,
+        "samplePeakDbfs": -0.925,
+        "oversampled4xPeakDbfs": -0.925,
+        "clippedSampleCount": 0,
+        "dcOffset": 3.1594E-05,
+        "decoderExitCode": 0,
+        "sha256": "5f1c252942a220d658121bd9417448cd19649ded9fff2ff15f6e50899373ce8e"
+      }
+    },
+    {
+      "filename": "Footstep_wood_02.ogg",
+      "path": "Assets/Game/Art/Audio/Apartment/Footstep_wood_02.ogg",
+      "role": "wood-floor footstep",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\footstep_wood_001.ogg",
+        "sourceSha256": "e4f68e1c9fd55b4dc8ca89ed2bbab6f200171bc54bdc18aa96b80d8e7336f462",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Byte-for-byte copy of the official original OGG; no decoding, trimming, normalization or transcoding."
+      ],
+      "byteIdenticalToSource": true,
+      "analysis": {
+        "durationSeconds": 0.248662,
+        "sizeBytes": 5929,
+        "codec": "vorbis",
+        "sampleRate": 44100,
+        "channels": 2,
+        "bitsPerSample": null,
+        "rmsDbfs": -20.026,
+        "samplePeakDbfs": -0.997,
+        "oversampled4xPeakDbfs": -0.994,
+        "clippedSampleCount": 0,
+        "dcOffset": -0.000141914,
+        "decoderExitCode": 0,
+        "sha256": "e4f68e1c9fd55b4dc8ca89ed2bbab6f200171bc54bdc18aa96b80d8e7336f462"
+      }
+    },
+    {
+      "filename": "Footstep_wood_03.ogg",
+      "path": "Assets/Game/Art/Audio/Apartment/Footstep_wood_03.ogg",
+      "role": "wood-floor footstep",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\footstep_wood_002.ogg",
+        "sourceSha256": "9ff095b05cee5eec40b081defe3f0eef7232bb16d4865ce03b9f6dbab875cfdd",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Byte-for-byte copy of the official original OGG; no decoding, trimming, normalization or transcoding."
+      ],
+      "byteIdenticalToSource": true,
+      "analysis": {
+        "durationSeconds": 0.248481,
+        "sizeBytes": 5895,
+        "codec": "vorbis",
+        "sampleRate": 44100,
+        "channels": 2,
+        "bitsPerSample": null,
+        "rmsDbfs": -19.422,
+        "samplePeakDbfs": -0.904,
+        "oversampled4xPeakDbfs": -0.903,
+        "clippedSampleCount": 0,
+        "dcOffset": 0.000152043,
+        "decoderExitCode": 0,
+        "sha256": "9ff095b05cee5eec40b081defe3f0eef7232bb16d4865ce03b9f6dbab875cfdd"
+      }
+    },
+    {
+      "filename": "Footstep_wood_04.ogg",
+      "path": "Assets/Game/Art/Audio/Apartment/Footstep_wood_04.ogg",
+      "role": "wood-floor footstep",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\footstep_wood_003.ogg",
+        "sourceSha256": "2a68a083daa9eda08fed0ea5da5280dfbe0de226196c576be02f95259dd139d9",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Byte-for-byte copy of the official original OGG; no decoding, trimming, normalization or transcoding."
+      ],
+      "byteIdenticalToSource": true,
+      "analysis": {
+        "durationSeconds": 0.248617,
+        "sizeBytes": 6207,
+        "codec": "vorbis",
+        "sampleRate": 44100,
+        "channels": 2,
+        "bitsPerSample": null,
+        "rmsDbfs": -21.476,
+        "samplePeakDbfs": -1.081,
+        "oversampled4xPeakDbfs": -1.081,
+        "clippedSampleCount": 0,
+        "dcOffset": 0.000142438,
+        "decoderExitCode": 0,
+        "sha256": "2a68a083daa9eda08fed0ea5da5280dfbe0de226196c576be02f95259dd139d9"
+      }
+    },
+    {
+      "filename": "Footstep_wood_05.ogg",
+      "path": "Assets/Game/Art/Audio/Apartment/Footstep_wood_05.ogg",
+      "role": "wood-floor footstep",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\footstep_wood_004.ogg",
+        "sourceSha256": "b33e0854e2b3f6b6492e25c25ef8f90447a332f7c6bb25dd02edced9581d3441",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Byte-for-byte copy of the official original OGG; no decoding, trimming, normalization or transcoding."
+      ],
+      "byteIdenticalToSource": true,
+      "analysis": {
+        "durationSeconds": 0.245011,
+        "sizeBytes": 5799,
+        "codec": "vorbis",
+        "sampleRate": 44100,
+        "channels": 2,
+        "bitsPerSample": null,
+        "rmsDbfs": -19.516,
+        "samplePeakDbfs": -0.96,
+        "oversampled4xPeakDbfs": -0.96,
+        "clippedSampleCount": 0,
+        "dcOffset": 0.00026134,
+        "decoderExitCode": 0,
+        "sha256": "b33e0854e2b3f6b6492e25c25ef8f90447a332f7c6bb25dd02edced9581d3441"
+      }
+    },
+    {
+      "filename": "LandSoft.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/LandSoft.wav",
+      "role": "soft body landing",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\impactSoft_heavy_000.ogg",
+        "sourceSha256": "49e7ca88743fca974bb8676ea138b751cfd8f9033b5e7af8736c2a215d6edbc1",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Selected source 0.000000–0.295000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied -13.0922 dB gain to sample peak -11.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        0.0,
+        0.295
+      ],
+      "targetPeakDbfs": -11,
+      "gainDb": -13.09223,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 0.295,
+        "sizeBytes": 28364,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -25.459,
+        "samplePeakDbfs": -11.0,
+        "oversampled4xPeakDbfs": -11.0,
+        "clippedSampleCount": 0,
+        "dcOffset": 0.000285242,
+        "decoderExitCode": 0,
+        "sha256": "32d8a72c0ead50077bd827892f8db6378c9032f6b60769970960b9185efe2758"
+      }
+    },
+    {
+      "filename": "DropWood.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/DropWood.wav",
+      "role": "small wood contact",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\impactWood_light_000.ogg",
+        "sourceSha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Selected source 0.000000–0.105000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied -11.5935 dB gain to sample peak -14.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        0.0,
+        0.105
+      ],
+      "targetPeakDbfs": -14,
+      "gainDb": -11.59347,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 0.105,
+        "sizeBytes": 10124,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -30.13,
+        "samplePeakDbfs": -14.0,
+        "oversampled4xPeakDbfs": -13.998,
+        "clippedSampleCount": 0,
+        "dcOffset": -0.001897346,
+        "decoderExitCode": 0,
+        "sha256": "e7e59ba5cbdec857440f12dcd750d957f54c217f1757c6455be9aa7c73990313"
+      }
+    },
+    {
+      "filename": "DropMetal.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/DropMetal.wav",
+      "role": "small metal contact",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "kenney-impact",
+        "title": "Impact Sounds",
+        "creator": "Kenney",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://kenney.nl/assets/impact-sounds",
+        "downloadUrl": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+        "downloadKind": "Official original archive",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\kenney_impact-sounds\\Audio\\impactMetal_light_000.ogg",
+        "sourceSha256": "33b5e6e37c6e9d54e07bf5a89b12c76e879f40c1ea83cdd82714df1d6f9fec6d",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney-impact-page.html",
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/kenney_impact-sounds/License.txt"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Selected source 0.000000–0.195000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied -17.7689 dB gain to sample peak -17.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        0.0,
+        0.195
+      ],
+      "targetPeakDbfs": -17,
+      "gainDb": -17.76891,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 0.195,
+        "sizeBytes": 18764,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -33.79,
+        "samplePeakDbfs": -17.001,
+        "oversampled4xPeakDbfs": -16.991,
+        "clippedSampleCount": 0,
+        "dcOffset": -0.000142428,
+        "decoderExitCode": 0,
+        "sha256": "e1476aa6a59b723a6e2fd9c596770fc94e78a16438708be0d832e55ffac3fd39"
+      }
+    },
+    {
+      "filename": "PickupSoft.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/PickupSoft.wav",
+      "role": "quiet hand/fabric pickup contact",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "334218",
+        "title": "Clothes Rustling 2",
+        "creator": "WasabiWielder",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/WasabiWielder/sounds/334218/",
+        "downloadUrl": "https://cdn.freesound.org/previews/334/334218_4290188-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\334218__wasabiwielder__clothes-rustling-2-hq.mp3",
+        "sourceSha256": "daf722d1985678376357a64e5e931f4f54731510ac05bd0dd823344077fbd874",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-334218-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=130,lowpass=f=6500",
+        "Selected source 0.360000–0.760000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied +5.0373 dB gain to sample peak -24.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        0.36,
+        0.76
+      ],
+      "targetPeakDbfs": -24,
+      "gainDb": 5.03726,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 0.4,
+        "sizeBytes": 38444,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -39.735,
+        "samplePeakDbfs": -24.002,
+        "oversampled4xPeakDbfs": -24.001,
+        "clippedSampleCount": 0,
+        "dcOffset": 6.514E-06,
+        "decoderExitCode": 0,
+        "sha256": "b6fdef892d229f7b67d5e14a121c4ff1d1a08e864f8bacce91bfec7d878c9454"
+      }
+    },
+    {
+      "filename": "Fabric.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/Fabric.wav",
+      "role": "short cloth movement",
+      "loop": false,
+      "optional": true,
+      "source": {
+        "id": "334218",
+        "title": "Clothes Rustling 2",
+        "creator": "WasabiWielder",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/WasabiWielder/sounds/334218/",
+        "downloadUrl": "https://cdn.freesound.org/previews/334/334218_4290188-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\334218__wasabiwielder__clothes-rustling-2-hq.mp3",
+        "sourceSha256": "daf722d1985678376357a64e5e931f4f54731510ac05bd0dd823344077fbd874",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-334218-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=130,lowpass=f=6500",
+        "Selected source 1.040000–1.480000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied -2.4959 dB gain to sample peak -22.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        1.04,
+        1.48
+      ],
+      "targetPeakDbfs": -22,
+      "gainDb": -2.49588,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 0.44,
+        "sizeBytes": 42284,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -45.322,
+        "samplePeakDbfs": -22.0,
+        "oversampled4xPeakDbfs": -21.972,
+        "clippedSampleCount": 0,
+        "dcOffset": 3.914E-06,
+        "decoderExitCode": 0,
+        "sha256": "a25f81f2c91437134cfd917faf7d3ea1e93e317cc08c544f7173f3a3fb34f5ee"
+      }
+    },
+    {
+      "filename": "DoorOpen.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/DoorOpen.wav",
+      "role": "door opening",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "344360",
+        "title": "Door Open Close",
+        "creator": "amholma",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/amholma/sounds/344360/",
+        "downloadUrl": "https://cdn.freesound.org/previews/344/344360_6128004-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\344360__amholma__door-open-close-hq.mp3",
+        "sourceSha256": "977ca3b9dcb7163e9681364bf3ddbd1ad1ab2ddd600dceeada4ca64b1f240fdc",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-344360-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=60,lowpass=f=10000",
+        "Selected source 1.088000–2.145000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied +1.1495 dB gain to sample peak -17.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        1.088,
+        2.145
+      ],
+      "targetPeakDbfs": -17,
+      "gainDb": 1.14945,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 1.057,
+        "sizeBytes": 101516,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -41.735,
+        "samplePeakDbfs": -16.999,
+        "oversampled4xPeakDbfs": -16.98,
+        "clippedSampleCount": 0,
+        "dcOffset": -2E-07,
+        "decoderExitCode": 0,
+        "sha256": "1b3e6e38c959d4c2ba89b9a1f078a728c74017254e58074913c31b0d9bdb9175"
+      }
+    },
+    {
+      "filename": "DoorClose.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/DoorClose.wav",
+      "role": "door mild closing",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "344360",
+        "title": "Door Open Close",
+        "creator": "amholma",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/amholma/sounds/344360/",
+        "downloadUrl": "https://cdn.freesound.org/previews/344/344360_6128004-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\344360__amholma__door-open-close-hq.mp3",
+        "sourceSha256": "977ca3b9dcb7163e9681364bf3ddbd1ad1ab2ddd600dceeada4ca64b1f240fdc",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-344360-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=60,lowpass=f=10000",
+        "Selected source 4.448000–5.325000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied -11.8158 dB gain to sample peak -13.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        4.448,
+        5.325
+      ],
+      "targetPeakDbfs": -13,
+      "gainDb": -11.81579,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 0.877,
+        "sizeBytes": 84236,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -36.166,
+        "samplePeakDbfs": -13.0,
+        "oversampled4xPeakDbfs": -12.62,
+        "clippedSampleCount": 0,
+        "dcOffset": 9E-09,
+        "decoderExitCode": 0,
+        "sha256": "802a341c1937eaf85cee0fec9ec00e6fbabc8e0886f82c9c100cc4792af81185"
+      }
+    },
+    {
+      "filename": "SwitchClick.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/SwitchClick.wav",
+      "role": "physical wall switch or PC power button",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "271466",
+        "title": "Light switch.wav",
+        "creator": "bdunis4",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourcePage": "https://freesound.org/people/bdunis4/sounds/271466/",
+        "downloadUrl": "https://cdn.freesound.org/previews/271/271466_4190771-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\271466__bdunis4__light-switch-hq.mp3",
+        "sourceSha256": "dc55c261e3339c5839d64e24e2ddf7eefdf5da94ddd9419f2ce7a04c4b9c2632",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-271466-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded to PCM; downmixed to mono and resampled to 48000 Hz.",
+        "Filtered with FFmpeg: highpass=f=120,lowpass=f=9000",
+        "Selected source 6.953000–7.095000 s; removed outer silence only.",
+        "Removed DC offset; applied 5 ms raised-cosine fades at both edges.",
+        "Applied -9.0416 dB gain to sample peak -18.0 dBFS.",
+        "Saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        6.953,
+        7.095
+      ],
+      "targetPeakDbfs": -18,
+      "gainDb": -9.04161,
+      "edgeFadeSeconds": 0.005,
+      "analysis": {
+        "durationSeconds": 0.142,
+        "sizeBytes": 13676,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -38.668,
+        "samplePeakDbfs": -18.001,
+        "oversampled4xPeakDbfs": -18.001,
+        "clippedSampleCount": 0,
+        "dcOffset": 1.3E-08,
+        "decoderExitCode": 0,
+        "sha256": "1dfee09bdbcb0e192c2c92e5be5c527e7035d29dff66c038213a4f283e6f1aff"
+      }
+    },
+    {
+      "filename": "RadiatorTick_01.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/RadiatorTick_01.wav",
+      "role": "rare radiator metal tick",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "493229",
+        "title": "radiator (constant clicking sound)",
+        "creator": "Nanisia",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "sourcePage": "https://freesound.org/people/Nanisia/sounds/493229/",
+        "downloadUrl": "https://cdn.freesound.org/previews/493/493229_3109397-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\493229__nanisia__radiator-constant-clicking-hq.mp3",
+        "sourceSha256": "4eac966761464afaa38d7ba18d0fdb762db5f06d6018b40fd970dd4c2a71d2fa",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-493229-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded source to PCM, downmixed to mono and resampled to 48000 Hz.",
+        "Band filtered: high-pass 650 Hz and low-pass 6200 Hz.",
+        "Selected isolated local-energy event around source 54.695979 s with 160 ms total crop.",
+        "Estimated local background RMS -50.534 dBFS; applied 2 ms RMS-keyed soft gate with 4 ms smoothing to attenuate steam hiss.",
+        "Preserved the attack, applied a raised-cosine release after 45 ms and 5 ms edge fades; removed DC offset.",
+        "Applied -9.5797 dB gain to peak -22.0 dBFS; saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        54.683979,
+        54.843979
+      ],
+      "peakSourceTimeSeconds": 54.695979,
+      "localNoiseRmsBeforeGateDbfs": -50.534,
+      "gainDb": -9.57967,
+      "targetPeakDbfs": -22,
+      "attributionRequired": true,
+      "minimumSuggestedEventCooldownSeconds": 30,
+      "analysis": {
+        "durationSeconds": 0.16,
+        "sizeBytes": 15404,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -43.653,
+        "samplePeakDbfs": -22.0,
+        "oversampled4xPeakDbfs": -22.0,
+        "clippedSampleCount": 0,
+        "dcOffset": 2.94E-07,
+        "decoderExitCode": 0,
+        "sha256": "f7fc4b361228fc4cacfdbb91a52eb21d5cea730a0f9305ae3a649c860913329b"
+      }
+    },
+    {
+      "filename": "RadiatorTick_02.wav",
+      "path": "Assets/Game/Art/Audio/Apartment/RadiatorTick_02.wav",
+      "role": "rare radiator metal tick",
+      "loop": false,
+      "optional": false,
+      "source": {
+        "id": "493229",
+        "title": "radiator (constant clicking sound)",
+        "creator": "Nanisia",
+        "license": "CC-BY-4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "sourcePage": "https://freesound.org/people/Nanisia/sounds/493229/",
+        "downloadUrl": "https://cdn.freesound.org/previews/493/493229_3109397-hq.mp3",
+        "downloadKind": "Public Freesound HQ MP3 preview, not original upload",
+        "localSourceFile": "E:\\GO-LIVE-NEW\\Library\\ApartmentAudioSources\\493229__nanisia__radiator-constant-clicking-hq.mp3",
+        "sourceSha256": "4eac966761464afaa38d7ba18d0fdb762db5f06d6018b40fd970dd4c2a71d2fa",
+        "licenseEvidence": [
+          "E:/GO-LIVE-NEW/Library/ApartmentAudioSources/freesound-493229-page.html"
+        ]
+      },
+      "modifications": [
+        "Decoded source to PCM, downmixed to mono and resampled to 48000 Hz.",
+        "Band filtered: high-pass 650 Hz and low-pass 6200 Hz.",
+        "Selected isolated local-energy event around source 89.913417 s with 160 ms total crop.",
+        "Estimated local background RMS -51.177 dBFS; applied 2 ms RMS-keyed soft gate with 4 ms smoothing to attenuate steam hiss.",
+        "Preserved the attack, applied a raised-cosine release after 45 ms and 5 ms edge fades; removed DC offset.",
+        "Applied -11.2597 dB gain to peak -24.0 dBFS; saved PCM16 WAV with TPDF dither."
+      ],
+      "sourceSectionSeconds": [
+        89.901417,
+        90.061417
+      ],
+      "peakSourceTimeSeconds": 89.913417,
+      "localNoiseRmsBeforeGateDbfs": -51.177,
+      "gainDb": -11.25971,
+      "targetPeakDbfs": -24,
+      "attributionRequired": true,
+      "minimumSuggestedEventCooldownSeconds": 30,
+      "analysis": {
+        "durationSeconds": 0.16,
+        "sizeBytes": 15404,
+        "codec": "pcm_s16le",
+        "sampleRate": 48000,
+        "channels": 1,
+        "bitsPerSample": 16,
+        "rmsDbfs": -46.183,
+        "samplePeakDbfs": -23.998,
+        "oversampled4xPeakDbfs": -23.998,
+        "clippedSampleCount": 0,
+        "dcOffset": 3.6E-08,
+        "decoderExitCode": 0,
+        "sha256": "3cace31e351420551492c56a150a7c97531913909cb9884c6c63db5bcedea9a6"
+      }
+    }
+  ]
+}

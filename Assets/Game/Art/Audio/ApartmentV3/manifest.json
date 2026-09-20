@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "license": "CC0-1.0",
+  "sourceArchiveSha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8",
+  "sources": [
+    "https://kenney.nl/assets/impact-sounds",
+    "https://freesound.org/people/Rudmer_Rotteveel/sounds/506664/"
+  ],
+  "subjectiveAuditionPerformed": false,
+  "auditionLimitation": "Local WAV submitted to available audio tool; tool reported that audio input is unsupported. Technical signal checks performed; in-game listening remains a human check.",
+  "clips": [
+    {
+      "file": "Footstep_HardFloor_01.wav",
+      "source": "Kenney / Audio/footstep_concrete_000.ogg",
+      "role": "hard floor footstep (bathroom)",
+      "modifications": "Official Kenney original OGG decoded to mono PCM16 48 kHz with equal-amplitude stereo mix, -5.075 dB gain to -6 dBFS peak, 2 ms attack fade. No additional lossy encode; no synthetic audio.",
+      "sha256": "25fa0e2d50c2071ea082b23d847231786cfaaf82677ee3348449b575e9db8307",
+      "durationSeconds": 0.103021,
+      "bytes": 9968,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -6.0,
+      "rmsDbfs": -25.926,
+      "clippedSamples": 0,
+      "sourceSha256": "d7267e183067757c92c169de2a379abea592cfca6b39bb2e8feea15221ad79fe"
+    },
+    {
+      "file": "Footstep_HardFloor_02.wav",
+      "source": "Kenney / Audio/footstep_concrete_001.ogg",
+      "role": "hard floor footstep (bathroom)",
+      "modifications": "Official Kenney original OGG decoded to mono PCM16 48 kHz with equal-amplitude stereo mix, -4.939 dB gain to -6 dBFS peak, 2 ms attack fade. No additional lossy encode; no synthetic audio.",
+      "sha256": "dfd8832952c61664c2212587b83d54e18133f060fdbd09d06334a5da61772210",
+      "durationSeconds": 0.10475,
+      "bytes": 10134,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -6.0,
+      "rmsDbfs": -27.299,
+      "clippedSamples": 0,
+      "sourceSha256": "507a75eb19b897087855a3be3cf11a12d7fa37d143ad535eeebe0b8031c7325d"
+    },
+    {
+      "file": "Footstep_HardFloor_03.wav",
+      "source": "Kenney / Audio/footstep_concrete_002.ogg",
+      "role": "hard floor footstep (bathroom)",
+      "modifications": "Official Kenney original OGG decoded to mono PCM16 48 kHz with equal-amplitude stereo mix, -5.010 dB gain to -6 dBFS peak, 2 ms attack fade. No additional lossy encode; no synthetic audio.",
+      "sha256": "806167ab6ac2370900c1777475d7b842e724685aa65e12ab0d9a69355228d62b",
+      "durationSeconds": 0.109896,
+      "bytes": 10628,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -6.0,
+      "rmsDbfs": -27.674,
+      "clippedSamples": 0,
+      "sourceSha256": "b21fa546d74941196b25da8a20b7010abd8c05c4fcf93545d1f344e66a664e13"
+    },
+    {
+      "file": "Footstep_HardFloor_04.wav",
+      "source": "Kenney / Audio/footstep_concrete_003.ogg",
+      "role": "hard floor footstep (bathroom)",
+      "modifications": "Official Kenney original OGG decoded to mono PCM16 48 kHz with equal-amplitude stereo mix, -4.900 dB gain to -6 dBFS peak, 2 ms attack fade. No additional lossy encode; no synthetic audio.",
+      "sha256": "95db0ae0bcbfdef77c254705afba60f0c2d747afe33628545fc8eb2416135cff",
+      "durationSeconds": 0.107604,
+      "bytes": 10408,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -6.0,
+      "rmsDbfs": -26.555,
+      "clippedSamples": 0,
+      "sourceSha256": "8b513c2f0316324060b9174b8f28df6c2147418c506e6a53b77f18e149a5547b"
+    },
+    {
+      "file": "Footstep_HardFloor_05.wav",
+      "source": "Kenney / Audio/footstep_concrete_004.ogg",
+      "role": "hard floor footstep (bathroom)",
+      "modifications": "Official Kenney original OGG decoded to mono PCM16 48 kHz with equal-amplitude stereo mix, -5.005 dB gain to -6 dBFS peak, 2 ms attack fade. No additional lossy encode; no synthetic audio.",
+      "sha256": "d74089b1692619468c3c447bf86aa322ece48e02c3ed743c5e38cbfaaa2e5806",
+      "durationSeconds": 0.111458,
+      "bytes": 10778,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -6.0,
+      "rmsDbfs": -26.165,
+      "clippedSamples": 0,
+      "sourceSha256": "24dd8db2413e5b81ad181e1205c12a1c7801da5f85715d471b92a4b2f632e45e"
+    },
+    {
+      "file": "Neighbour_WoodImpact_01.wav",
+      "source": "Kenney / Audio/impactWood_light_000.ogg",
+      "role": "rare muted wooden contact through shared wall",
+      "modifications": "Official Kenney original OGG decoded to mono PCM16 48 kHz with equal-amplitude stereo mix, -11.889 dB gain to -13 dBFS peak, 2 ms attack fade. No additional lossy encode; no synthetic audio.",
+      "sha256": "93ca98d5c329834f057a5abc4107d23903a6b46e9fe23bea6066fe26ebce1c80",
+      "durationSeconds": 0.262708,
+      "bytes": 25298,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -13.0,
+      "rmsDbfs": -34.153,
+      "clippedSamples": 0,
+      "sourceSha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3"
+    },
+    {
+      "file": "Neighbour_WoodImpact_02.wav",
+      "source": "Kenney / Audio/impactWood_light_002.ogg",
+      "role": "rare muted wooden contact through shared wall",
+      "modifications": "Official Kenney original OGG decoded to mono PCM16 48 kHz with equal-amplitude stereo mix, -11.906 dB gain to -13 dBFS peak, 2 ms attack fade. No additional lossy encode; no synthetic audio.",
+      "sha256": "b1c16dd30750eb59d4a531bb959dd6942578c59c841901e0d59220cd8f8f233d",
+      "durationSeconds": 0.262708,
+      "bytes": 25298,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -13.0,
+      "rmsDbfs": -33.952,
+      "clippedSamples": 0,
+      "sourceSha256": "b183cf7a5bd783817e0e4b82af34ac6658fa1927049089dadc8b15c2ecc771dc"
+    },
+    {
+      "file": "FloorCreak_01.wav",
+      "source": "Wood Creak Single V9 / Rudmer_Rotteveel",
+      "page": "https://freesound.org/people/Rudmer_Rotteveel/sounds/506664/",
+      "download": "https://cdn.freesound.org/previews/506/506664_4921277-hq.mp3",
+      "sourceSha256": "5dafd36ededfa2de484ac0445d454da272439be0c5ab5d18aa6554c64687b220",
+      "role": "infrequent floorboard flex on a successful wood footstep",
+      "modifications": "Full public HQ MP3 preview (not original upload); mono 48 kHz PCM16; high-pass 90 Hz, low-pass 4200 Hz, 12 ms fade-in / 90 ms tail fade; gain -4.886 dB to peak -17 dBFS.",
+      "sha256": "b2cf37288cc1a2c0506954271da400180a696e6e6171b2aa8d6d7de29e6863fa",
+      "durationSeconds": 1.144458,
+      "bytes": 109946,
+      "format": {
+        "codec_name": "pcm_s16le",
+        "sample_rate": "48000",
+        "channels": 1
+      },
+      "peakDbfs": -16.999,
+      "rmsDbfs": -36.178,
+      "clippedSamples": 0
+    }
+  ],
+  "totalBytes": 212458
+}
