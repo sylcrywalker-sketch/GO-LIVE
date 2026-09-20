@@ -12,7 +12,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{8f08981e-9b92-c5c7-8c4f-dc39980d34f2}</ProjectGuid>
+    <ProjectGuid>{6bca1173-3c6f-ebfa-2f0d-d29509a89b9f}</ProjectGuid>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -531,46 +531,46 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.6.0f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="TextMateSharpPlastic">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\TextMateSharp\TextMateSharpPlastic.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\TextMateSharp\TextMateSharpPlastic.dll</HintPath>
     </Reference>
     <Reference Include="TextMateSharpPlastic.Grammars">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\TextMateSharp\TextMateSharpPlastic.Grammars.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\TextMateSharp\TextMateSharpPlastic.Grammars.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.YamlDotNet">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections.LowLevel.ILSupport">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collections@10fff0607388\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collections@10fff0607388\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="unityplastic">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\unityplastic.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\unityplastic.dll</HintPath>
     </Reference>
     <Reference Include="OnigwrapPlastic">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\TextMateSharp\Onigwrap\OnigwrapPlastic.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\TextMateSharp\Onigwrap\OnigwrapPlastic.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.ext.nunit@0198eae3b53e\net472\unity-custom\nunit.framework.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.ext.nunit@0198eae3b53e\net472\unity-custom\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="log4netPlastic">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\log4netPlastic.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.collab-proxy@4628d2ba6ea4\Lib\Editor\log4netPlastic.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.IonicZip">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.visualscripting@4edfcc09512f\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff\Mono.Cecil.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.6.0f1\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\mscorlib.dll</HintPath>
@@ -978,198 +978,198 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.6.0f1\Editor\Data\BCLExtensions\TargetingPacks\netstandard2.1\ref\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.TestRunner">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TestRunner">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI.Analytics">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\UnityEditor.UI.Analytics.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\UnityEditor.UI.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rendering.LightTransport.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Rendering.LightTransport.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Rendering.LightTransport.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AI.Navigation">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem.ForUI.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InputSystem.ForUI.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InputSystem.ForUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.2D.Editor.Overrides">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.2D.Editor.Overrides.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.2D.Editor.Overrides.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AI.Navigation.Updater">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.AI.Navigation.Updater.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.AI.Navigation.Updater.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections.Tests.CoreCLR.PrivateJobNested">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.PrivateJobNested.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.PrivateJobNested.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AI.Navigation.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PathTracing.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.PathTracing.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.PathTracing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime.Shared">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.Shared.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.Shared.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.2D.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.2D.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.2D.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InternalAPIEngineBridge.RenderPipelines.Core.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.RenderPipelines.Core.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.RenderPipelines.Core.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Shared.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Searcher.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Searcher.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Searcher.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Core">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
     </Reference>
     <Reference Include="Unity.UnifiedRayTracing.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.UnifiedRayTracing.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.UnifiedRayTracing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections.Tests.CoreCLR.PublicJobPrivateGeneric">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.PublicJobPrivateGeneric.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.PublicJobPrivateGeneric.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.AI.Navigation.Editor.ConversionSystem">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.ConversionSystem.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.AI.Navigation.Editor.ConversionSystem.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InternalAPIEditorBridge.ShaderGraph.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.ShaderGraph.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InternalAPIEditorBridge.ShaderGraph.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PlasticSCM.Editor.Assistant">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.Assistant.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.PlasticSCM.Editor.Assistant.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.GraphAuthoring.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.GraphAuthoring.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.GraphAuthoring.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections.Tests.CoreCLR.ProtectedJobNested">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.ProtectedJobNested.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.ProtectedJobNested.dll</HintPath>
     </Reference>
     <Reference Include="Unity.SurfaceCache.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.SurfaceCache.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.SurfaceCache.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Collections.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Collections.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Profiling.Core">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Profiling.Core.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Profiling.Core.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.GPUDriven.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.GPUDriven.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.GPUDriven.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.State.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InternalAPIEngineBridge.ObjectDispatcher.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.ObjectDispatcher.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.ObjectDispatcher.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Shaders">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem.ForUI">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InputSystem.ForUI.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InputSystem.ForUI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Burst">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.Core.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InternalAPIEngineBridge.004">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.004.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.004.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PathTracing.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.PathTracing.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.PathTracing.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.State">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Config.Runtime">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Config.Runtime.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Config.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InternalAPIEngineBridge.RenderPipelines.Core.Runtime.Shared">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.RenderPipelines.Core.Runtime.Shared.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.RenderPipelines.Core.Runtime.Shared.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections.Tests.CoreCLR.InternalJobNestedPrivate">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.InternalJobNestedPrivate.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Collections.Tests.CoreCLR.InternalJobNestedPrivate.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.Collections.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.Collections.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.ShaderGraph.Editor">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Editor.Shared">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.Shared.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Editor.Shared.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\Unity.InputSystem.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\Unity.InputSystem.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
-      <HintPath>C:\Users\makcm\Unity\NEW\GO-LIVE\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
+      <HintPath>E:\GO! Live\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{392354fe-3e84-f0a0-a1fa-e259328e5a36}</Project>
+      <Project>{b5cc10ab-f3e6-366c-3cf7-673624946690}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
   </ItemGroup>
