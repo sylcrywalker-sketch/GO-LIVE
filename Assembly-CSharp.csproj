@@ -103,6 +103,7 @@
     <Compile Include="Assets\Game\Scripts\Needs\PlayerNeeds.cs" />
     <Compile Include="Assets\Game\Scripts\Time\GameTimeConfig.cs" />
     <Compile Include="Assets\Game\Scripts\Time\GameClock.cs" />
+    <Compile Include="Assets\Game\Scripts\Phone\PhoneMessageScheduleConfig.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\Game\Scripts\Food\FoodConsumption.cs" />
