@@ -15,7 +15,7 @@ MonoBehaviour:
   <StartingDay>k__BackingField: 1
   <StartingHour>k__BackingField: 7
   <StartingMinute>k__BackingField: 0
-  <GameMinutesPerRealMinute>k__BackingField: 15
+  <GameMinutesPerRealMinute>k__BackingField: 32
   <MorningStartsAt>k__BackingField: 6
   <DayStartsAt>k__BackingField: 10
   <EveningStartsAt>k__BackingField: 18
