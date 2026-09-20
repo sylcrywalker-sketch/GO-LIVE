@@ -41,24 +41,9 @@ namespace GoLive.Persistence
                 enabled = false;
         }
 
-        private void Start()
-        {
-            if (!isActiveAndEnabled)
-                return;
-
-            if (!ValidateRuntimeState())
-            {
-                enabled = false;
-                return;
-            }
-
-            Bind();
-        }
-
         private void OnEnable()
         {
-            if (_sleep != null)
-                Bind();
+            Bind();
         }
 
         private void OnDisable()
@@ -73,11 +58,11 @@ namespace GoLive.Persistence
 
         public bool CreateCheckpoint()
         {
-            string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss_fff", CultureInfo.InvariantCulture);
-            string fileName = $"checkpoint_{timestamp}_{DateTime.UtcNow.Ticks}.json";
-            string path = Path.Combine(SaveDirectory, fileName);
+            DateTime now = DateTime.UtcNow;
+            string timestamp = now.ToString("yyyyMMdd_HHmmss_fff", CultureInfo.InvariantCulture);
+            string fileName = $"checkpoint_{timestamp}_{now.Ticks}.json";
 
-            return TrySave(path);
+            return TrySave(Path.Combine(SaveDirectory, fileName));
         }
 
         public bool LoadAutosave()
@@ -87,6 +72,9 @@ namespace GoLive.Persistence
 
         public bool LoadLatestCheckpoint()
         {
+            if (!EnsureRuntimeStateReady())
+                return false;
+
             if (!Directory.Exists(SaveDirectory))
             {
                 Debug.LogWarning("No checkpoint save directory exists yet.");
@@ -171,6 +159,9 @@ namespace GoLive.Persistence
 
         private bool TrySave(string path)
         {
+            if (!EnsureRuntimeStateReady())
+                return false;
+
             try
             {
                 GameSaveData data = Capture();
@@ -190,6 +181,9 @@ namespace GoLive.Persistence
 
         private bool TryLoad(string path)
         {
+            if (!EnsureRuntimeStateReady())
+                return false;
+
             if (!File.Exists(path))
             {
                 Debug.LogWarning($"Save file does not exist: {path}");
@@ -339,7 +333,11 @@ namespace GoLive.Persistence
                 if (item.Instance == null)
                     continue;
 
-                ItemInstance removed = new(item.Instance.InstanceId, item.Instance.DefinitionId, ItemLocation.Removed);
+                ItemInstance removed = new(
+                    item.Instance.InstanceId,
+                    item.Instance.DefinitionId,
+                    ItemLocation.Removed);
+
                 item.RestoreAsRemoved(removed);
             }
 
@@ -384,11 +382,22 @@ namespace GoLive.Persistence
         {
             sceneItems = BuildSceneItemMap();
 
-            if (data == null || data.Version != CurrentVersion || data.Player == null || data.Rent == null || data.Items == null)
+            if (data == null ||
+                data.Version != CurrentVersion ||
+                data.Player == null ||
+                data.Rent == null ||
+                data.Items == null)
+            {
                 return false;
+            }
 
-            if (data.GameTimeSeconds < 0 || data.BalanceCents < 0 || data.Rent.AmountDueCents < 0 || data.Rent.ProcessedThroughSeconds < 0)
+            if (data.GameTimeSeconds < 0 ||
+                data.BalanceCents < 0 ||
+                data.Rent.AmountDueCents < 0 ||
+                data.Rent.ProcessedThroughSeconds < 0)
+            {
                 return false;
+            }
 
             if (data.Rent.ProcessedThroughSeconds > data.GameTimeSeconds)
                 return false;
@@ -475,6 +484,21 @@ namespace GoLive.Persistence
             return result;
         }
 
+        private bool EnsureRuntimeStateReady()
+        {
+            if (_inventory.Inventory != null &&
+                _gameClock.Clock != null &&
+                _needs.Needs != null &&
+                _wallet.Wallet != null &&
+                _rent.TryGetSnapshot(out _))
+            {
+                return true;
+            }
+
+            Debug.LogError($"{nameof(GameSaveController)} cannot save or load because game state is not initialized.", this);
+            return false;
+        }
+
         private bool ValidateConfiguration()
         {
             if (_player != null &&
@@ -490,21 +514,6 @@ namespace GoLive.Persistence
             }
 
             Debug.LogError($"{nameof(GameSaveController)} on {name} has incomplete configuration.", this);
-            return false;
-        }
-
-        private bool ValidateRuntimeState()
-        {
-            if (_inventory.Inventory != null &&
-                _gameClock.Clock != null &&
-                _needs.Needs != null &&
-                _wallet.Wallet != null &&
-                _rent.TryGetSnapshot(out _))
-            {
-                return true;
-            }
-
-            Debug.LogError($"{nameof(GameSaveController)} could not access initialized game state.", this);
             return false;
         }
 

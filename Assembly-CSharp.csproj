@@ -65,6 +65,7 @@
     <Compile Include="Assets\Game\Scripts\Economy\RentAccount.cs" />
     <Compile Include="Assets\Game\Scripts\Interact\PlayerInteractor.cs" />
     <Compile Include="Assets\Game\Scripts\Food\FoodConsumable.cs" />
+    <Compile Include="Assets\Game\Scripts\Phone\PhoneBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryUiController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Assets\Game\Scripts\UI\GameUiInputRouter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\Game\Scripts\Economy\RentConfig.cs" />
+    <Compile Include="Assets\Game\Scripts\Phone\PhoneSession.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryOutlineIcon.cs" />
     <Compile Include="Assets\Game\Scripts\Localization\LocalizationRuntime.cs" />

@@ -1,24 +1,21 @@
 using GoLive.Inventory;
+using GoLive.Phone;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace GoLive.UI
 {
     [DisallowMultipleComponent]
     public sealed class GameUiInputRouter : MonoBehaviour
     {
-        [FormerlySerializedAs("inventory")]
-        [SerializeField] private InventoryUiController _inventory;
+        [SerializeField] private InventoryUiController inventory;
+        [SerializeField] private GamePauseController pause;
+        [SerializeField] private PhoneBehaviour phone;
 
-        [FormerlySerializedAs("pause")]
-        [SerializeField] private GamePauseController _pause;
-
-        [FormerlySerializedAs("inventoryAction")]
-        [SerializeField] private InputActionReference _inventoryAction;
-
-        [FormerlySerializedAs("backAction")]
-        [SerializeField] private InputActionReference _backAction;
+        [Header("Input")]
+        [SerializeField] private InputActionReference inventoryAction;
+        [SerializeField] private InputActionReference phoneAction;
+        [SerializeField] private InputActionReference backAction;
 
         private void Awake()
         {
@@ -28,71 +25,95 @@ namespace GoLive.UI
 
         private void OnEnable()
         {
-            SetActionEnabled(_inventoryAction, true);
-            SetActionEnabled(_backAction, true);
+            SetActionEnabled(inventoryAction, true);
+            SetActionEnabled(phoneAction, true);
+            SetActionEnabled(backAction, true);
         }
 
         private void OnDisable()
         {
-            SetActionEnabled(_inventoryAction, false);
-            SetActionEnabled(_backAction, false);
+            SetActionEnabled(inventoryAction, false);
+            SetActionEnabled(phoneAction, false);
+            SetActionEnabled(backAction, false);
         }
 
         private void Update()
         {
-            if (_backAction.action.WasPressedThisFrame())
+            if (backAction.action.WasPressedThisFrame())
             {
                 HandleBack();
                 return;
             }
 
-            if (_inventoryAction.action.WasPressedThisFrame())
+            if (phoneAction.action.WasPressedThisFrame())
+            {
+                HandlePhone();
+                return;
+            }
+
+            if (inventoryAction.action.WasPressedThisFrame())
                 HandleInventory();
         }
 
         private void HandleBack()
         {
-            if (_inventory.IsOpen)
+            if (inventory.IsOpen)
             {
-                _inventory.Close();
+                inventory.Close();
                 return;
             }
 
-            if (_pause.IsPaused)
+            if (phone.IsOpen)
             {
-                _pause.Close();
+                phone.HandleBack();
                 return;
             }
 
-            _pause.Open();
+            if (pause.IsPaused)
+            {
+                pause.Close();
+                return;
+            }
+
+            pause.Open();
+        }
+
+        private void HandlePhone()
+        {
+            if (pause.IsPaused || inventory.IsOpen)
+                return;
+
+            if (phone.IsOpen)
+                phone.RequestClose();
+            else
+                phone.Open();
         }
 
         private void HandleInventory()
         {
-            if (_pause.IsPaused)
+            if (pause.IsPaused || phone.IsOpen)
                 return;
 
-            if (_inventory.IsOpen)
-                _inventory.Close();
+            if (inventory.IsOpen)
+                inventory.Close();
             else
-                _inventory.Open();
+                inventory.Open();
         }
 
         private bool ValidateConfiguration()
         {
-            if (_inventory == null || _pause == null)
+            if (inventory != null &&
+                pause != null &&
+                phone != null &&
+                HasAction(inventoryAction) &&
+                HasAction(phoneAction) &&
+                HasAction(backAction))
             {
-                Debug.LogError($"{nameof(GameUiInputRouter)} on {name} requires Inventory and Pause controllers.", this);
-                return false;
+                return true;
             }
 
-            if (!HasAction(_inventoryAction) || !HasAction(_backAction))
-            {
-                Debug.LogError($"{nameof(GameUiInputRouter)} on {name} requires Inventory and Back input actions.", this);
-                return false;
-            }
-
-            return true;
+            Debug.LogError($"{nameof(GameUiInputRouter)} on {name} has incomplete configuration.", this);
+            return false;
         }
 
         private static bool HasAction(InputActionReference reference)
