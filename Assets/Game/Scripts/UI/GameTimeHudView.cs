@@ -1,15 +1,27 @@
+using GoLive.Localization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GoLive.GameTime
 {
     [DisallowMultipleComponent]
     public sealed class GameTimeHudView : MonoBehaviour
     {
-        [SerializeField] private GameClockBehaviour gameClock;
-        [SerializeField] private TMP_Text clockText;
-        [SerializeField] private TMP_Text dayText;
+        private const string DayLocalizationKey = "hud.day";
 
+        [FormerlySerializedAs("gameClock")]
+        [SerializeField] private GameClockBehaviour _gameClock;
+
+        [FormerlySerializedAs("clockText")]
+        [SerializeField] private TMP_Text _clockText;
+
+        [FormerlySerializedAs("dayText")]
+        [SerializeField] private TMP_Text _dayText;
+
+        [SerializeField] private LocalizationContext _localization;
+
+        private bool _started;
         private bool _bound;
 
         private void Start()
@@ -20,48 +32,87 @@ namespace GoLive.GameTime
                 return;
             }
 
-            gameClock.Clock.MinuteChanged += OnMinuteChanged;
-            gameClock.Clock.DayChanged += OnDayChanged;
-            _bound = true;
+            _started = true;
+            Bind();
+            Refresh(_gameClock.Clock.Current);
+        }
 
-            Refresh(gameClock.Clock.Current);
+        private void OnEnable()
+        {
+            if (_started)
+                Bind();
         }
 
         private void OnDisable()
         {
-            if (!_bound || gameClock == null || gameClock.Clock == null)
-                return;
-
-            gameClock.Clock.MinuteChanged -= OnMinuteChanged;
-            gameClock.Clock.DayChanged -= OnDayChanged;
-            _bound = false;
+            Unbind();
         }
 
-        private void OnMinuteChanged(GameTimeSnapshot snapshot)
+        private void Bind()
+        {
+            if (_bound)
+                return;
+
+            _bound = true;
+
+            _gameClock.Clock.MinuteChanged += HandleMinuteChanged;
+            _gameClock.Clock.DayChanged += HandleDayChanged;
+            _localization.LanguageChanged += HandleLanguageChanged;
+        }
+
+        private void Unbind()
+        {
+            if (!_bound)
+                return;
+
+            _bound = false;
+
+            _gameClock.Clock.MinuteChanged -= HandleMinuteChanged;
+            _gameClock.Clock.DayChanged -= HandleDayChanged;
+            _localization.LanguageChanged -= HandleLanguageChanged;
+        }
+
+        private void HandleMinuteChanged(GameTimeSnapshot snapshot)
         {
             RefreshClock(snapshot);
         }
 
-        private void OnDayChanged(int previousDay, int currentDay)
+        private void HandleDayChanged(int previousDay, int currentDay)
         {
-            dayText.text = currentDay.ToString();
+            RefreshDay(currentDay);
+        }
+
+        private void HandleLanguageChanged(GameLanguage language)
+        {
+            RefreshDay(_gameClock.Clock.Current.Day);
         }
 
         private void Refresh(GameTimeSnapshot snapshot)
         {
             RefreshClock(snapshot);
-            dayText.text = snapshot.Day.ToString();
+            RefreshDay(snapshot.Day);
         }
 
         private void RefreshClock(GameTimeSnapshot snapshot)
         {
-            clockText.text = $"{snapshot.Hour:00}:{snapshot.Minute:00}";
+            _clockText.text = $"{snapshot.Hour:00}:{snapshot.Minute:00}";
+        }
+
+        private void RefreshDay(int day)
+        {
+            _dayText.text = _localization.Format(DayLocalizationKey, day);
         }
 
         private bool ValidateConfiguration()
         {
-            if (gameClock != null && gameClock.Clock != null && clockText != null && dayText != null)
+            if (_gameClock != null &&
+                _gameClock.Clock != null &&
+                _clockText != null &&
+                _dayText != null &&
+                _localization != null)
+            {
                 return true;
+            }
 
             Debug.LogError($"{nameof(GameTimeHudView)} on {name} has incomplete configuration.", this);
             return false;

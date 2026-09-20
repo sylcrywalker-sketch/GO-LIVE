@@ -66,6 +66,7 @@ namespace GoLive.Inventory
         private IDisposable _controlBlock;
         private CursorLockMode _previousCursorLockMode;
         private bool _previousCursorVisible;
+        private float _visibleOverlayAlpha;
         private bool _started;
         private bool _bound;
         private bool _isOpen;
@@ -81,6 +82,7 @@ namespace GoLive.Inventory
                 return;
             }
 
+            _visibleOverlayAlpha = overlay.alpha;
             _emptyItemName = itemNameText.text;
             _slotHandlers = new UnityAction[slotButtons.Length];
             _categoryHandlers = new UnityAction[categoryButtons.Length];
@@ -438,7 +440,7 @@ namespace GoLive.Inventory
         private void SetOverlayVisible(bool visible)
         {
             overlay.gameObject.SetActive(visible);
-            overlay.alpha = visible ? 1f : 0f;
+            overlay.alpha = visible ? _visibleOverlayAlpha : 0f;
             overlay.interactable = visible;
             overlay.blocksRaycasts = visible;
             inventoryHintText.gameObject.SetActive(!visible);
