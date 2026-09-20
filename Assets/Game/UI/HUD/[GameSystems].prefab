@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2512266633561197604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 467306461430734675}
+  - component: {fileID: 8840065713197302256}
+  - component: {fileID: 1513685854072986871}
+  - component: {fileID: 4246880686105695767}
+  - component: {fileID: 3629656814786328956}
+  m_Layer: 0
+  m_Name: '[GameSystems]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &467306461430734675
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512266633561197604}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.41932, y: 4.16282, z: -6.38434}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8840065713197302256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512266633561197604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 927eb56ce21323f419afb17ff6f3c8d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.GameTime.GameClockBehaviour
+  config: {fileID: 11400000, guid: 12f1f32c87b25a042923c6dcd30e2736, type: 2}
+--- !u!114 &1513685854072986871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512266633561197604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6165e9f45edd8334c8bfacabc19ea7e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.GameTime.DayLightingView
+  gameClock: {fileID: 8840065713197302256}
+  sun: {fileID: 0}
+  sunYaw: 170
+  morning:
+    <SunColor>k__BackingField: {r: 1, g: 0.72, b: 0.5, a: 1}
+    <SunIntensity>k__BackingField: 0.65
+    <AmbientColor>k__BackingField: {r: 0.42, g: 0.39, b: 0.38, a: 1}
+  day:
+    <SunColor>k__BackingField: {r: 1, g: 0.96, b: 0.88, a: 1}
+    <SunIntensity>k__BackingField: 1.1
+    <AmbientColor>k__BackingField: {r: 0.62, g: 0.66, b: 0.72, a: 1}
+  evening:
+    <SunColor>k__BackingField: {r: 1, g: 0.48, b: 0.28, a: 1}
+    <SunIntensity>k__BackingField: 0.45
+    <AmbientColor>k__BackingField: {r: 0.28, g: 0.24, b: 0.27, a: 1}
+  night:
+    <SunColor>k__BackingField: {r: 0.38, g: 0.47, b: 0.68, a: 1}
+    <SunIntensity>k__BackingField: 0.08
+    <AmbientColor>k__BackingField: {r: 0.07, g: 0.09, b: 0.14, a: 1}
+--- !u!114 &4246880686105695767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512266633561197604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b564ae8f10c255429754e9dfbc3310a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.UI.GamePauseController
+  _playerController: {fileID: 0}
+  _pauseOverlay: {fileID: 0}
+--- !u!114 &3629656814786328956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512266633561197604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6d86616f56d73740b622c14d503e909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.UI.GameUiInputRouter
+  _inventory: {fileID: 0}
+  _pause: {fileID: 4246880686105695767}
+  _inventoryAction: {fileID: 499693070576633356, guid: ba5e3c362a405394680d655225b61027, type: 3}
+  _backAction: {fileID: -8083039818551020410, guid: ba5e3c362a405394680d655225b61027, type: 3}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GoLive.Interaction;
 using GoLive.Items;
@@ -6,11 +7,51 @@ using UnityEngine.InputSystem;
 
 namespace GoLive.Player
 {
+    public readonly struct InteractionPromptState : IEquatable<InteractionPromptState>
+    {
+        public string TakeKey { get; }
+        public string WorldUseKey { get; }
+        public string HeldUseKey { get; }
+        public string DropKey { get; }
+        public string SpecialKey { get; }
+
+        public InteractionPromptState(string takeKey, string worldUseKey, string heldUseKey, string dropKey, string specialKey)
+        {
+            TakeKey = takeKey;
+            WorldUseKey = worldUseKey;
+            HeldUseKey = heldUseKey;
+            DropKey = dropKey;
+            SpecialKey = specialKey;
+        }
+
+        public bool Equals(InteractionPromptState other)
+        {
+            return TakeKey == other.TakeKey &&
+                   WorldUseKey == other.WorldUseKey &&
+                   HeldUseKey == other.HeldUseKey &&
+                   DropKey == other.DropKey &&
+                   SpecialKey == other.SpecialKey;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is InteractionPromptState other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(TakeKey, WorldUseKey, HeldUseKey, DropKey, SpecialKey);
+        }
+    }
+
     [DisallowMultipleComponent]
     [RequireComponent(typeof(PlayerController))]
     [RequireComponent(typeof(PlayerCarry))]
     public sealed class PlayerInteractor : MonoBehaviour
     {
+        private const string TakePromptKey = "interaction.take";
+        private const string DropPromptKey = "interaction.drop";
+
         [Header("Interaction")]
         [SerializeField] private Camera playerCamera;
         [SerializeField] private InputActionReference takeAction;
@@ -19,6 +60,10 @@ namespace GoLive.Player
         [SerializeField] private InputActionReference specialAction;
         [SerializeField, Min(0.1f)] private float interactionDistance = 2.5f;
         [SerializeField] private LayerMask interactionMask = ~0;
+
+        public InteractionPromptState Prompts { get; private set; }
+
+        public event Action<InteractionPromptState> PromptsChanged;
 
         private readonly List<MonoBehaviour> _interactionCandidates = new();
 
@@ -44,6 +89,8 @@ namespace GoLive.Player
 
         private void OnDisable()
         {
+            SetPrompts(default);
+
             SetActionEnabled(takeAction, false);
             SetActionEnabled(useAction, false);
             SetActionEnabled(dropAction, false);
@@ -53,7 +100,14 @@ namespace GoLive.Player
         private void Update()
         {
             if (!_playerController.Controls.IsAllowed(PlayerControlMask.Interaction))
+            {
+                SetPrompts(default);
                 return;
+            }
+
+            bool hasTarget = TryRaycast(out RaycastHit hit);
+
+            RefreshPrompts(hasTarget, in hit);
 
             if (dropAction.action.WasPressedThisFrame())
             {
@@ -63,23 +117,28 @@ namespace GoLive.Player
 
             if (takeAction.action.WasPressedThisFrame())
             {
-                TryTakeTarget();
+                TryTakeTarget(hasTarget, in hit);
                 return;
             }
 
             if (useAction.action.WasPressedThisFrame())
             {
-                TryInteract(InteractionAction.Use);
+                TryInteract(InteractionAction.Use, hasTarget, in hit);
                 return;
             }
 
             if (specialAction.action.WasPressedThisFrame())
-                TryInteract(InteractionAction.Special);
+                TryInteract(InteractionAction.Special, hasTarget, in hit);
         }
 
-        private bool TryTakeTarget()
+        public string GetTakeBinding() => GetBindingDisplayString(takeAction);
+        public string GetUseBinding() => GetBindingDisplayString(useAction);
+        public string GetDropBinding() => GetBindingDisplayString(dropAction);
+        public string GetSpecialBinding() => GetBindingDisplayString(specialAction);
+
+        private bool TryTakeTarget(bool hasTarget, in RaycastHit hit)
         {
-            if (_playerCarry.HasItem || !TryRaycast(out RaycastHit hit))
+            if (_playerCarry.HasItem || !hasTarget)
                 return false;
 
             WorldItem item = hit.collider.GetComponentInParent<WorldItem>();
@@ -90,20 +149,69 @@ namespace GoLive.Player
             return _playerCarry.TryCarry(item);
         }
 
-        private bool TryInteract(InteractionAction action)
+        private bool TryInteract(InteractionAction action, bool hasTarget, in RaycastHit hit)
         {
             InteractionContext context = new(gameObject, playerCamera.transform, action);
 
-            if (_playerCarry.TryInteractCarried(in context))
+            if (action == InteractionAction.Use && _playerCarry.TryInteractCarried(in context))
                 return true;
 
-            if (!TryRaycast(out RaycastHit hit))
+            if (!hasTarget)
                 return false;
 
-            _interactionCandidates.Clear();
-            hit.collider.GetComponentsInParent(false, _interactionCandidates);
+            FillInteractionCandidates(hit.collider);
 
             return InteractionResolver.TryInteract(_interactionCandidates, in context, hit.collider);
+        }
+
+        private void RefreshPrompts(bool hasTarget, in RaycastHit hit)
+        {
+            string takeKey = null;
+            string worldUseKey = null;
+            string heldUseKey = null;
+            string dropKey = null;
+            string specialKey = null;
+
+            InteractionContext useContext = new(gameObject, playerCamera.transform, InteractionAction.Use);
+            InteractionContext specialContext = new(gameObject, playerCamera.transform, InteractionAction.Special);
+
+            if (_playerCarry.HasItem)
+            {
+                dropKey = DropPromptKey;
+                _playerCarry.CarriedItem.TryGetInteractionPrompt(in useContext, out heldUseKey);
+            }
+
+            if (hasTarget)
+            {
+                WorldItem worldItem = hit.collider.GetComponentInParent<WorldItem>();
+
+                if (!_playerCarry.HasItem && worldItem != null && worldItem.CanBeCarried)
+                    takeKey = TakePromptKey;
+
+                FillInteractionCandidates(hit.collider);
+
+                if (heldUseKey == null)
+                    InteractionResolver.TryGetPromptKey(_interactionCandidates, in useContext, out worldUseKey);
+
+                InteractionResolver.TryGetPromptKey(_interactionCandidates, in specialContext, out specialKey);
+            }
+
+            SetPrompts(new InteractionPromptState(takeKey, worldUseKey, heldUseKey, dropKey, specialKey));
+        }
+
+        private void FillInteractionCandidates(Collider collider)
+        {
+            _interactionCandidates.Clear();
+            collider.GetComponentsInParent(false, _interactionCandidates);
+        }
+
+        private void SetPrompts(InteractionPromptState prompts)
+        {
+            if (Prompts.Equals(prompts))
+                return;
+
+            Prompts = prompts;
+            PromptsChanged?.Invoke(prompts);
         }
 
         private bool TryRaycast(out RaycastHit hit)
@@ -134,6 +242,11 @@ namespace GoLive.Player
         private static bool HasAction(InputActionReference reference)
         {
             return reference != null && reference.action != null;
+        }
+
+        private static string GetBindingDisplayString(InputActionReference reference)
+        {
+            return HasAction(reference) ? reference.action.GetBindingDisplayString() : string.Empty;
         }
 
         private static void SetActionEnabled(InputActionReference reference, bool enabled)

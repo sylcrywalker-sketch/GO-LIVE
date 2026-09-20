@@ -26,6 +26,7 @@ namespace GoLive.Interaction
     public interface IInteractable
     {
         bool CanInteract(in InteractionContext context);
+        string GetPromptKey(in InteractionContext context);
         void Interact(in InteractionContext context);
     }
 
@@ -33,7 +34,33 @@ namespace GoLive.Interaction
     {
         public static bool TryInteract(IReadOnlyList<MonoBehaviour> candidates, in InteractionContext context, Object logContext)
         {
-            IInteractable selected = null;
+            if (!TryResolve(candidates, in context, out IInteractable interactable, out bool ambiguous))
+            {
+                if (ambiguous)
+                    Debug.LogError($"Multiple interactables can handle {context.Action} on the same target.", logContext);
+
+                return false;
+            }
+
+            interactable.Interact(in context);
+            return true;
+        }
+
+        public static bool TryGetPromptKey(IReadOnlyList<MonoBehaviour> candidates, in InteractionContext context, out string key)
+        {
+            key = null;
+
+            if (!TryResolve(candidates, in context, out IInteractable interactable, out _))
+                return false;
+
+            key = interactable.GetPromptKey(in context);
+            return !string.IsNullOrWhiteSpace(key);
+        }
+
+        private static bool TryResolve(IReadOnlyList<MonoBehaviour> candidates, in InteractionContext context, out IInteractable selected, out bool ambiguous)
+        {
+            selected = null;
+            ambiguous = false;
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -47,18 +74,15 @@ namespace GoLive.Interaction
 
                 if (selected != null)
                 {
-                    Debug.LogError($"Multiple interactables can handle {context.Action} on the same target.", logContext);
+                    selected = null;
+                    ambiguous = true;
                     return false;
                 }
 
                 selected = interactable;
             }
 
-            if (selected == null)
-                return false;
-
-            selected.Interact(in context);
-            return true;
+            return selected != null;
         }
     }
 }

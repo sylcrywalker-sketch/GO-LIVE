@@ -69,6 +69,16 @@ namespace GoLive.Items
             return InteractionResolver.TryInteract(_interactionCandidates, in context, this);
         }
 
+        public bool TryGetInteractionPrompt(in InteractionContext context, out string key)
+        {
+            key = null;
+
+            if (!isActiveAndEnabled || Instance == null)
+                return false;
+
+            return InteractionResolver.TryGetPromptKey(_interactionCandidates, in context, out key);
+        }
+
         internal bool TryBeginCarry(Transform anchor)
         {
             if (!CanBeCarried || anchor == null)
