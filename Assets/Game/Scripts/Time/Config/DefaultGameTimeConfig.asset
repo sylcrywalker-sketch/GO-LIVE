@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 867302e4c6aca72498b0a6e33a8ac638, type: 3}
+  m_Name: DefaultGameTimeConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.GameTime.GameTimeConfig
+  <StartingDay>k__BackingField: 1
+  <StartingHour>k__BackingField: 7
+  <StartingMinute>k__BackingField: 0
+  <GameMinutesPerRealMinute>k__BackingField: 3600
+  <MorningStartsAt>k__BackingField: 6
+  <DayStartsAt>k__BackingField: 10
+  <EveningStartsAt>k__BackingField: 18
+  <NightStartsAt>k__BackingField: 22

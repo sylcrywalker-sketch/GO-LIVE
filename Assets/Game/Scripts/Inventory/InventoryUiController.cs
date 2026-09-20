@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
+using GoLive.Items;
+using GoLive.Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using GoLive.Items;
-using GoLive.Player;
 
 namespace GoLive.Inventory
 {
@@ -17,10 +16,6 @@ namespace GoLive.Inventory
         [SerializeField] private PlayerInventory playerInventory;
         [SerializeField] private PlayerCarry playerCarry;
         [SerializeField] private PlayerController playerController;
-
-        [Header("Input")]
-        [SerializeField] private InputActionReference inventoryAction;
-        [SerializeField] private InputActionReference cancelAction;
 
         [Header("Root")]
         [SerializeField] private CanvasGroup overlay;
@@ -61,6 +56,8 @@ namespace GoLive.Inventory
 
         [Header("Close")]
         [SerializeField] private Button closeButton;
+
+        public bool IsOpen => _isOpen;
 
         private readonly List<ItemInstance> _visibleItems = new(12);
 
@@ -126,42 +123,19 @@ namespace GoLive.Inventory
 
         private void OnEnable()
         {
-            SetActionEnabled(inventoryAction, true);
-            SetActionEnabled(cancelAction, true);
-
             if (_started)
                 Bind();
         }
 
         private void OnDisable()
         {
-            if (_isOpen)
-                Close();
-
+            Close();
             Unbind();
-            SetActionEnabled(inventoryAction, false);
-            SetActionEnabled(cancelAction, false);
         }
 
-        private void Update()
+        public void Open()
         {
-            if (inventoryAction.action.WasPressedThisFrame())
-            {
-                if (_isOpen)
-                    Close();
-                else
-                    Open();
-
-                return;
-            }
-
-            if (_isOpen && cancelAction.action.WasPressedThisFrame())
-                Close();
-        }
-
-        private void Open()
-        {
-            if (_isOpen)
+            if (!_started || !isActiveAndEnabled || _isOpen)
                 return;
 
             _isOpen = true;
@@ -176,7 +150,7 @@ namespace GoLive.Inventory
             Refresh();
         }
 
-        private void Close()
+        public void Close()
         {
             if (!_isOpen)
                 return;
@@ -290,12 +264,14 @@ namespace GoLive.Inventory
             if (string.IsNullOrWhiteSpace(_selectedInstanceId) || playerCarry.HasItem)
                 return;
 
-            if (!playerInventory.TryTakeToCarry(_selectedInstanceId))
+            string instanceId = _selectedInstanceId;
+
+            if (!playerInventory.TryTakeToCarry(instanceId))
                 return;
 
             if (!playerCarry.Drop())
             {
-                Debug.LogError($"Failed to drop Inventory item {_selectedInstanceId}.", this);
+                Debug.LogError($"Failed to drop Inventory item {instanceId}.", this);
                 return;
             }
 
@@ -450,7 +426,9 @@ namespace GoLive.Inventory
             takeButton.interactable = hasSelection && handsFree;
             dropSelectedButton.interactable = hasSelection && handsFree;
 
-            bool canStoreHeld = playerCarry.HasItem && playerCarry.CarriedItem.Definition.CanStoreInInventory && !playerInventory.Inventory.IsFull;
+            bool canStoreHeld = playerCarry.HasItem &&
+                                playerCarry.CarriedItem.Definition.CanStoreInInventory &&
+                                !playerInventory.Inventory.IsFull;
 
             storeHeldButton.interactable = canStoreHeld;
             useHeldButton.interactable = false;
@@ -471,22 +449,46 @@ namespace GoLive.Inventory
             if (playerInventory == null || playerCarry == null || playerController == null || overlay == null || inventoryHintText == null)
                 return LogInvalidConfiguration();
 
-            if (!HasAction(inventoryAction) || !HasAction(cancelAction))
-                return LogInvalidConfiguration();
-
             int slotCount = slotButtons.Length;
 
-            if (slotCount == 0 || slotIcons.Length != slotCount || slotNames.Length != slotCount || slotQuantities.Length != slotCount || slotIconFallbacks.Length != slotCount || slotSelections.Length != slotCount)
+            if (slotCount == 0 ||
+                slotIcons.Length != slotCount ||
+                slotNames.Length != slotCount ||
+                slotQuantities.Length != slotCount ||
+                slotIconFallbacks.Length != slotCount ||
+                slotSelections.Length != slotCount)
+            {
                 return LogInvalidConfiguration();
+            }
 
             if (categoryButtons.Length != 4 || categoryFocusLines.Length != categoryButtons.Length)
                 return LogInvalidConfiguration();
 
-            if (capacityText == null || emptyText == null || itemIcon == null || itemIconFallback == null || itemNameText == null || categoryText == null || descriptionText == null || propertiesText == null)
+            if (capacityText == null ||
+                emptyText == null ||
+                itemIcon == null ||
+                itemIconFallback == null ||
+                itemNameText == null ||
+                categoryText == null ||
+                descriptionText == null ||
+                propertiesText == null)
+            {
                 return LogInvalidConfiguration();
+            }
 
-            if (heldPanel == null || heldIcon == null || heldNameText == null || heldInfoText == null || takeButton == null || dropSelectedButton == null || storeHeldButton == null || useHeldButton == null || dropHeldButton == null || closeButton == null)
+            if (heldPanel == null ||
+                heldIcon == null ||
+                heldNameText == null ||
+                heldInfoText == null ||
+                takeButton == null ||
+                dropSelectedButton == null ||
+                storeHeldButton == null ||
+                useHeldButton == null ||
+                dropHeldButton == null ||
+                closeButton == null)
+            {
                 return LogInvalidConfiguration();
+            }
 
             return true;
         }
@@ -516,22 +518,6 @@ namespace GoLive.Inventory
             string value = itemId.Replace('_', ' ').Replace('-', ' ');
 
             return char.ToUpperInvariant(value[0]) + value[1..];
-        }
-
-        private static bool HasAction(InputActionReference reference)
-        {
-            return reference != null && reference.action != null;
-        }
-
-        private static void SetActionEnabled(InputActionReference reference, bool enabled)
-        {
-            if (!HasAction(reference))
-                return;
-
-            if (enabled)
-                reference.action.Enable();
-            else
-                reference.action.Disable();
         }
     }
 }
