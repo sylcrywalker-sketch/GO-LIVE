@@ -116,6 +116,13 @@ namespace GoLive.Items
             transform.SetParent(storageRoot, false);
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
+
+            _body.linearVelocity = Vector3.zero;
+            _body.angularVelocity = Vector3.zero;
+            _body.isKinematic = true;
+            _body.useGravity = false;
+
+            SetCollidersEnabled(false);
             gameObject.SetActive(false);
 
             return true;
@@ -146,6 +153,73 @@ namespace GoLive.Items
             if (Instance == null || !Instance.TryMove(expectedLocation, ItemLocation.Removed))
                 return false;
 
+            RestoreAsRemoved(Instance);
+            return true;
+        }
+
+        internal bool RestoreAsWorld(ItemInstance instance, Vector3 position, Quaternion rotation)
+        {
+            if (!CanRestore(instance, ItemLocation.World))
+                return false;
+
+            Instance = instance;
+
+            gameObject.SetActive(true);
+            transform.SetParent(null, true);
+            transform.SetPositionAndRotation(position, rotation);
+
+            _body.linearVelocity = Vector3.zero;
+            _body.angularVelocity = Vector3.zero;
+            _body.isKinematic = false;
+            _body.useGravity = true;
+
+            RestoreColliderStates();
+
+            return true;
+        }
+
+        internal bool RestoreAsInventory(ItemInstance instance, Transform storageRoot)
+        {
+            if (!CanRestore(instance, ItemLocation.Inventory) || storageRoot == null)
+                return false;
+
+            Instance = instance;
+
+            transform.SetParent(storageRoot, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+
+            _body.linearVelocity = Vector3.zero;
+            _body.angularVelocity = Vector3.zero;
+            _body.isKinematic = true;
+            _body.useGravity = false;
+
+            SetCollidersEnabled(false);
+            gameObject.SetActive(false);
+
+            return true;
+        }
+
+        internal bool RestoreAsCarried(ItemInstance instance, Transform anchor)
+        {
+            if (!CanRestore(instance, ItemLocation.Carried) || anchor == null)
+                return false;
+
+            Instance = instance;
+
+            gameObject.SetActive(true);
+            AttachToCarry(anchor);
+
+            return true;
+        }
+
+        internal bool RestoreAsRemoved(ItemInstance instance)
+        {
+            if (!CanRestore(instance, ItemLocation.Removed))
+                return false;
+
+            Instance = instance;
+
             _body.linearVelocity = Vector3.zero;
             _body.angularVelocity = Vector3.zero;
             _body.isKinematic = true;
@@ -170,6 +244,13 @@ namespace GoLive.Items
             transform.SetParent(anchor, false);
             transform.localPosition = definition.CarryLocalPosition;
             transform.localRotation = Quaternion.Euler(definition.CarryLocalEulerAngles);
+        }
+
+        private bool CanRestore(ItemInstance instance, ItemLocation expectedLocation)
+        {
+            return instance != null &&
+                   instance.Location == expectedLocation &&
+                   string.Equals(instance.DefinitionId, definition.ItemId, System.StringComparison.Ordinal);
         }
 
         private void SetCollidersEnabled(bool value)

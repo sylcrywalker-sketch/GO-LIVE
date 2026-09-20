@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6776326b1f8f647b248e4c54bd747d, type: 3}
   m_Name: DefaultEconomyConfig
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Economy.EconomyConfig
-  <StartingBalanceCents>k__BackingField: 100000
+  <StartingBalanceCents>k__BackingField: 2500
