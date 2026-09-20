@@ -59,6 +59,18 @@ namespace GoLive.Player
             return _carriedItem.TryInteract(in context);
         }
 
+        public bool TryRemoveCarriedItem(WorldItem item)
+        {
+            if (!HasItem || item == null || _carriedItem != item)
+                return false;
+
+            if (!item.TryRemoveFromGame(ItemLocation.Carried))
+                return false;
+
+            _carriedItem = null;
+            return true;
+        }
+
         internal bool TryStoreCarriedItem(Transform storageRoot, out WorldItem storedItem)
         {
             storedItem = null;

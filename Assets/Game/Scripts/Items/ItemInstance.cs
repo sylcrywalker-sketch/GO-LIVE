@@ -6,7 +6,8 @@ namespace GoLive.Items
     {
         World,
         Carried,
-        Inventory
+        Inventory,
+        Removed
     }
 
     public sealed class ItemInstance
@@ -35,7 +36,7 @@ namespace GoLive.Items
 
         public bool TryMove(ItemLocation expectedLocation, ItemLocation destination)
         {
-            if (Location != expectedLocation || destination == expectedLocation)
+            if (Location != expectedLocation || destination == expectedLocation || Location == ItemLocation.Removed)
                 return false;
 
             Location = destination;

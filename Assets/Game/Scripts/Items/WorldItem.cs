@@ -141,6 +141,23 @@ namespace GoLive.Items
             return true;
         }
 
+        internal bool TryRemoveFromGame(ItemLocation expectedLocation)
+        {
+            if (Instance == null || !Instance.TryMove(expectedLocation, ItemLocation.Removed))
+                return false;
+
+            _body.linearVelocity = Vector3.zero;
+            _body.angularVelocity = Vector3.zero;
+            _body.isKinematic = true;
+            _body.useGravity = false;
+
+            transform.SetParent(null, true);
+            SetCollidersEnabled(false);
+            gameObject.SetActive(false);
+
+            return true;
+        }
+
         private void AttachToCarry(Transform anchor)
         {
             _body.linearVelocity = Vector3.zero;

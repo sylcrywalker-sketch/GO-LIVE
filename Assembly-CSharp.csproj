@@ -60,6 +60,7 @@
     <Compile Include="Assets\Game\Scripts\UI\GameTimeHudView.cs" />
     <Compile Include="Assets\Game\Scripts\Localization\LocalizedTextView.cs" />
     <Compile Include="Assets\Game\Scripts\Interact\PlayerInteractor.cs" />
+    <Compile Include="Assets\Game\Scripts\Food\FoodConsumable.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryUiController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Assets\Game\Scripts\Interact\IInteractable.cs" />
     <Compile Include="Assets\Game\Scripts\Time\GameClockBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Needs\NeedsHudView.cs" />
+    <Compile Include="Assets\Game\Scripts\Food\PlayerFoodConsumption.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Assets\Game\Scripts\Time\GameClock.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
+    <Compile Include="Assets\Game\Scripts\Food\FoodConsumption.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Game\Scripts\UI\GamePauseController.cs" />
