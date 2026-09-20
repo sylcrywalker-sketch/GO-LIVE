@@ -73,3 +73,73 @@ MonoBehaviour:
   - _key: rent.failed
     _russian: "\u0410\u0440\u0435\u043D\u0434\u0430 \u043D\u0435 \u043E\u043F\u043B\u0430\u0447\u0435\u043D\u0430"
     _english: Rent unpaid
+  - _key: phone.brand
+    _russian: goline
+    _english: goline
+  - _key: phone.shop
+    _russian: "\u041C\u0430\u0433\u0430\u0437\u0438\u043D"
+    _english: Shop
+  - _key: phone.messages
+    _russian: "\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u044F"
+    _english: Messages
+  - _key: phone.back
+    _russian: "\u041D\u0430\u0437\u0430\u0434"
+    _english: Back
+  - _key: phone.landlord
+    _russian: "\u0410\u0440\u0435\u043D\u0434\u043E\u0434\u0430\u0442\u0435\u043B\u044C"
+    _english: Landlord
+  - _key: phone.conversation
+    _russian: "\u041B\u0438\u0447\u043D\u0430\u044F \u043F\u0435\u0440\u0435\u043F\u0438\u0441\u043A\u0430"
+    _english: Private conversation
+  - _key: phone.message_preview
+    _russian: "\u041C\u043D\u0435 \u043D\u0443\u0436\u043D\u044B \u0434\u0435\u043D\u044C\u0433\u0438..."
+    _english: I need the money...
+  - _key: phone.unread
+    _russian: "{0} \u043D\u0435\u043F\u0440\u043E\u0447\u0438\u0442."
+    _english: '{0} unread'
+  - _key: phone.sample_message_1
+    _russian: "\u041C\u043D\u0435 \u043D\u0443\u0436\u043D\u044B \u0434\u0435\u043D\u044C\u0433\u0438 \u0437\u0430 \u0430\u0440\u0435\u043D\u0434\u0443. \u041D\u0430\u043F\u043E\u043C\u043D\u0438, \u043A\u043E\u0433\u0434\u0430 \u0441\u043C\u043E\u0436\u0435\u0448\u044C \u043F\u0435\u0440\u0435\u0432\u0435\u0441\u0442\u0438?\n\n<size=13><color=#A8BBC8>07:12</color></size>"
+    _english: 'I need the rent money. Remind me, when can you transfer it?
+
+
+      <size=13><color=#A8BBC8>07:12</color></size>'
+  - _key: phone.sample_message_2
+    _russian: "\u041F\u043E\u043C\u043D\u044E. \u041D\u0430\u043F\u0438\u0448\u0443, \u043A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0440\u0430\u0437\u0431\u0435\u0440\u0443\u0441\u044C.\n\n<size=13><color=#B5C9CC>07:14</color></size>"
+    _english: 'I remember. I''ll message you as soon as I sort it out.
+
+
+      <size=13><color=#B5C9CC>07:14</color></size>'
+  - _key: phone.sample_message_3
+    _russian: "\u0425\u043E\u0440\u043E\u0448\u043E. \u0415\u0441\u043B\u0438 \u0447\u0442\u043E-\u0442\u043E \u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F \u2014 \u043F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0434\u0438 \u0437\u0430\u0440\u0430\u043D\u0435\u0435, \u043F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430.\n\n\u0418 \u043D\u0435 \u0437\u0430\u0431\u0443\u0434\u044C \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043E\u043A\u043D\u043E, \u043A\u043E\u0433\u0434\u0430 \u0443\u0445\u043E\u0434\u0438\u0448\u044C.\n\n<size=13><color=#A8BBC8>07:15</color></size>"
+    _english: 'All right. If anything changes, please let me know ahead of time.
+
+
+      And remember to close the window when you go out.
+
+
+      <size=13><color=#A8BBC8>07:15</color></size>'
+  - _key: phone.product_category
+    _russian: "\u041A\u041E\u041C\u041F\u041B\u0415\u041A\u0422\u0423\u042E\u0429\u0418\u0415"
+    _english: COMPONENTS
+  - _key: phone.product_name
+    _russian: "\u0411\u044E\u0434\u0436\u0435\u0442\u043D\u0430\u044F \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0430"
+    _english: Budget GPU
+  - _key: phone.product_description
+    _russian: "\u0414\u043B\u044F \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u0440\u0430\u0431\u043E\u0447\u0435\u0433\u043E \u043A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440\u0430.\n\u041F\u043E\u043A\u0443\u043F\u043A\u0430 \u043F\u043E\u043A\u0430 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430."
+    _english: 'For your first desktop computer.
+
+      Purchasing is not available yet.'
+  - _key: phone.buy
+    _russian: "\u041A\u0443\u043F\u0438\u0442\u044C"
+    _english: Buy
+  - _key: phone.unavailable
+    _russian: "\u041D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E"
+    _english: Unavailable
+  - _key: phone.preview_only
+    _russian: "\u0422\u043E\u043B\u044C\u043A\u043E \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440"
+    _english: Preview only
+  - _key: phone.preview_feedback
+    _russian: "\u041F\u043E\u043A\u0443\u043F\u043A\u0430 \u0435\u0449\u0451 \u043D\u0435 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0430.\n\u0414\u0435\u043D\u044C\u0433\u0438 \u043D\u0435 \u0441\u043F\u0438\u0441\u0430\u043D\u044B."
+    _english: 'Purchasing is not connected yet.
+
+      No money was charged.'

@@ -918,6 +918,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3523329325288463931, guid: 8bbbfe77c15ebbf478b7ef51c2c78863, type: 3}
+      propertyPath: _clock
+      value: 
+      objectReference: {fileID: 6156782873906993373}
+    - target: {fileID: 3523329325288463931, guid: 8bbbfe77c15ebbf478b7ef51c2c78863, type: 3}
+      propertyPath: _localization
+      value: 
+      objectReference: {fileID: 6156782873906993374}
     - target: {fileID: 7909901069252309156, guid: 8bbbfe77c15ebbf478b7ef51c2c78863, type: 3}
       propertyPath: _gameClock
       value: 

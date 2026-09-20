@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using GoLive.Player;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace GoLive.Phone
@@ -55,7 +54,7 @@ namespace GoLive.Phone
 
         [Header("Dependencies")]
         [SerializeField] private PlayerController playerController;
-        [SerializeField] private InputActionReference aimAction;
+        [SerializeField] private PhonePointerBehaviour pointer;
 
         [Header("Rig")]
         [SerializeField] private Transform viewRoot;
@@ -73,16 +72,19 @@ namespace GoLive.Phone
         [SerializeField, Min(0.01f)] private float presentDuration = 0.28f;
         [SerializeField, Min(0.01f)] private float hideDuration = 0.22f;
 
-        [Header("Aim")]
-        [SerializeField] private Vector2 aimSensitivity = new(0.003f, 0.003f);
-        [SerializeField, Min(0.001f)] private float aimSmoothTime = 0.055f;
-        [SerializeField] private Vector2 aimPositionRange = new(0.14f, 0.16f);
-        [SerializeField] private Vector3 aimRotationRange = new(7f, 10f, 5f);
+        [Header("Physical Follow")]
+        [SerializeField, Min(0.001f)] private float followSmoothTime = 0.08f;
+        [SerializeField] private Vector2 followPositionRange = new(0.022f, 0.028f);
+        [SerializeField] private Vector3 followRotationRange = new(2.5f, 3.5f, 2f);
 
         public bool IsOpen => _session != null && _session.IsOpen;
         public bool IsInteractive => _presentationState == PhonePresentationState.Held;
         public PhoneScreenId CurrentScreen => _session?.CurrentScreen ?? PhoneScreenId.Home;
         public PhonePresentationState PresentationState => _presentationState;
+        public float PresentationProgress => _presentationProgress;
+
+        public event Action ScreenChanged;
+        public event Func<bool> ScreenBackRequested;
 
         private readonly Dictionary<PhoneScreenId, GameObject> _screenRoots = new();
 
@@ -90,9 +92,8 @@ namespace GoLive.Phone
         private PhonePresentationState _presentationState = PhonePresentationState.Hidden;
         private IDisposable _controlBlock;
 
-        private Vector2 _aimTarget;
-        private Vector2 _aimCurrent;
-        private Vector2 _aimVelocity;
+        private Vector2 _followCurrent;
+        private Vector2 _followVelocity;
         private float _presentationProgress;
 
         private void Awake()
@@ -115,24 +116,12 @@ namespace GoLive.Phone
             viewRoot.gameObject.SetActive(false);
         }
 
-        private void Start()
-        {
-            if (!isActiveAndEnabled)
-                return;
-
-            if (UnityEngine.EventSystems.EventSystem.current != null)
-                return;
-
-            Debug.LogError($"{nameof(PhoneBehaviour)} requires an active EventSystem.", this);
-            enabled = false;
-        }
-
         private void Update()
         {
             if (!IsOpen)
                 return;
 
-            UpdateAim();
+            UpdatePhysicalFollow();
             UpdatePresentation();
 
             if (IsOpen && viewRoot.gameObject.activeSelf)
@@ -163,12 +152,15 @@ namespace GoLive.Phone
 
             _controlBlock = playerController.Controls.Block(PlayerControlMask.All);
 
-            _aimTarget = Vector2.zero;
-            _aimCurrent = Vector2.zero;
-            _aimVelocity = Vector2.zero;
+            _followCurrent = Vector2.zero;
+            _followVelocity = Vector2.zero;
             _presentationProgress = 0f;
 
+            pointer.ResetToCenter();
+            pointer.SetInteractionEnabled(false);
+
             viewRoot.gameObject.SetActive(true);
+
             SetUiInteractive(false);
             SetHiddenPose();
 
@@ -188,7 +180,6 @@ namespace GoLive.Phone
                 return false;
             }
 
-            _aimTarget = Vector2.zero;
             SetUiInteractive(false);
             _presentationState = PhonePresentationState.Hiding;
 
@@ -199,6 +190,9 @@ namespace GoLive.Phone
         {
             if (!IsOpen)
                 return false;
+
+            if (_presentationState == PhonePresentationState.Held && TryHandleScreenBack())
+                return true;
 
             if (_presentationState == PhonePresentationState.Held && _session.TryBack())
                 return true;
@@ -217,26 +211,17 @@ namespace GoLive.Phone
             return _session.TryNavigate(screen);
         }
 
-        private void UpdateAim()
+        private void UpdatePhysicalFollow()
         {
-            if (_presentationState == PhonePresentationState.Held)
-            {
-                Vector2 delta = aimAction.action.ReadValue<Vector2>();
+            Vector2 target = _presentationState == PhonePresentationState.Held
+                ? pointer.NormalizedPosition
+                : Vector2.zero;
 
-                _aimTarget += Vector2.Scale(delta, aimSensitivity);
-                _aimTarget.x = Mathf.Clamp(_aimTarget.x, -1f, 1f);
-                _aimTarget.y = Mathf.Clamp(_aimTarget.y, -1f, 1f);
-            }
-            else
-            {
-                _aimTarget = Vector2.zero;
-            }
-
-            _aimCurrent = Vector2.SmoothDamp(
-                _aimCurrent,
-                _aimTarget,
-                ref _aimVelocity,
-                aimSmoothTime,
+            _followCurrent = Vector2.SmoothDamp(
+                _followCurrent,
+                target,
+                ref _followVelocity,
+                followSmoothTime,
                 Mathf.Infinity,
                 Time.unscaledDeltaTime);
         }
@@ -255,6 +240,7 @@ namespace GoLive.Phone
 
                 _presentationState = PhonePresentationState.Held;
                 SetUiInteractive(true);
+
                 return;
             }
 
@@ -276,18 +262,18 @@ namespace GoLive.Phone
         {
             float presentation = Mathf.SmoothStep(0f, 1f, _presentationProgress);
 
-            Vector3 aimOffset = new(
-                _aimCurrent.x * aimPositionRange.x,
-                _aimCurrent.y * aimPositionRange.y,
+            Vector3 followOffset = new(
+                _followCurrent.x * followPositionRange.x,
+                _followCurrent.y * followPositionRange.y,
                 0f);
 
-            Quaternion aimRotation = Quaternion.Euler(
-                -_aimCurrent.y * aimRotationRange.x,
-                _aimCurrent.x * aimRotationRange.y,
-                -_aimCurrent.x * aimRotationRange.z);
+            Quaternion followRotation = Quaternion.Euler(
+                -_followCurrent.y * followRotationRange.x,
+                _followCurrent.x * followRotationRange.y,
+                -_followCurrent.x * followRotationRange.z);
 
-            Vector3 targetPosition = heldPose.localPosition + aimOffset;
-            Quaternion targetRotation = heldPose.localRotation * aimRotation;
+            Vector3 targetPosition = heldPose.localPosition + followOffset;
+            Quaternion targetRotation = heldPose.localRotation * followRotation;
 
             viewRoot.localPosition = Vector3.Lerp(
                 hiddenPose.localPosition,
@@ -309,10 +295,9 @@ namespace GoLive.Phone
 
             ReleasePlayerControl();
 
+            _followCurrent = Vector2.zero;
+            _followVelocity = Vector2.zero;
             _presentationProgress = 0f;
-            _aimTarget = Vector2.zero;
-            _aimCurrent = Vector2.zero;
-            _aimVelocity = Vector2.zero;
             _presentationState = PhonePresentationState.Hidden;
 
             _session.Close();
@@ -326,10 +311,9 @@ namespace GoLive.Phone
             SetUiInteractive(false);
             ReleasePlayerControl();
 
+            _followCurrent = Vector2.zero;
+            _followVelocity = Vector2.zero;
             _presentationProgress = 0f;
-            _aimTarget = Vector2.zero;
-            _aimCurrent = Vector2.zero;
-            _aimVelocity = Vector2.zero;
             _presentationState = PhonePresentationState.Hidden;
 
             if (viewRoot != null && hiddenPose != null)
@@ -345,6 +329,11 @@ namespace GoLive.Phone
         private void HandleSessionChanged()
         {
             RefreshScreens();
+
+            if (pointer != null)
+                pointer.ResetToCenter();
+
+            ScreenChanged?.Invoke();
         }
 
         private void RefreshScreens()
@@ -385,11 +374,14 @@ namespace GoLive.Phone
 
         private void SetUiInteractive(bool interactive)
         {
-            if (phoneCanvasGroup == null)
-                return;
+            if (phoneCanvasGroup != null)
+            {
+                phoneCanvasGroup.interactable = interactive;
+                phoneCanvasGroup.blocksRaycasts = interactive;
+            }
 
-            phoneCanvasGroup.interactable = interactive;
-            phoneCanvasGroup.blocksRaycasts = interactive;
+            if (pointer != null)
+                pointer.SetInteractionEnabled(interactive);
         }
 
         private void SetHiddenPose()
@@ -402,6 +394,22 @@ namespace GoLive.Phone
         {
             _controlBlock?.Dispose();
             _controlBlock = null;
+        }
+
+        private bool TryHandleScreenBack()
+        {
+            if (ScreenBackRequested == null)
+                return false;
+
+            Delegate[] handlers = ScreenBackRequested.GetInvocationList();
+
+            for (int i = 0; i < handlers.Length; i++)
+            {
+                if (handlers[i] is Func<bool> handler && handler())
+                    return true;
+            }
+
+            return false;
         }
 
         private bool BuildScreenMap()
@@ -458,8 +466,7 @@ namespace GoLive.Phone
         private bool ValidateConfiguration()
         {
             if (playerController == null ||
-                aimAction == null ||
-                aimAction.action == null ||
+                pointer == null ||
                 viewRoot == null ||
                 hiddenPose == null ||
                 heldPose == null ||
@@ -470,7 +477,8 @@ namespace GoLive.Phone
                 return false;
             }
 
-            if (viewRoot.parent != hiddenPose.parent || viewRoot.parent != heldPose.parent)
+            if (viewRoot.parent != hiddenPose.parent ||
+                viewRoot.parent != heldPose.parent)
             {
                 Debug.LogError($"{nameof(PhoneBehaviour)} requires View Root, Hidden Pose and Held Pose to share the same parent.", this);
                 return false;
@@ -488,13 +496,13 @@ namespace GoLive.Phone
                 return false;
             }
 
-            if (aimPositionRange.x < 0f ||
-                aimPositionRange.y < 0f ||
-                aimRotationRange.x < 0f ||
-                aimRotationRange.y < 0f ||
-                aimRotationRange.z < 0f)
+            if (followPositionRange.x < 0f ||
+                followPositionRange.y < 0f ||
+                followRotationRange.x < 0f ||
+                followRotationRange.y < 0f ||
+                followRotationRange.z < 0f)
             {
-                Debug.LogError($"{nameof(PhoneBehaviour)} on {name} contains invalid aim ranges.", this);
+                Debug.LogError($"{nameof(PhoneBehaviour)} on {name} contains invalid physical follow settings.", this);
                 return false;
             }
 
