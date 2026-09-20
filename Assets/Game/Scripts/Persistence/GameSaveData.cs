@@ -1,6 +1,7 @@
 using System;
 using GoLive.Economy;
 using GoLive.Items;
+using GoLive.Phone;
 using UnityEngine;
 
 namespace GoLive.Persistence
@@ -16,6 +17,7 @@ namespace GoLive.Persistence
         public float Concentration;
         public long BalanceCents;
         public RentSaveData Rent;
+        public PhoneMessagesSnapshot Messages;
         public ItemSaveData[] Items = Array.Empty<ItemSaveData>();
     }
 

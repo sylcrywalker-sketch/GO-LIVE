@@ -36,6 +36,9 @@ namespace GoLive.Phone
         private Vector2 _normalizedPosition;
         private GameObject _hoverTarget;
         private GameObject _pressedTarget;
+        private GameObject _scrollTarget;
+        private InputAction _scrollAction;
+        private bool _scrollActionWasEnabled;
         private RaycastResult _currentRaycast;
 
         private bool _interactionEnabled;
@@ -88,6 +91,7 @@ namespace GoLive.Phone
 
             UpdatePosition();
             UpdateRaycast();
+            UpdateScroll();
 
             if (submitAction.action.WasPressedThisFrame())
                 Press();
@@ -110,10 +114,13 @@ namespace GoLive.Phone
 
             if (value)
             {
+                _scrollAction = uiInputModule.scrollWheel?.action;
+                _scrollActionWasEnabled = _scrollAction != null && _scrollAction.enabled;
                 _uiInputModuleWasEnabled = uiInputModule.enabled;
                 uiInputModule.enabled = false;
 
                 submitAction.action.Enable();
+                _scrollAction?.Enable();
 
                 cursorVisual.gameObject.SetActive(true);
                 UpdateCursorVisual();
@@ -130,6 +137,10 @@ namespace GoLive.Phone
 
             if (submitAction != null && submitAction.action != null)
                 submitAction.action.Disable();
+
+            if (!_scrollActionWasEnabled)
+                _scrollAction?.Disable();
+            _scrollAction = null;
 
             if (uiInputModule != null)
                 uiInputModule.enabled = _uiInputModuleWasEnabled;
@@ -181,11 +192,14 @@ namespace GoLive.Phone
             _raycaster.Raycast(_pointerEvent, _raycastResults);
 
             GameObject target = null;
+            _scrollTarget = null;
             _currentRaycast = default;
 
             for (int i = 0; i < _raycastResults.Count; i++)
             {
                 RaycastResult result = _raycastResults[i];
+                if (_scrollTarget == null && result.gameObject.transform.IsChildOf(phoneCanvas.transform))
+                    _scrollTarget = ExecuteEvents.GetEventHandler<IScrollHandler>(result.gameObject);
                 GameObject handler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(result.gameObject);
 
                 if (handler == null || !handler.transform.IsChildOf(phoneCanvas.transform))
@@ -197,6 +211,21 @@ namespace GoLive.Phone
             }
 
             SetHoverTarget(target);
+        }
+
+        private void UpdateScroll()
+        {
+            if (_scrollTarget == null || _scrollAction == null)
+                return;
+
+            Vector2 delta = _scrollAction.ReadValue<Vector2>();
+            if (delta.sqrMagnitude < 0.001f)
+                return;
+
+            bool nativeWindowsRange = InputSystem.settings.scrollDeltaBehavior == InputSettings.ScrollDeltaBehavior.KeepPlatformSpecificInputRange
+                && (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer);
+            _pointerEvent.scrollDelta = delta / (nativeWindowsRange ? 120f : 1f) * uiInputModule.scrollDeltaPerTick;
+            ExecuteEvents.Execute(_scrollTarget, _pointerEvent, ExecuteEvents.scrollHandler);
         }
 
         private void SetHoverTarget(GameObject target)
@@ -256,6 +285,7 @@ namespace GoLive.Phone
 
             _pressedTarget = null;
             _hoverTarget = null;
+            _scrollTarget = null;
             _currentRaycast = default;
 
             if (_pointerEvent != null)

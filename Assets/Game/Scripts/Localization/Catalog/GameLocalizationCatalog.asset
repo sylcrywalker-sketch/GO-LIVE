@@ -104,11 +104,8 @@ MonoBehaviour:
 
       <size=13><color=#A8BBC8>07:12</color></size>'
   - _key: phone.sample_message_2
-    _russian: "\u041F\u043E\u043C\u043D\u044E. \u041D\u0430\u043F\u0438\u0448\u0443, \u043A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0440\u0430\u0437\u0431\u0435\u0440\u0443\u0441\u044C.\n\n<size=13><color=#B5C9CC>07:14</color></size>"
-    _english: 'I remember. I''ll message you as soon as I sort it out.
-
-
-      <size=13><color=#B5C9CC>07:14</color></size>'
+    _russian: "\u041F\u043E\u043C\u043D\u044E. \u041D\u0430\u043F\u0438\u0448\u0443, \u043A\u0430\u043A \u0442\u043E\u043B\u044C\u043A\u043E \u0440\u0430\u0437\u0431\u0435\u0440\u0443\u0441\u044C.\n\n<size=13><color=#B5C9CC>\u0412\u044B \xB7 07:14 \xB7 \u041E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u043E</color></size>"
+    _english: "I remember. I'll message you as soon as I sort it out.\n\n<size=13><color=#B5C9CC>You \xB7 07:14 \xB7 Sent</color></size>"
   - _key: phone.sample_message_3
     _russian: "\u0425\u043E\u0440\u043E\u0448\u043E. \u0415\u0441\u043B\u0438 \u0447\u0442\u043E-\u0442\u043E \u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F \u2014 \u043F\u0440\u0435\u0434\u0443\u043F\u0440\u0435\u0434\u0438 \u0437\u0430\u0440\u0430\u043D\u0435\u0435, \u043F\u043E\u0436\u0430\u043B\u0443\u0439\u0441\u0442\u0430.\n\n\u0418 \u043D\u0435 \u0437\u0430\u0431\u0443\u0434\u044C \u0437\u0430\u043A\u0440\u044B\u0442\u044C \u043E\u043A\u043D\u043E, \u043A\u043E\u0433\u0434\u0430 \u0443\u0445\u043E\u0434\u0438\u0448\u044C.\n\n<size=13><color=#A8BBC8>07:15</color></size>"
     _english: 'All right. If anything changes, please let me know ahead of time.
@@ -143,3 +140,20 @@ MonoBehaviour:
     _english: 'Purchasing is not connected yet.
 
       No money was charged.'
+  - _key: phone.details
+    _russian: "\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u0435\u0435"
+    _english: View details
+  - _key: phone.product_details
+    _russian: "\u041E \u0442\u043E\u0432\u0430\u0440\u0435"
+    _english: Product details
+  - _key: phone.storefront
+    _russian: "<line-height=110><size=16><indent=30><color=#A4B5C2>\u041F\u043E\u0438\u0441\u043A \u0442\u043E\u0432\u0430\u0440\u043E\u0432...</color></indent></size>\n<line-height=38><size=22><b>\u0411\u044E\u0434\u0436\u0435\u0442\u043D\u0430\u044F \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0430</b></size>\n<line-height=184><size=26>$15.00</size>\n<line-height=34><size=22>\u041A\u043B\u0430\u0432\u0438\u0430\u0442\u0443\u0440\u0430</size>\n<size=16><color=#8F9FAB>\u041F\u043E\u043A\u0430 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E</color></size>"
+    _english: '<line-height=110><size=16><indent=30><color=#A4B5C2>Search products...</color></indent></size>
+
+      <line-height=38><size=22><b>Budget GPU</b></size>
+
+      <line-height=184><size=26>$15.00</size>
+
+      <line-height=34><size=22>Keyboard</size>
+
+      <size=16><color=#8F9FAB>Unavailable</color></size>'

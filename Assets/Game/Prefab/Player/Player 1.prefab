@@ -343,6 +343,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1033273579112914650}
+  - component: {fileID: 7799628480859984467}
+  - component: {fileID: 8095983788012773507}
   m_Layer: 5
   m_Name: Shop
   m_TagString: Untagged
@@ -372,6 +374,44 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 420, y: 780}
   m_Pivot: {x: 0, y: 1}
+--- !u!222 &7799628480859984467
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448106798236726727}
+  m_CullTransparentMesh: 1
+--- !u!114 &8095983788012773507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448106798236726727}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: db13cbc6f31d2e545bef993c0f21f158, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1517700437162869384
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,7 +597,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Phone.PhoneBehaviour
   playerController: {fileID: 2284904334080474095}
-  aimAction: {fileID: -2600141063736078231, guid: ba5e3c362a405394680d655225b61027, type: 3}
+  pointer: {fileID: 0}
   viewRoot: {fileID: 909160736816286286}
   hiddenPose: {fileID: 1311334155820334153}
   heldPose: {fileID: 8410882342232440199}
@@ -579,10 +619,9 @@ MonoBehaviour:
   - {fileID: 5513100883541712234}
   presentDuration: 0.28
   hideDuration: 0.22
-  aimSensitivity: {x: 0.003, y: 0.003}
-  aimSmoothTime: 0.055
-  aimPositionRange: {x: 0.14, y: 0.16}
-  aimRotationRange: {x: 7, y: 10, z: 5}
+  followSmoothTime: 0.08
+  followPositionRange: {x: 0.022, y: 0.028}
+  followRotationRange: {x: 2.5, y: 3.5, z: 2}
 --- !u!1 &1555827243057996478
 GameObject:
   m_ObjectHideFlags: 0
@@ -1764,6 +1803,8 @@ MonoBehaviour:
   - {fileID: 9106868122973479286}
   - {fileID: 5183008509951123742}
   - {fileID: 5960153085581475727}
+  _storefrontSurface: {fileID: 8095983788012773507}
+  _productImage: {fileID: 1852879010510757293}
   _productText: {fileID: 8031679920452781411}
   _buy: {fileID: 439428438744374600}
   _buyLabel: {fileID: 7825636850515504807}

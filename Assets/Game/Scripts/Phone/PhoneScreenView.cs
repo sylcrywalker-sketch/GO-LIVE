@@ -33,17 +33,24 @@ namespace GoLive.Phone
         [SerializeField] private TMP_Text[] _bubbles;
 
         [Header("Shop visual sample")]
+        [SerializeField] private Image _storefrontSurface;
+        [SerializeField] private Image _productImage;
         [SerializeField] private TMP_Text _productText;
         [SerializeField] private Button _buy;
         [SerializeField] private TMP_Text _buyLabel;
         [SerializeField] private bool _previewProductAvailable = true;
 
         public bool IsConversationVisible => _conversationVisible;
+        public bool IsProductDetailsVisible => _productDetailsVisible;
         private bool _conversationVisible;
+        private bool _productDetailsVisible;
         private bool _previewPressed;
         private bool _bound;
         private GameClock _subscribedClock;
         private GameTimeSnapshot _time;
+        private ColorBlock _detailButtonColors;
+
+        private void Awake() => _detailButtonColors = _buy.colors;
 
         private void OnEnable()
         {
@@ -57,7 +64,7 @@ namespace GoLive.Phone
             _phone.ScreenBackRequested += TryBack;
             _localization.LanguageChanged += HandleLanguageChanged;
             _contact.onClick.AddListener(OpenConversation);
-            _buy.onClick.AddListener(PreviewBuy);
+            _buy.onClick.AddListener(HandleShopAction);
             _subscribedClock = _clock.Clock;
             if (_subscribedClock != null)
             {
@@ -77,12 +84,13 @@ namespace GoLive.Phone
             _phone.ScreenBackRequested -= TryBack;
             _localization.LanguageChanged -= HandleLanguageChanged;
             _contact.onClick.RemoveListener(OpenConversation);
-            _buy.onClick.RemoveListener(PreviewBuy);
+            _buy.onClick.RemoveListener(HandleShopAction);
             if (_subscribedClock != null)
                 _subscribedClock.MinuteChanged -= HandleMinuteChanged;
             _subscribedClock = null;
             _bound = false;
             _conversationVisible = false;
+            _productDetailsVisible = false;
             _previewPressed = false;
         }
 
@@ -104,6 +112,7 @@ namespace GoLive.Phone
         private void HandleScreenChanged()
         {
             _conversationVisible = false;
+            _productDetailsVisible = false;
             _previewPressed = false;
             Refresh();
         }
@@ -130,6 +139,14 @@ namespace GoLive.Phone
 
         private bool TryBack()
         {
+            if (_phone.CurrentScreen == PhoneScreenId.Shop && _productDetailsVisible)
+            {
+                _productDetailsVisible = false;
+                _previewPressed = false;
+                Refresh();
+                return true;
+            }
+
             if (_phone.CurrentScreen != PhoneScreenId.Messages || !_conversationVisible)
                 return false;
 
@@ -138,9 +155,19 @@ namespace GoLive.Phone
             return true;
         }
 
-        private void PreviewBuy()
+        private void HandleShopAction()
         {
-            if (!_phone.IsInteractive || _phone.CurrentScreen != PhoneScreenId.Shop || !_previewProductAvailable)
+            if (!_phone.IsInteractive || _phone.CurrentScreen != PhoneScreenId.Shop)
+                return;
+
+            if (!_productDetailsVisible)
+            {
+                _productDetailsVisible = true;
+                Refresh();
+                return;
+            }
+
+            if (!_previewProductAvailable || _previewPressed)
                 return;
 
             _previewPressed = true;
@@ -164,10 +191,41 @@ namespace GoLive.Phone
             _conversation.gameObject.SetActive(_conversationVisible);
             for (int i = 0; i < _bubbles.Length; i++)
                 _bubbles[i].text = _localization.Text($"phone.sample_message_{i + 1}");
-            _buy.interactable = _previewProductAvailable && !_previewPressed;
-            _buyLabel.text = _localization.Text(_previewPressed ? "phone.preview_only" : _previewProductAvailable ? "phone.buy" : "phone.unavailable");
-            _productText.text = $"<size=13><color=#A3B8CA>{_localization.Text("phone.product_category")}</color></size>\n<size=30><b>{_localization.Text("phone.product_name")}</b></size>\n<line-height=145%><size=32>$15.00</size>\n<size=17><color=#BAC5CD>{_localization.Text(_previewPressed ? "phone.preview_feedback" : "phone.product_description")}</color></size>";
+            RefreshShop();
             RefreshClock();
+        }
+
+        private void RefreshShop()
+        {
+            // Two visual screens share these widgets; only details exposes the preview Buy action.
+            _storefrontSurface.enabled = !_productDetailsVisible;
+            _buy.interactable = !_productDetailsVisible || (_previewProductAvailable && !_previewPressed);
+            _buyLabel.text = _localization.Text(!_productDetailsVisible ? "phone.details" : _previewPressed ? "phone.preview_only" : _previewProductAvailable ? "phone.buy" : "phone.unavailable");
+            _buyLabel.alignment = _productDetailsVisible ? TextAlignmentOptions.Center : TextAlignmentOptions.MidlineLeft;
+            _buyLabel.color = _productDetailsVisible ? new Color32(23, 33, 43, 255) : new Color32(190, 211, 218, 255);
+            _buy.image.color = _productDetailsVisible ? new Color32(180, 200, 203, 255) : Color.white;
+            ColorBlock colors = _detailButtonColors;
+            if (!_productDetailsVisible)
+            {
+                colors.normalColor = colors.selectedColor = new Color(1f, 1f, 1f, 0f);
+                colors.highlightedColor = new Color(1f, 1f, 1f, 0.02f);
+                colors.pressedColor = new Color(1f, 1f, 1f, 0.04f);
+            }
+            _buy.colors = colors;
+
+            SetRect(_productImage.rectTransform, _productDetailsVisible ? new Rect(28, 151, 364, 235) : new Rect(248, 298, 128, 83));
+            SetRect(_productText.rectTransform, _productDetailsVisible ? new Rect(32, 408, 356, 185) : new Rect(48, 130, 324, 490));
+            SetRect((RectTransform)_buy.transform, _productDetailsVisible ? new Rect(28, 604, 364, 54) : new Rect(28, 210, 364, 216));
+            SetRect(_buyLabel.rectTransform, _productDetailsVisible ? new Rect(8, 0, 348, 54) : new Rect(20, 160, 324, 40));
+            _productText.text = _productDetailsVisible
+                ? $"<size=13><color=#A3B8CA>{_localization.Text("phone.product_category")}</color></size>\n<size=30><b>{_localization.Text("phone.product_name")}</b></size>\n<line-height=145%><size=32>$15.00</size>\n<size=17><color=#BAC5CD>{_localization.Text(_previewPressed ? "phone.preview_feedback" : "phone.product_description")}</color></size>"
+                : _localization.Text("phone.storefront");
+        }
+
+        private static void SetRect(RectTransform target, Rect layout)
+        {
+            target.anchoredPosition = new Vector2(layout.x, -layout.y);
+            target.sizeDelta = layout.size;
         }
 
         private string UnreadCaption() => _previewUnreadCount > 0 ? "  ·  " + _localization.Format("phone.unread", _previewUnreadCount) : string.Empty;
@@ -177,7 +235,7 @@ namespace GoLive.Phone
             string title = _phone.CurrentScreen switch
             {
                 PhoneScreenId.Messages => _localization.Text("phone.messages"),
-                PhoneScreenId.Shop => _localization.Text("phone.shop"),
+                PhoneScreenId.Shop => _localization.Text(_productDetailsVisible ? "phone.product_details" : "phone.shop"),
                 _ => _localization.Text("phone.brand")
             };
             _header.text = $"<size=14>{_time.Hour:00}:{_time.Minute:00}<pos=295>LTE</size>\n<line-height=170%><size=29><b>{title}</b></size>";

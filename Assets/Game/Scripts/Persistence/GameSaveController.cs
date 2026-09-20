@@ -8,6 +8,7 @@ using GoLive.GameTime;
 using GoLive.Inventory;
 using GoLive.Items;
 using GoLive.Needs;
+using GoLive.Phone;
 using GoLive.Player;
 using GoLive.Sleep;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace GoLive.Persistence
     [DisallowMultipleComponent]
     public sealed class GameSaveController : MonoBehaviour
     {
-        private const int CurrentVersion = 1;
+        private const int CurrentVersion = 2;
         private const string AutosaveFileName = "autosave.json";
 
         [Header("Game State")]
@@ -29,6 +30,7 @@ namespace GoLive.Persistence
         [SerializeField] private WalletBehaviour _wallet;
         [SerializeField] private RentBehaviour _rent;
         [SerializeField] private PlayerSleepController _sleep;
+        [SerializeField] private PhoneMessagesBehaviour _phoneMessages;
 
         private bool _bound;
 
@@ -193,7 +195,10 @@ namespace GoLive.Persistence
             try
             {
                 string json = File.ReadAllText(path, Encoding.UTF8);
-                GameSaveData data = JsonUtility.FromJson<GameSaveData>(json);
+                // FromJson creates default inline objects even for missing/null JSON sections.
+                // Overwrite an invalid sentinel so a missing Messages payload cannot silently erase history.
+                GameSaveData data = new() { Messages = new PhoneMessagesSnapshot { Version = 0, Conversations = null } };
+                JsonUtility.FromJsonOverwrite(json, data);
 
                 if (!ValidateSaveData(data, out Dictionary<string, WorldItem> sceneItems))
                 {
@@ -286,7 +291,8 @@ namespace GoLive.Persistence
                     ProcessedThroughSeconds = rent.ProcessedThroughSeconds
                 },
 
-                Items = itemData
+                Items = itemData,
+                Messages = _phoneMessages.Messages.CaptureSnapshot()
             };
         }
 
@@ -376,6 +382,8 @@ namespace GoLive.Persistence
                 data.Rent.SecondBillIssued,
                 data.Rent.Outcome,
                 data.Rent.ProcessedThroughSeconds));
+
+            _phoneMessages.Messages.Restore(data.Messages);
         }
 
         private bool ValidateSaveData(GameSaveData data, out Dictionary<string, WorldItem> sceneItems)
@@ -386,7 +394,19 @@ namespace GoLive.Persistence
                 data.Version != CurrentVersion ||
                 data.Player == null ||
                 data.Rent == null ||
-                data.Items == null)
+                data.Items == null ||
+                data.Messages == null)
+            {
+                return false;
+            }
+
+            // Preflight on an unobserved temporary instance before Apply can change any live state.
+            // Keep snapshot validation in the domain; this instance is not a second runtime owner.
+            try
+            {
+                new PhoneMessages().Restore(data.Messages);
+            }
+            catch (ArgumentException)
             {
                 return false;
             }
@@ -486,6 +506,9 @@ namespace GoLive.Persistence
 
         private bool EnsureRuntimeStateReady()
         {
+            if (!ValidateConfiguration())
+                return false;
+
             if (_inventory.Inventory != null &&
                 _gameClock.Clock != null &&
                 _needs.Needs != null &&
@@ -508,7 +531,8 @@ namespace GoLive.Persistence
                 _needs != null &&
                 _wallet != null &&
                 _rent != null &&
-                _sleep != null)
+                _sleep != null &&
+                _phoneMessages != null)
             {
                 return true;
             }
