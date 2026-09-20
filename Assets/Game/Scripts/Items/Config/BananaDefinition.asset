@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 507f4ce9fbbc7194daf26863701676de, type: 3}
+  m_Name: BananaDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
+  itemId: banana
+  category: 0
+  worldPrefab: {fileID: 5818144976745710219, guid: d3befcb536f2be54ea241885b5a5b0b6, type: 3}
+  iconOverride: {fileID: 0}
+  generatedIcon: {fileID: 0}
+  canStoreInInventory: 1
+  carryStyle: 0
+  carryLocalPosition: {x: 0, y: 0, z: 0}
+  carryLocalEulerAngles: {x: 0, y: 0, z: 0}

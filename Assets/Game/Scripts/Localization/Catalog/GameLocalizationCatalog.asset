@@ -46,3 +46,6 @@ MonoBehaviour:
   - _key: hud.concentration
     _russian: "\u041A\u043E\u043D\u0446\u0435\u043D\u0442\u0440\u0430\u0446\u0438\u044F"
     _english: Concentration
+  - _key: interaction.eat
+    _russian: "\u0421\u044A\u0435\u0441\u0442\u044C"
+    _english: Eat

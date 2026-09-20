@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DefaultPlayerNeedsConfig
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Needs.PlayerNeedsConfig
   <MaxHunger>k__BackingField: 100
-  <StartingHunger>k__BackingField: 20
+  <StartingHunger>k__BackingField: 50
   <HungerPerGameHour>k__BackingField: 4
   <MaxConcentration>k__BackingField: 100
-  <StartingConcentration>k__BackingField: 100
+  <StartingConcentration>k__BackingField: 50
