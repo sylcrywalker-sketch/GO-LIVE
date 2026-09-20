@@ -564,6 +564,8 @@ GameObject:
   - component: {fileID: 2125787185867726929}
   - component: {fileID: 6156782873906993374}
   - component: {fileID: 6156782873906993375}
+  - component: {fileID: 6156782873906993376}
+  - component: {fileID: 6156782873906993377}
   m_Layer: 0
   m_Name: '[GameSystems]'
   m_TagString: Untagged
@@ -892,6 +894,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Needs.PlayerNeedsBehaviour
   _gameClock: {fileID: 6156782873906993373}
   _config: {fileID: 11400000, guid: fc1112be5c9b27a4792c7c7179c819fb, type: 2}
+--- !u!114 &6156782873906993376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937360858381047049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afd8acba47774af43a811dc491bd40c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Economy.WalletBehaviour
+  _config: {fileID: 11400000, guid: d806bfbfd9fdba64f909c764a5c8150c, type: 2}
+--- !u!114 &6156782873906993377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937360858381047049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1858aeb41793d694ba891bc0559511b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Economy.RentBehaviour
+  _gameClock: {fileID: 6156782873906993373}
+  _wallet: {fileID: 6156782873906993376}
+  _config: {fileID: 11400000, guid: 02a8e50e045902b42b7a8856d772e52b, type: 2}
 --- !u!1001 &7211820405149896878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1065,6 +1095,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 634512227253876151, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
+      propertyPath: _rent
+      value: 
+      objectReference: {fileID: 6156782873906993377}
+    - target: {fileID: 634512227253876151, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
+      propertyPath: _localization
+      value: 
+      objectReference: {fileID: 6156782873906993374}
+    - target: {fileID: 751556310630782201, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
+      propertyPath: _localization
+      value: 
+      objectReference: {fileID: 6156782873906993374}
     - target: {fileID: 1301404997580841065, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1213,6 +1255,10 @@ PrefabInstance:
       propertyPath: _localization
       value: 
       objectReference: {fileID: 6156782873906993374}
+    - target: {fileID: 8197466112632364411, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
+      propertyPath: _wallet
+      value: 
+      objectReference: {fileID: 6156782873906993376}
     - target: {fileID: 8455691993500581694, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0

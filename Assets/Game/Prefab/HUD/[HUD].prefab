@@ -4262,6 +4262,7 @@ GameObject:
   - component: {fileID: 1730525394379611433}
   - component: {fileID: 8659850315388016492}
   - component: {fileID: 6341303289071380674}
+  - component: {fileID: 751556310630782201}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -4388,6 +4389,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &751556310630782201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1820006327920499656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c7e52fe01a32e346b24e8cff5405d61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Localization.LocalizedTextView
+  _localization: {fileID: 0}
+  _key: hud.balance
 --- !u!1 &1832299095543453518
 GameObject:
   m_ObjectHideFlags: 0
@@ -8099,6 +8114,8 @@ GameObject:
   - component: {fileID: 4403175669109841144}
   - component: {fileID: 4085790743714762592}
   - component: {fileID: 6127979724394232786}
+  - component: {fileID: 8197466112632364411}
+  - component: {fileID: 634512227253876151}
   m_Layer: 5
   m_Name: '[HUD]'
   m_TagString: Untagged
@@ -8250,6 +8267,36 @@ MonoBehaviour:
   _hungerValueText: {fileID: 5240996969862531769}
   _concentrationSlider: {fileID: 122120782245948092}
   _concentrationValueText: {fileID: 4833202931692130223}
+--- !u!114 &8197466112632364411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3475034637084238370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4910cec7bcbb00b44895acbc54e9889c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Economy.WalletHudView
+  _wallet: {fileID: 0}
+  _balanceText: {fileID: 4134903133667750579}
+--- !u!114 &634512227253876151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3475034637084238370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ecebde8c1c39a4bbae9bf8e5b3a385, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Economy.RentHudView
+  _rent: {fileID: 0}
+  _config: {fileID: 11400000, guid: 02a8e50e045902b42b7a8856d772e52b, type: 2}
+  _localization: {fileID: 0}
+  _objectiveText: {fileID: 6464013894444406625}
 --- !u!1 &3511822314815813151
 GameObject:
   m_ObjectHideFlags: 0
