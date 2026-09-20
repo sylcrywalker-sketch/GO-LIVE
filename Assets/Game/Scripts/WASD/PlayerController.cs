@@ -3,6 +3,20 @@ using UnityEngine.InputSystem;
 
 namespace GoLive.Player
 {
+    public readonly struct PlayerPoseSnapshot
+    {
+        public Vector3 Position { get; }
+        public Quaternion Rotation { get; }
+        public float Pitch { get; }
+
+        public PlayerPoseSnapshot(Vector3 position, Quaternion rotation, float pitch)
+        {
+            Position = position;
+            Rotation = rotation;
+            Pitch = pitch;
+        }
+    }
+
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CharacterController))]
     public sealed class PlayerController : MonoBehaviour
@@ -65,6 +79,26 @@ namespace GoLive.Player
         {
             UpdateLook();
             UpdateMovement();
+        }
+
+        public PlayerPoseSnapshot CapturePose()
+        {
+            return new PlayerPoseSnapshot(transform.position, transform.rotation, _pitch);
+        }
+
+        public void RestorePose(PlayerPoseSnapshot pose)
+        {
+            bool controllerWasEnabled = _characterController.enabled;
+
+            _characterController.enabled = false;
+
+            transform.SetPositionAndRotation(pose.Position, pose.Rotation);
+
+            _pitch = Mathf.Clamp(pose.Pitch, -maxLookAngle, maxLookAngle);
+            lookPivot.localRotation = _lookPivotBaseRotation * Quaternion.Euler(_pitch, 0f, 0f);
+            _verticalVelocity = 0f;
+
+            _characterController.enabled = controllerWasEnabled;
         }
 
         private void UpdateLook()

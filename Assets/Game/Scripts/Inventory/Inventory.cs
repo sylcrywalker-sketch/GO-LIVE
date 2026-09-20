@@ -41,8 +41,8 @@ namespace GoLive.Inventory
 
             _items.Add(item);
             _instanceIds.Add(item.InstanceId);
-            Changed?.Invoke();
 
+            Changed?.Invoke();
             return true;
         }
 
@@ -72,8 +72,36 @@ namespace GoLive.Inventory
 
             _items.Remove(item);
             _instanceIds.Remove(item.InstanceId);
-            Changed?.Invoke();
 
+            Changed?.Invoke();
+            return true;
+        }
+
+        internal bool RestoreItems(IReadOnlyList<ItemInstance> items)
+        {
+            if (items == null || items.Count > Capacity)
+                return false;
+
+            HashSet<string> ids = new(StringComparer.Ordinal);
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                ItemInstance item = items[i];
+
+                if (item == null || item.Location != ItemLocation.Inventory || !ids.Add(item.InstanceId))
+                    return false;
+            }
+
+            _items.Clear();
+            _instanceIds.Clear();
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                _items.Add(items[i]);
+                _instanceIds.Add(items[i].InstanceId);
+            }
+
+            Changed?.Invoke();
             return true;
         }
     }

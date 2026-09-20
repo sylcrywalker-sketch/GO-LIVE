@@ -566,6 +566,7 @@ GameObject:
   - component: {fileID: 6156782873906993375}
   - component: {fileID: 6156782873906993376}
   - component: {fileID: 6156782873906993377}
+  - component: {fileID: 6156782873906993378}
   m_Layer: 0
   m_Name: '[GameSystems]'
   m_TagString: Untagged
@@ -853,6 +854,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc4738e1ab248d49beb75d5bb2cb0d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Player.PlayerCarry
+--- !u!114 &5722134851238744717 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1822905998515294160, guid: b749e698d756ce747a9ea404cbd928eb, type: 3}
+  m_PrefabInstance: {fileID: 3533245004867436044}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df63110d7d75da24fa3b9ead072b4ea5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Sleep.PlayerSleepController
 --- !u!114 &6156782873906993373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -922,6 +934,26 @@ MonoBehaviour:
   _gameClock: {fileID: 6156782873906993373}
   _wallet: {fileID: 6156782873906993376}
   _config: {fileID: 11400000, guid: 02a8e50e045902b42b7a8856d772e52b, type: 2}
+--- !u!114 &6156782873906993378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937360858381047049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20cef6e3031640047802bb2b2ce6b39e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Persistence.GameSaveController
+  _player: {fileID: 3942604338530139978}
+  _carry: {fileID: 5175225647020538106}
+  _inventory: {fileID: 194133398033722538}
+  _gameClock: {fileID: 6156782873906993373}
+  _needs: {fileID: 6156782873906993375}
+  _wallet: {fileID: 6156782873906993376}
+  _rent: {fileID: 6156782873906993377}
+  _sleep: {fileID: 5722134851238744717}
 --- !u!1001 &7211820405149896878
 PrefabInstance:
   m_ObjectHideFlags: 0

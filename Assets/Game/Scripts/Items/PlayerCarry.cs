@@ -13,6 +13,8 @@ namespace GoLive.Player
         public bool HasItem => _carriedItem != null;
         public WorldItem CarriedItem => _carriedItem;
 
+        internal Transform CarryAnchor => carryAnchor;
+
         private WorldItem _carriedItem;
 
         private void Awake()
@@ -95,6 +97,15 @@ namespace GoLive.Player
                 return false;
 
             if (!item.TryBeginCarryFromInventory(carryAnchor))
+                return false;
+
+            _carriedItem = item;
+            return true;
+        }
+
+        internal bool RestoreCarriedItem(WorldItem item)
+        {
+            if (item != null && (item.Instance == null || item.Instance.Location != ItemLocation.Carried))
                 return false;
 
             _carriedItem = item;

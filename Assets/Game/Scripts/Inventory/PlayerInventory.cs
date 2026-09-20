@@ -15,6 +15,8 @@ namespace GoLive.Inventory
 
         public Inventory Inventory { get; private set; }
 
+        internal Transform StoredItemsRoot => storedItemsRoot;
+
         private readonly Dictionary<string, WorldItem> _storedWorldItems = new(StringComparer.Ordinal);
 
         private PlayerCarry _playerCarry;
@@ -90,6 +92,40 @@ namespace GoLive.Inventory
 
             definition = item.Definition;
             return definition != null;
+        }
+
+        internal bool RestoreStoredItems(IReadOnlyList<WorldItem> items)
+        {
+            if (items == null || items.Count > Inventory.Capacity)
+                return false;
+
+            Dictionary<string, WorldItem> restoredItems = new(StringComparer.Ordinal);
+            List<ItemInstance> instances = new(items.Count);
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                WorldItem item = items[i];
+
+                if (item == null ||
+                    item.Instance == null ||
+                    item.Instance.Location != ItemLocation.Inventory ||
+                    !restoredItems.TryAdd(item.Instance.InstanceId, item))
+                {
+                    return false;
+                }
+
+                instances.Add(item.Instance);
+            }
+
+            if (!Inventory.RestoreItems(instances))
+                return false;
+
+            _storedWorldItems.Clear();
+
+            foreach (KeyValuePair<string, WorldItem> pair in restoredItems)
+                _storedWorldItems.Add(pair.Key, pair.Value);
+
+            return true;
         }
     }
 }
