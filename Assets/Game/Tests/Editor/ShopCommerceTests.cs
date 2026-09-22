@@ -100,6 +100,36 @@ namespace GoLive.Tests
         }
 
         [Test]
+        public void DeliveryEstimateMatchesThePlacedOrder()
+        {
+            GameTimeSnapshot estimate = BudgetGpu.GetDeliveryDueAt(_clock.Current);
+
+            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+
+            Assert.That(estimate.TotalSeconds - _clock.Current.TotalSeconds, Is.EqualTo(150 * GameTimeSnapshot.SecondsPerMinute));
+            Assert.That(order.DeliveryDueAt.TotalSeconds, Is.EqualTo(estimate.TotalSeconds));
+        }
+
+        [Test]
+        public void DeliveredOrdersStayInHistoryButStopCountingAsActive()
+        {
+            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+
+            Assert.That(_orders.CountActive(), Is.EqualTo(1));
+            Assert.That(_orders.TryGetLatestActiveOrder(BudgetGpuId, out ShopOrder active), Is.True);
+            Assert.That(active, Is.SameAs(order));
+
+            _clock.AdvanceMinutes(150);
+            _orders.TryMarkDelivered(order.OrderId, _clock.Current);
+
+            Assert.That(_orders.Orders, Has.Count.EqualTo(1));
+            Assert.That(_orders.Orders[0].Status, Is.EqualTo(ShopOrderStatus.Delivered));
+            Assert.That(_orders.CountActive(), Is.Zero);
+            Assert.That(_orders.TryGetLatestActiveOrder(BudgetGpuId, out _), Is.False);
+            Assert.That(_purchase.Evaluate(BudgetGpu), Is.EqualTo(ShopPurchaseResultCode.PurchaseLimitReached));
+        }
+
+        [Test]
         public void DeliveryStatusIsOwnedByOrderBook()
         {
             ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;

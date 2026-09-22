@@ -91,6 +91,23 @@ namespace GoLive.Shop
             return _purchase.Evaluate(in offer);
         }
 
+        public bool TryEstimateDelivery(string productId, out GameTimeSnapshot deliveryDueAt)
+        {
+            deliveryDueAt = default;
+
+            if (!TryGetProduct(productId, out ShopProductDefinition product) ||
+                !product.IsAvailable ||
+                gameClock.Clock == null)
+            {
+                return false;
+            }
+
+            ShopPurchaseOffer offer = product.CreatePurchaseOffer();
+
+            deliveryDueAt = offer.GetDeliveryDueAt(gameClock.Clock.Current);
+            return true;
+        }
+
         public ShopPurchaseResult TryPurchase(string productId)
         {
             if (!TryGetProduct(productId, out ShopProductDefinition product))

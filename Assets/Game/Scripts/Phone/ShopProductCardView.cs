@@ -10,25 +10,29 @@ namespace GoLive.Phone
     {
         [SerializeField] private Button _button;
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private GameObject _thumbnail;
         [SerializeField] private Image _image;
         [SerializeField] private TMP_Text _name;
         [SerializeField] private TMP_Text _price;
         [SerializeField] private TMP_Text _status;
-        [SerializeField] private GameObject _action;
-        [SerializeField] private TMP_Text _actionLabel;
-        [SerializeField, Range(0f, 1f)] private float _unavailableAlpha = 0.45f;
+        [SerializeField] private TMP_Text _description;
+        [SerializeField] private GameObject _badge;
+        [SerializeField] private TMP_Text _badgeLabel;
+        [SerializeField, Range(0f, 1f)] private float _unavailableAlpha = 0.55f;
 
         public event Action Clicked;
 
         public bool IsConfigured =>
             _button != null &&
             _canvasGroup != null &&
+            _thumbnail != null &&
             _image != null &&
             _name != null &&
             _price != null &&
             _status != null &&
-            _action != null &&
-            _actionLabel != null;
+            _description != null &&
+            _badge != null &&
+            _badgeLabel != null;
 
         private void Awake()
         {
@@ -40,33 +44,37 @@ namespace GoLive.Phone
             _button.onClick.RemoveListener(HandleClick);
         }
 
-        public void ShowAvailable(Sprite image, string productName, string price, string action)
+        public void ShowAvailable(Sprite image, string productName, string description, string price, string badge)
         {
-            Show(image, productName, true);
+            Show(image, productName, description, true);
 
             _price.text = price;
-            _actionLabel.text = action;
+
+            bool hasBadge = !string.IsNullOrEmpty(badge);
+
+            _badgeLabel.text = hasBadge ? badge : string.Empty;
+            _badge.SetActive(hasBadge);
         }
 
-        public void ShowUnavailable(Sprite image, string productName, string status)
+        public void ShowUnavailable(Sprite image, string productName, string description, string status)
         {
-            Show(image, productName, false);
+            Show(image, productName, description, false);
 
             _status.text = status;
+            _badge.SetActive(false);
         }
 
-        private void Show(Sprite image, string productName, bool available)
+        private void Show(Sprite image, string productName, string description, bool available)
         {
             _image.sprite = image;
-            _image.gameObject.SetActive(image != null);
+            _thumbnail.SetActive(image != null);
 
             _name.text = productName;
+            _description.text = description;
 
             _price.gameObject.SetActive(available);
-            _action.SetActive(available);
             _status.gameObject.SetActive(!available);
 
-            _button.interactable = available;
             _canvasGroup.alpha = available ? 1f : _unavailableAlpha;
         }
 

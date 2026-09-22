@@ -1,104 +1,59 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using GoLive.Economy;
 using GoLive.GameTime;
-using GoLive.Inventory;
-using GoLive.Needs;
 using GoLive.Persistence;
 using GoLive.Phone;
-using GoLive.Player;
-using GoLive.Sleep;
+using GoLive.Shop;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
-using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
     public sealed class PhoneMessagesSaveTests
     {
+        private SaveTestWorld _world;
         private GameObject _root;
         private GameSaveController _save;
         private PhoneMessagesBehaviour _owner;
         private GameClockBehaviour _clock;
         private WalletBehaviour _wallet;
-        private string _directory;
+        private ShopBehaviour _shop;
         private string _path;
         private SceneSetup[] _previousScenes;
 
-        // Explicit EditMode composition, not a substitute for Awake/Start or Play Mode verification.
         [OneTimeSetUp]
         public void IsolateTestScene()
         {
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
-                var scene = SceneManager.GetSceneAt(i);
-                if (scene.isDirty && scene.rootCount > 0)
-                    Assert.Ignore("Save your open scene before running the isolated Save/Load fixture; unsaved scene work will not be closed.");
-            }
-            _previousScenes = EditorSceneManager.GetSceneManagerSetup();
-            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            _previousScenes = SaveTestWorld.IsolateScene();
         }
 
         [OneTimeTearDown]
         public void RestoreEditorSceneSetup()
         {
-            if (_previousScenes != null && _previousScenes.Length > 0)
-                EditorSceneManager.RestoreSceneManagerSetup(_previousScenes);
+            SaveTestWorld.RestoreScene(_previousScenes);
         }
 
         [SetUp]
         public void SetUp()
         {
-            _directory = Path.Combine(Path.GetTempPath(), "GoLiveMessagesTests", Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(_directory);
-            _path = Path.Combine(_directory, "save.json");
-            _root = new GameObject("Messages save test");
-            _root.SetActive(false);
-            var pivot = new GameObject("Test look pivot").transform;
-            pivot.SetParent(_root.transform, false);
-            var player = _root.AddComponent<PlayerController>();
-            SetField(player, "lookPivot", pivot);
-            SetField(player, "_characterController", _root.GetComponent<CharacterController>());
-            SetField(player, "_lookPivotBaseRotation", Quaternion.identity);
-            var carry = _root.AddComponent<PlayerCarry>();
-            var inventory = _root.AddComponent<PlayerInventory>();
-            SetField(carry, "carryAnchor", pivot);
-            SetField(inventory, "storedItemsRoot", pivot);
-            SetProperty(inventory, "Inventory", new GoLive.Inventory.Inventory(12));
-            _clock = _root.AddComponent<GameClockBehaviour>();
-            SetProperty(_clock, "Clock", new GameClock(1, 7, 12));
-            var needs = _root.AddComponent<PlayerNeedsBehaviour>();
-            SetProperty(needs, "Needs", new PlayerNeeds(new PlayerNeedsRules(100, 20, 4, 100, 100)));
-            _wallet = _root.AddComponent<WalletBehaviour>();
-            SetProperty(_wallet, "Wallet", new Wallet(4000));
-            var rent = _root.AddComponent<RentBehaviour>();
-            SetField(rent, "_rent", new RentAccount(new RentRules(5000, 5000, 2000, 3, 6, 6), _clock.Clock.Current));
-            var sleep = _root.AddComponent<PlayerSleepController>();
-            _owner = _root.AddComponent<PhoneMessagesBehaviour>();
-            _save = _root.AddComponent<GameSaveController>();
-            SetField(_save, "_player", player);
-            SetField(_save, "_carry", carry);
-            SetField(_save, "_inventory", inventory);
-            SetField(_save, "_gameClock", _clock);
-            SetField(_save, "_needs", needs);
-            SetField(_save, "_wallet", _wallet);
-            SetField(_save, "_rent", rent);
-            SetField(_save, "_sleep", sleep);
-            SetField(_save, "_phoneMessages", _owner);
+            _world = SaveTestWorld.Create(4000);
+            _root = _world.Root;
+            _save = _world.Save;
+            _owner = _world.Messages;
+            _clock = _world.Clock;
+            _wallet = _world.Wallet;
+            _shop = _world.Shop;
+            _path = _world.SavePath;
         }
 
         [TearDown]
         public void TearDown()
         {
-            if (_root != null)
-                Object.DestroyImmediate(_root);
-            if (Directory.Exists(_directory))
-                Directory.Delete(_directory, true);
+            _world?.Dispose();
         }
 
         [Test]
@@ -112,7 +67,10 @@ namespace GoLive.Tests
             Assert.That(data.Messages.Conversations[0].ContactId, Is.EqualTo("landlord"));
             Assert.That(data.Messages.Conversations[0].Messages[0].MessageId, Is.EqualTo("first"));
             Assert.That(data.Messages.Conversations[0].Messages[0].IsRead, Is.False);
-            Assert.That(data.Version, Is.EqualTo(2));
+            Assert.That(data.Version, Is.EqualTo(3));
+            Assert.That(data.Orders, Is.Not.Null);
+            Assert.That(data.Orders.Version, Is.EqualTo(ShopOrdersSnapshot.CurrentVersion));
+            Assert.That(data.Orders.Orders, Is.Empty);
         }
 
         [Test]
@@ -273,19 +231,33 @@ namespace GoLive.Tests
             Assert.That(data.Messages.Version, Is.EqualTo(1));
         }
 
-        [Test]
-        public void OldSkeletonSaveVersionIsRejectedWithoutMigration()
+        [TestCase(1)]
+        [TestCase(2)]
+        public void OldSkeletonSaveVersionIsRejectedWithoutMigration(int version)
         {
             AddIncoming("current");
+            _shop.TryPurchase(SaveTestWorld.BudgetGpuId);
             Assert.That(Save(), Is.True);
             var data = ReadSave();
-            data.Version = 1;
-            data.Messages = null;
-            File.WriteAllText(_path, JsonUtility.ToJson(data));
+            data.Version = version;
+            // Skeleton saves predate the Orders section; version 1 also predates Messages.
+            string json = JsonUtility.ToJson(data).Replace("\"Orders\":" + JsonUtility.ToJson(data.Orders) + ",", string.Empty);
+            if (version == 1)
+                json = json.Replace("\"Messages\":" + JsonUtility.ToJson(data.Messages) + ",", string.Empty);
+            File.WriteAllText(_path, json);
+            _wallet.Wallet.Restore(777);
+            _shop.RestoreOrders(new ShopOrdersSnapshot());
+            _clock.Clock.AdvanceMinutes(3);
+            _root.transform.position = new Vector3(5, 0, 1);
             string before = SnapshotJson();
+            long clockBefore = _clock.Clock.Current.TotalSeconds;
             LogAssert.Expect(LogType.Error, $"Save validation failed: {_path}");
             Assert.That(Load(), Is.False);
             Assert.That(SnapshotJson(), Is.EqualTo(before));
+            Assert.That(_wallet.Wallet.BalanceCents, Is.EqualTo(777));
+            Assert.That(_shop.Orders.Orders, Is.Empty);
+            Assert.That(_clock.Clock.Current.TotalSeconds, Is.EqualTo(clockBefore));
+            Assert.That(_root.transform.position, Is.EqualTo(new Vector3(5, 0, 1)));
         }
 
         [Test]
@@ -343,9 +315,6 @@ namespace GoLive.Tests
             => (bool)typeof(GameSaveController).GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_save, new object[] { _path });
 
         private static void SetField(object target, string name, object value)
-            => target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
-
-        private static void SetProperty(object target, string name, object value)
-            => target.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.Public).SetValue(target, value);
+            => SaveTestWorld.SetField(target, name, value);
     }
 }

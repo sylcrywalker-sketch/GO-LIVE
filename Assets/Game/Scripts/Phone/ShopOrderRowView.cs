@@ -7,6 +7,7 @@ namespace GoLive.Phone
     [DisallowMultipleComponent]
     public sealed class ShopOrderRowView : MonoBehaviour
     {
+        [SerializeField] private GameObject _thumbnail;
         [SerializeField] private Image _image;
         [SerializeField] private TMP_Text _name;
         [SerializeField] private TMP_Text _price;
@@ -14,6 +15,7 @@ namespace GoLive.Phone
         [SerializeField] private TMP_Text _delivery;
 
         public bool IsConfigured =>
+            _thumbnail != null &&
             _image != null &&
             _name != null &&
             _price != null &&
@@ -23,7 +25,7 @@ namespace GoLive.Phone
         public void Show(Sprite image, string productName, string price, string status, string delivery)
         {
             _image.sprite = image;
-            _image.gameObject.SetActive(image != null);
+            _thumbnail.SetActive(image != null);
 
             _name.text = productName;
             _price.text = price;
