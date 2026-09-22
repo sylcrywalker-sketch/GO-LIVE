@@ -187,3 +187,21 @@ MonoBehaviour:
   - _key: phone.not_enough_money
     _russian: "\u041D\u0435\u0434\u043E\u0441\u0442\u0430\u0442\u043E\u0447\u043D\u043E \u0441\u0440\u0435\u0434\u0441\u0442\u0432"
     _english: Not enough money
+  - _key: phone.orders
+    _russian: "\u0417\u0430\u043A\u0430\u0437\u044B"
+    _english: Orders
+  - _key: phone.orders_empty
+    _russian: "\u0417\u0430\u043A\u0430\u0437\u043E\u0432 \u043F\u043E\u043A\u0430 \u043D\u0435\u0442"
+    _english: No orders yet
+  - _key: phone.order_placed
+    _russian: "\u041E\u0444\u043E\u0440\u043C\u043B\u0435\u043D"
+    _english: Placed
+  - _key: phone.order_delivered
+    _russian: "\u0414\u043E\u0441\u0442\u0430\u0432\u043B\u0435\u043D"
+    _english: Delivered
+  - _key: phone.order_eta
+    _russian: "\u0414\u043E\u0441\u0442\u0430\u0432\u043A\u0430 ~{0}"
+    _english: 'Delivery ~{0}'
+  - _key: phone.order_eta_day
+    _russian: "\u0414\u043E\u0441\u0442\u0430\u0432\u043A\u0430: \u0434\u0435\u043D\u044C {0}, ~{1}"
+    _english: 'Delivery: day {0}, ~{1}'

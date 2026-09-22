@@ -85,6 +85,9 @@
     <Compile Include="Assets\Game\Scripts\Interact\IInteractable.cs" />
     <Compile Include="Assets\Game\Scripts\Economy\RentBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneScreenView.cs" />
+    <Compile Include="Assets\Game\Scripts\Phone\PhoneShopView.cs" />
+    <Compile Include="Assets\Game\Scripts\Phone\ShopProductCardView.cs" />
+    <Compile Include="Assets\Game\Scripts\Phone\ShopOrderRowView.cs" />
     <Compile Include="Assets\Game\Scripts\Time\GameClockBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Sleep\PlayerSleepController.cs" />
     <Compile Include="Assets\Game\Scripts\Sleep\SleepService.cs" />
