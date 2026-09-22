@@ -1,5 +1,7 @@
+using System.Globalization;
 using GoLive.GameTime;
 using GoLive.Localization;
+using GoLive.Shop;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,12 +12,15 @@ namespace GoLive.Phone
     public sealed class PhoneScreenView : MonoBehaviour
     {
         private const string LandlordContactId = "landlord";
+        private const string BudgetGpuProductId = "budget-gpu";
+        private const string BasicKeyboardProductId = "basic-keyboard";
 
-        [Header("Existing engine and scene bindings")]
+        [Header("Core")]
         [SerializeField] private PhoneBehaviour _phone;
         [SerializeField] private LocalizationContext _localization;
         [SerializeField] private GameClockBehaviour _clock;
         [SerializeField] private PhoneMessagesBehaviour _messages;
+        [SerializeField] private ShopBehaviour _shop;
 
         [Header("Shared and Home")]
         [SerializeField] private TMP_Text _header;
@@ -34,26 +39,40 @@ namespace GoLive.Phone
         [SerializeField] private ScrollRect _conversation;
         [SerializeField] private TMP_Text[] _bubbles;
 
-        [Header("Shop visual sample")]
-        [SerializeField] private Image _storefrontSurface;
-        [SerializeField] private Image _productImage;
-        [SerializeField] private TMP_Text _productText;
-        [SerializeField] private Button _buy;
-        [SerializeField] private TMP_Text _buyLabel;
-        [SerializeField] private bool _previewProductAvailable = true;
+        [Header("Shop Storefront")]
+        [SerializeField] private GameObject _storefront;
+
+        [SerializeField] private Button _budgetGpuCard;
+        [SerializeField] private Image _budgetGpuImage;
+        [SerializeField] private TMP_Text _budgetGpuName;
+        [SerializeField] private TMP_Text _budgetGpuPrice;
+        [SerializeField] private TMP_Text _budgetGpuActionLabel;
+
+        [SerializeField] private Button _keyboardCard;
+        [SerializeField] private Image _keyboardImage;
+        [SerializeField] private TMP_Text _keyboardName;
+        [SerializeField] private TMP_Text _keyboardAvailability;
+
+        [Header("Shop Product Details")]
+        [SerializeField] private GameObject _productDetails;
+        [SerializeField] private Image _detailsImage;
+        [SerializeField] private TMP_Text _detailsCategory;
+        [SerializeField] private TMP_Text _detailsName;
+        [SerializeField] private TMP_Text _detailsPrice;
+        [SerializeField] private TMP_Text _detailsDescription;
+        [SerializeField] private Button _detailsBuy;
+        [SerializeField] private TMP_Text _detailsBuyLabel;
 
         public bool IsConversationVisible => _conversationVisible;
         public bool IsProductDetailsVisible => _productDetailsVisible;
 
         private bool _conversationVisible;
         private bool _productDetailsVisible;
-        private bool _previewPressed;
         private bool _started;
         private bool _bound;
 
         private GameClock _subscribedClock;
         private GameTimeSnapshot _time;
-        private ColorBlock _detailButtonColors;
 
         private void Awake()
         {
@@ -63,13 +82,24 @@ namespace GoLive.Phone
                 return;
             }
 
-            _detailButtonColors = _buy.colors;
+            SetShopMode(false);
         }
 
         private void Start()
         {
             if (!isActiveAndEnabled)
                 return;
+
+            if (!_shop.TryGetProduct(BudgetGpuProductId, out _) ||
+                !_shop.TryGetProduct(BasicKeyboardProductId, out _))
+            {
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} requires '{BudgetGpuProductId}' and '{BasicKeyboardProductId}' in the Shop Catalog.",
+                    this);
+
+                enabled = false;
+                return;
+            }
 
             _started = true;
             Bind();
@@ -87,16 +117,8 @@ namespace GoLive.Phone
 
             _conversationVisible = false;
             _productDetailsVisible = false;
-            _previewPressed = false;
-        }
 
-        public void SetProductAvailablePreview(bool available)
-        {
-            _previewProductAvailable = available;
-            _previewPressed = false;
-
-            if (_bound)
-                Refresh();
+            SetShopMode(false);
         }
 
         private void Bind()
@@ -108,7 +130,10 @@ namespace GoLive.Phone
 
             if (_subscribedClock == null)
             {
-                Debug.LogError($"{nameof(PhoneScreenView)} could not access initialized Game Clock.", this);
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} could not access initialized Game Clock.",
+                    this);
+
                 enabled = false;
                 return;
             }
@@ -117,8 +142,12 @@ namespace GoLive.Phone
             _phone.ScreenBackRequested += TryBack;
             _localization.LanguageChanged += HandleLanguageChanged;
             _messages.Messages.Changed += HandleMessagesChanged;
+            _shop.Changed += HandleShopChanged;
+
             _contact.onClick.AddListener(OpenConversation);
-            _buy.onClick.AddListener(HandleShopAction);
+            _budgetGpuCard.onClick.AddListener(OpenBudgetGpuDetails);
+            _detailsBuy.onClick.AddListener(BuyBudgetGpu);
+
             _subscribedClock.MinuteChanged += HandleMinuteChanged;
 
             _time = _subscribedClock.Current;
@@ -136,8 +165,11 @@ namespace GoLive.Phone
             _phone.ScreenBackRequested -= TryBack;
             _localization.LanguageChanged -= HandleLanguageChanged;
             _messages.Messages.Changed -= HandleMessagesChanged;
+            _shop.Changed -= HandleShopChanged;
+
             _contact.onClick.RemoveListener(OpenConversation);
-            _buy.onClick.RemoveListener(HandleShopAction);
+            _budgetGpuCard.onClick.RemoveListener(OpenBudgetGpuDetails);
+            _detailsBuy.onClick.RemoveListener(BuyBudgetGpu);
 
             if (_subscribedClock != null)
                 _subscribedClock.MinuteChanged -= HandleMinuteChanged;
@@ -150,7 +182,8 @@ namespace GoLive.Phone
         {
             _conversationVisible = false;
             _productDetailsVisible = false;
-            _previewPressed = false;
+
+            SetShopMode(false);
             Refresh();
         }
 
@@ -161,7 +194,12 @@ namespace GoLive.Phone
 
         private void HandleMessagesChanged()
         {
-            Refresh();
+            RefreshMessages();
+        }
+
+        private void HandleShopChanged()
+        {
+            RefreshShop();
         }
 
         private void HandleMinuteChanged(GameTimeSnapshot time)
@@ -174,7 +212,9 @@ namespace GoLive.Phone
         {
             if (!_phone.IsInteractive ||
                 _phone.CurrentScreen != PhoneScreenId.Messages ||
-                !_messages.Messages.TryGetConversation(LandlordContactId, out PhoneConversation conversation) ||
+                !_messages.Messages.TryGetConversation(
+                    LandlordContactId,
+                    out PhoneConversation conversation) ||
                 conversation.Messages.Count == 0)
             {
                 return;
@@ -183,48 +223,69 @@ namespace GoLive.Phone
             _conversationVisible = true;
 
             if (!_messages.Messages.MarkConversationRead(LandlordContactId))
-                Refresh();
+                RefreshMessages();
 
             Canvas.ForceUpdateCanvases();
+
             _conversation.StopMovement();
             _conversation.verticalNormalizedPosition = 1f;
+
+            RefreshMessages();
+        }
+
+        private void OpenBudgetGpuDetails()
+        {
+            if (!_phone.IsInteractive ||
+                _phone.CurrentScreen != PhoneScreenId.Shop)
+            {
+                return;
+            }
+
+            _productDetailsVisible = true;
+
+            SetShopMode(true);
+            RefreshShop();
+            RefreshClock();
+        }
+
+        private void BuyBudgetGpu()
+        {
+            if (!_phone.IsInteractive ||
+                _phone.CurrentScreen != PhoneScreenId.Shop ||
+                !_productDetailsVisible)
+            {
+                return;
+            }
+
+            _shop.TryPurchase(BudgetGpuProductId);
+
+            RefreshShop();
         }
 
         private bool TryBack()
         {
-            if (_phone.CurrentScreen == PhoneScreenId.Shop && _productDetailsVisible)
+            if (_phone.CurrentScreen == PhoneScreenId.Shop &&
+                _productDetailsVisible)
             {
                 _productDetailsVisible = false;
-                _previewPressed = false;
-                Refresh();
+
+                SetShopMode(false);
+                RefreshShop();
+                RefreshClock();
+
                 return true;
             }
 
-            if (_phone.CurrentScreen != PhoneScreenId.Messages || !_conversationVisible)
-                return false;
-
-            _conversationVisible = false;
-            Refresh();
-            return true;
-        }
-
-        private void HandleShopAction()
-        {
-            if (!_phone.IsInteractive || _phone.CurrentScreen != PhoneScreenId.Shop)
-                return;
-
-            if (!_productDetailsVisible)
+            if (_phone.CurrentScreen != PhoneScreenId.Messages ||
+                !_conversationVisible)
             {
-                _productDetailsVisible = true;
-                Refresh();
-                return;
+                return false;
             }
 
-            if (!_previewProductAvailable || _previewPressed)
-                return;
+            _conversationVisible = false;
+            RefreshMessages();
 
-            _previewPressed = true;
-            Refresh();
+            return true;
         }
 
         private void Refresh()
@@ -232,7 +293,9 @@ namespace GoLive.Phone
             _shopLabel.text = _localization.Text("phone.shop");
             _messagesLabel.text = _localization.Text("phone.messages");
             _backLabel.text = _localization.Text("phone.back");
-            _back.gameObject.SetActive(_phone.CurrentScreen != PhoneScreenId.Home);
+
+            _back.gameObject.SetActive(
+                _phone.CurrentScreen != PhoneScreenId.Home);
 
             RefreshMessages();
             RefreshShop();
@@ -244,33 +307,46 @@ namespace GoLive.Phone
             int totalUnread = _messages.Messages.TotalUnreadCount;
 
             _unreadBadge.transform.parent.gameObject.SetActive(totalUnread > 0);
-            _unreadBadge.text = totalUnread > 99 ? "99+" : totalUnread.ToString();
+            _unreadBadge.text =
+                totalUnread > 99 ? "99+" : totalUnread.ToString();
+
             _avatar.sprite = _landlordAvatar;
 
-            if (!_messages.Messages.TryGetConversation(LandlordContactId, out PhoneConversation conversation) ||
+            if (!_messages.Messages.TryGetConversation(
+                    LandlordContactId,
+                    out PhoneConversation conversation) ||
                 conversation.Messages.Count == 0)
             {
                 _conversationVisible = false;
+
                 _contact.gameObject.SetActive(false);
                 _conversation.gameObject.SetActive(false);
+
                 ClearBubbles();
                 return;
             }
 
             _contact.gameObject.SetActive(true);
 
-            PhoneMessage latestMessage = conversation.Messages[conversation.Messages.Count - 1];
-            string contactName = _localization.Text("phone.landlord");
+            PhoneMessage latestMessage =
+                conversation.Messages[conversation.Messages.Count - 1];
+
+            string contactName =
+                _localization.Text("phone.landlord");
 
             if (_conversationVisible)
             {
                 _contactText.text =
-                    $"<b>{contactName}</b>\n<size=14><color=#A4B3BE>{_localization.Text("phone.conversation")}</color></size>";
+                    $"<b>{contactName}</b>\n" +
+                    $"<size=14><color=#A4B3BE>{_localization.Text("phone.conversation")}</color></size>";
             }
             else
             {
-                string preview = ResolveContent(latestMessage.Content);
-                string time = FormatTime(latestMessage.Timestamp);
+                string preview =
+                    ResolveContent(latestMessage.Content);
+
+                string time =
+                    FormatTime(latestMessage.Timestamp);
 
                 _contactText.text =
                     $"<b>{contactName}</b>\n" +
@@ -291,20 +367,28 @@ namespace GoLive.Phone
             if (!_conversationVisible)
                 return;
 
-            int visibleCount = Mathf.Min(_bubbles.Length, conversation.Messages.Count);
-            int firstMessageIndex = conversation.Messages.Count - visibleCount;
+            int visibleCount =
+                Mathf.Min(
+                    _bubbles.Length,
+                    conversation.Messages.Count);
+
+            int firstMessageIndex =
+                conversation.Messages.Count - visibleCount;
 
             for (int i = 0; i < visibleCount; i++)
             {
                 TMP_Text bubble = _bubbles[i];
-                PhoneMessage message = conversation.Messages[firstMessageIndex + i];
+
+                PhoneMessage message =
+                    conversation.Messages[firstMessageIndex + i];
 
                 bubble.gameObject.SetActive(true);
                 bubble.text = ResolveContent(message.Content);
 
-                bubble.alignment = message.Direction == MessageDirection.Outgoing
-                    ? TextAlignmentOptions.MidlineRight
-                    : TextAlignmentOptions.MidlineLeft;
+                bubble.alignment =
+                    message.Direction == MessageDirection.Outgoing
+                        ? TextAlignmentOptions.MidlineRight
+                        : TextAlignmentOptions.MidlineLeft;
             }
         }
 
@@ -326,82 +410,131 @@ namespace GoLive.Phone
 
         private void RefreshShop()
         {
-            _storefrontSurface.enabled = !_productDetailsVisible;
-            _buy.interactable = !_productDetailsVisible || (_previewProductAvailable && !_previewPressed);
-
-            _buyLabel.text = _localization.Text(
-                !_productDetailsVisible
-                    ? "phone.details"
-                    : _previewPressed
-                        ? "phone.preview_only"
-                        : _previewProductAvailable
-                            ? "phone.buy"
-                            : "phone.unavailable");
-
-            _buyLabel.alignment = _productDetailsVisible
-                ? TextAlignmentOptions.Center
-                : TextAlignmentOptions.MidlineLeft;
-
-            _buyLabel.color = _productDetailsVisible
-                ? new Color32(23, 33, 43, 255)
-                : new Color32(190, 211, 218, 255);
-
-            _buy.image.color = _productDetailsVisible
-                ? new Color32(180, 200, 203, 255)
-                : Color.white;
-
-            ColorBlock colors = _detailButtonColors;
-
-            if (!_productDetailsVisible)
+            if (!_shop.TryGetProduct(
+                    BudgetGpuProductId,
+                    out ShopProductDefinition gpu))
             {
-                colors.normalColor = new Color(1f, 1f, 1f, 0f);
-                colors.selectedColor = new Color(1f, 1f, 1f, 0f);
-                colors.highlightedColor = new Color(1f, 1f, 1f, 0.02f);
-                colors.pressedColor = new Color(1f, 1f, 1f, 0.04f);
+                return;
             }
 
-            _buy.colors = colors;
+            if (!_shop.TryGetProduct(
+                    BasicKeyboardProductId,
+                    out ShopProductDefinition keyboard))
+            {
+                return;
+            }
 
-            SetRect(
-                _productImage.rectTransform,
-                _productDetailsVisible
-                    ? new Rect(28, 151, 364, 235)
-                    : new Rect(248, 298, 128, 83));
+            _budgetGpuImage.sprite = gpu.Image;
+            _budgetGpuImage.enabled = gpu.Image != null;
 
-            SetRect(
-                _productText.rectTransform,
-                _productDetailsVisible
-                    ? new Rect(32, 408, 356, 185)
-                    : new Rect(48, 130, 324, 490));
+            _budgetGpuName.text =
+                _localization.Text(gpu.NameLocalizationKey);
 
-            SetRect(
-                (RectTransform)_buy.transform,
-                _productDetailsVisible
-                    ? new Rect(28, 604, 364, 54)
-                    : new Rect(28, 210, 364, 216));
+            _budgetGpuPrice.text =
+                FormatMoney(gpu.PriceCents);
 
-            SetRect(
-                _buyLabel.rectTransform,
-                _productDetailsVisible
-                    ? new Rect(8, 0, 348, 54)
-                    : new Rect(20, 160, 324, 40));
+            _budgetGpuActionLabel.text =
+                _localization.Text("phone.details");
 
-            _productText.text = _productDetailsVisible
-                ? $"<size=13><color=#A3B8CA>{_localization.Text("phone.product_category")}</color></size>\n" +
-                  $"<size=30><b>{_localization.Text("phone.product_name")}</b></size>\n" +
-                  $"<line-height=145%><size=32>$15.00</size>\n" +
-                  $"<size=17><color=#BAC5CD>{_localization.Text(_previewPressed ? "phone.preview_feedback" : "phone.product_description")}</color></size>"
-                : _localization.Text("phone.storefront");
+            _budgetGpuCard.interactable = true;
+
+            _keyboardImage.sprite = keyboard.Image;
+            _keyboardImage.enabled = keyboard.Image != null;
+
+            _keyboardName.text =
+                _localization.Text(keyboard.NameLocalizationKey);
+
+            _keyboardAvailability.text =
+                keyboard.IsAvailable
+                    ? FormatMoney(keyboard.PriceCents)
+                    : _localization.Text("phone.unavailable");
+
+            _keyboardCard.interactable = false;
+
+            _detailsImage.sprite = gpu.Image;
+            _detailsImage.enabled = gpu.Image != null;
+
+            _detailsCategory.text =
+                _localization.Text(gpu.CategoryLocalizationKey);
+
+            _detailsName.text =
+                _localization.Text(gpu.NameLocalizationKey);
+
+            _detailsPrice.text =
+                FormatMoney(gpu.PriceCents);
+
+            _detailsDescription.text =
+                _localization.Text(gpu.DescriptionLocalizationKey);
+
+            ShopPurchaseResultCode purchaseState =
+                _shop.EvaluatePurchase(BudgetGpuProductId);
+
+            _detailsBuyLabel.text =
+                _localization.Text(
+                    GetPurchaseButtonKey(purchaseState));
+
+            _detailsBuy.interactable =
+                purchaseState == ShopPurchaseResultCode.Success;
+
+            SetShopMode(_productDetailsVisible);
+        }
+
+        private void SetShopMode(bool showDetails)
+        {
+            if (_storefront != null)
+                _storefront.SetActive(!showDetails);
+
+            if (_productDetails != null)
+                _productDetails.SetActive(showDetails);
+        }
+
+        private string GetPurchaseButtonKey(ShopPurchaseResultCode state)
+        {
+            return state switch
+            {
+                ShopPurchaseResultCode.Success =>
+                    "phone.buy",
+
+                ShopPurchaseResultCode.PurchaseLimitReached =>
+                    "phone.ordered",
+
+                ShopPurchaseResultCode.InsufficientFunds =>
+                    "phone.not_enough_money",
+
+                ShopPurchaseResultCode.Unavailable =>
+                    "phone.unavailable",
+
+                ShopPurchaseResultCode.ProductNotFound =>
+                    "phone.unavailable",
+
+                ShopPurchaseResultCode.NotReady =>
+                    "phone.unavailable",
+
+                ShopPurchaseResultCode.Busy =>
+                    "phone.buy",
+
+                _ =>
+                    "phone.unavailable"
+            };
         }
 
         private void RefreshClock()
         {
-            string title = _phone.CurrentScreen switch
-            {
-                PhoneScreenId.Messages => _localization.Text("phone.messages"),
-                PhoneScreenId.Shop => _localization.Text(_productDetailsVisible ? "phone.product_details" : "phone.shop"),
-                _ => _localization.Text("phone.brand")
-            };
+            string title =
+                _phone.CurrentScreen switch
+                {
+                    PhoneScreenId.Messages =>
+                        _localization.Text("phone.messages"),
+
+                    PhoneScreenId.Shop =>
+                        _localization.Text(
+                            _productDetailsVisible
+                                ? "phone.product_details"
+                                : "phone.shop"),
+
+                    _ =>
+                        _localization.Text("phone.brand")
+                };
 
             _header.text =
                 $"<size=14>{_time.Hour:00}:{_time.Minute:00}<pos=295>LTE</size>\n" +
@@ -415,7 +548,8 @@ namespace GoLive.Phone
         private string UnreadCaption(int count)
         {
             return count > 0
-                ? "  ·  " + _localization.Format("phone.unread", count)
+                ? "  ·  " +
+                  _localization.Format("phone.unread", count)
                 : string.Empty;
         }
 
@@ -424,10 +558,12 @@ namespace GoLive.Phone
             return $"{time.Hour:00}:{time.Minute:00}";
         }
 
-        private static void SetRect(RectTransform target, Rect layout)
+        private static string FormatMoney(long cents)
         {
-            target.anchoredPosition = new Vector2(layout.x, -layout.y);
-            target.sizeDelta = layout.size;
+            decimal dollars = cents / 100m;
+
+            return
+                $"${dollars.ToString("0.00", CultureInfo.InvariantCulture)}";
         }
 
         private bool ValidateConfiguration()
@@ -436,6 +572,7 @@ namespace GoLive.Phone
                 _localization == null ||
                 _clock == null ||
                 _messages == null ||
+                _shop == null ||
                 _header == null ||
                 _homeClock == null ||
                 _shopLabel == null ||
@@ -447,14 +584,30 @@ namespace GoLive.Phone
                 _avatar == null ||
                 _contactText == null ||
                 _conversation == null ||
-                _storefrontSurface == null ||
-                _productImage == null ||
-                _productText == null ||
-                _buy == null ||
-                _buyLabel == null ||
-                _bubbles == null)
+                _bubbles == null ||
+                _storefront == null ||
+                _budgetGpuCard == null ||
+                _budgetGpuImage == null ||
+                _budgetGpuName == null ||
+                _budgetGpuPrice == null ||
+                _budgetGpuActionLabel == null ||
+                _keyboardCard == null ||
+                _keyboardImage == null ||
+                _keyboardName == null ||
+                _keyboardAvailability == null ||
+                _productDetails == null ||
+                _detailsImage == null ||
+                _detailsCategory == null ||
+                _detailsName == null ||
+                _detailsPrice == null ||
+                _detailsDescription == null ||
+                _detailsBuy == null ||
+                _detailsBuyLabel == null)
             {
-                Debug.LogError($"{nameof(PhoneScreenView)} on {name} has incomplete configuration.", this);
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} on {name} has incomplete configuration.",
+                    this);
+
                 return false;
             }
 
@@ -463,7 +616,10 @@ namespace GoLive.Phone
                 if (_bubbles[i] != null)
                     continue;
 
-                Debug.LogError($"{nameof(PhoneScreenView)} on {name} contains an empty message bubble reference.", this);
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} on {name} contains an empty message bubble reference.",
+                    this);
+
                 return false;
             }
 

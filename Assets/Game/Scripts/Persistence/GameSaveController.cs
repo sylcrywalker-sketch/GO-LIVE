@@ -10,6 +10,7 @@ using GoLive.Items;
 using GoLive.Needs;
 using GoLive.Phone;
 using GoLive.Player;
+using GoLive.Shop;
 using GoLive.Sleep;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace GoLive.Persistence
     [DisallowMultipleComponent]
     public sealed class GameSaveController : MonoBehaviour
     {
-        private const int CurrentVersion = 2;
+        private const int CurrentVersion = 3;
         private const string AutosaveFileName = "autosave.json";
 
         [Header("Game State")]
@@ -31,11 +32,19 @@ namespace GoLive.Persistence
         [SerializeField] private RentBehaviour _rent;
         [SerializeField] private PlayerSleepController _sleep;
         [SerializeField] private PhoneMessagesBehaviour _phoneMessages;
+        [SerializeField] private ShopBehaviour _shop;
 
         private bool _bound;
 
-        private string SaveDirectory => Path.Combine(Application.persistentDataPath, "Saves");
-        private string AutosavePath => Path.Combine(SaveDirectory, AutosaveFileName);
+        private string SaveDirectory =>
+            Path.Combine(
+                Application.persistentDataPath,
+                "Saves");
+
+        private string AutosavePath =>
+            Path.Combine(
+                SaveDirectory,
+                AutosaveFileName);
 
         private void Awake()
         {
@@ -60,11 +69,21 @@ namespace GoLive.Persistence
 
         public bool CreateCheckpoint()
         {
-            DateTime now = DateTime.UtcNow;
-            string timestamp = now.ToString("yyyyMMdd_HHmmss_fff", CultureInfo.InvariantCulture);
-            string fileName = $"checkpoint_{timestamp}_{now.Ticks}.json";
+            DateTime now =
+                DateTime.UtcNow;
 
-            return TrySave(Path.Combine(SaveDirectory, fileName));
+            string timestamp =
+                now.ToString(
+                    "yyyyMMdd_HHmmss_fff",
+                    CultureInfo.InvariantCulture);
+
+            string fileName =
+                $"checkpoint_{timestamp}_{now.Ticks}.json";
+
+            return TrySave(
+                Path.Combine(
+                    SaveDirectory,
+                    fileName));
         }
 
         public bool LoadAutosave()
@@ -79,30 +98,46 @@ namespace GoLive.Persistence
 
             if (!Directory.Exists(SaveDirectory))
             {
-                Debug.LogWarning("No checkpoint save directory exists yet.");
+                Debug.LogWarning(
+                    "No checkpoint save directory exists yet.");
+
                 return false;
             }
 
-            string[] files = Directory.GetFiles(SaveDirectory, "checkpoint_*.json");
+            string[] files =
+                Directory.GetFiles(
+                    SaveDirectory,
+                    "checkpoint_*.json");
 
             if (files.Length == 0)
             {
-                Debug.LogWarning("No checkpoints exist yet.");
+                Debug.LogWarning(
+                    "No checkpoints exist yet.");
+
                 return false;
             }
 
-            string latestPath = files[0];
-            DateTime latestWriteTime = File.GetLastWriteTimeUtc(latestPath);
+            string latestPath =
+                files[0];
+
+            DateTime latestWriteTime =
+                File.GetLastWriteTimeUtc(
+                    latestPath);
 
             for (int i = 1; i < files.Length; i++)
             {
-                DateTime writeTime = File.GetLastWriteTimeUtc(files[i]);
+                DateTime writeTime =
+                    File.GetLastWriteTimeUtc(
+                        files[i]);
 
                 if (writeTime <= latestWriteTime)
                     continue;
 
-                latestPath = files[i];
-                latestWriteTime = writeTime;
+                latestPath =
+                    files[i];
+
+                latestWriteTime =
+                    writeTime;
             }
 
             return TryLoad(latestPath);
@@ -141,7 +176,9 @@ namespace GoLive.Persistence
             if (_bound || _sleep == null)
                 return;
 
-            _sleep.SleepCompleted += HandleSleepCompleted;
+            _sleep.SleepCompleted +=
+                HandleSleepCompleted;
+
             _bound = true;
         }
 
@@ -150,28 +187,41 @@ namespace GoLive.Persistence
             if (!_bound || _sleep == null)
                 return;
 
-            _sleep.SleepCompleted -= HandleSleepCompleted;
+            _sleep.SleepCompleted -=
+                HandleSleepCompleted;
+
             _bound = false;
         }
 
-        private void HandleSleepCompleted(SleepResult result)
+        private void HandleSleepCompleted(
+            SleepResult result)
         {
             SaveAutosave();
         }
 
-        private bool TrySave(string path)
+        private bool TrySave(
+            string path)
         {
             if (!EnsureRuntimeStateReady())
                 return false;
 
             try
             {
-                GameSaveData data = Capture();
-                string json = JsonUtility.ToJson(data, true);
+                GameSaveData data =
+                    Capture();
 
-                WriteAtomic(path, json);
+                string json =
+                    JsonUtility.ToJson(
+                        data,
+                        true);
 
-                Debug.Log($"GO! LIVE save created: {path}");
+                WriteAtomic(
+                    path,
+                    json);
+
+                Debug.Log(
+                    $"GO! LIVE save created: {path}");
+
                 return true;
             }
             catch (Exception exception)
@@ -181,34 +231,66 @@ namespace GoLive.Persistence
             }
         }
 
-        private bool TryLoad(string path)
+        private bool TryLoad(
+            string path)
         {
             if (!EnsureRuntimeStateReady())
                 return false;
 
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"Save file does not exist: {path}");
+                Debug.LogWarning(
+                    $"Save file does not exist: {path}");
+
                 return false;
             }
 
             try
             {
-                string json = File.ReadAllText(path, Encoding.UTF8);
-                // FromJson creates default inline objects even for missing/null JSON sections.
-                // Overwrite an invalid sentinel so a missing Messages payload cannot silently erase history.
-                GameSaveData data = new() { Messages = new PhoneMessagesSnapshot { Version = 0, Conversations = null } };
-                JsonUtility.FromJsonOverwrite(json, data);
+                string json =
+                    File.ReadAllText(
+                        path,
+                        Encoding.UTF8);
 
-                if (!ValidateSaveData(data, out Dictionary<string, WorldItem> sceneItems))
+                GameSaveData data =
+                    new()
+                    {
+                        Messages =
+                            new PhoneMessagesSnapshot
+                            {
+                                Version = 0,
+                                Conversations = null
+                            },
+
+                        Orders =
+                            new ShopOrdersSnapshot
+                            {
+                                Version = 0,
+                                Orders = null
+                            }
+                    };
+
+                JsonUtility.FromJsonOverwrite(
+                    json,
+                    data);
+
+                if (!ValidateSaveData(
+                        data,
+                        out Dictionary<string, WorldItem> sceneItems))
                 {
-                    Debug.LogError($"Save validation failed: {path}");
+                    Debug.LogError(
+                        $"Save validation failed: {path}");
+
                     return false;
                 }
 
-                Apply(data, sceneItems);
+                Apply(
+                    data,
+                    sceneItems);
 
-                Debug.Log($"GO! LIVE save loaded: {path}");
+                Debug.Log(
+                    $"GO! LIVE save loaded: {path}");
+
                 return true;
             }
             catch (Exception exception)
@@ -220,193 +302,360 @@ namespace GoLive.Persistence
 
         private GameSaveData Capture()
         {
-            PlayerPoseSnapshot playerPose = _player.CapturePose();
-            PlayerNeedsSnapshot needs = _needs.Needs.Current;
+            PlayerPoseSnapshot playerPose =
+                _player.CapturePose();
 
-            if (!_rent.TryGetSnapshot(out RentSnapshot rent))
-                throw new InvalidOperationException("Rent state is not initialized.");
+            PlayerNeedsSnapshot needs =
+                _needs.Needs.Current;
 
-            IReadOnlyList<ItemInstance> inventoryItems = _inventory.Inventory.Items;
-            Dictionary<string, int> inventoryIndices = new(StringComparer.Ordinal);
+            if (!_rent.TryGetSnapshot(
+                    out RentSnapshot rent))
+            {
+                throw new InvalidOperationException(
+                    "Rent state is not initialized.");
+            }
+
+            IReadOnlyList<ItemInstance> inventoryItems =
+                _inventory.Inventory.Items;
+
+            Dictionary<string, int> inventoryIndices =
+                new(StringComparer.Ordinal);
 
             for (int i = 0; i < inventoryItems.Count; i++)
-                inventoryIndices.Add(inventoryItems[i].InstanceId, i);
+            {
+                inventoryIndices.Add(
+                    inventoryItems[i].InstanceId,
+                    i);
+            }
 
-            WorldItem[] worldItems = UnityEngine.Object.FindObjectsByType<WorldItem>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+            WorldItem[] worldItems =
+                UnityEngine.Object.FindObjectsByType<WorldItem>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None);
 
-            ItemSaveData[] itemData = new ItemSaveData[worldItems.Length];
-            HashSet<string> instanceIds = new(StringComparer.Ordinal);
+            ItemSaveData[] itemData =
+                new ItemSaveData[worldItems.Length];
+
+            HashSet<string> instanceIds =
+                new(StringComparer.Ordinal);
 
             for (int i = 0; i < worldItems.Length; i++)
             {
-                WorldItem item = worldItems[i];
+                WorldItem item =
+                    worldItems[i];
 
                 if (item.Instance == null)
-                    throw new InvalidOperationException($"WorldItem '{item.name}' has no runtime ItemInstance.");
-
-                if (!instanceIds.Add(item.Instance.InstanceId))
-                    throw new InvalidOperationException($"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
-
-                int inventoryIndex = inventoryIndices.TryGetValue(item.Instance.InstanceId, out int index) ? index : -1;
-
-                itemData[i] = new ItemSaveData
                 {
-                    InstanceId = item.Instance.InstanceId,
-                    DefinitionId = item.Instance.DefinitionId,
-                    Location = item.Instance.Location,
-                    InventoryIndex = inventoryIndex,
-                    Position = item.transform.position,
-                    Rotation = item.transform.rotation
-                };
+                    throw new InvalidOperationException(
+                        $"WorldItem '{item.name}' has no runtime ItemInstance.");
+                }
+
+                if (!instanceIds.Add(
+                        item.Instance.InstanceId))
+                {
+                    throw new InvalidOperationException(
+                        $"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
+                }
+
+                int inventoryIndex =
+                    inventoryIndices.TryGetValue(
+                        item.Instance.InstanceId,
+                        out int index)
+                        ? index
+                        : -1;
+
+                itemData[i] =
+                    new ItemSaveData
+                    {
+                        InstanceId =
+                            item.Instance.InstanceId,
+
+                        DefinitionId =
+                            item.Instance.DefinitionId,
+
+                        Location =
+                            item.Instance.Location,
+
+                        InventoryIndex =
+                            inventoryIndex,
+
+                        Position =
+                            item.transform.position,
+
+                        Rotation =
+                            item.transform.rotation
+                    };
             }
 
-            Array.Sort(itemData, (left, right) => string.CompareOrdinal(left.InstanceId, right.InstanceId));
+            Array.Sort(
+                itemData,
+                (left, right) =>
+                    string.CompareOrdinal(
+                        left.InstanceId,
+                        right.InstanceId));
 
             return new GameSaveData
             {
-                Version = CurrentVersion,
-                SavedAtUtcTicks = DateTime.UtcNow.Ticks,
+                Version =
+                    CurrentVersion,
 
-                Player = new PlayerSaveData
-                {
-                    Position = playerPose.Position,
-                    Rotation = playerPose.Rotation,
-                    Pitch = playerPose.Pitch
-                },
+                SavedAtUtcTicks =
+                    DateTime.UtcNow.Ticks,
 
-                GameTimeSeconds = _gameClock.Clock.Current.TotalSeconds,
-                Hunger = needs.Hunger,
-                Concentration = needs.Concentration,
-                BalanceCents = _wallet.Wallet.BalanceCents,
+                Player =
+                    new PlayerSaveData
+                    {
+                        Position =
+                            playerPose.Position,
 
-                Rent = new RentSaveData
-                {
-                    AmountDueCents = rent.AmountDueCents,
-                    FirstPaymentSettled = rent.FirstPaymentSettled,
-                    FirstDeadlineMissed = rent.FirstDeadlineMissed,
-                    SecondBillIssued = rent.SecondBillIssued,
-                    Outcome = rent.Outcome,
-                    ProcessedThroughSeconds = rent.ProcessedThroughSeconds
-                },
+                        Rotation =
+                            playerPose.Rotation,
 
-                Items = itemData,
-                Messages = _phoneMessages.Messages.CaptureSnapshot()
+                        Pitch =
+                            playerPose.Pitch
+                    },
+
+                GameTimeSeconds =
+                    _gameClock.Clock.Current.TotalSeconds,
+
+                Hunger =
+                    needs.Hunger,
+
+                Concentration =
+                    needs.Concentration,
+
+                BalanceCents =
+                    _wallet.Wallet.BalanceCents,
+
+                Rent =
+                    new RentSaveData
+                    {
+                        AmountDueCents =
+                            rent.AmountDueCents,
+
+                        FirstPaymentSettled =
+                            rent.FirstPaymentSettled,
+
+                        FirstDeadlineMissed =
+                            rent.FirstDeadlineMissed,
+
+                        SecondBillIssued =
+                            rent.SecondBillIssued,
+
+                        Outcome =
+                            rent.Outcome,
+
+                        ProcessedThroughSeconds =
+                            rent.ProcessedThroughSeconds
+                    },
+
+                Items =
+                    itemData,
+
+                Messages =
+                    _phoneMessages.Messages.CaptureSnapshot(),
+
+                Orders =
+                    _shop.CaptureOrders()
             };
         }
 
-        private void Apply(GameSaveData data, Dictionary<string, WorldItem> sceneItems)
+        private void Apply(
+            GameSaveData data,
+            Dictionary<string, WorldItem> sceneItems)
         {
-            Dictionary<int, WorldItem> inventoryByIndex = new();
-            HashSet<string> savedIds = new(StringComparer.Ordinal);
-            WorldItem carriedItem = null;
+            Dictionary<int, WorldItem> inventoryByIndex =
+                new();
+
+            HashSet<string> savedIds =
+                new(StringComparer.Ordinal);
+
+            WorldItem carriedItem =
+                null;
 
             for (int i = 0; i < data.Items.Length; i++)
             {
-                ItemSaveData savedItem = data.Items[i];
-                savedIds.Add(savedItem.InstanceId);
+                ItemSaveData savedItem =
+                    data.Items[i];
 
-                WorldItem worldItem = sceneItems[savedItem.InstanceId];
-                ItemInstance instance = new(savedItem.InstanceId, savedItem.DefinitionId, savedItem.Location);
+                savedIds.Add(
+                    savedItem.InstanceId);
 
-                bool restored = savedItem.Location switch
-                {
-                    ItemLocation.World => worldItem.RestoreAsWorld(instance, savedItem.Position, savedItem.Rotation),
-                    ItemLocation.Inventory => worldItem.RestoreAsInventory(instance, _inventory.StoredItemsRoot),
-                    ItemLocation.Carried => worldItem.RestoreAsCarried(instance, _carry.CarryAnchor),
-                    ItemLocation.Removed => worldItem.RestoreAsRemoved(instance),
-                    _ => false
-                };
+                WorldItem worldItem =
+                    sceneItems[savedItem.InstanceId];
+
+                ItemInstance instance =
+                    new(
+                        savedItem.InstanceId,
+                        savedItem.DefinitionId,
+                        savedItem.Location);
+
+                bool restored =
+                    savedItem.Location switch
+                    {
+                        ItemLocation.World =>
+                            worldItem.RestoreAsWorld(
+                                instance,
+                                savedItem.Position,
+                                savedItem.Rotation),
+
+                        ItemLocation.Inventory =>
+                            worldItem.RestoreAsInventory(
+                                instance,
+                                _inventory.StoredItemsRoot),
+
+                        ItemLocation.Carried =>
+                            worldItem.RestoreAsCarried(
+                                instance,
+                                _carry.CarryAnchor),
+
+                        ItemLocation.Removed =>
+                            worldItem.RestoreAsRemoved(
+                                instance),
+
+                        _ =>
+                            false
+                    };
 
                 if (!restored)
-                    throw new InvalidOperationException($"Failed to restore item {savedItem.InstanceId}.");
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to restore item {savedItem.InstanceId}.");
+                }
 
-                if (savedItem.Location == ItemLocation.Inventory)
-                    inventoryByIndex.Add(savedItem.InventoryIndex, worldItem);
+                if (savedItem.Location ==
+                    ItemLocation.Inventory)
+                {
+                    inventoryByIndex.Add(
+                        savedItem.InventoryIndex,
+                        worldItem);
+                }
 
-                if (savedItem.Location == ItemLocation.Carried)
-                    carriedItem = worldItem;
+                if (savedItem.Location ==
+                    ItemLocation.Carried)
+                {
+                    carriedItem =
+                        worldItem;
+                }
             }
 
-            foreach (KeyValuePair<string, WorldItem> pair in sceneItems)
+            foreach (
+                KeyValuePair<string, WorldItem> pair
+                in sceneItems)
             {
                 if (savedIds.Contains(pair.Key))
                     continue;
 
-                WorldItem item = pair.Value;
+                WorldItem item =
+                    pair.Value;
 
                 if (item.Instance == null)
                     continue;
 
-                ItemInstance removed = new(
-                    item.Instance.InstanceId,
-                    item.Instance.DefinitionId,
-                    ItemLocation.Removed);
+                ItemInstance removed =
+                    new(
+                        item.Instance.InstanceId,
+                        item.Instance.DefinitionId,
+                        ItemLocation.Removed);
 
-                item.RestoreAsRemoved(removed);
+                item.RestoreAsRemoved(
+                    removed);
             }
 
-            List<WorldItem> orderedInventory = new(inventoryByIndex.Count);
+            List<WorldItem> orderedInventory =
+                new(inventoryByIndex.Count);
 
             for (int i = 0; i < inventoryByIndex.Count; i++)
-                orderedInventory.Add(inventoryByIndex[i]);
+            {
+                orderedInventory.Add(
+                    inventoryByIndex[i]);
+            }
 
-            if (!_inventory.RestoreStoredItems(orderedInventory))
-                throw new InvalidOperationException("Failed to restore Inventory state.");
+            if (!_inventory.RestoreStoredItems(
+                    orderedInventory))
+            {
+                throw new InvalidOperationException(
+                    "Failed to restore Inventory state.");
+            }
 
-            if (!_carry.RestoreCarriedItem(carriedItem))
-                throw new InvalidOperationException("Failed to restore Carry state.");
+            if (!_carry.RestoreCarriedItem(
+                    carriedItem))
+            {
+                throw new InvalidOperationException(
+                    "Failed to restore Carry state.");
+            }
 
-            _player.RestorePose(new PlayerPoseSnapshot(
-                data.Player.Position,
-                data.Player.Rotation,
-                data.Player.Pitch));
+            _player.RestorePose(
+                new PlayerPoseSnapshot(
+                    data.Player.Position,
+                    data.Player.Rotation,
+                    data.Player.Pitch));
 
-            _gameClock.Clock.Restore(new GameTimeSnapshot(data.GameTimeSeconds));
+            _gameClock.Clock.Restore(
+                new GameTimeSnapshot(
+                    data.GameTimeSeconds));
 
-            PlayerNeedsSnapshot currentNeeds = _needs.Needs.Current;
+            PlayerNeedsSnapshot currentNeeds =
+                _needs.Needs.Current;
 
-            _needs.Restore(new PlayerNeedsSnapshot(
-                data.Hunger,
-                currentNeeds.MaxHunger,
-                data.Concentration,
-                currentNeeds.MaxConcentration));
+            _needs.Restore(
+                new PlayerNeedsSnapshot(
+                    data.Hunger,
+                    currentNeeds.MaxHunger,
+                    data.Concentration,
+                    currentNeeds.MaxConcentration));
 
-            _wallet.Wallet.Restore(data.BalanceCents);
+            _wallet.Wallet.Restore(
+                data.BalanceCents);
 
-            _rent.Restore(new RentSnapshot(
-                data.Rent.AmountDueCents,
-                data.Rent.FirstPaymentSettled,
-                data.Rent.FirstDeadlineMissed,
-                data.Rent.SecondBillIssued,
-                data.Rent.Outcome,
-                data.Rent.ProcessedThroughSeconds));
+            _shop.RestoreOrders(
+                data.Orders);
 
-            _phoneMessages.Messages.Restore(data.Messages);
+            _rent.Restore(
+                new RentSnapshot(
+                    data.Rent.AmountDueCents,
+                    data.Rent.FirstPaymentSettled,
+                    data.Rent.FirstDeadlineMissed,
+                    data.Rent.SecondBillIssued,
+                    data.Rent.Outcome,
+                    data.Rent.ProcessedThroughSeconds));
+
+            _phoneMessages.Messages.Restore(
+                data.Messages);
         }
 
-        private bool ValidateSaveData(GameSaveData data, out Dictionary<string, WorldItem> sceneItems)
+        private bool ValidateSaveData(
+            GameSaveData data,
+            out Dictionary<string, WorldItem> sceneItems)
         {
-            sceneItems = BuildSceneItemMap();
+            sceneItems =
+                BuildSceneItemMap();
 
             if (data == null ||
                 data.Version != CurrentVersion ||
                 data.Player == null ||
                 data.Rent == null ||
                 data.Items == null ||
-                data.Messages == null)
+                data.Messages == null ||
+                data.Orders == null)
             {
                 return false;
             }
 
-            // Preflight on an unobserved temporary instance before Apply can change any live state.
-            // Keep snapshot validation in the domain; this instance is not a second runtime owner.
             try
             {
-                new PhoneMessages().Restore(data.Messages);
+                new PhoneMessages()
+                    .Restore(
+                        data.Messages);
             }
             catch (ArgumentException)
+            {
+                return false;
+            }
+
+            if (!_shop.ValidateOrdersSnapshot(
+                    data.Orders,
+                    data.GameTimeSeconds))
             {
                 return false;
             }
@@ -419,45 +668,79 @@ namespace GoLive.Persistence
                 return false;
             }
 
-            if (data.Rent.ProcessedThroughSeconds > data.GameTimeSeconds)
-                return false;
-
-            PlayerNeedsSnapshot currentNeeds = _needs.Needs.Current;
-
-            if (!IsFiniteInRange(data.Hunger, 0f, currentNeeds.MaxHunger) ||
-                !IsFiniteInRange(data.Concentration, 0f, currentNeeds.MaxConcentration))
+            if (data.Rent.ProcessedThroughSeconds >
+                data.GameTimeSeconds)
             {
                 return false;
             }
 
-            HashSet<string> savedIds = new(StringComparer.Ordinal);
-            HashSet<int> inventoryIndices = new();
-            int inventoryCount = 0;
-            int carriedCount = 0;
+            PlayerNeedsSnapshot currentNeeds =
+                _needs.Needs.Current;
+
+            if (!IsFiniteInRange(
+                    data.Hunger,
+                    0f,
+                    currentNeeds.MaxHunger) ||
+                !IsFiniteInRange(
+                    data.Concentration,
+                    0f,
+                    currentNeeds.MaxConcentration))
+            {
+                return false;
+            }
+
+            HashSet<string> savedIds =
+                new(StringComparer.Ordinal);
+
+            HashSet<int> inventoryIndices =
+                new();
+
+            int inventoryCount =
+                0;
+
+            int carriedCount =
+                0;
 
             for (int i = 0; i < data.Items.Length; i++)
             {
-                ItemSaveData item = data.Items[i];
+                ItemSaveData item =
+                    data.Items[i];
 
                 if (item == null ||
                     string.IsNullOrWhiteSpace(item.InstanceId) ||
                     string.IsNullOrWhiteSpace(item.DefinitionId) ||
                     !savedIds.Add(item.InstanceId) ||
-                    !Enum.IsDefined(typeof(ItemLocation), item.Location))
+                    !Enum.IsDefined(
+                        typeof(ItemLocation),
+                        item.Location))
                 {
                     return false;
                 }
 
-                if (!sceneItems.TryGetValue(item.InstanceId, out WorldItem worldItem))
-                    return false;
-
-                if (!string.Equals(worldItem.Definition.ItemId, item.DefinitionId, StringComparison.Ordinal))
-                    return false;
-
-                if (item.Location == ItemLocation.Inventory)
+                if (!sceneItems.TryGetValue(
+                        item.InstanceId,
+                        out WorldItem worldItem))
                 {
-                    if (item.InventoryIndex < 0 || !inventoryIndices.Add(item.InventoryIndex))
+                    return false;
+                }
+
+                if (!string.Equals(
+                        worldItem.Definition.ItemId,
+                        item.DefinitionId,
+                        StringComparison.Ordinal))
+                {
+                    return false;
+                }
+
+                if (item.Location ==
+                    ItemLocation.Inventory)
+                {
+                    if (item.InventoryIndex < 0 ||
+                        !inventoryIndices.Add(
+                            item.InventoryIndex))
+                    {
                         return false;
+                    }
 
                     inventoryCount++;
                 }
@@ -466,12 +749,19 @@ namespace GoLive.Persistence
                     return false;
                 }
 
-                if (item.Location == ItemLocation.Carried)
+                if (item.Location ==
+                    ItemLocation.Carried)
+                {
                     carriedCount++;
+                }
             }
 
-            if (inventoryCount > _inventory.Inventory.Capacity || carriedCount > 1)
+            if (inventoryCount >
+                    _inventory.Inventory.Capacity ||
+                carriedCount > 1)
+            {
                 return false;
+            }
 
             for (int i = 0; i < inventoryCount; i++)
             {
@@ -482,23 +772,35 @@ namespace GoLive.Persistence
             return true;
         }
 
-        private Dictionary<string, WorldItem> BuildSceneItemMap()
+        private Dictionary<string, WorldItem>
+            BuildSceneItemMap()
         {
-            WorldItem[] items = UnityEngine.Object.FindObjectsByType<WorldItem>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+            WorldItem[] items =
+                UnityEngine.Object.FindObjectsByType<WorldItem>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None);
 
-            Dictionary<string, WorldItem> result = new(StringComparer.Ordinal);
+            Dictionary<string, WorldItem> result =
+                new(StringComparer.Ordinal);
 
             for (int i = 0; i < items.Length; i++)
             {
-                WorldItem item = items[i];
+                WorldItem item =
+                    items[i];
 
                 if (item.Instance == null)
-                    throw new InvalidOperationException($"WorldItem '{item.name}' has no runtime ItemInstance.");
+                {
+                    throw new InvalidOperationException(
+                        $"WorldItem '{item.name}' has no runtime ItemInstance.");
+                }
 
-                if (!result.TryAdd(item.Instance.InstanceId, item))
-                    throw new InvalidOperationException($"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
+                if (!result.TryAdd(
+                        item.Instance.InstanceId,
+                        item))
+                {
+                    throw new InvalidOperationException(
+                        $"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
+                }
             }
 
             return result;
@@ -513,12 +815,16 @@ namespace GoLive.Persistence
                 _gameClock.Clock != null &&
                 _needs.Needs != null &&
                 _wallet.Wallet != null &&
+                _shop.IsReady &&
                 _rent.TryGetSnapshot(out _))
             {
                 return true;
             }
 
-            Debug.LogError($"{nameof(GameSaveController)} cannot save or load because game state is not initialized.", this);
+            Debug.LogError(
+                $"{nameof(GameSaveController)} cannot save or load because game state is not initialized.",
+                this);
+
             return false;
         }
 
@@ -532,16 +838,23 @@ namespace GoLive.Persistence
                 _wallet != null &&
                 _rent != null &&
                 _sleep != null &&
-                _phoneMessages != null)
+                _phoneMessages != null &&
+                _shop != null)
             {
                 return true;
             }
 
-            Debug.LogError($"{nameof(GameSaveController)} on {name} has incomplete configuration.", this);
+            Debug.LogError(
+                $"{nameof(GameSaveController)} on {name} has incomplete configuration.",
+                this);
+
             return false;
         }
 
-        private static bool IsFiniteInRange(float value, float minimum, float maximum)
+        private static bool IsFiniteInRange(
+            float value,
+            float minimum,
+            float maximum)
         {
             return !float.IsNaN(value) &&
                    !float.IsInfinity(value) &&
@@ -549,30 +862,49 @@ namespace GoLive.Persistence
                    value <= maximum;
         }
 
-        private static void WriteAtomic(string path, string content)
+        private static void WriteAtomic(
+            string path,
+            string content)
         {
-            string directory = Path.GetDirectoryName(path);
+            string directory =
+                Path.GetDirectoryName(path);
 
             if (string.IsNullOrWhiteSpace(directory))
-                throw new DirectoryNotFoundException("Save directory could not be resolved.");
+            {
+                throw new DirectoryNotFoundException(
+                    "Save directory could not be resolved.");
+            }
 
-            Directory.CreateDirectory(directory);
+            Directory.CreateDirectory(
+                directory);
 
-            string temporaryPath = path + ".tmp";
-            string backupPath = path + ".bak";
+            string temporaryPath =
+                path + ".tmp";
 
-            File.WriteAllText(temporaryPath, content, new UTF8Encoding(false));
+            string backupPath =
+                path + ".bak";
+
+            File.WriteAllText(
+                temporaryPath,
+                content,
+                new UTF8Encoding(false));
 
             if (!File.Exists(path))
             {
-                File.Move(temporaryPath, path);
+                File.Move(
+                    temporaryPath,
+                    path);
+
                 return;
             }
 
             if (File.Exists(backupPath))
                 File.Delete(backupPath);
 
-            File.Replace(temporaryPath, path, backupPath);
+            File.Replace(
+                temporaryPath,
+                path,
+                backupPath);
 
             if (File.Exists(backupPath))
                 File.Delete(backupPath);

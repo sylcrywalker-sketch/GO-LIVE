@@ -1882,6 +1882,7 @@ MonoBehaviour:
   _phone: {fileID: 7655668068815808359}
   _localization: {fileID: 0}
   _clock: {fileID: 0}
+  _messages: {fileID: 0}
   _header: {fileID: 1222465428132621008}
   _homeClock: {fileID: 9198843402029528703}
   _shopLabel: {fileID: 6556043080707972360}
@@ -1892,7 +1893,6 @@ MonoBehaviour:
   _contact: {fileID: 3995483778419263268}
   _avatar: {fileID: 2997779495668787470}
   _landlordAvatar: {fileID: 21300000, guid: 8c759d0274f19ee4fa4a347bd0b48edc, type: 3}
-  _previewUnreadCount: 1
   _contactText: {fileID: 6740885326830187764}
   _conversation: {fileID: 1396081921183210994}
   _bubbles:

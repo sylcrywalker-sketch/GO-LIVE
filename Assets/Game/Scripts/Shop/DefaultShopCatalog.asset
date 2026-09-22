@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27fc379fb4e7a4149bb417237ef3423e, type: 3}
+  m_Name: DefaultShopCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Shop.ShopCatalogConfig
+  products:
+  - productId: budget-gpu
+    nameLocalizationKey: shop.product.budget_gpu.name
+    descriptionLocalizationKey: shop.product.budget_gpu.description
+    categoryLocalizationKey: shop.category.pc_parts
+    priceCents: 1500
+    availability: 0
+    maxPurchases: 1
+    image: {fileID: 21300000, guid: 50c2791261efdab4a9a9c6b990909524, type: 3}
+    fulfillmentItem: {fileID: 11400000, guid: eb920c548c66d684297b6eca5259fa7d, type: 2}
+    deliveryDelayMinutes: 150
+  - productId: basic-keyboard
+    nameLocalizationKey: shop.product.basic_keyboard.name
+    descriptionLocalizationKey: shop.product.basic_keyboard.description
+    categoryLocalizationKey: shop.category.peripherals
+    priceCents: 800
+    availability: 1
+    maxPurchases: 1
+    image: {fileID: 0}
+    fulfillmentItem: {fileID: 0}
+    deliveryDelayMinutes: 0
