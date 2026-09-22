@@ -1,7 +1,7 @@
 ﻿// ===== Combined Scripts Header =====
-// Generation Time: 9/22/2026 8:28:57 AM
+// Generation Time: 9/22/2026 7:43:44 PM
 // Encoding: Unicode (UTF-8)
-// Total Files: 54
+// Total Files: 57
 // =================================
 
 // ===== Consolidated Usings =====
@@ -14,6 +14,7 @@ using GoLive.Localization;
 using GoLive.Needs;
 using GoLive.Phone;
 using GoLive.Player;
+using GoLive.Shop;
 using GoLive.Sleep;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,7 +33,7 @@ using UnityEngine.UI;
 using UnityEngine;
 // =================================
 
-//==== File 1 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\EconomyConfig.cs ====
+//==== File 1 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\EconomyConfig.cs ====
 namespace GoLive.Economy
 {
     [CreateAssetMenu(fileName = "EconomyConfig", menuName = "GO! LIVE/Economy/Economy Config")]
@@ -45,7 +46,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 2 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\RentAccount.cs ====
+//==== File 2 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\RentAccount.cs ====
 namespace GoLive.Economy
 {
     public enum RentOutcome
@@ -223,7 +224,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 3 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\RentBehaviour.cs ====
+//==== File 3 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\RentBehaviour.cs ====
 namespace GoLive.Economy
 {
     [DisallowMultipleComponent]
@@ -368,7 +369,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 4 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\RentConfig.cs ====
+//==== File 4 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\RentConfig.cs ====
 namespace GoLive.Economy
 {
     [CreateAssetMenu(fileName = "RentConfig", menuName = "GO! LIVE/Economy/Rent Config")]
@@ -436,7 +437,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 5 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\RentHudView.cs ====
+//==== File 5 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\RentHudView.cs ====
 namespace GoLive.Economy
 {
     [DisallowMultipleComponent]
@@ -574,7 +575,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 6 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\Wallet.cs ====
+//==== File 6 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\Wallet.cs ====
 namespace GoLive.Economy
 {
     public sealed class Wallet
@@ -633,7 +634,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 7 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\WalletBehaviour.cs ====
+//==== File 7 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\WalletBehaviour.cs ====
 namespace GoLive.Economy
 {
     [DisallowMultipleComponent]
@@ -665,7 +666,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 8 of 54: E:/GO! Live/Assets\Game/Scripts\Economy\WalletHudView.cs ====
+//==== File 8 of 57: E:/GO! Live/Assets\Game/Scripts\Economy\WalletHudView.cs ====
 namespace GoLive.Economy
 {
     [DisallowMultipleComponent]
@@ -737,7 +738,7 @@ namespace GoLive.Economy
 }
 
 
-//==== File 9 of 54: E:/GO! Live/Assets\Game/Scripts\Food\FoodConsumable.cs ====
+//==== File 9 of 57: E:/GO! Live/Assets\Game/Scripts\Food\FoodConsumable.cs ====
 namespace GoLive.Food
 {
     [DisallowMultipleComponent]
@@ -798,7 +799,7 @@ namespace GoLive.Food
 }
 
 
-//==== File 10 of 54: E:/GO! Live/Assets\Game/Scripts\Food\FoodConsumption.cs ====
+//==== File 10 of 57: E:/GO! Live/Assets\Game/Scripts\Food\FoodConsumption.cs ====
 namespace GoLive.Food
 {
     public readonly struct FoodEffect
@@ -860,7 +861,7 @@ namespace GoLive.Food
 }
 
 
-//==== File 11 of 54: E:/GO! Live/Assets\Game/Scripts\Food\PlayerFoodConsumption.cs ====
+//==== File 11 of 57: E:/GO! Live/Assets\Game/Scripts\Food\PlayerFoodConsumption.cs ====
 namespace GoLive.Food
 {
     [DisallowMultipleComponent]
@@ -922,7 +923,7 @@ namespace GoLive.Food
 }
 
 
-//==== File 12 of 54: E:/GO! Live/Assets\Game/Scripts\HUD\HudBackdropGraphic.cs ====
+//==== File 12 of 57: E:/GO! Live/Assets\Game/Scripts\HUD\HudBackdropGraphic.cs ====
 namespace GoLive.HUD
 {
     /// <summary>Local feathered contrast behind HUD text. Built once using the shared UI material.</summary>
@@ -963,7 +964,7 @@ namespace GoLive.HUD
 }
 
 
-//==== File 13 of 54: E:/GO! Live/Assets\Game/Scripts\HUD\InteractionPromptView.cs ====
+//==== File 13 of 57: E:/GO! Live/Assets\Game/Scripts\HUD\InteractionPromptView.cs ====
 namespace GoLive.HUD
 {
     [DisallowMultipleComponent]
@@ -1069,7 +1070,7 @@ namespace GoLive.HUD
 }
 
 
-//==== File 14 of 54: E:/GO! Live/Assets\Game/Scripts\Interact\IInteractable.cs ====
+//==== File 14 of 57: E:/GO! Live/Assets\Game/Scripts\Interact\IInteractable.cs ====
 namespace GoLive.Interaction
 {
     public enum InteractionAction
@@ -1157,7 +1158,7 @@ namespace GoLive.Interaction
 }
 
 
-//==== File 15 of 54: E:/GO! Live/Assets\Game/Scripts\Interact\PlayerInteractor.cs ====
+//==== File 15 of 57: E:/GO! Live/Assets\Game/Scripts\Interact\PlayerInteractor.cs ====
 namespace GoLive.Player
 {
     public readonly struct InteractionPromptState : IEquatable<InteractionPromptState>
@@ -1416,7 +1417,7 @@ namespace GoLive.Player
 }
 
 
-//==== File 16 of 54: E:/GO! Live/Assets\Game/Scripts\Inventory\Inventory.cs ====
+//==== File 16 of 57: E:/GO! Live/Assets\Game/Scripts\Inventory\Inventory.cs ====
 namespace GoLive.Inventory
 {
     public sealed class Inventory
@@ -1522,7 +1523,7 @@ namespace GoLive.Inventory
 }
 
 
-//==== File 17 of 54: E:/GO! Live/Assets\Game/Scripts\Inventory\InventoryOutlineIcon.cs ====
+//==== File 17 of 57: E:/GO! Live/Assets\Game/Scripts\Inventory\InventoryOutlineIcon.cs ====
 namespace GoLive.Inventory
 {
     public enum InventoryIconShape { Backpack, Phone, Tasks, Broadcast, Map, Settings, Hand, Place, Use }
@@ -1602,7 +1603,7 @@ namespace GoLive.Inventory
 }
 
 
-//==== File 18 of 54: E:/GO! Live/Assets\Game/Scripts\Inventory\InventoryUiController.cs ====
+//==== File 18 of 57: E:/GO! Live/Assets\Game/Scripts\Inventory\InventoryUiController.cs ====
 namespace GoLive.Inventory
 {
     [DisallowMultipleComponent]
@@ -2121,7 +2122,7 @@ namespace GoLive.Inventory
 }
 
 
-//==== File 19 of 54: E:/GO! Live/Assets\Game/Scripts\Inventory\PlayerInventory.cs ====
+//==== File 19 of 57: E:/GO! Live/Assets\Game/Scripts\Inventory\PlayerInventory.cs ====
 namespace GoLive.Inventory
 {
     [DisallowMultipleComponent]
@@ -2249,7 +2250,7 @@ namespace GoLive.Inventory
 }
 
 
-//==== File 20 of 54: E:/GO! Live/Assets\Game/Scripts\Items\ItemDefinition.cs ====
+//==== File 20 of 57: E:/GO! Live/Assets\Game/Scripts\Items\ItemDefinition.cs ====
 namespace GoLive.Items
 {
     public enum ItemCarryStyle
@@ -2308,7 +2309,7 @@ namespace GoLive.Items
 }
 
 
-//==== File 21 of 54: E:/GO! Live/Assets\Game/Scripts\Items\ItemInstance.cs ====
+//==== File 21 of 57: E:/GO! Live/Assets\Game/Scripts\Items\ItemInstance.cs ====
 namespace GoLive.Items
 {
     public enum ItemLocation
@@ -2355,7 +2356,7 @@ namespace GoLive.Items
 }
 
 
-//==== File 22 of 54: E:/GO! Live/Assets\Game/Scripts\Items\PlayerCarry.cs ====
+//==== File 22 of 57: E:/GO! Live/Assets\Game/Scripts\Items\PlayerCarry.cs ====
 namespace GoLive.Player
 {
     [DisallowMultipleComponent]
@@ -2469,7 +2470,7 @@ namespace GoLive.Player
 }
 
 
-//==== File 23 of 54: E:/GO! Live/Assets\Game/Scripts\Items\WorldItem.cs ====
+//==== File 23 of 57: E:/GO! Live/Assets\Game/Scripts\Items\WorldItem.cs ====
 namespace GoLive.Items
 {
     [DisallowMultipleComponent]
@@ -2759,7 +2760,7 @@ namespace GoLive.Items
 }
 
 
-//==== File 24 of 54: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizationCatalog.cs ====
+//==== File 24 of 57: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizationCatalog.cs ====
 namespace GoLive.Localization
 {
     public enum GameLanguage
@@ -2883,7 +2884,7 @@ namespace GoLive.Localization
 }
 
 
-//==== File 25 of 54: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizationContext.cs ====
+//==== File 25 of 57: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizationContext.cs ====
 namespace GoLive.Localization
 {
     [DisallowMultipleComponent]
@@ -2992,7 +2993,7 @@ namespace GoLive.Localization
 }
 
 
-//==== File 26 of 54: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizationRuntime.cs ====
+//==== File 26 of 57: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizationRuntime.cs ====
 namespace GoLive.Localization
 {
     public sealed class LocalizationRuntime
@@ -3040,7 +3041,7 @@ namespace GoLive.Localization
 }
 
 
-//==== File 27 of 54: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizedTextView.cs ====
+//==== File 27 of 57: E:/GO! Live/Assets\Game/Scripts\Localization\LocalizedTextView.cs ====
 namespace GoLive.Localization
 {
     [DisallowMultipleComponent]
@@ -3091,7 +3092,7 @@ namespace GoLive.Localization
 }
 
 
-//==== File 28 of 54: E:/GO! Live/Assets\Game/Scripts\Needs\NeedsHudView.cs ====
+//==== File 28 of 57: E:/GO! Live/Assets\Game/Scripts\Needs\NeedsHudView.cs ====
 namespace GoLive.Needs
 {
     [DisallowMultipleComponent]
@@ -3187,7 +3188,7 @@ namespace GoLive.Needs
 }
 
 
-//==== File 29 of 54: E:/GO! Live/Assets\Game/Scripts\Needs\PlayerNeeds.cs ====
+//==== File 29 of 57: E:/GO! Live/Assets\Game/Scripts\Needs\PlayerNeeds.cs ====
 namespace GoLive.Needs
 {
     public readonly struct PlayerNeedsRules
@@ -3349,7 +3350,7 @@ namespace GoLive.Needs
 }
 
 
-//==== File 30 of 54: E:/GO! Live/Assets\Game/Scripts\Needs\PlayerNeedsBehaviour.cs ====
+//==== File 30 of 57: E:/GO! Live/Assets\Game/Scripts\Needs\PlayerNeedsBehaviour.cs ====
 namespace GoLive.Needs
 {
     [DisallowMultipleComponent]
@@ -3470,7 +3471,7 @@ namespace GoLive.Needs
 }
 
 
-//==== File 31 of 54: E:/GO! Live/Assets\Game/Scripts\Needs\PlayerNeedsConfig.cs ====
+//==== File 31 of 57: E:/GO! Live/Assets\Game/Scripts\Needs\PlayerNeedsConfig.cs ====
 namespace GoLive.Needs
 {
     [CreateAssetMenu(fileName = "PlayerNeedsConfig", menuName = "GO! LIVE/Needs/Player Needs Config")]
@@ -3507,13 +3508,13 @@ namespace GoLive.Needs
 }
 
 
-//==== File 32 of 54: E:/GO! Live/Assets\Game/Scripts\Persistence\GameSaveController.cs ====
+//==== File 32 of 57: E:/GO! Live/Assets\Game/Scripts\Persistence\GameSaveController.cs ====
 namespace GoLive.Persistence
 {
     [DisallowMultipleComponent]
     public sealed class GameSaveController : MonoBehaviour
     {
-        private const int CurrentVersion = 2;
+        private const int CurrentVersion = 3;
         private const string AutosaveFileName = "autosave.json";
 
         [Header("Game State")]
@@ -3526,11 +3527,19 @@ namespace GoLive.Persistence
         [SerializeField] private RentBehaviour _rent;
         [SerializeField] private PlayerSleepController _sleep;
         [SerializeField] private PhoneMessagesBehaviour _phoneMessages;
+        [SerializeField] private ShopBehaviour _shop;
 
         private bool _bound;
 
-        private string SaveDirectory => Path.Combine(Application.persistentDataPath, "Saves");
-        private string AutosavePath => Path.Combine(SaveDirectory, AutosaveFileName);
+        private string SaveDirectory =>
+            Path.Combine(
+                Application.persistentDataPath,
+                "Saves");
+
+        private string AutosavePath =>
+            Path.Combine(
+                SaveDirectory,
+                AutosaveFileName);
 
         private void Awake()
         {
@@ -3555,11 +3564,21 @@ namespace GoLive.Persistence
 
         public bool CreateCheckpoint()
         {
-            DateTime now = DateTime.UtcNow;
-            string timestamp = now.ToString("yyyyMMdd_HHmmss_fff", CultureInfo.InvariantCulture);
-            string fileName = $"checkpoint_{timestamp}_{now.Ticks}.json";
+            DateTime now =
+                DateTime.UtcNow;
 
-            return TrySave(Path.Combine(SaveDirectory, fileName));
+            string timestamp =
+                now.ToString(
+                    "yyyyMMdd_HHmmss_fff",
+                    CultureInfo.InvariantCulture);
+
+            string fileName =
+                $"checkpoint_{timestamp}_{now.Ticks}.json";
+
+            return TrySave(
+                Path.Combine(
+                    SaveDirectory,
+                    fileName));
         }
 
         public bool LoadAutosave()
@@ -3574,30 +3593,46 @@ namespace GoLive.Persistence
 
             if (!Directory.Exists(SaveDirectory))
             {
-                Debug.LogWarning("No checkpoint save directory exists yet.");
+                Debug.LogWarning(
+                    "No checkpoint save directory exists yet.");
+
                 return false;
             }
 
-            string[] files = Directory.GetFiles(SaveDirectory, "checkpoint_*.json");
+            string[] files =
+                Directory.GetFiles(
+                    SaveDirectory,
+                    "checkpoint_*.json");
 
             if (files.Length == 0)
             {
-                Debug.LogWarning("No checkpoints exist yet.");
+                Debug.LogWarning(
+                    "No checkpoints exist yet.");
+
                 return false;
             }
 
-            string latestPath = files[0];
-            DateTime latestWriteTime = File.GetLastWriteTimeUtc(latestPath);
+            string latestPath =
+                files[0];
+
+            DateTime latestWriteTime =
+                File.GetLastWriteTimeUtc(
+                    latestPath);
 
             for (int i = 1; i < files.Length; i++)
             {
-                DateTime writeTime = File.GetLastWriteTimeUtc(files[i]);
+                DateTime writeTime =
+                    File.GetLastWriteTimeUtc(
+                        files[i]);
 
                 if (writeTime <= latestWriteTime)
                     continue;
 
-                latestPath = files[i];
-                latestWriteTime = writeTime;
+                latestPath =
+                    files[i];
+
+                latestWriteTime =
+                    writeTime;
             }
 
             return TryLoad(latestPath);
@@ -3636,7 +3671,9 @@ namespace GoLive.Persistence
             if (_bound || _sleep == null)
                 return;
 
-            _sleep.SleepCompleted += HandleSleepCompleted;
+            _sleep.SleepCompleted +=
+                HandleSleepCompleted;
+
             _bound = true;
         }
 
@@ -3645,28 +3682,41 @@ namespace GoLive.Persistence
             if (!_bound || _sleep == null)
                 return;
 
-            _sleep.SleepCompleted -= HandleSleepCompleted;
+            _sleep.SleepCompleted -=
+                HandleSleepCompleted;
+
             _bound = false;
         }
 
-        private void HandleSleepCompleted(SleepResult result)
+        private void HandleSleepCompleted(
+            SleepResult result)
         {
             SaveAutosave();
         }
 
-        private bool TrySave(string path)
+        private bool TrySave(
+            string path)
         {
             if (!EnsureRuntimeStateReady())
                 return false;
 
             try
             {
-                GameSaveData data = Capture();
-                string json = JsonUtility.ToJson(data, true);
+                GameSaveData data =
+                    Capture();
 
-                WriteAtomic(path, json);
+                string json =
+                    JsonUtility.ToJson(
+                        data,
+                        true);
 
-                Debug.Log($"GO! LIVE save created: {path}");
+                WriteAtomic(
+                    path,
+                    json);
+
+                Debug.Log(
+                    $"GO! LIVE save created: {path}");
+
                 return true;
             }
             catch (Exception exception)
@@ -3676,34 +3726,66 @@ namespace GoLive.Persistence
             }
         }
 
-        private bool TryLoad(string path)
+        private bool TryLoad(
+            string path)
         {
             if (!EnsureRuntimeStateReady())
                 return false;
 
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"Save file does not exist: {path}");
+                Debug.LogWarning(
+                    $"Save file does not exist: {path}");
+
                 return false;
             }
 
             try
             {
-                string json = File.ReadAllText(path, Encoding.UTF8);
-                // FromJson creates default inline objects even for missing/null JSON sections.
-                // Overwrite an invalid sentinel so a missing Messages payload cannot silently erase history.
-                GameSaveData data = new() { Messages = new PhoneMessagesSnapshot { Version = 0, Conversations = null } };
-                JsonUtility.FromJsonOverwrite(json, data);
+                string json =
+                    File.ReadAllText(
+                        path,
+                        Encoding.UTF8);
 
-                if (!ValidateSaveData(data, out Dictionary<string, WorldItem> sceneItems))
+                GameSaveData data =
+                    new()
+                    {
+                        Messages =
+                            new PhoneMessagesSnapshot
+                            {
+                                Version = 0,
+                                Conversations = null
+                            },
+
+                        Orders =
+                            new ShopOrdersSnapshot
+                            {
+                                Version = 0,
+                                Orders = null
+                            }
+                    };
+
+                JsonUtility.FromJsonOverwrite(
+                    json,
+                    data);
+
+                if (!ValidateSaveData(
+                        data,
+                        out Dictionary<string, WorldItem> sceneItems))
                 {
-                    Debug.LogError($"Save validation failed: {path}");
+                    Debug.LogError(
+                        $"Save validation failed: {path}");
+
                     return false;
                 }
 
-                Apply(data, sceneItems);
+                Apply(
+                    data,
+                    sceneItems);
 
-                Debug.Log($"GO! LIVE save loaded: {path}");
+                Debug.Log(
+                    $"GO! LIVE save loaded: {path}");
+
                 return true;
             }
             catch (Exception exception)
@@ -3715,193 +3797,360 @@ namespace GoLive.Persistence
 
         private GameSaveData Capture()
         {
-            PlayerPoseSnapshot playerPose = _player.CapturePose();
-            PlayerNeedsSnapshot needs = _needs.Needs.Current;
+            PlayerPoseSnapshot playerPose =
+                _player.CapturePose();
 
-            if (!_rent.TryGetSnapshot(out RentSnapshot rent))
-                throw new InvalidOperationException("Rent state is not initialized.");
+            PlayerNeedsSnapshot needs =
+                _needs.Needs.Current;
 
-            IReadOnlyList<ItemInstance> inventoryItems = _inventory.Inventory.Items;
-            Dictionary<string, int> inventoryIndices = new(StringComparer.Ordinal);
+            if (!_rent.TryGetSnapshot(
+                    out RentSnapshot rent))
+            {
+                throw new InvalidOperationException(
+                    "Rent state is not initialized.");
+            }
+
+            IReadOnlyList<ItemInstance> inventoryItems =
+                _inventory.Inventory.Items;
+
+            Dictionary<string, int> inventoryIndices =
+                new(StringComparer.Ordinal);
 
             for (int i = 0; i < inventoryItems.Count; i++)
-                inventoryIndices.Add(inventoryItems[i].InstanceId, i);
+            {
+                inventoryIndices.Add(
+                    inventoryItems[i].InstanceId,
+                    i);
+            }
 
-            WorldItem[] worldItems = UnityEngine.Object.FindObjectsByType<WorldItem>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+            WorldItem[] worldItems =
+                UnityEngine.Object.FindObjectsByType<WorldItem>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None);
 
-            ItemSaveData[] itemData = new ItemSaveData[worldItems.Length];
-            HashSet<string> instanceIds = new(StringComparer.Ordinal);
+            ItemSaveData[] itemData =
+                new ItemSaveData[worldItems.Length];
+
+            HashSet<string> instanceIds =
+                new(StringComparer.Ordinal);
 
             for (int i = 0; i < worldItems.Length; i++)
             {
-                WorldItem item = worldItems[i];
+                WorldItem item =
+                    worldItems[i];
 
                 if (item.Instance == null)
-                    throw new InvalidOperationException($"WorldItem '{item.name}' has no runtime ItemInstance.");
-
-                if (!instanceIds.Add(item.Instance.InstanceId))
-                    throw new InvalidOperationException($"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
-
-                int inventoryIndex = inventoryIndices.TryGetValue(item.Instance.InstanceId, out int index) ? index : -1;
-
-                itemData[i] = new ItemSaveData
                 {
-                    InstanceId = item.Instance.InstanceId,
-                    DefinitionId = item.Instance.DefinitionId,
-                    Location = item.Instance.Location,
-                    InventoryIndex = inventoryIndex,
-                    Position = item.transform.position,
-                    Rotation = item.transform.rotation
-                };
+                    throw new InvalidOperationException(
+                        $"WorldItem '{item.name}' has no runtime ItemInstance.");
+                }
+
+                if (!instanceIds.Add(
+                        item.Instance.InstanceId))
+                {
+                    throw new InvalidOperationException(
+                        $"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
+                }
+
+                int inventoryIndex =
+                    inventoryIndices.TryGetValue(
+                        item.Instance.InstanceId,
+                        out int index)
+                        ? index
+                        : -1;
+
+                itemData[i] =
+                    new ItemSaveData
+                    {
+                        InstanceId =
+                            item.Instance.InstanceId,
+
+                        DefinitionId =
+                            item.Instance.DefinitionId,
+
+                        Location =
+                            item.Instance.Location,
+
+                        InventoryIndex =
+                            inventoryIndex,
+
+                        Position =
+                            item.transform.position,
+
+                        Rotation =
+                            item.transform.rotation
+                    };
             }
 
-            Array.Sort(itemData, (left, right) => string.CompareOrdinal(left.InstanceId, right.InstanceId));
+            Array.Sort(
+                itemData,
+                (left, right) =>
+                    string.CompareOrdinal(
+                        left.InstanceId,
+                        right.InstanceId));
 
             return new GameSaveData
             {
-                Version = CurrentVersion,
-                SavedAtUtcTicks = DateTime.UtcNow.Ticks,
+                Version =
+                    CurrentVersion,
 
-                Player = new PlayerSaveData
-                {
-                    Position = playerPose.Position,
-                    Rotation = playerPose.Rotation,
-                    Pitch = playerPose.Pitch
-                },
+                SavedAtUtcTicks =
+                    DateTime.UtcNow.Ticks,
 
-                GameTimeSeconds = _gameClock.Clock.Current.TotalSeconds,
-                Hunger = needs.Hunger,
-                Concentration = needs.Concentration,
-                BalanceCents = _wallet.Wallet.BalanceCents,
+                Player =
+                    new PlayerSaveData
+                    {
+                        Position =
+                            playerPose.Position,
 
-                Rent = new RentSaveData
-                {
-                    AmountDueCents = rent.AmountDueCents,
-                    FirstPaymentSettled = rent.FirstPaymentSettled,
-                    FirstDeadlineMissed = rent.FirstDeadlineMissed,
-                    SecondBillIssued = rent.SecondBillIssued,
-                    Outcome = rent.Outcome,
-                    ProcessedThroughSeconds = rent.ProcessedThroughSeconds
-                },
+                        Rotation =
+                            playerPose.Rotation,
 
-                Items = itemData,
-                Messages = _phoneMessages.Messages.CaptureSnapshot()
+                        Pitch =
+                            playerPose.Pitch
+                    },
+
+                GameTimeSeconds =
+                    _gameClock.Clock.Current.TotalSeconds,
+
+                Hunger =
+                    needs.Hunger,
+
+                Concentration =
+                    needs.Concentration,
+
+                BalanceCents =
+                    _wallet.Wallet.BalanceCents,
+
+                Rent =
+                    new RentSaveData
+                    {
+                        AmountDueCents =
+                            rent.AmountDueCents,
+
+                        FirstPaymentSettled =
+                            rent.FirstPaymentSettled,
+
+                        FirstDeadlineMissed =
+                            rent.FirstDeadlineMissed,
+
+                        SecondBillIssued =
+                            rent.SecondBillIssued,
+
+                        Outcome =
+                            rent.Outcome,
+
+                        ProcessedThroughSeconds =
+                            rent.ProcessedThroughSeconds
+                    },
+
+                Items =
+                    itemData,
+
+                Messages =
+                    _phoneMessages.Messages.CaptureSnapshot(),
+
+                Orders =
+                    _shop.CaptureOrders()
             };
         }
 
-        private void Apply(GameSaveData data, Dictionary<string, WorldItem> sceneItems)
+        private void Apply(
+            GameSaveData data,
+            Dictionary<string, WorldItem> sceneItems)
         {
-            Dictionary<int, WorldItem> inventoryByIndex = new();
-            HashSet<string> savedIds = new(StringComparer.Ordinal);
-            WorldItem carriedItem = null;
+            Dictionary<int, WorldItem> inventoryByIndex =
+                new();
+
+            HashSet<string> savedIds =
+                new(StringComparer.Ordinal);
+
+            WorldItem carriedItem =
+                null;
 
             for (int i = 0; i < data.Items.Length; i++)
             {
-                ItemSaveData savedItem = data.Items[i];
-                savedIds.Add(savedItem.InstanceId);
+                ItemSaveData savedItem =
+                    data.Items[i];
 
-                WorldItem worldItem = sceneItems[savedItem.InstanceId];
-                ItemInstance instance = new(savedItem.InstanceId, savedItem.DefinitionId, savedItem.Location);
+                savedIds.Add(
+                    savedItem.InstanceId);
 
-                bool restored = savedItem.Location switch
-                {
-                    ItemLocation.World => worldItem.RestoreAsWorld(instance, savedItem.Position, savedItem.Rotation),
-                    ItemLocation.Inventory => worldItem.RestoreAsInventory(instance, _inventory.StoredItemsRoot),
-                    ItemLocation.Carried => worldItem.RestoreAsCarried(instance, _carry.CarryAnchor),
-                    ItemLocation.Removed => worldItem.RestoreAsRemoved(instance),
-                    _ => false
-                };
+                WorldItem worldItem =
+                    sceneItems[savedItem.InstanceId];
+
+                ItemInstance instance =
+                    new(
+                        savedItem.InstanceId,
+                        savedItem.DefinitionId,
+                        savedItem.Location);
+
+                bool restored =
+                    savedItem.Location switch
+                    {
+                        ItemLocation.World =>
+                            worldItem.RestoreAsWorld(
+                                instance,
+                                savedItem.Position,
+                                savedItem.Rotation),
+
+                        ItemLocation.Inventory =>
+                            worldItem.RestoreAsInventory(
+                                instance,
+                                _inventory.StoredItemsRoot),
+
+                        ItemLocation.Carried =>
+                            worldItem.RestoreAsCarried(
+                                instance,
+                                _carry.CarryAnchor),
+
+                        ItemLocation.Removed =>
+                            worldItem.RestoreAsRemoved(
+                                instance),
+
+                        _ =>
+                            false
+                    };
 
                 if (!restored)
-                    throw new InvalidOperationException($"Failed to restore item {savedItem.InstanceId}.");
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to restore item {savedItem.InstanceId}.");
+                }
 
-                if (savedItem.Location == ItemLocation.Inventory)
-                    inventoryByIndex.Add(savedItem.InventoryIndex, worldItem);
+                if (savedItem.Location ==
+                    ItemLocation.Inventory)
+                {
+                    inventoryByIndex.Add(
+                        savedItem.InventoryIndex,
+                        worldItem);
+                }
 
-                if (savedItem.Location == ItemLocation.Carried)
-                    carriedItem = worldItem;
+                if (savedItem.Location ==
+                    ItemLocation.Carried)
+                {
+                    carriedItem =
+                        worldItem;
+                }
             }
 
-            foreach (KeyValuePair<string, WorldItem> pair in sceneItems)
+            foreach (
+                KeyValuePair<string, WorldItem> pair
+                in sceneItems)
             {
                 if (savedIds.Contains(pair.Key))
                     continue;
 
-                WorldItem item = pair.Value;
+                WorldItem item =
+                    pair.Value;
 
                 if (item.Instance == null)
                     continue;
 
-                ItemInstance removed = new(
-                    item.Instance.InstanceId,
-                    item.Instance.DefinitionId,
-                    ItemLocation.Removed);
+                ItemInstance removed =
+                    new(
+                        item.Instance.InstanceId,
+                        item.Instance.DefinitionId,
+                        ItemLocation.Removed);
 
-                item.RestoreAsRemoved(removed);
+                item.RestoreAsRemoved(
+                    removed);
             }
 
-            List<WorldItem> orderedInventory = new(inventoryByIndex.Count);
+            List<WorldItem> orderedInventory =
+                new(inventoryByIndex.Count);
 
             for (int i = 0; i < inventoryByIndex.Count; i++)
-                orderedInventory.Add(inventoryByIndex[i]);
+            {
+                orderedInventory.Add(
+                    inventoryByIndex[i]);
+            }
 
-            if (!_inventory.RestoreStoredItems(orderedInventory))
-                throw new InvalidOperationException("Failed to restore Inventory state.");
+            if (!_inventory.RestoreStoredItems(
+                    orderedInventory))
+            {
+                throw new InvalidOperationException(
+                    "Failed to restore Inventory state.");
+            }
 
-            if (!_carry.RestoreCarriedItem(carriedItem))
-                throw new InvalidOperationException("Failed to restore Carry state.");
+            if (!_carry.RestoreCarriedItem(
+                    carriedItem))
+            {
+                throw new InvalidOperationException(
+                    "Failed to restore Carry state.");
+            }
 
-            _player.RestorePose(new PlayerPoseSnapshot(
-                data.Player.Position,
-                data.Player.Rotation,
-                data.Player.Pitch));
+            _player.RestorePose(
+                new PlayerPoseSnapshot(
+                    data.Player.Position,
+                    data.Player.Rotation,
+                    data.Player.Pitch));
 
-            _gameClock.Clock.Restore(new GameTimeSnapshot(data.GameTimeSeconds));
+            _gameClock.Clock.Restore(
+                new GameTimeSnapshot(
+                    data.GameTimeSeconds));
 
-            PlayerNeedsSnapshot currentNeeds = _needs.Needs.Current;
+            PlayerNeedsSnapshot currentNeeds =
+                _needs.Needs.Current;
 
-            _needs.Restore(new PlayerNeedsSnapshot(
-                data.Hunger,
-                currentNeeds.MaxHunger,
-                data.Concentration,
-                currentNeeds.MaxConcentration));
+            _needs.Restore(
+                new PlayerNeedsSnapshot(
+                    data.Hunger,
+                    currentNeeds.MaxHunger,
+                    data.Concentration,
+                    currentNeeds.MaxConcentration));
 
-            _wallet.Wallet.Restore(data.BalanceCents);
+            _wallet.Wallet.Restore(
+                data.BalanceCents);
 
-            _rent.Restore(new RentSnapshot(
-                data.Rent.AmountDueCents,
-                data.Rent.FirstPaymentSettled,
-                data.Rent.FirstDeadlineMissed,
-                data.Rent.SecondBillIssued,
-                data.Rent.Outcome,
-                data.Rent.ProcessedThroughSeconds));
+            _shop.RestoreOrders(
+                data.Orders);
 
-            _phoneMessages.Messages.Restore(data.Messages);
+            _rent.Restore(
+                new RentSnapshot(
+                    data.Rent.AmountDueCents,
+                    data.Rent.FirstPaymentSettled,
+                    data.Rent.FirstDeadlineMissed,
+                    data.Rent.SecondBillIssued,
+                    data.Rent.Outcome,
+                    data.Rent.ProcessedThroughSeconds));
+
+            _phoneMessages.Messages.Restore(
+                data.Messages);
         }
 
-        private bool ValidateSaveData(GameSaveData data, out Dictionary<string, WorldItem> sceneItems)
+        private bool ValidateSaveData(
+            GameSaveData data,
+            out Dictionary<string, WorldItem> sceneItems)
         {
-            sceneItems = BuildSceneItemMap();
+            sceneItems =
+                BuildSceneItemMap();
 
             if (data == null ||
                 data.Version != CurrentVersion ||
                 data.Player == null ||
                 data.Rent == null ||
                 data.Items == null ||
-                data.Messages == null)
+                data.Messages == null ||
+                data.Orders == null)
             {
                 return false;
             }
 
-            // Preflight on an unobserved temporary instance before Apply can change any live state.
-            // Keep snapshot validation in the domain; this instance is not a second runtime owner.
             try
             {
-                new PhoneMessages().Restore(data.Messages);
+                new PhoneMessages()
+                    .Restore(
+                        data.Messages);
             }
             catch (ArgumentException)
+            {
+                return false;
+            }
+
+            if (!_shop.ValidateOrdersSnapshot(
+                    data.Orders,
+                    data.GameTimeSeconds))
             {
                 return false;
             }
@@ -3914,45 +4163,79 @@ namespace GoLive.Persistence
                 return false;
             }
 
-            if (data.Rent.ProcessedThroughSeconds > data.GameTimeSeconds)
-                return false;
-
-            PlayerNeedsSnapshot currentNeeds = _needs.Needs.Current;
-
-            if (!IsFiniteInRange(data.Hunger, 0f, currentNeeds.MaxHunger) ||
-                !IsFiniteInRange(data.Concentration, 0f, currentNeeds.MaxConcentration))
+            if (data.Rent.ProcessedThroughSeconds >
+                data.GameTimeSeconds)
             {
                 return false;
             }
 
-            HashSet<string> savedIds = new(StringComparer.Ordinal);
-            HashSet<int> inventoryIndices = new();
-            int inventoryCount = 0;
-            int carriedCount = 0;
+            PlayerNeedsSnapshot currentNeeds =
+                _needs.Needs.Current;
+
+            if (!IsFiniteInRange(
+                    data.Hunger,
+                    0f,
+                    currentNeeds.MaxHunger) ||
+                !IsFiniteInRange(
+                    data.Concentration,
+                    0f,
+                    currentNeeds.MaxConcentration))
+            {
+                return false;
+            }
+
+            HashSet<string> savedIds =
+                new(StringComparer.Ordinal);
+
+            HashSet<int> inventoryIndices =
+                new();
+
+            int inventoryCount =
+                0;
+
+            int carriedCount =
+                0;
 
             for (int i = 0; i < data.Items.Length; i++)
             {
-                ItemSaveData item = data.Items[i];
+                ItemSaveData item =
+                    data.Items[i];
 
                 if (item == null ||
                     string.IsNullOrWhiteSpace(item.InstanceId) ||
                     string.IsNullOrWhiteSpace(item.DefinitionId) ||
                     !savedIds.Add(item.InstanceId) ||
-                    !Enum.IsDefined(typeof(ItemLocation), item.Location))
+                    !Enum.IsDefined(
+                        typeof(ItemLocation),
+                        item.Location))
                 {
                     return false;
                 }
 
-                if (!sceneItems.TryGetValue(item.InstanceId, out WorldItem worldItem))
-                    return false;
-
-                if (!string.Equals(worldItem.Definition.ItemId, item.DefinitionId, StringComparison.Ordinal))
-                    return false;
-
-                if (item.Location == ItemLocation.Inventory)
+                if (!sceneItems.TryGetValue(
+                        item.InstanceId,
+                        out WorldItem worldItem))
                 {
-                    if (item.InventoryIndex < 0 || !inventoryIndices.Add(item.InventoryIndex))
+                    return false;
+                }
+
+                if (!string.Equals(
+                        worldItem.Definition.ItemId,
+                        item.DefinitionId,
+                        StringComparison.Ordinal))
+                {
+                    return false;
+                }
+
+                if (item.Location ==
+                    ItemLocation.Inventory)
+                {
+                    if (item.InventoryIndex < 0 ||
+                        !inventoryIndices.Add(
+                            item.InventoryIndex))
+                    {
                         return false;
+                    }
 
                     inventoryCount++;
                 }
@@ -3961,12 +4244,19 @@ namespace GoLive.Persistence
                     return false;
                 }
 
-                if (item.Location == ItemLocation.Carried)
+                if (item.Location ==
+                    ItemLocation.Carried)
+                {
                     carriedCount++;
+                }
             }
 
-            if (inventoryCount > _inventory.Inventory.Capacity || carriedCount > 1)
+            if (inventoryCount >
+                    _inventory.Inventory.Capacity ||
+                carriedCount > 1)
+            {
                 return false;
+            }
 
             for (int i = 0; i < inventoryCount; i++)
             {
@@ -3977,23 +4267,35 @@ namespace GoLive.Persistence
             return true;
         }
 
-        private Dictionary<string, WorldItem> BuildSceneItemMap()
+        private Dictionary<string, WorldItem>
+            BuildSceneItemMap()
         {
-            WorldItem[] items = UnityEngine.Object.FindObjectsByType<WorldItem>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+            WorldItem[] items =
+                UnityEngine.Object.FindObjectsByType<WorldItem>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None);
 
-            Dictionary<string, WorldItem> result = new(StringComparer.Ordinal);
+            Dictionary<string, WorldItem> result =
+                new(StringComparer.Ordinal);
 
             for (int i = 0; i < items.Length; i++)
             {
-                WorldItem item = items[i];
+                WorldItem item =
+                    items[i];
 
                 if (item.Instance == null)
-                    throw new InvalidOperationException($"WorldItem '{item.name}' has no runtime ItemInstance.");
+                {
+                    throw new InvalidOperationException(
+                        $"WorldItem '{item.name}' has no runtime ItemInstance.");
+                }
 
-                if (!result.TryAdd(item.Instance.InstanceId, item))
-                    throw new InvalidOperationException($"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
+                if (!result.TryAdd(
+                        item.Instance.InstanceId,
+                        item))
+                {
+                    throw new InvalidOperationException(
+                        $"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
+                }
             }
 
             return result;
@@ -4008,12 +4310,16 @@ namespace GoLive.Persistence
                 _gameClock.Clock != null &&
                 _needs.Needs != null &&
                 _wallet.Wallet != null &&
+                _shop.IsReady &&
                 _rent.TryGetSnapshot(out _))
             {
                 return true;
             }
 
-            Debug.LogError($"{nameof(GameSaveController)} cannot save or load because game state is not initialized.", this);
+            Debug.LogError(
+                $"{nameof(GameSaveController)} cannot save or load because game state is not initialized.",
+                this);
+
             return false;
         }
 
@@ -4027,16 +4333,23 @@ namespace GoLive.Persistence
                 _wallet != null &&
                 _rent != null &&
                 _sleep != null &&
-                _phoneMessages != null)
+                _phoneMessages != null &&
+                _shop != null)
             {
                 return true;
             }
 
-            Debug.LogError($"{nameof(GameSaveController)} on {name} has incomplete configuration.", this);
+            Debug.LogError(
+                $"{nameof(GameSaveController)} on {name} has incomplete configuration.",
+                this);
+
             return false;
         }
 
-        private static bool IsFiniteInRange(float value, float minimum, float maximum)
+        private static bool IsFiniteInRange(
+            float value,
+            float minimum,
+            float maximum)
         {
             return !float.IsNaN(value) &&
                    !float.IsInfinity(value) &&
@@ -4044,30 +4357,49 @@ namespace GoLive.Persistence
                    value <= maximum;
         }
 
-        private static void WriteAtomic(string path, string content)
+        private static void WriteAtomic(
+            string path,
+            string content)
         {
-            string directory = Path.GetDirectoryName(path);
+            string directory =
+                Path.GetDirectoryName(path);
 
             if (string.IsNullOrWhiteSpace(directory))
-                throw new DirectoryNotFoundException("Save directory could not be resolved.");
+            {
+                throw new DirectoryNotFoundException(
+                    "Save directory could not be resolved.");
+            }
 
-            Directory.CreateDirectory(directory);
+            Directory.CreateDirectory(
+                directory);
 
-            string temporaryPath = path + ".tmp";
-            string backupPath = path + ".bak";
+            string temporaryPath =
+                path + ".tmp";
 
-            File.WriteAllText(temporaryPath, content, new UTF8Encoding(false));
+            string backupPath =
+                path + ".bak";
+
+            File.WriteAllText(
+                temporaryPath,
+                content,
+                new UTF8Encoding(false));
 
             if (!File.Exists(path))
             {
-                File.Move(temporaryPath, path);
+                File.Move(
+                    temporaryPath,
+                    path);
+
                 return;
             }
 
             if (File.Exists(backupPath))
                 File.Delete(backupPath);
 
-            File.Replace(temporaryPath, path, backupPath);
+            File.Replace(
+                temporaryPath,
+                path,
+                backupPath);
 
             if (File.Exists(backupPath))
                 File.Delete(backupPath);
@@ -4076,7 +4408,7 @@ namespace GoLive.Persistence
 }
 
 
-//==== File 33 of 54: E:/GO! Live/Assets\Game/Scripts\Persistence\GameSaveData.cs ====
+//==== File 33 of 57: E:/GO! Live/Assets\Game/Scripts\Persistence\GameSaveData.cs ====
 namespace GoLive.Persistence
 {
     [Serializable]
@@ -4091,6 +4423,7 @@ namespace GoLive.Persistence
         public long BalanceCents;
         public RentSaveData Rent;
         public PhoneMessagesSnapshot Messages;
+        public ShopOrdersSnapshot Orders;
         public ItemSaveData[] Items = Array.Empty<ItemSaveData>();
     }
 
@@ -4126,7 +4459,7 @@ namespace GoLive.Persistence
 }
 
 
-//==== File 34 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneBehaviour.cs ====
+//==== File 34 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneBehaviour.cs ====
 namespace GoLive.Phone
 {
     public enum PhonePresentationState
@@ -4635,7 +4968,7 @@ namespace GoLive.Phone
 }
 
 
-//==== File 35 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessages.cs ====
+//==== File 35 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessages.cs ====
 namespace GoLive.Phone
 {
     public enum MessageDirection { Incoming = 0, Outgoing = 1 }
@@ -4913,7 +5246,7 @@ namespace GoLive.Phone
 }
 
 
-//==== File 36 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessagesBehaviour.cs ====
+//==== File 36 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessagesBehaviour.cs ====
 namespace GoLive.Phone
 {
     [DisallowMultipleComponent]
@@ -5032,7 +5365,7 @@ namespace GoLive.Phone
 }
 
 
-//==== File 37 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessageScheduleConfig.cs ====
+//==== File 37 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessageScheduleConfig.cs ====
 namespace GoLive.Phone
 {
     [Serializable]
@@ -5105,7 +5438,7 @@ namespace GoLive.Phone
 }
 
 
-//==== File 38 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessagesSnapshot.cs ====
+//==== File 38 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneMessagesSnapshot.cs ====
 namespace GoLive.Phone
 {
     [Serializable]
@@ -5136,7 +5469,7 @@ namespace GoLive.Phone
 }
 
 
-//==== File 39 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhonePointerBehaviour.cs ====
+//==== File 39 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhonePointerBehaviour.cs ====
 namespace GoLive.Phone
 {
     [DisallowMultipleComponent]
@@ -5468,19 +5801,22 @@ namespace GoLive.Phone
 }
 
 
-//==== File 40 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneScreenView.cs ====
+//==== File 40 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneScreenView.cs ====
 namespace GoLive.Phone
 {
     [DisallowMultipleComponent]
     public sealed class PhoneScreenView : MonoBehaviour
     {
         private const string LandlordContactId = "landlord";
+        private const string BudgetGpuProductId = "budget-gpu";
+        private const string BasicKeyboardProductId = "basic-keyboard";
 
-        [Header("Existing engine and scene bindings")]
+        [Header("Core")]
         [SerializeField] private PhoneBehaviour _phone;
         [SerializeField] private LocalizationContext _localization;
         [SerializeField] private GameClockBehaviour _clock;
         [SerializeField] private PhoneMessagesBehaviour _messages;
+        [SerializeField] private ShopBehaviour _shop;
 
         [Header("Shared and Home")]
         [SerializeField] private TMP_Text _header;
@@ -5499,26 +5835,40 @@ namespace GoLive.Phone
         [SerializeField] private ScrollRect _conversation;
         [SerializeField] private TMP_Text[] _bubbles;
 
-        [Header("Shop visual sample")]
-        [SerializeField] private Image _storefrontSurface;
-        [SerializeField] private Image _productImage;
-        [SerializeField] private TMP_Text _productText;
-        [SerializeField] private Button _buy;
-        [SerializeField] private TMP_Text _buyLabel;
-        [SerializeField] private bool _previewProductAvailable = true;
+        [Header("Shop Storefront")]
+        [SerializeField] private GameObject _storefront;
+
+        [SerializeField] private Button _budgetGpuCard;
+        [SerializeField] private Image _budgetGpuImage;
+        [SerializeField] private TMP_Text _budgetGpuName;
+        [SerializeField] private TMP_Text _budgetGpuPrice;
+        [SerializeField] private TMP_Text _budgetGpuActionLabel;
+
+        [SerializeField] private Button _keyboardCard;
+        [SerializeField] private Image _keyboardImage;
+        [SerializeField] private TMP_Text _keyboardName;
+        [SerializeField] private TMP_Text _keyboardAvailability;
+
+        [Header("Shop Product Details")]
+        [SerializeField] private GameObject _productDetails;
+        [SerializeField] private Image _detailsImage;
+        [SerializeField] private TMP_Text _detailsCategory;
+        [SerializeField] private TMP_Text _detailsName;
+        [SerializeField] private TMP_Text _detailsPrice;
+        [SerializeField] private TMP_Text _detailsDescription;
+        [SerializeField] private Button _detailsBuy;
+        [SerializeField] private TMP_Text _detailsBuyLabel;
 
         public bool IsConversationVisible => _conversationVisible;
         public bool IsProductDetailsVisible => _productDetailsVisible;
 
         private bool _conversationVisible;
         private bool _productDetailsVisible;
-        private bool _previewPressed;
         private bool _started;
         private bool _bound;
 
         private GameClock _subscribedClock;
         private GameTimeSnapshot _time;
-        private ColorBlock _detailButtonColors;
 
         private void Awake()
         {
@@ -5528,13 +5878,24 @@ namespace GoLive.Phone
                 return;
             }
 
-            _detailButtonColors = _buy.colors;
+            SetShopMode(false);
         }
 
         private void Start()
         {
             if (!isActiveAndEnabled)
                 return;
+
+            if (!_shop.TryGetProduct(BudgetGpuProductId, out _) ||
+                !_shop.TryGetProduct(BasicKeyboardProductId, out _))
+            {
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} requires '{BudgetGpuProductId}' and '{BasicKeyboardProductId}' in the Shop Catalog.",
+                    this);
+
+                enabled = false;
+                return;
+            }
 
             _started = true;
             Bind();
@@ -5552,16 +5913,8 @@ namespace GoLive.Phone
 
             _conversationVisible = false;
             _productDetailsVisible = false;
-            _previewPressed = false;
-        }
 
-        public void SetProductAvailablePreview(bool available)
-        {
-            _previewProductAvailable = available;
-            _previewPressed = false;
-
-            if (_bound)
-                Refresh();
+            SetShopMode(false);
         }
 
         private void Bind()
@@ -5573,7 +5926,10 @@ namespace GoLive.Phone
 
             if (_subscribedClock == null)
             {
-                Debug.LogError($"{nameof(PhoneScreenView)} could not access initialized Game Clock.", this);
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} could not access initialized Game Clock.",
+                    this);
+
                 enabled = false;
                 return;
             }
@@ -5582,8 +5938,12 @@ namespace GoLive.Phone
             _phone.ScreenBackRequested += TryBack;
             _localization.LanguageChanged += HandleLanguageChanged;
             _messages.Messages.Changed += HandleMessagesChanged;
+            _shop.Changed += HandleShopChanged;
+
             _contact.onClick.AddListener(OpenConversation);
-            _buy.onClick.AddListener(HandleShopAction);
+            _budgetGpuCard.onClick.AddListener(OpenBudgetGpuDetails);
+            _detailsBuy.onClick.AddListener(BuyBudgetGpu);
+
             _subscribedClock.MinuteChanged += HandleMinuteChanged;
 
             _time = _subscribedClock.Current;
@@ -5601,8 +5961,11 @@ namespace GoLive.Phone
             _phone.ScreenBackRequested -= TryBack;
             _localization.LanguageChanged -= HandleLanguageChanged;
             _messages.Messages.Changed -= HandleMessagesChanged;
+            _shop.Changed -= HandleShopChanged;
+
             _contact.onClick.RemoveListener(OpenConversation);
-            _buy.onClick.RemoveListener(HandleShopAction);
+            _budgetGpuCard.onClick.RemoveListener(OpenBudgetGpuDetails);
+            _detailsBuy.onClick.RemoveListener(BuyBudgetGpu);
 
             if (_subscribedClock != null)
                 _subscribedClock.MinuteChanged -= HandleMinuteChanged;
@@ -5615,7 +5978,8 @@ namespace GoLive.Phone
         {
             _conversationVisible = false;
             _productDetailsVisible = false;
-            _previewPressed = false;
+
+            SetShopMode(false);
             Refresh();
         }
 
@@ -5626,7 +5990,12 @@ namespace GoLive.Phone
 
         private void HandleMessagesChanged()
         {
-            Refresh();
+            RefreshMessages();
+        }
+
+        private void HandleShopChanged()
+        {
+            RefreshShop();
         }
 
         private void HandleMinuteChanged(GameTimeSnapshot time)
@@ -5639,7 +6008,9 @@ namespace GoLive.Phone
         {
             if (!_phone.IsInteractive ||
                 _phone.CurrentScreen != PhoneScreenId.Messages ||
-                !_messages.Messages.TryGetConversation(LandlordContactId, out PhoneConversation conversation) ||
+                !_messages.Messages.TryGetConversation(
+                    LandlordContactId,
+                    out PhoneConversation conversation) ||
                 conversation.Messages.Count == 0)
             {
                 return;
@@ -5648,48 +6019,69 @@ namespace GoLive.Phone
             _conversationVisible = true;
 
             if (!_messages.Messages.MarkConversationRead(LandlordContactId))
-                Refresh();
+                RefreshMessages();
 
             Canvas.ForceUpdateCanvases();
+
             _conversation.StopMovement();
             _conversation.verticalNormalizedPosition = 1f;
+
+            RefreshMessages();
+        }
+
+        private void OpenBudgetGpuDetails()
+        {
+            if (!_phone.IsInteractive ||
+                _phone.CurrentScreen != PhoneScreenId.Shop)
+            {
+                return;
+            }
+
+            _productDetailsVisible = true;
+
+            SetShopMode(true);
+            RefreshShop();
+            RefreshClock();
+        }
+
+        private void BuyBudgetGpu()
+        {
+            if (!_phone.IsInteractive ||
+                _phone.CurrentScreen != PhoneScreenId.Shop ||
+                !_productDetailsVisible)
+            {
+                return;
+            }
+
+            _shop.TryPurchase(BudgetGpuProductId);
+
+            RefreshShop();
         }
 
         private bool TryBack()
         {
-            if (_phone.CurrentScreen == PhoneScreenId.Shop && _productDetailsVisible)
+            if (_phone.CurrentScreen == PhoneScreenId.Shop &&
+                _productDetailsVisible)
             {
                 _productDetailsVisible = false;
-                _previewPressed = false;
-                Refresh();
+
+                SetShopMode(false);
+                RefreshShop();
+                RefreshClock();
+
                 return true;
             }
 
-            if (_phone.CurrentScreen != PhoneScreenId.Messages || !_conversationVisible)
-                return false;
-
-            _conversationVisible = false;
-            Refresh();
-            return true;
-        }
-
-        private void HandleShopAction()
-        {
-            if (!_phone.IsInteractive || _phone.CurrentScreen != PhoneScreenId.Shop)
-                return;
-
-            if (!_productDetailsVisible)
+            if (_phone.CurrentScreen != PhoneScreenId.Messages ||
+                !_conversationVisible)
             {
-                _productDetailsVisible = true;
-                Refresh();
-                return;
+                return false;
             }
 
-            if (!_previewProductAvailable || _previewPressed)
-                return;
+            _conversationVisible = false;
+            RefreshMessages();
 
-            _previewPressed = true;
-            Refresh();
+            return true;
         }
 
         private void Refresh()
@@ -5697,7 +6089,9 @@ namespace GoLive.Phone
             _shopLabel.text = _localization.Text("phone.shop");
             _messagesLabel.text = _localization.Text("phone.messages");
             _backLabel.text = _localization.Text("phone.back");
-            _back.gameObject.SetActive(_phone.CurrentScreen != PhoneScreenId.Home);
+
+            _back.gameObject.SetActive(
+                _phone.CurrentScreen != PhoneScreenId.Home);
 
             RefreshMessages();
             RefreshShop();
@@ -5709,33 +6103,46 @@ namespace GoLive.Phone
             int totalUnread = _messages.Messages.TotalUnreadCount;
 
             _unreadBadge.transform.parent.gameObject.SetActive(totalUnread > 0);
-            _unreadBadge.text = totalUnread > 99 ? "99+" : totalUnread.ToString();
+            _unreadBadge.text =
+                totalUnread > 99 ? "99+" : totalUnread.ToString();
+
             _avatar.sprite = _landlordAvatar;
 
-            if (!_messages.Messages.TryGetConversation(LandlordContactId, out PhoneConversation conversation) ||
+            if (!_messages.Messages.TryGetConversation(
+                    LandlordContactId,
+                    out PhoneConversation conversation) ||
                 conversation.Messages.Count == 0)
             {
                 _conversationVisible = false;
+
                 _contact.gameObject.SetActive(false);
                 _conversation.gameObject.SetActive(false);
+
                 ClearBubbles();
                 return;
             }
 
             _contact.gameObject.SetActive(true);
 
-            PhoneMessage latestMessage = conversation.Messages[conversation.Messages.Count - 1];
-            string contactName = _localization.Text("phone.landlord");
+            PhoneMessage latestMessage =
+                conversation.Messages[conversation.Messages.Count - 1];
+
+            string contactName =
+                _localization.Text("phone.landlord");
 
             if (_conversationVisible)
             {
                 _contactText.text =
-                    $"<b>{contactName}</b>\n<size=14><color=#A4B3BE>{_localization.Text("phone.conversation")}</color></size>";
+                    $"<b>{contactName}</b>\n" +
+                    $"<size=14><color=#A4B3BE>{_localization.Text("phone.conversation")}</color></size>";
             }
             else
             {
-                string preview = ResolveContent(latestMessage.Content);
-                string time = FormatTime(latestMessage.Timestamp);
+                string preview =
+                    ResolveContent(latestMessage.Content);
+
+                string time =
+                    FormatTime(latestMessage.Timestamp);
 
                 _contactText.text =
                     $"<b>{contactName}</b>\n" +
@@ -5756,20 +6163,28 @@ namespace GoLive.Phone
             if (!_conversationVisible)
                 return;
 
-            int visibleCount = Mathf.Min(_bubbles.Length, conversation.Messages.Count);
-            int firstMessageIndex = conversation.Messages.Count - visibleCount;
+            int visibleCount =
+                Mathf.Min(
+                    _bubbles.Length,
+                    conversation.Messages.Count);
+
+            int firstMessageIndex =
+                conversation.Messages.Count - visibleCount;
 
             for (int i = 0; i < visibleCount; i++)
             {
                 TMP_Text bubble = _bubbles[i];
-                PhoneMessage message = conversation.Messages[firstMessageIndex + i];
+
+                PhoneMessage message =
+                    conversation.Messages[firstMessageIndex + i];
 
                 bubble.gameObject.SetActive(true);
                 bubble.text = ResolveContent(message.Content);
 
-                bubble.alignment = message.Direction == MessageDirection.Outgoing
-                    ? TextAlignmentOptions.MidlineRight
-                    : TextAlignmentOptions.MidlineLeft;
+                bubble.alignment =
+                    message.Direction == MessageDirection.Outgoing
+                        ? TextAlignmentOptions.MidlineRight
+                        : TextAlignmentOptions.MidlineLeft;
             }
         }
 
@@ -5791,82 +6206,131 @@ namespace GoLive.Phone
 
         private void RefreshShop()
         {
-            _storefrontSurface.enabled = !_productDetailsVisible;
-            _buy.interactable = !_productDetailsVisible || (_previewProductAvailable && !_previewPressed);
-
-            _buyLabel.text = _localization.Text(
-                !_productDetailsVisible
-                    ? "phone.details"
-                    : _previewPressed
-                        ? "phone.preview_only"
-                        : _previewProductAvailable
-                            ? "phone.buy"
-                            : "phone.unavailable");
-
-            _buyLabel.alignment = _productDetailsVisible
-                ? TextAlignmentOptions.Center
-                : TextAlignmentOptions.MidlineLeft;
-
-            _buyLabel.color = _productDetailsVisible
-                ? new Color32(23, 33, 43, 255)
-                : new Color32(190, 211, 218, 255);
-
-            _buy.image.color = _productDetailsVisible
-                ? new Color32(180, 200, 203, 255)
-                : Color.white;
-
-            ColorBlock colors = _detailButtonColors;
-
-            if (!_productDetailsVisible)
+            if (!_shop.TryGetProduct(
+                    BudgetGpuProductId,
+                    out ShopProductDefinition gpu))
             {
-                colors.normalColor = new Color(1f, 1f, 1f, 0f);
-                colors.selectedColor = new Color(1f, 1f, 1f, 0f);
-                colors.highlightedColor = new Color(1f, 1f, 1f, 0.02f);
-                colors.pressedColor = new Color(1f, 1f, 1f, 0.04f);
+                return;
             }
 
-            _buy.colors = colors;
+            if (!_shop.TryGetProduct(
+                    BasicKeyboardProductId,
+                    out ShopProductDefinition keyboard))
+            {
+                return;
+            }
 
-            SetRect(
-                _productImage.rectTransform,
-                _productDetailsVisible
-                    ? new Rect(28, 151, 364, 235)
-                    : new Rect(248, 298, 128, 83));
+            _budgetGpuImage.sprite = gpu.Image;
+            _budgetGpuImage.enabled = gpu.Image != null;
 
-            SetRect(
-                _productText.rectTransform,
-                _productDetailsVisible
-                    ? new Rect(32, 408, 356, 185)
-                    : new Rect(48, 130, 324, 490));
+            _budgetGpuName.text =
+                _localization.Text(gpu.NameLocalizationKey);
 
-            SetRect(
-                (RectTransform)_buy.transform,
-                _productDetailsVisible
-                    ? new Rect(28, 604, 364, 54)
-                    : new Rect(28, 210, 364, 216));
+            _budgetGpuPrice.text =
+                FormatMoney(gpu.PriceCents);
 
-            SetRect(
-                _buyLabel.rectTransform,
-                _productDetailsVisible
-                    ? new Rect(8, 0, 348, 54)
-                    : new Rect(20, 160, 324, 40));
+            _budgetGpuActionLabel.text =
+                _localization.Text("phone.details");
 
-            _productText.text = _productDetailsVisible
-                ? $"<size=13><color=#A3B8CA>{_localization.Text("phone.product_category")}</color></size>\n" +
-                  $"<size=30><b>{_localization.Text("phone.product_name")}</b></size>\n" +
-                  $"<line-height=145%><size=32>$15.00</size>\n" +
-                  $"<size=17><color=#BAC5CD>{_localization.Text(_previewPressed ? "phone.preview_feedback" : "phone.product_description")}</color></size>"
-                : _localization.Text("phone.storefront");
+            _budgetGpuCard.interactable = true;
+
+            _keyboardImage.sprite = keyboard.Image;
+            _keyboardImage.enabled = keyboard.Image != null;
+
+            _keyboardName.text =
+                _localization.Text(keyboard.NameLocalizationKey);
+
+            _keyboardAvailability.text =
+                keyboard.IsAvailable
+                    ? FormatMoney(keyboard.PriceCents)
+                    : _localization.Text("phone.unavailable");
+
+            _keyboardCard.interactable = false;
+
+            _detailsImage.sprite = gpu.Image;
+            _detailsImage.enabled = gpu.Image != null;
+
+            _detailsCategory.text =
+                _localization.Text(gpu.CategoryLocalizationKey);
+
+            _detailsName.text =
+                _localization.Text(gpu.NameLocalizationKey);
+
+            _detailsPrice.text =
+                FormatMoney(gpu.PriceCents);
+
+            _detailsDescription.text =
+                _localization.Text(gpu.DescriptionLocalizationKey);
+
+            ShopPurchaseResultCode purchaseState =
+                _shop.EvaluatePurchase(BudgetGpuProductId);
+
+            _detailsBuyLabel.text =
+                _localization.Text(
+                    GetPurchaseButtonKey(purchaseState));
+
+            _detailsBuy.interactable =
+                purchaseState == ShopPurchaseResultCode.Success;
+
+            SetShopMode(_productDetailsVisible);
+        }
+
+        private void SetShopMode(bool showDetails)
+        {
+            if (_storefront != null)
+                _storefront.SetActive(!showDetails);
+
+            if (_productDetails != null)
+                _productDetails.SetActive(showDetails);
+        }
+
+        private string GetPurchaseButtonKey(ShopPurchaseResultCode state)
+        {
+            return state switch
+            {
+                ShopPurchaseResultCode.Success =>
+                    "phone.buy",
+
+                ShopPurchaseResultCode.PurchaseLimitReached =>
+                    "phone.ordered",
+
+                ShopPurchaseResultCode.InsufficientFunds =>
+                    "phone.not_enough_money",
+
+                ShopPurchaseResultCode.Unavailable =>
+                    "phone.unavailable",
+
+                ShopPurchaseResultCode.ProductNotFound =>
+                    "phone.unavailable",
+
+                ShopPurchaseResultCode.NotReady =>
+                    "phone.unavailable",
+
+                ShopPurchaseResultCode.Busy =>
+                    "phone.buy",
+
+                _ =>
+                    "phone.unavailable"
+            };
         }
 
         private void RefreshClock()
         {
-            string title = _phone.CurrentScreen switch
-            {
-                PhoneScreenId.Messages => _localization.Text("phone.messages"),
-                PhoneScreenId.Shop => _localization.Text(_productDetailsVisible ? "phone.product_details" : "phone.shop"),
-                _ => _localization.Text("phone.brand")
-            };
+            string title =
+                _phone.CurrentScreen switch
+                {
+                    PhoneScreenId.Messages =>
+                        _localization.Text("phone.messages"),
+
+                    PhoneScreenId.Shop =>
+                        _localization.Text(
+                            _productDetailsVisible
+                                ? "phone.product_details"
+                                : "phone.shop"),
+
+                    _ =>
+                        _localization.Text("phone.brand")
+                };
 
             _header.text =
                 $"<size=14>{_time.Hour:00}:{_time.Minute:00}<pos=295>LTE</size>\n" +
@@ -5880,7 +6344,8 @@ namespace GoLive.Phone
         private string UnreadCaption(int count)
         {
             return count > 0
-                ? "  ·  " + _localization.Format("phone.unread", count)
+                ? "  ·  " +
+                  _localization.Format("phone.unread", count)
                 : string.Empty;
         }
 
@@ -5889,10 +6354,12 @@ namespace GoLive.Phone
             return $"{time.Hour:00}:{time.Minute:00}";
         }
 
-        private static void SetRect(RectTransform target, Rect layout)
+        private static string FormatMoney(long cents)
         {
-            target.anchoredPosition = new Vector2(layout.x, -layout.y);
-            target.sizeDelta = layout.size;
+            decimal dollars = cents / 100m;
+
+            return
+                $"${dollars.ToString("0.00", CultureInfo.InvariantCulture)}";
         }
 
         private bool ValidateConfiguration()
@@ -5901,6 +6368,7 @@ namespace GoLive.Phone
                 _localization == null ||
                 _clock == null ||
                 _messages == null ||
+                _shop == null ||
                 _header == null ||
                 _homeClock == null ||
                 _shopLabel == null ||
@@ -5912,14 +6380,30 @@ namespace GoLive.Phone
                 _avatar == null ||
                 _contactText == null ||
                 _conversation == null ||
-                _storefrontSurface == null ||
-                _productImage == null ||
-                _productText == null ||
-                _buy == null ||
-                _buyLabel == null ||
-                _bubbles == null)
+                _bubbles == null ||
+                _storefront == null ||
+                _budgetGpuCard == null ||
+                _budgetGpuImage == null ||
+                _budgetGpuName == null ||
+                _budgetGpuPrice == null ||
+                _budgetGpuActionLabel == null ||
+                _keyboardCard == null ||
+                _keyboardImage == null ||
+                _keyboardName == null ||
+                _keyboardAvailability == null ||
+                _productDetails == null ||
+                _detailsImage == null ||
+                _detailsCategory == null ||
+                _detailsName == null ||
+                _detailsPrice == null ||
+                _detailsDescription == null ||
+                _detailsBuy == null ||
+                _detailsBuyLabel == null)
             {
-                Debug.LogError($"{nameof(PhoneScreenView)} on {name} has incomplete configuration.", this);
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} on {name} has incomplete configuration.",
+                    this);
+
                 return false;
             }
 
@@ -5928,7 +6412,10 @@ namespace GoLive.Phone
                 if (_bubbles[i] != null)
                     continue;
 
-                Debug.LogError($"{nameof(PhoneScreenView)} on {name} contains an empty message bubble reference.", this);
+                Debug.LogError(
+                    $"{nameof(PhoneScreenView)} on {name} contains an empty message bubble reference.",
+                    this);
+
                 return false;
             }
 
@@ -5938,7 +6425,7 @@ namespace GoLive.Phone
 }
 
 
-//==== File 41 of 54: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneSession.cs ====
+//==== File 41 of 57: E:/GO! Live/Assets\Game/Scripts\Phone\PhoneSession.cs ====
 namespace GoLive.Phone
 {
     public enum PhoneScreenId
@@ -6016,7 +6503,918 @@ namespace GoLive.Phone
 }
 
 
-//==== File 42 of 54: E:/GO! Live/Assets\Game/Scripts\Sleep\BedSleepInteractable.cs ====
+//==== File 42 of 57: E:/GO! Live/Assets\Game/Scripts\Shop\ShopBehaviour.cs ====
+namespace GoLive.Shop
+{
+    [DisallowMultipleComponent]
+    public sealed class ShopBehaviour : MonoBehaviour
+    {
+        [SerializeField] private WalletBehaviour wallet;
+        [SerializeField] private GameClockBehaviour gameClock;
+        [SerializeField] private ShopCatalogConfig catalog;
+
+        public ShopOrderBook Orders { get; } = new();
+        public bool IsReady => _purchase != null;
+
+        public event Action Changed;
+
+        private ShopPurchase _purchase;
+        private bool _started;
+        private bool _bound;
+
+        private void Awake()
+        {
+            if (!ValidateConfiguration())
+                enabled = false;
+        }
+
+        private void Start()
+        {
+            if (!isActiveAndEnabled)
+                return;
+
+            if (wallet.Wallet == null || gameClock.Clock == null)
+            {
+                Debug.LogError(
+                    $"{nameof(ShopBehaviour)} could not access initialized Wallet or Game Clock.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            _purchase = new ShopPurchase(
+                wallet.Wallet,
+                Orders,
+                gameClock.Clock);
+
+            _started = true;
+
+            Bind();
+            Changed?.Invoke();
+        }
+
+        private void OnEnable()
+        {
+            if (_started)
+                Bind();
+        }
+
+        private void OnDisable()
+        {
+            Unbind();
+        }
+
+        public bool TryGetProduct(string productId, out ShopProductDefinition product)
+        {
+            product = null;
+
+            if (catalog == null)
+                return false;
+
+            return catalog.TryGetProduct(productId, out product);
+        }
+
+        public ShopPurchaseResultCode EvaluatePurchase(string productId)
+        {
+            if (!TryGetProduct(productId, out ShopProductDefinition product))
+                return ShopPurchaseResultCode.ProductNotFound;
+
+            if (_purchase == null)
+                return ShopPurchaseResultCode.NotReady;
+
+            ShopPurchaseOffer offer = product.CreatePurchaseOffer();
+
+            return _purchase.Evaluate(in offer);
+        }
+
+        public ShopPurchaseResult TryPurchase(string productId)
+        {
+            if (!TryGetProduct(productId, out ShopProductDefinition product))
+                return ShopPurchaseResult.Failure(ShopPurchaseResultCode.ProductNotFound);
+
+            if (_purchase == null)
+                return ShopPurchaseResult.Failure(ShopPurchaseResultCode.NotReady);
+
+            ShopPurchaseOffer offer = product.CreatePurchaseOffer();
+
+            return _purchase.TryPurchase(in offer);
+        }
+
+        public ShopOrdersSnapshot CaptureOrders()
+        {
+            return Orders.CaptureSnapshot();
+        }
+
+        public void RestoreOrders(ShopOrdersSnapshot snapshot)
+        {
+            if (gameClock.Clock == null)
+                throw new InvalidOperationException("Game Clock is not initialized.");
+
+            long currentGameTimeSeconds = gameClock.Clock.Current.TotalSeconds;
+
+            if (!ValidateOrdersSnapshot(snapshot, currentGameTimeSeconds))
+                throw new ArgumentException("Shop orders snapshot is invalid.", nameof(snapshot));
+
+            Orders.Restore(snapshot);
+        }
+
+        public bool ValidateOrdersSnapshot(
+            ShopOrdersSnapshot snapshot,
+            long currentGameTimeSeconds)
+        {
+            if (snapshot == null || currentGameTimeSeconds < 0)
+                return false;
+
+            ShopOrderBook candidate = new();
+
+            try
+            {
+                candidate.Restore(snapshot);
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < candidate.Orders.Count; i++)
+            {
+                ShopOrder order = candidate.Orders[i];
+
+                if (!catalog.TryGetProduct(order.ProductId, out ShopProductDefinition product))
+                    return false;
+
+                if (order.PlacedAt.TotalSeconds > currentGameTimeSeconds)
+                    return false;
+
+                if (order.Status == ShopOrderStatus.Delivered &&
+                    order.DeliveryDueAt.TotalSeconds > currentGameTimeSeconds)
+                {
+                    return false;
+                }
+
+                if (product.MaxPurchases > 0 &&
+                    candidate.CountForProduct(order.ProductId) > product.MaxPurchases)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool TryGetOrder(string orderId, out ShopOrder order)
+        {
+            return Orders.TryGetOrder(orderId, out order);
+        }
+
+        public bool TryMarkDelivered(string orderId)
+        {
+            if (gameClock.Clock == null)
+                return false;
+
+            return Orders.TryMarkDelivered(
+                orderId,
+                gameClock.Clock.Current);
+        }
+
+        private void Bind()
+        {
+            if (_bound || wallet.Wallet == null)
+                return;
+
+            wallet.Wallet.BalanceChanged += HandleBalanceChanged;
+            Orders.Changed += HandleOrdersChanged;
+
+            _bound = true;
+        }
+
+        private void Unbind()
+        {
+            if (!_bound)
+                return;
+
+            if (wallet != null && wallet.Wallet != null)
+                wallet.Wallet.BalanceChanged -= HandleBalanceChanged;
+
+            Orders.Changed -= HandleOrdersChanged;
+
+            _bound = false;
+        }
+
+        private void HandleBalanceChanged(long balanceCents)
+        {
+            Changed?.Invoke();
+        }
+
+        private void HandleOrdersChanged()
+        {
+            Changed?.Invoke();
+        }
+
+        private bool ValidateConfiguration()
+        {
+            if (wallet == null)
+            {
+                Debug.LogError(
+                    $"{nameof(ShopBehaviour)} on {name} requires a Wallet.",
+                    this);
+
+                return false;
+            }
+
+            if (gameClock == null)
+            {
+                Debug.LogError(
+                    $"{nameof(ShopBehaviour)} on {name} requires a Game Clock.",
+                    this);
+
+                return false;
+            }
+
+            if (catalog == null)
+            {
+                Debug.LogError(
+                    $"{nameof(ShopBehaviour)} on {name} requires a Shop Catalog.",
+                    this);
+
+                return false;
+            }
+
+            if (!catalog.Validate(out string error))
+            {
+                Debug.LogError(
+                    $"{nameof(ShopCatalogConfig)} assigned to {name} is invalid: {error}",
+                    catalog);
+
+                return false;
+            }
+
+            return true;
+        }
+    }
+}
+
+
+//==== File 43 of 57: E:/GO! Live/Assets\Game/Scripts\Shop\ShopCatalogConfig.cs ====
+namespace GoLive.Shop
+{
+    public enum ShopProductAvailability
+    {
+        Available = 0,
+        Unavailable = 1
+    }
+
+    [Serializable]
+    public sealed class ShopProductDefinition
+    {
+        [SerializeField] private string productId;
+        [SerializeField] private string nameLocalizationKey;
+        [SerializeField] private string descriptionLocalizationKey;
+        [SerializeField] private string categoryLocalizationKey;
+        [SerializeField, Min(1)] private long priceCents = 100;
+        [SerializeField] private ShopProductAvailability availability = ShopProductAvailability.Available;
+        [SerializeField, Min(0)] private int maxPurchases;
+        [SerializeField] private Sprite image;
+        [SerializeField] private ItemDefinition fulfillmentItem;
+        [SerializeField, Min(0)] private int deliveryDelayMinutes = 150;
+
+        public string ProductId => productId;
+        public string NameLocalizationKey => nameLocalizationKey;
+        public string DescriptionLocalizationKey => descriptionLocalizationKey;
+        public string CategoryLocalizationKey => categoryLocalizationKey;
+        public long PriceCents => priceCents;
+        public ShopProductAvailability Availability => availability;
+        public int MaxPurchases => maxPurchases;
+        public Sprite Image => image;
+        public ItemDefinition FulfillmentItem => fulfillmentItem;
+        public int DeliveryDelayMinutes => deliveryDelayMinutes;
+
+        public bool IsAvailable => availability == ShopProductAvailability.Available;
+        public bool HasPurchaseLimit => maxPurchases > 0;
+
+        internal ShopPurchaseOffer CreatePurchaseOffer()
+        {
+            return new ShopPurchaseOffer(
+                productId,
+                priceCents,
+                maxPurchases,
+                deliveryDelayMinutes,
+                IsAvailable);
+        }
+
+        internal bool Validate(out string error)
+        {
+            if (!ShopId.IsValid(productId))
+            {
+                error = $"Product has invalid Product ID '{productId}'.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(nameLocalizationKey))
+            {
+                error = $"Product '{productId}' has no name localization key.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(descriptionLocalizationKey))
+            {
+                error = $"Product '{productId}' has no description localization key.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(categoryLocalizationKey))
+            {
+                error = $"Product '{productId}' has no category localization key.";
+                return false;
+            }
+
+            if (priceCents <= 0)
+            {
+                error = $"Product '{productId}' must have a positive price.";
+                return false;
+            }
+
+            if (!Enum.IsDefined(typeof(ShopProductAvailability), availability))
+            {
+                error = $"Product '{productId}' has an invalid availability state.";
+                return false;
+            }
+
+            if (maxPurchases < 0)
+            {
+                error = $"Product '{productId}' has an invalid purchase limit.";
+                return false;
+            }
+
+            if (IsAvailable && image == null)
+            {
+                error = $"Available product '{productId}' has no product image.";
+                return false;
+            }
+
+            if (IsAvailable && fulfillmentItem == null)
+            {
+                error = $"Available product '{productId}' has no fulfillment Item Definition.";
+                return false;
+            }
+
+            if (fulfillmentItem != null && !ItemDefinition.IsValidItemId(fulfillmentItem.ItemId))
+            {
+                error = $"Product '{productId}' references an invalid fulfillment Item Definition.";
+                return false;
+            }
+
+            if (IsAvailable && deliveryDelayMinutes <= 0)
+            {
+                error = $"Available product '{productId}' requires a positive delivery delay.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
+        }
+    }
+
+    [CreateAssetMenu(fileName = "ShopCatalog", menuName = "GO! LIVE/Shop/Shop Catalog")]
+    public sealed class ShopCatalogConfig : ScriptableObject
+    {
+        [SerializeField] private ShopProductDefinition[] products = Array.Empty<ShopProductDefinition>();
+
+        public IReadOnlyList<ShopProductDefinition> Products => products;
+
+        private Dictionary<string, ShopProductDefinition> _lookup;
+
+        public bool Validate(out string error)
+        {
+            if (products == null)
+            {
+                error = "Shop catalog product array is missing.";
+                return false;
+            }
+
+            HashSet<string> productIds = new(StringComparer.Ordinal);
+
+            for (int i = 0; i < products.Length; i++)
+            {
+                ShopProductDefinition product = products[i];
+
+                if (product == null)
+                {
+                    error = $"Shop product at index {i} is null.";
+                    return false;
+                }
+
+                if (!product.Validate(out error))
+                    return false;
+
+                if (!productIds.Add(product.ProductId))
+                {
+                    error = $"Duplicate Shop Product ID '{product.ProductId}'.";
+                    return false;
+                }
+            }
+
+            error = string.Empty;
+            return true;
+        }
+
+        public bool TryGetProduct(string productId, out ShopProductDefinition product)
+        {
+            product = null;
+
+            if (!ShopId.IsValid(productId))
+                return false;
+
+            if (!EnsureLookup())
+                return false;
+
+            return _lookup.TryGetValue(productId, out product);
+        }
+
+        public static bool IsValidProductId(string value)
+        {
+            return ShopId.IsValid(value);
+        }
+
+        private bool EnsureLookup()
+        {
+            if (_lookup != null)
+                return true;
+
+            if (!Validate(out _))
+                return false;
+
+            Dictionary<string, ShopProductDefinition> lookup =
+                new(products.Length, StringComparer.Ordinal);
+
+            for (int i = 0; i < products.Length; i++)
+                lookup.Add(products[i].ProductId, products[i]);
+
+            _lookup = lookup;
+            return true;
+        }
+
+        private void OnEnable()
+        {
+            _lookup = null;
+        }
+
+        private void OnValidate()
+        {
+            _lookup = null;
+        }
+    }
+}
+
+
+//==== File 44 of 57: E:/GO! Live/Assets\Game/Scripts\Shop\ShopCommerce.cs ====
+namespace GoLive.Shop
+{
+    internal static class ShopId
+    {
+        public static bool IsValid(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length > 80)
+                return false;
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                char character = value[i];
+
+                if (character is >= 'a' and <= 'z' or >= '0' and <= '9' or '-' or '_')
+                    continue;
+
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    public enum ShopOrderStatus
+    {
+        Placed = 0,
+        Delivered = 1
+    }
+
+    public enum ShopPurchaseResultCode
+    {
+        Success = 0,
+        NotReady = 1,
+        ProductNotFound = 2,
+        Unavailable = 3,
+        PurchaseLimitReached = 4,
+        InsufficientFunds = 5,
+        Busy = 6
+    }
+
+    public readonly struct ShopPurchaseOffer
+    {
+        public string ProductId { get; }
+        public long PriceCents { get; }
+        public int MaxPurchases { get; }
+        public int DeliveryDelayMinutes { get; }
+        public bool IsAvailable { get; }
+
+        public ShopPurchaseOffer(
+            string productId,
+            long priceCents,
+            int maxPurchases,
+            int deliveryDelayMinutes,
+            bool isAvailable)
+        {
+            if (!ShopId.IsValid(productId))
+                throw new ArgumentException("Product ID is invalid.", nameof(productId));
+
+            if (priceCents <= 0)
+                throw new ArgumentOutOfRangeException(nameof(priceCents));
+
+            if (maxPurchases < 0)
+                throw new ArgumentOutOfRangeException(nameof(maxPurchases));
+
+            if (isAvailable && deliveryDelayMinutes <= 0)
+                throw new ArgumentOutOfRangeException(nameof(deliveryDelayMinutes));
+
+            ProductId = productId;
+            PriceCents = priceCents;
+            MaxPurchases = maxPurchases;
+            DeliveryDelayMinutes = deliveryDelayMinutes;
+            IsAvailable = isAvailable;
+        }
+    }
+
+    public readonly struct ShopPurchaseResult
+    {
+        public ShopPurchaseResultCode Code { get; }
+        public ShopOrder Order { get; }
+        public bool Succeeded => Code == ShopPurchaseResultCode.Success;
+
+        private ShopPurchaseResult(ShopPurchaseResultCode code, ShopOrder order)
+        {
+            Code = code;
+            Order = order;
+        }
+
+        public static ShopPurchaseResult Success(ShopOrder order)
+        {
+            if (order == null)
+                throw new ArgumentNullException(nameof(order));
+
+            return new ShopPurchaseResult(ShopPurchaseResultCode.Success, order);
+        }
+
+        public static ShopPurchaseResult Failure(ShopPurchaseResultCode code)
+        {
+            if (code == ShopPurchaseResultCode.Success)
+                throw new ArgumentOutOfRangeException(nameof(code));
+
+            return new ShopPurchaseResult(code, null);
+        }
+    }
+
+    public sealed class ShopOrder
+    {
+        public string OrderId { get; }
+        public string ProductId { get; }
+        public long PaidPriceCents { get; }
+        public GameTimeSnapshot PlacedAt { get; }
+        public GameTimeSnapshot DeliveryDueAt { get; }
+        public ShopOrderStatus Status { get; private set; }
+
+        internal ShopOrder(
+            string orderId,
+            string productId,
+            long paidPriceCents,
+            GameTimeSnapshot placedAt,
+            GameTimeSnapshot deliveryDueAt,
+            ShopOrderStatus status)
+        {
+            if (!ShopId.IsValid(orderId))
+                throw new ArgumentException("Order ID is invalid.", nameof(orderId));
+
+            if (!ShopId.IsValid(productId))
+                throw new ArgumentException("Product ID is invalid.", nameof(productId));
+
+            if (paidPriceCents <= 0)
+                throw new ArgumentOutOfRangeException(nameof(paidPriceCents));
+
+            if (deliveryDueAt.TotalSeconds < placedAt.TotalSeconds)
+                throw new ArgumentException("Delivery time cannot be earlier than placement time.");
+
+            if (!Enum.IsDefined(typeof(ShopOrderStatus), status))
+                throw new ArgumentOutOfRangeException(nameof(status));
+
+            OrderId = orderId;
+            ProductId = productId;
+            PaidPriceCents = paidPriceCents;
+            PlacedAt = placedAt;
+            DeliveryDueAt = deliveryDueAt;
+            Status = status;
+        }
+
+        internal static ShopOrder CreateNew(
+            string productId,
+            long paidPriceCents,
+            GameTimeSnapshot placedAt,
+            GameTimeSnapshot deliveryDueAt)
+        {
+            return new ShopOrder(
+                Guid.NewGuid().ToString("N"),
+                productId,
+                paidPriceCents,
+                placedAt,
+                deliveryDueAt,
+                ShopOrderStatus.Placed);
+        }
+
+        public bool IsDeliveryDue(GameTimeSnapshot currentTime)
+        {
+            return Status == ShopOrderStatus.Placed &&
+                   currentTime.TotalSeconds >= DeliveryDueAt.TotalSeconds;
+        }
+
+        internal bool TryMarkDelivered(GameTimeSnapshot currentTime)
+        {
+            if (!IsDeliveryDue(currentTime))
+                return false;
+
+            Status = ShopOrderStatus.Delivered;
+            return true;
+        }
+    }
+
+    public sealed class ShopOrderBook
+    {
+        public IReadOnlyList<ShopOrder> Orders { get; private set; }
+
+        public event Action Changed;
+
+        private List<ShopOrder> _orders = new();
+        private Dictionary<string, ShopOrder> _ordersById = new(StringComparer.Ordinal);
+
+        public ShopOrderBook()
+        {
+            Orders = new ReadOnlyCollection<ShopOrder>(_orders);
+        }
+
+        public bool TryGetOrder(string orderId, out ShopOrder order)
+        {
+            order = null;
+
+            if (!ShopId.IsValid(orderId))
+                return false;
+
+            return _ordersById.TryGetValue(orderId, out order);
+        }
+
+        public int CountForProduct(string productId)
+        {
+            if (!ShopId.IsValid(productId))
+                return 0;
+
+            int count = 0;
+
+            for (int i = 0; i < _orders.Count; i++)
+            {
+                if (string.Equals(_orders[i].ProductId, productId, StringComparison.Ordinal))
+                    count++;
+            }
+
+            return count;
+        }
+
+        public bool HasReachedPurchaseLimit(string productId, int maxPurchases)
+        {
+            if (maxPurchases <= 0)
+                return false;
+
+            return CountForProduct(productId) >= maxPurchases;
+        }
+
+        public bool TryMarkDelivered(string orderId, GameTimeSnapshot currentTime)
+        {
+            if (!TryGetOrder(orderId, out ShopOrder order))
+                return false;
+
+            if (!order.TryMarkDelivered(currentTime))
+                return false;
+
+            Changed?.Invoke();
+            return true;
+        }
+
+        public ShopOrdersSnapshot CaptureSnapshot()
+        {
+            ShopOrderSnapshot[] orders = new ShopOrderSnapshot[_orders.Count];
+
+            for (int i = 0; i < _orders.Count; i++)
+            {
+                ShopOrder order = _orders[i];
+
+                orders[i] = new ShopOrderSnapshot
+                {
+                    OrderId = order.OrderId,
+                    ProductId = order.ProductId,
+                    PaidPriceCents = order.PaidPriceCents,
+                    PlacedAtGameTimeSeconds = order.PlacedAt.TotalSeconds,
+                    DeliveryDueGameTimeSeconds = order.DeliveryDueAt.TotalSeconds,
+                    Status = order.Status
+                };
+            }
+
+            return new ShopOrdersSnapshot
+            {
+                Orders = orders
+            };
+        }
+
+        public void Restore(ShopOrdersSnapshot snapshot)
+        {
+            if (snapshot == null)
+                throw new ArgumentNullException(nameof(snapshot));
+
+            if (snapshot.Version != ShopOrdersSnapshot.CurrentVersion ||
+                snapshot.Orders == null)
+            {
+                throw new ArgumentException(
+                    "Unsupported or incomplete Shop orders snapshot.",
+                    nameof(snapshot));
+            }
+
+            List<ShopOrder> restoredOrders = new(snapshot.Orders.Length);
+            Dictionary<string, ShopOrder> restoredById =
+                new(snapshot.Orders.Length, StringComparer.Ordinal);
+
+            for (int i = 0; i < snapshot.Orders.Length; i++)
+            {
+                ShopOrderSnapshot savedOrder = snapshot.Orders[i];
+
+                if (savedOrder == null)
+                    throw new ArgumentException("Saved Shop order is missing.", nameof(snapshot));
+
+                ShopOrder order = RestoreOrder(savedOrder);
+
+                if (!restoredById.TryAdd(order.OrderId, order))
+                {
+                    throw new ArgumentException(
+                        $"Duplicate Order ID '{order.OrderId}'.",
+                        nameof(snapshot));
+                }
+
+                restoredOrders.Add(order);
+            }
+
+            _orders = restoredOrders;
+            _ordersById = restoredById;
+            Orders = new ReadOnlyCollection<ShopOrder>(_orders);
+
+            Changed?.Invoke();
+        }
+
+        internal bool TryReserve(ShopOrder order)
+        {
+            if (order == null || _ordersById.ContainsKey(order.OrderId))
+                return false;
+
+            _orders.Add(order);
+            _ordersById.Add(order.OrderId, order);
+            return true;
+        }
+
+        internal bool TryCancelReservation(string orderId)
+        {
+            if (!_ordersById.TryGetValue(orderId, out ShopOrder order))
+                return false;
+
+            _ordersById.Remove(orderId);
+            _orders.Remove(order);
+            return true;
+        }
+
+        internal void PublishChanged()
+        {
+            Changed?.Invoke();
+        }
+
+        private static ShopOrder RestoreOrder(ShopOrderSnapshot savedOrder)
+        {
+            if (savedOrder.PlacedAtGameTimeSeconds < 0 ||
+                savedOrder.DeliveryDueGameTimeSeconds < 0)
+            {
+                throw new ArgumentException("Saved Shop order contains invalid game time.");
+            }
+
+            return new ShopOrder(
+                savedOrder.OrderId,
+                savedOrder.ProductId,
+                savedOrder.PaidPriceCents,
+                new GameTimeSnapshot(savedOrder.PlacedAtGameTimeSeconds),
+                new GameTimeSnapshot(savedOrder.DeliveryDueGameTimeSeconds),
+                savedOrder.Status);
+        }
+    }
+
+    public sealed class ShopPurchase
+    {
+        private readonly Wallet _wallet;
+        private readonly ShopOrderBook _orders;
+        private readonly GameClock _clock;
+
+        private bool _busy;
+
+        public ShopPurchase(Wallet wallet, ShopOrderBook orders, GameClock clock)
+        {
+            _wallet = wallet ?? throw new ArgumentNullException(nameof(wallet));
+            _orders = orders ?? throw new ArgumentNullException(nameof(orders));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+        }
+
+        public ShopPurchaseResultCode Evaluate(in ShopPurchaseOffer offer)
+        {
+            if (!offer.IsAvailable)
+                return ShopPurchaseResultCode.Unavailable;
+
+            if (_orders.HasReachedPurchaseLimit(offer.ProductId, offer.MaxPurchases))
+                return ShopPurchaseResultCode.PurchaseLimitReached;
+
+            if (_wallet.BalanceCents < offer.PriceCents)
+                return ShopPurchaseResultCode.InsufficientFunds;
+
+            return ShopPurchaseResultCode.Success;
+        }
+
+        public ShopPurchaseResult TryPurchase(in ShopPurchaseOffer offer)
+        {
+            if (_busy)
+                return ShopPurchaseResult.Failure(ShopPurchaseResultCode.Busy);
+
+            ShopPurchaseResultCode evaluation = Evaluate(in offer);
+
+            if (evaluation != ShopPurchaseResultCode.Success)
+                return ShopPurchaseResult.Failure(evaluation);
+
+            _busy = true;
+
+            try
+            {
+                GameTimeSnapshot placedAt = _clock.Current;
+
+                long delaySeconds = checked(
+                    offer.DeliveryDelayMinutes * GameTimeSnapshot.SecondsPerMinute);
+
+                GameTimeSnapshot deliveryDueAt = new(
+                    checked(placedAt.TotalSeconds + delaySeconds));
+
+                ShopOrder order = ShopOrder.CreateNew(
+                    offer.ProductId,
+                    offer.PriceCents,
+                    placedAt,
+                    deliveryDueAt);
+
+                if (!_orders.TryReserve(order))
+                    throw new InvalidOperationException("Failed to reserve a unique Shop order.");
+
+                if (!_wallet.TrySpend(offer.PriceCents))
+                {
+                    _orders.TryCancelReservation(order.OrderId);
+                    return ShopPurchaseResult.Failure(ShopPurchaseResultCode.InsufficientFunds);
+                }
+
+                _orders.PublishChanged();
+
+                return ShopPurchaseResult.Success(order);
+            }
+            finally
+            {
+                _busy = false;
+            }
+        }
+    }
+
+    [Serializable]
+    public sealed class ShopOrdersSnapshot
+    {
+        public const int CurrentVersion = 1;
+
+        public int Version = CurrentVersion;
+        public ShopOrderSnapshot[] Orders = Array.Empty<ShopOrderSnapshot>();
+    }
+
+    [Serializable]
+    public sealed class ShopOrderSnapshot
+    {
+        public string OrderId;
+        public string ProductId;
+        public long PaidPriceCents;
+        public long PlacedAtGameTimeSeconds;
+        public long DeliveryDueGameTimeSeconds;
+        public ShopOrderStatus Status;
+    }
+}
+
+
+//==== File 45 of 57: E:/GO! Live/Assets\Game/Scripts\Sleep\BedSleepInteractable.cs ====
 namespace GoLive.Sleep
 {
     [DisallowMultipleComponent]
@@ -6046,7 +7444,7 @@ namespace GoLive.Sleep
 }
 
 
-//==== File 43 of 54: E:/GO! Live/Assets\Game/Scripts\Sleep\PlayerSleepController.cs ====
+//==== File 46 of 57: E:/GO! Live/Assets\Game/Scripts\Sleep\PlayerSleepController.cs ====
 namespace GoLive.Sleep
 {
     [DisallowMultipleComponent]
@@ -6132,7 +7530,7 @@ namespace GoLive.Sleep
 }
 
 
-//==== File 44 of 54: E:/GO! Live/Assets\Game/Scripts\Sleep\SleepConfig.cs ====
+//==== File 47 of 57: E:/GO! Live/Assets\Game/Scripts\Sleep\SleepConfig.cs ====
 namespace GoLive.Sleep
 {
     [CreateAssetMenu(fileName = "SleepConfig", menuName = "GO! LIVE/Sleep/Sleep Config")]
@@ -6162,7 +7560,7 @@ namespace GoLive.Sleep
 }
 
 
-//==== File 45 of 54: E:/GO! Live/Assets\Game/Scripts\Sleep\SleepService.cs ====
+//==== File 48 of 57: E:/GO! Live/Assets\Game/Scripts\Sleep\SleepService.cs ====
 namespace GoLive.Sleep
 {
     public readonly struct SleepRules
@@ -6269,7 +7667,7 @@ namespace GoLive.Sleep
 }
 
 
-//==== File 46 of 54: E:/GO! Live/Assets\Game/Scripts\Time\DayLightingView.cs ====
+//==== File 49 of 57: E:/GO! Live/Assets\Game/Scripts\Time\DayLightingView.cs ====
 namespace GoLive.GameTime
 {
     [DisallowMultipleComponent]
@@ -6371,7 +7769,7 @@ namespace GoLive.GameTime
 }
 
 
-//==== File 47 of 54: E:/GO! Live/Assets\Game/Scripts\Time\GameClock.cs ====
+//==== File 50 of 57: E:/GO! Live/Assets\Game/Scripts\Time\GameClock.cs ====
 namespace GoLive.GameTime
 {
     public enum DayPhase
@@ -6591,7 +7989,7 @@ namespace GoLive.GameTime
 }
 
 
-//==== File 48 of 54: E:/GO! Live/Assets\Game/Scripts\Time\GameClockBehaviour.cs ====
+//==== File 51 of 57: E:/GO! Live/Assets\Game/Scripts\Time\GameClockBehaviour.cs ====
 namespace GoLive.GameTime
 {
     [DisallowMultipleComponent]
@@ -6649,7 +8047,7 @@ namespace GoLive.GameTime
 }
 
 
-//==== File 49 of 54: E:/GO! Live/Assets\Game/Scripts\Time\GameTimeConfig.cs ====
+//==== File 52 of 57: E:/GO! Live/Assets\Game/Scripts\Time\GameTimeConfig.cs ====
 namespace GoLive.GameTime
 {
     [CreateAssetMenu(fileName = "GameTimeConfig", menuName = "GO! LIVE/Time/Game Time Config")]
@@ -6686,7 +8084,7 @@ namespace GoLive.GameTime
 }
 
 
-//==== File 50 of 54: E:/GO! Live/Assets\Game/Scripts\UI\GamePauseController.cs ====
+//==== File 53 of 57: E:/GO! Live/Assets\Game/Scripts\UI\GamePauseController.cs ====
 namespace GoLive.UI
 {
     [DisallowMultipleComponent]
@@ -6774,7 +8172,7 @@ namespace GoLive.UI
 }
 
 
-//==== File 51 of 54: E:/GO! Live/Assets\Game/Scripts\UI\GameTimeHudView.cs ====
+//==== File 54 of 57: E:/GO! Live/Assets\Game/Scripts\UI\GameTimeHudView.cs ====
 namespace GoLive.GameTime
 {
     [DisallowMultipleComponent]
@@ -6893,7 +8291,7 @@ namespace GoLive.GameTime
 }
 
 
-//==== File 52 of 54: E:/GO! Live/Assets\Game/Scripts\UI\GameUiInputRouter.cs ====
+//==== File 55 of 57: E:/GO! Live/Assets\Game/Scripts\UI\GameUiInputRouter.cs ====
 namespace GoLive.UI
 {
     [DisallowMultipleComponent]
@@ -7026,7 +8424,7 @@ namespace GoLive.UI
 }
 
 
-//==== File 53 of 54: E:/GO! Live/Assets\Game/Scripts\WASD\PlayerController.cs ====
+//==== File 56 of 57: E:/GO! Live/Assets\Game/Scripts\WASD\PlayerController.cs ====
 namespace GoLive.Player
 {
     public readonly struct PlayerPoseSnapshot
@@ -7197,7 +8595,7 @@ namespace GoLive.Player
 }
 
 
-//==== File 54 of 54: E:/GO! Live/Assets\Game/Scripts\WASD\PlayerControlState.cs ====
+//==== File 57 of 57: E:/GO! Live/Assets\Game/Scripts\WASD\PlayerControlState.cs ====
 namespace GoLive.Player
 {
     [Flags]
@@ -7270,10 +8668,10 @@ namespace GoLive.Player
 
 
 // ============ Statistics =============
-// Total Files: 54
-// Total Size: 235.01 KB
-// Total Lines: 7300
-// Classes: 66
-// Methods: 683
-// Comments (Blocks): 19
+// Total Files: 57
+// Total Size: 272.61 KB
+// Total Lines: 8706
+// Classes: 75
+// Methods: 703
+// Comments (Blocks): 15
 // =====================================
