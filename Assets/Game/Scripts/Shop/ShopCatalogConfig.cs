@@ -18,6 +18,8 @@ namespace GoLive.Shop
         [SerializeField] private string nameLocalizationKey;
         [SerializeField] private string descriptionLocalizationKey;
         [SerializeField] private string categoryLocalizationKey;
+        [SerializeField] private ItemCategory category;
+        [SerializeField] private bool showInFeatured;
         [SerializeField, Min(1)] private long priceCents = 100;
         [SerializeField] private ShopProductAvailability availability = ShopProductAvailability.Available;
         [SerializeField, Min(0)] private int maxPurchases;
@@ -29,6 +31,8 @@ namespace GoLive.Shop
         public string NameLocalizationKey => nameLocalizationKey;
         public string DescriptionLocalizationKey => descriptionLocalizationKey;
         public string CategoryLocalizationKey => categoryLocalizationKey;
+        public ItemCategory Category => category;
+        public bool ShowInFeatured => showInFeatured;
         public long PriceCents => priceCents;
         public ShopProductAvailability Availability => availability;
         public int MaxPurchases => maxPurchases;
@@ -75,6 +79,12 @@ namespace GoLive.Shop
                 return false;
             }
 
+            if (!Enum.IsDefined(typeof(ItemCategory), category))
+            {
+                error = $"Product '{productId}' has an invalid category.";
+                return false;
+            }
+
             if (priceCents <= 0)
             {
                 error = $"Product '{productId}' must have a positive price.";
@@ -93,12 +103,6 @@ namespace GoLive.Shop
                 return false;
             }
 
-            if (IsAvailable && image == null)
-            {
-                error = $"Available product '{productId}' has no product image.";
-                return false;
-            }
-
             if (IsAvailable && fulfillmentItem == null)
             {
                 error = $"Available product '{productId}' has no fulfillment Item Definition.";
@@ -108,6 +112,12 @@ namespace GoLive.Shop
             if (fulfillmentItem != null && !ItemDefinition.IsValidItemId(fulfillmentItem.ItemId))
             {
                 error = $"Product '{productId}' references an invalid fulfillment Item Definition.";
+                return false;
+            }
+
+            if (fulfillmentItem != null && fulfillmentItem.Category != category)
+            {
+                error = $"Product '{productId}' is listed as {category} but delivers a {fulfillmentItem.Category} item.";
                 return false;
             }
 

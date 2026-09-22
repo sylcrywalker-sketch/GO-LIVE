@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GoLive.Economy;
 using GoLive.GameTime;
 using UnityEngine;
@@ -14,6 +15,9 @@ namespace GoLive.Shop
 
         public ShopOrderBook Orders { get; } = new();
         public bool IsReady => _purchase != null;
+
+        public IReadOnlyList<ShopProductDefinition> Products =>
+            catalog != null ? catalog.Products : Array.Empty<ShopProductDefinition>();
 
         public event Action Changed;
 
@@ -85,6 +89,23 @@ namespace GoLive.Shop
             ShopPurchaseOffer offer = product.CreatePurchaseOffer();
 
             return _purchase.Evaluate(in offer);
+        }
+
+        public bool TryEstimateDelivery(string productId, out GameTimeSnapshot deliveryDueAt)
+        {
+            deliveryDueAt = default;
+
+            if (!TryGetProduct(productId, out ShopProductDefinition product) ||
+                !product.IsAvailable ||
+                gameClock.Clock == null)
+            {
+                return false;
+            }
+
+            ShopPurchaseOffer offer = product.CreatePurchaseOffer();
+
+            deliveryDueAt = offer.GetDeliveryDueAt(gameClock.Clock.Current);
+            return true;
         }
 
         public ShopPurchaseResult TryPurchase(string productId)
