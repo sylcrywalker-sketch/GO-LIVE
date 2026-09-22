@@ -2,6 +2,7 @@ using System;
 using GoLive.Economy;
 using GoLive.Items;
 using GoLive.Phone;
+using GoLive.Shop;
 using UnityEngine;
 
 namespace GoLive.Persistence
@@ -18,6 +19,7 @@ namespace GoLive.Persistence
         public long BalanceCents;
         public RentSaveData Rent;
         public PhoneMessagesSnapshot Messages;
+        public ShopOrdersSnapshot Orders;
         public ItemSaveData[] Items = Array.Empty<ItemSaveData>();
     }
 
