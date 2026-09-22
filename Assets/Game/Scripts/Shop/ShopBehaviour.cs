@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GoLive.Economy;
 using GoLive.GameTime;
 using UnityEngine;
@@ -14,6 +15,9 @@ namespace GoLive.Shop
 
         public ShopOrderBook Orders { get; } = new();
         public bool IsReady => _purchase != null;
+
+        public IReadOnlyList<ShopProductDefinition> Products =>
+            catalog != null ? catalog.Products : Array.Empty<ShopProductDefinition>();
 
         public event Action Changed;
 
