@@ -77,6 +77,15 @@ namespace GoLive.Shop
             DeliveryDelayMinutes = deliveryDelayMinutes;
             IsAvailable = isAvailable;
         }
+
+        public GameTimeSnapshot GetDeliveryDueAt(GameTimeSnapshot placedAt)
+        {
+            long delaySeconds = checked(
+                DeliveryDelayMinutes * GameTimeSnapshot.SecondsPerMinute);
+
+            return new GameTimeSnapshot(
+                checked(placedAt.TotalSeconds + delaySeconds));
+        }
     }
 
     public readonly struct ShopPurchaseResult
@@ -116,6 +125,7 @@ namespace GoLive.Shop
         public GameTimeSnapshot PlacedAt { get; }
         public GameTimeSnapshot DeliveryDueAt { get; }
         public ShopOrderStatus Status { get; private set; }
+        public bool IsActive => Status == ShopOrderStatus.Placed;
 
         internal ShopOrder(
             string orderId,
@@ -225,6 +235,41 @@ namespace GoLive.Shop
                 return false;
 
             return CountForProduct(productId) >= maxPurchases;
+        }
+
+        public int CountActive()
+        {
+            int count = 0;
+
+            for (int i = 0; i < _orders.Count; i++)
+            {
+                if (_orders[i].IsActive)
+                    count++;
+            }
+
+            return count;
+        }
+
+        public bool TryGetLatestActiveOrder(string productId, out ShopOrder order)
+        {
+            order = null;
+
+            if (!ShopId.IsValid(productId))
+                return false;
+
+            for (int i = _orders.Count - 1; i >= 0; i--)
+            {
+                if (!_orders[i].IsActive ||
+                    !string.Equals(_orders[i].ProductId, productId, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                order = _orders[i];
+                return true;
+            }
+
+            return false;
         }
 
         public bool TryMarkDelivered(string orderId, GameTimeSnapshot currentTime)
@@ -394,12 +439,7 @@ namespace GoLive.Shop
             try
             {
                 GameTimeSnapshot placedAt = _clock.Current;
-
-                long delaySeconds = checked(
-                    offer.DeliveryDelayMinutes * GameTimeSnapshot.SecondsPerMinute);
-
-                GameTimeSnapshot deliveryDueAt = new(
-                    checked(placedAt.TotalSeconds + delaySeconds));
+                GameTimeSnapshot deliveryDueAt = offer.GetDeliveryDueAt(placedAt);
 
                 ShopOrder order = ShopOrder.CreateNew(
                     offer.ProductId,

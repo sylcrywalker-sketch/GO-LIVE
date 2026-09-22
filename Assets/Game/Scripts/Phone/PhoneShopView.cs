@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using GoLive.GameTime;
+using GoLive.Items;
 using GoLive.Localization;
 using GoLive.Shop;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace GoLive.Phone
@@ -20,6 +22,23 @@ namespace GoLive.Phone
             Orders
         }
 
+        [Serializable]
+        private sealed class CategoryTab
+        {
+            [field: SerializeField] public Button Button { get; private set; }
+            [field: SerializeField] public TMP_Text Label { get; private set; }
+            [field: SerializeField] public string LabelKey { get; private set; }
+            [field: SerializeField] public bool ShowsFeatured { get; private set; }
+            [field: SerializeField] public ItemCategory Category { get; private set; }
+
+            public bool Lists(ShopProductDefinition product)
+            {
+                return ShowsFeatured
+                    ? product.ShowInFeatured
+                    : product.Category == Category;
+            }
+        }
+
         private readonly struct ProductCard
         {
             public ShopProductDefinition Product { get; }
@@ -32,18 +51,6 @@ namespace GoLive.Phone
             }
         }
 
-        private readonly struct CategoryLabel
-        {
-            public string LocalizationKey { get; }
-            public TMP_Text Text { get; }
-
-            public CategoryLabel(string localizationKey, TMP_Text text)
-            {
-                LocalizationKey = localizationKey;
-                Text = text;
-            }
-        }
-
         [Header("Core")]
         [SerializeField] private PhoneBehaviour _phone;
         [SerializeField] private LocalizationContext _localization;
@@ -52,9 +59,14 @@ namespace GoLive.Phone
 
         [Header("Storefront")]
         [SerializeField] private GameObject _storefront;
+        [SerializeField] private CategoryTab[] _tabs = Array.Empty<CategoryTab>();
+        [SerializeField] private Color _tabColor = new(0.133f, 0.192f, 0.247f, 1f);
+        [SerializeField] private Color _tabLabelColor = new(0.702f, 0.749f, 0.784f, 1f);
+        [SerializeField] private Color _selectedTabColor = new(0.278f, 0.388f, 0.494f, 1f);
+        [SerializeField] private Color _selectedTabLabelColor = new(0.933f, 0.945f, 0.933f, 1f);
         [SerializeField] private ScrollRect _catalog;
-        [SerializeField] private TMP_Text _categoryTemplate;
         [SerializeField] private ShopProductCardView _productCardTemplate;
+        [SerializeField] private TMP_Text _catalogEmpty;
         [SerializeField] private Button _openOrders;
         [SerializeField] private TMP_Text _openOrdersLabel;
         [SerializeField] private GameObject _activeOrdersBadge;
@@ -62,10 +74,12 @@ namespace GoLive.Phone
 
         [Header("Product Details")]
         [SerializeField] private GameObject _productDetails;
+        [SerializeField] private GameObject _detailsMedia;
         [SerializeField] private Image _detailsImage;
         [SerializeField] private TMP_Text _detailsCategory;
         [SerializeField] private TMP_Text _detailsName;
         [SerializeField] private TMP_Text _detailsPrice;
+        [SerializeField] private TMP_Text _detailsDelivery;
         [SerializeField] private TMP_Text _detailsDescription;
         [SerializeField] private Button _detailsBuy;
         [SerializeField] private TMP_Text _detailsBuyLabel;
@@ -88,11 +102,12 @@ namespace GoLive.Phone
 
         public event Action PageChanged;
 
-        private readonly List<CategoryLabel> _categoryLabels = new();
         private readonly List<ProductCard> _productCards = new();
         private readonly List<ShopOrderRowView> _orderRows = new();
 
+        private UnityAction[] _tabClicks = Array.Empty<UnityAction>();
         private Page _page;
+        private int _selectedTab;
         private ShopProductDefinition _selectedProduct;
         private GameClock _subscribedClock;
         private bool _bound;
@@ -105,9 +120,19 @@ namespace GoLive.Phone
                 return;
             }
 
-            _categoryTemplate.gameObject.SetActive(false);
             _productCardTemplate.gameObject.SetActive(false);
             _orderRowTemplate.gameObject.SetActive(false);
+
+            _tabClicks = new UnityAction[_tabs.Length];
+
+            for (int i = 0; i < _tabs.Length; i++)
+            {
+                int index = i;
+                _tabClicks[i] = () => SelectTab(index);
+            }
+
+            // The Orders shortcut sits in the shared bottom bar, outside this screen, so it follows the phone screen instead of OnEnable/OnDisable.
+            _phone.ScreenChanged += RefreshOrdersShortcut;
 
             BuildCatalog();
         }
@@ -125,6 +150,12 @@ namespace GoLive.Phone
             _selectedProduct = null;
         }
 
+        private void OnDestroy()
+        {
+            if (_phone != null)
+                _phone.ScreenChanged -= RefreshOrdersShortcut;
+        }
+
         private void Bind()
         {
             if (_bound)
@@ -137,10 +168,13 @@ namespace GoLive.Phone
             _openOrders.onClick.AddListener(OpenOrders);
             _detailsBuy.onClick.AddListener(BuySelectedProduct);
 
+            for (int i = 0; i < _tabs.Length; i++)
+                _tabs[i].Button.onClick.AddListener(_tabClicks[i]);
+
             _subscribedClock = _clock.Clock;
 
             if (_subscribedClock != null)
-                _subscribedClock.DayChanged += HandleDayChanged;
+                _subscribedClock.MinuteChanged += HandleMinuteChanged;
 
             _bound = true;
 
@@ -159,8 +193,11 @@ namespace GoLive.Phone
             _openOrders.onClick.RemoveListener(OpenOrders);
             _detailsBuy.onClick.RemoveListener(BuySelectedProduct);
 
+            for (int i = 0; i < _tabs.Length; i++)
+                _tabs[i].Button.onClick.RemoveListener(_tabClicks[i]);
+
             if (_subscribedClock != null)
-                _subscribedClock.DayChanged -= HandleDayChanged;
+                _subscribedClock.MinuteChanged -= HandleMinuteChanged;
 
             _subscribedClock = null;
             _bound = false;
@@ -169,38 +206,18 @@ namespace GoLive.Phone
         private void BuildCatalog()
         {
             IReadOnlyList<ShopProductDefinition> products = _shop.Products;
-            List<string> categories = new();
+            Transform content = _catalog.content;
 
             for (int i = 0; i < products.Count; i++)
             {
-                if (!categories.Contains(products[i].CategoryLocalizationKey))
-                    categories.Add(products[i].CategoryLocalizationKey);
-            }
+                ShopProductDefinition product = products[i];
 
-            Transform content = _catalog.content;
+                ShopProductCardView card = Instantiate(_productCardTemplate, content);
+                card.name = product.ProductId;
+                card.Clicked += () => OpenProductDetails(product);
+                card.gameObject.SetActive(true);
 
-            for (int c = 0; c < categories.Count; c++)
-            {
-                TMP_Text label = Instantiate(_categoryTemplate, content);
-                label.name = categories[c];
-                label.gameObject.SetActive(true);
-
-                _categoryLabels.Add(new CategoryLabel(categories[c], label));
-
-                for (int i = 0; i < products.Count; i++)
-                {
-                    ShopProductDefinition product = products[i];
-
-                    if (!string.Equals(product.CategoryLocalizationKey, categories[c], StringComparison.Ordinal))
-                        continue;
-
-                    ShopProductCardView card = Instantiate(_productCardTemplate, content);
-                    card.name = product.ProductId;
-                    card.Clicked += () => OpenProductDetails(product);
-                    card.gameObject.SetActive(true);
-
-                    _productCards.Add(new ProductCard(product, card));
-                }
+                _productCards.Add(new ProductCard(product, card));
             }
         }
 
@@ -213,17 +230,26 @@ namespace GoLive.Phone
             _orders.SetActive(page == Page.Orders);
 
             Refresh();
+            RefreshOrdersShortcut();
+
             PageChanged?.Invoke();
+        }
+
+        private void SelectTab(int index)
+        {
+            if (!_phone.IsInteractive || _page != Page.Storefront)
+                return;
+
+            _selectedTab = index;
+
+            RefreshCatalog();
+            ScrollToTop(_catalog);
         }
 
         private void OpenProductDetails(ShopProductDefinition product)
         {
-            if (!_phone.IsInteractive ||
-                _page != Page.Storefront ||
-                !product.IsAvailable)
-            {
+            if (!_phone.IsInteractive || _page != Page.Storefront)
                 return;
-            }
 
             _selectedProduct = product;
             ShowPage(Page.ProductDetails);
@@ -235,6 +261,7 @@ namespace GoLive.Phone
                 return;
 
             ShowPage(Page.Orders);
+            ScrollToTop(_orderList);
         }
 
         private void BuySelectedProduct()
@@ -267,9 +294,12 @@ namespace GoLive.Phone
             Refresh();
         }
 
-        private void HandleDayChanged(int previousDay, int currentDay)
+        private void HandleMinuteChanged(GameTimeSnapshot time)
         {
-            RefreshOrders();
+            if (_page == Page.ProductDetails)
+                RefreshProductDetails();
+            else if (_page == Page.Orders)
+                RefreshOrders();
         }
 
         private void Refresh()
@@ -279,42 +309,74 @@ namespace GoLive.Phone
             RefreshOrders();
         }
 
+        private void RefreshOrdersShortcut()
+        {
+            bool visible =
+                _phone.IsOpen &&
+                _phone.CurrentScreen == PhoneScreenId.Shop &&
+                _page == Page.Storefront;
+
+            if (_openOrders.gameObject.activeSelf != visible)
+                _openOrders.gameObject.SetActive(visible);
+        }
+
         private void RefreshCatalog()
         {
-            for (int i = 0; i < _categoryLabels.Count; i++)
+            for (int i = 0; i < _tabs.Length; i++)
             {
-                _categoryLabels[i].Text.text =
-                    _localization.Text(_categoryLabels[i].LocalizationKey);
+                CategoryTab tab = _tabs[i];
+                bool selected = i == _selectedTab;
+
+                tab.Label.text = _localization.Text(tab.LabelKey);
+                tab.Label.color = selected ? _selectedTabLabelColor : _tabLabelColor;
+                tab.Button.image.color = selected ? _selectedTabColor : _tabColor;
             }
+
+            CategoryTab shelf = _tabs[_selectedTab];
+            int listedCount = 0;
 
             for (int i = 0; i < _productCards.Count; i++)
             {
                 ShopProductDefinition product = _productCards[i].Product;
                 ShopProductCardView view = _productCards[i].View;
 
+                bool listed = shelf.Lists(product);
+
+                if (view.gameObject.activeSelf != listed)
+                    view.gameObject.SetActive(listed);
+
+                if (!listed)
+                    continue;
+
+                listedCount++;
+
                 string productName =
                     _localization.Text(product.NameLocalizationKey);
+
+                string description =
+                    _localization.Text(product.DescriptionLocalizationKey);
 
                 if (!product.IsAvailable)
                 {
                     view.ShowUnavailable(
                         product.Image,
                         productName,
+                        description,
                         _localization.Text("phone.unavailable"));
 
                     continue;
                 }
 
-                bool ordered =
-                    _shop.EvaluatePurchase(product.ProductId) ==
-                    ShopPurchaseResultCode.PurchaseLimitReached;
-
                 view.ShowAvailable(
                     product.Image,
                     productName,
+                    description,
                     FormatMoney(product.PriceCents),
-                    _localization.Text(ordered ? "phone.ordered" : "phone.details"));
+                    GetCardBadge(product));
             }
+
+            _catalogEmpty.text = _localization.Text("phone.catalog_empty");
+            _catalogEmpty.gameObject.SetActive(listedCount == 0);
         }
 
         private void RefreshProductDetails()
@@ -325,7 +387,7 @@ namespace GoLive.Phone
             ShopProductDefinition product = _selectedProduct;
 
             _detailsImage.sprite = product.Image;
-            _detailsImage.gameObject.SetActive(product.Image != null);
+            _detailsMedia.SetActive(product.Image != null);
 
             _detailsCategory.text =
                 _localization.Text(product.CategoryLocalizationKey);
@@ -342,11 +404,20 @@ namespace GoLive.Phone
             ShopPurchaseResultCode purchaseState =
                 _shop.EvaluatePurchase(product.ProductId);
 
+            bool hasActiveOrder =
+                _shop.Orders.TryGetLatestActiveOrder(product.ProductId, out ShopOrder activeOrder);
+
+            string delivery =
+                GetDetailsDelivery(product, purchaseState, activeOrder);
+
+            _detailsDelivery.text = delivery ?? string.Empty;
+            _detailsDelivery.gameObject.SetActive(delivery != null);
+
             bool canPurchase =
                 purchaseState == ShopPurchaseResultCode.Success;
 
             _detailsBuyLabel.text =
-                _localization.Text(GetPurchaseButtonKey(purchaseState));
+                _localization.Text(GetPurchaseButtonKey(purchaseState, hasActiveOrder));
 
             _detailsBuyLabel.color =
                 canPurchase
@@ -359,15 +430,10 @@ namespace GoLive.Phone
         private void RefreshOrders()
         {
             IReadOnlyList<ShopOrder> orders = _shop.Orders.Orders;
-            int activeOrders = 0;
 
             for (int i = 0; i < orders.Count; i++)
             {
                 ShopOrder order = orders[orders.Count - 1 - i];
-                bool delivered = order.Status == ShopOrderStatus.Delivered;
-
-                if (!delivered)
-                    activeOrders++;
 
                 _shop.TryGetProduct(order.ProductId, out ShopProductDefinition product);
 
@@ -380,7 +446,7 @@ namespace GoLive.Phone
                         : order.ProductId,
                     FormatMoney(order.PaidPriceCents),
                     _localization.Text(GetOrderStatusKey(order.Status)),
-                    delivered ? null : FormatDelivery(order.DeliveryDueAt));
+                    order.IsActive ? FormatDelivery(order.DeliveryDueAt) : null);
 
                 row.gameObject.SetActive(true);
             }
@@ -390,6 +456,8 @@ namespace GoLive.Phone
 
             _ordersEmpty.text = _localization.Text("phone.orders_empty");
             _ordersEmpty.gameObject.SetActive(orders.Count == 0);
+
+            int activeOrders = _shop.Orders.CountActive();
 
             _openOrdersLabel.text = _localization.Text("phone.orders");
             _activeOrdersBadge.SetActive(activeOrders > 0);
@@ -407,6 +475,40 @@ namespace GoLive.Phone
             return _orderRows[index];
         }
 
+        private string GetCardBadge(ShopProductDefinition product)
+        {
+            if (_shop.Orders.TryGetLatestActiveOrder(product.ProductId, out _))
+                return _localization.Text("phone.ordered");
+
+            return _shop.EvaluatePurchase(product.ProductId) == ShopPurchaseResultCode.PurchaseLimitReached
+                ? _localization.Text("phone.purchased")
+                : null;
+        }
+
+        private string GetDetailsDelivery(
+            ShopProductDefinition product,
+            ShopPurchaseResultCode purchaseState,
+            ShopOrder activeOrder)
+        {
+            if (activeOrder != null)
+            {
+                return _localization.Format(
+                    "phone.ordered_with_eta",
+                    FormatDelivery(activeOrder.DeliveryDueAt));
+            }
+
+            bool purchasable =
+                purchaseState is ShopPurchaseResultCode.Success or ShopPurchaseResultCode.InsufficientFunds;
+
+            if (purchasable &&
+                _shop.TryEstimateDelivery(product.ProductId, out GameTimeSnapshot deliveryDueAt))
+            {
+                return FormatDelivery(deliveryDueAt);
+            }
+
+            return null;
+        }
+
         private string FormatDelivery(GameTimeSnapshot dueAt)
         {
             string time = $"{dueAt.Hour:00}:{dueAt.Minute:00}";
@@ -418,13 +520,21 @@ namespace GoLive.Phone
             return _localization.Format("phone.order_eta_day", dueAt.Day, time);
         }
 
-        private static string GetPurchaseButtonKey(ShopPurchaseResultCode state)
+        private static void ScrollToTop(ScrollRect scrollRect)
+        {
+            scrollRect.StopMovement();
+
+            RectTransform content = scrollRect.content;
+            content.anchoredPosition = new Vector2(content.anchoredPosition.x, 0f);
+        }
+
+        private static string GetPurchaseButtonKey(ShopPurchaseResultCode state, bool hasActiveOrder)
         {
             return state switch
             {
                 ShopPurchaseResultCode.Success => "phone.buy",
                 ShopPurchaseResultCode.Busy => "phone.buy",
-                ShopPurchaseResultCode.PurchaseLimitReached => "phone.ordered",
+                ShopPurchaseResultCode.PurchaseLimitReached => hasActiveOrder ? "phone.ordered" : "phone.purchased",
                 ShopPurchaseResultCode.InsufficientFunds => "phone.not_enough_money",
                 _ => "phone.unavailable"
             };
@@ -453,19 +563,23 @@ namespace GoLive.Phone
                 _clock == null ||
                 _shop == null ||
                 _storefront == null ||
+                _tabs == null ||
+                _tabs.Length == 0 ||
                 _catalog == null ||
                 _catalog.content == null ||
-                _categoryTemplate == null ||
                 _productCardTemplate == null ||
+                _catalogEmpty == null ||
                 _openOrders == null ||
                 _openOrdersLabel == null ||
                 _activeOrdersBadge == null ||
                 _activeOrdersCount == null ||
                 _productDetails == null ||
+                _detailsMedia == null ||
                 _detailsImage == null ||
                 _detailsCategory == null ||
                 _detailsName == null ||
                 _detailsPrice == null ||
+                _detailsDelivery == null ||
                 _detailsDescription == null ||
                 _detailsBuy == null ||
                 _detailsBuyLabel == null ||
@@ -477,6 +591,26 @@ namespace GoLive.Phone
             {
                 Debug.LogError(
                     $"{nameof(PhoneShopView)} on {name} has incomplete configuration.",
+                    this);
+
+                return false;
+            }
+
+            for (int i = 0; i < _tabs.Length; i++)
+            {
+                CategoryTab tab = _tabs[i];
+
+                if (tab != null &&
+                    tab.Button != null &&
+                    tab.Button.image != null &&
+                    tab.Label != null &&
+                    !string.IsNullOrWhiteSpace(tab.LabelKey))
+                {
+                    continue;
+                }
+
+                Debug.LogError(
+                    $"{nameof(PhoneShopView)} on {name} contains an incomplete category tab at index {i}.",
                     this);
 
                 return false;

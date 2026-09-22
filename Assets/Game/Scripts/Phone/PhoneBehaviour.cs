@@ -73,9 +73,9 @@ namespace GoLive.Phone
         [SerializeField, Min(0.01f)] private float hideDuration = 0.22f;
 
         [Header("Physical Follow")]
-        [SerializeField, Min(0.001f)] private float followSmoothTime = 0.08f;
-        [SerializeField] private Vector2 followPositionRange = new(0.022f, 0.028f);
-        [SerializeField] private Vector3 followRotationRange = new(2.5f, 3.5f, 2f);
+        [SerializeField, Min(0.001f)] private float followSmoothTime = 0.1f;
+        [SerializeField] private Vector2 followPositionRange = new(0.016f, 0.02f);
+        [SerializeField] private Vector3 followRotationRange = new(1.4f, 1.9f, 1.1f);
 
         public bool IsOpen => _session != null && _session.IsOpen;
         public bool IsInteractive => _presentationState == PhonePresentationState.Held;
