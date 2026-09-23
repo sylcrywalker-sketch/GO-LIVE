@@ -1,5 +1,7 @@
 using GoLive.Items;
+using GoLive.Localization;
 using NUnit.Framework;
+using UnityEditor;
 
 namespace GoLive.Tests
 {
@@ -50,6 +52,26 @@ namespace GoLive.Tests
 
             Assert.That(changes, Is.Zero);
             Assert.That(inventory.Items, Is.EqualTo(new[] { first, second }));
+        }
+
+        [Test]
+        public void EveryItemNameKeyExistsInTheCatalog()
+        {
+            LocalizationCatalog catalog = AssetDatabase.LoadAssetAtPath<LocalizationCatalog>("Assets/Game/Scripts/Localization/Catalog/GameLocalizationCatalog.asset");
+            string[] guids = AssetDatabase.FindAssets("t:ItemDefinition", new[] { "Assets/Game" });
+
+            Assert.That(guids, Is.Not.Empty);
+
+            foreach (string guid in guids)
+            {
+                ItemDefinition definition = AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+
+                if (string.IsNullOrWhiteSpace(definition.NameLocalizationKey))
+                    continue;
+
+                Assert.That(catalog.TryGetText(definition.NameLocalizationKey, GameLanguage.Russian, out _), Is.True, $"{definition.name}: Russian name");
+                Assert.That(catalog.TryGetText(definition.NameLocalizationKey, GameLanguage.English, out _), Is.True, $"{definition.name}: English name");
+            }
         }
 
         private static ItemInstance Stored(string id)

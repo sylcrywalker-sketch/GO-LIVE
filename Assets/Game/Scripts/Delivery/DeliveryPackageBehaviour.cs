@@ -31,14 +31,14 @@ namespace GoLive.Delivery
             enabled = false;
         }
 
+        // Opens where it lies in the world, or from the actor's own hands; never while stored or removed.
         public bool CanInteract(in InteractionContext context)
         {
             return context.Action == InteractionAction.Use &&
                    _owner != null &&
                    context.Actor != null &&
                    context.Actor.TryGetComponent(out PlayerCarry carry) &&
-                   carry.CarriedItem == Item &&
-                   _owner.CanOpen(Item);
+                   _owner.CanOpen(Item, carry);
         }
 
         public string GetPromptKey(in InteractionContext context)

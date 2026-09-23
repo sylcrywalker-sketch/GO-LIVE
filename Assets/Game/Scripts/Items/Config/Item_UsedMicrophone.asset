@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Item_UsedMicrophone
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: used-microphone
+  nameLocalizationKey: shop.product.used_microphone.name
   category: 1
   worldPrefab: {fileID: 3329437378521323406, guid: 8c90d1d284555dc41a9bb7f3c1e00588, type: 3}
   iconOverride: {fileID: 0}
-  generatedIcon: {fileID: 0}
+  generatedIcon: {fileID: 21300000, guid: 00eecb23062fe1441b85674479270bdd, type: 3}
   canStoreInInventory: 1
   carryStyle: 0
   carryLocalPosition: {x: 0, y: -0.095, z: 0}

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: BananaDefinition
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: banana
+  nameLocalizationKey: shop.product.banana.name
   category: 0
   worldPrefab: {fileID: 1786087781561182519, guid: ebb7e516660bc6746b5ec1bd44c9aa9d, type: 3}
   iconOverride: {fileID: 0}
-  generatedIcon: {fileID: 0}
+  generatedIcon: {fileID: 21300000, guid: fe5b9bb919fe4834aa0de577399d19cf, type: 3}
   canStoreInInventory: 1
   carryStyle: 0
   carryLocalPosition: {x: 0, y: 0, z: 0}

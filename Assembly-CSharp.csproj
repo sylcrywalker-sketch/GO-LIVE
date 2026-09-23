@@ -54,13 +54,13 @@
     <Compile Include="Assets\Game\Scripts\WASD\PlayerController.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\PlayerInventory.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
+    <Compile Include="Assets\Game\Scripts\Inventory\InventoryListView.cs" />
     <Compile Include="Assets\Game\Scripts\Items\ItemDefinition.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Game\Scripts\Economy\Wallet.cs" />
     <Compile Include="Assets\Game\Scripts\Economy\WalletBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneMessagesBehaviour.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
-    <Compile Include="Assets\Game\Scripts\Inventory\InventoryGridView.cs" />
     <Compile Include="Assets\Game\Scripts\Persistence\GameSaveController.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneMessages.cs" />
     <Compile Include="Assets\Game\Scripts\UI\GameTimeHudView.cs" />

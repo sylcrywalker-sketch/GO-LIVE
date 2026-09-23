@@ -5,10 +5,13 @@ using GoLive.Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace GoLive.Inventory
 {
-    // TAB Inventory: a compact panel over the live world plus a card for the held item.
+    // TAB Inventory: a compact side panel over the live world with the stored items and an "In hands" section.
+    // Drop zones: the panel outside the hands section stores the held item; the hands section or anywhere
+    // outside the panel takes (or swaps in) an Inventory item.
     // A drag is transactional: while the pointer moves only the preview changes, and the single domain call
     // (PlayerInventory.TryTakeToCarry / TryStoreCarriedItem) happens on a valid release. Closing, an invalid
     // release or any item change during the drag leave every item exactly where it was.
@@ -36,26 +39,32 @@ namespace GoLive.Inventory
         [SerializeField] private PlayerController playerController;
         [SerializeField] private LocalizationContext localization;
 
-        [Header("Overlay")]
+        [Header("Panel")]
         [SerializeField] private CanvasGroup overlay;
         [SerializeField] private RectTransform panel;
-        [SerializeField] private InventoryGridView grid;
+        [SerializeField] private InventoryListView list;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text capacityText;
         [SerializeField] private TMP_Text hintText;
         [SerializeField] private TMP_Text closedHintText;
+        [SerializeField] private Graphic storeHighlight;
 
         [Header("Hands")]
+        [SerializeField] private RectTransform handsZone;
         [SerializeField] private InventoryItemView heldItem;
         [SerializeField] private TMP_Text heldTitleText;
+        [SerializeField] private TMP_Text heldEmptyText;
+        [SerializeField] private Graphic handsHighlight;
 
         [Header("Drag")]
         [SerializeField] private InventoryDragGhost dragGhost;
+        [SerializeField] private Color acceptedHighlightColor = new(0.36f, 0.86f, 0.52f, 0.16f);
+        [SerializeField] private Color rejectedHighlightColor = new(0.95f, 0.36f, 0.32f, 0.16f);
 
         [Header("Behaviour")]
         [SerializeField] private PlayerControlMask blockedWhileOpen = PlayerControlMask.Look | PlayerControlMask.Jump | PlayerControlMask.Interaction;
         [SerializeField, Min(0.5f)] private float feedbackSeconds = 2.5f;
-        [SerializeField] private Color feedbackColor = new(1f, 0.66f, 0.58f, 1f);
+        [SerializeField] private Color feedbackColor = new(1f, 0.62f, 0.56f, 1f);
 
         public bool IsOpen => _isOpen;
         public bool IsDragging => _dragSource != DragSource.None;
@@ -71,6 +80,7 @@ namespace GoLive.Inventory
         private CursorLockMode _previousCursorLockMode;
         private bool _previousCursorVisible;
         private Color _instructionsColor;
+        private string _feedbackKey;
         private float _feedbackUntil;
         private bool _started;
         private bool _bound;
@@ -90,6 +100,7 @@ namespace GoLive.Inventory
             }
 
             _instructionsColor = hintText.color;
+            ShowHighlight(null, false);
             SetOverlayVisible(false);
         }
 
@@ -137,11 +148,12 @@ namespace GoLive.Inventory
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
-            grid.Render();
+            // Visible first: the list sizes its viewport from the live layout.
+            SetOverlayVisible(true);
+            list.Render();
             RenderCapacity();
             RenderHands();
             ShowInstructions();
-            SetOverlayVisible(true);
         }
 
         public void Close()
@@ -166,7 +178,7 @@ namespace GoLive.Inventory
             if (_bound)
                 return;
 
-            if (!grid.Bind(playerInventory))
+            if (!list.Bind(playerInventory, localization))
             {
                 enabled = false;
                 return;
@@ -174,9 +186,9 @@ namespace GoLive.Inventory
 
             _bound = true;
 
-            grid.ItemDragStarted += HandleInventoryDragStarted;
-            grid.ItemDragged += HandleDragged;
-            grid.ItemDragEnded += HandleDragEnded;
+            list.ItemDragStarted += HandleInventoryDragStarted;
+            list.ItemDragged += HandleDragged;
+            list.ItemDragEnded += HandleDragEnded;
             heldItem.DragStarted += HandleHandsDragStarted;
             heldItem.Dragged += HandleDragged;
             heldItem.DragEnded += HandleDragEnded;
@@ -196,9 +208,9 @@ namespace GoLive.Inventory
 
             _bound = false;
 
-            grid.ItemDragStarted -= HandleInventoryDragStarted;
-            grid.ItemDragged -= HandleDragged;
-            grid.ItemDragEnded -= HandleDragEnded;
+            list.ItemDragStarted -= HandleInventoryDragStarted;
+            list.ItemDragged -= HandleDragged;
+            list.ItemDragEnded -= HandleDragEnded;
             heldItem.DragStarted -= HandleHandsDragStarted;
             heldItem.Dragged -= HandleDragged;
             heldItem.DragEnded -= HandleDragEnded;
@@ -206,7 +218,7 @@ namespace GoLive.Inventory
             playerCarry.CarriedItemChanged -= HandleCarriedItemChanged;
             localization.LanguageChanged -= HandleLanguageChanged;
 
-            grid.Unbind();
+            list.Unbind();
         }
 
         private void HandleInventoryDragStarted(InventoryItemView view, PointerEventData eventData)
@@ -256,21 +268,32 @@ namespace GoLive.Inventory
 
         private void UpdateDrop(PointerEventData eventData)
         {
-            bool overPanel = RectTransformUtility.RectangleContainsScreenPoint(panel, eventData.position, eventData.pressEventCamera);
+            Camera eventCamera = eventData.pressEventCamera;
+            bool overStoredItems = RectTransformUtility.RectangleContainsScreenPoint(panel, eventData.position, eventCamera) &&
+                                   !RectTransformUtility.RectangleContainsScreenPoint(handsZone, eventData.position, eventCamera);
 
-            _dropTransfer = EvaluateDrop(overPanel);
+            _dropTransfer = EvaluateDrop(overStoredItems);
+
+            bool accepted = _dropTransfer?.IsAllowed() ?? false;
+            InventoryDragGhost.HintTone tone = _dropTransfer == null
+                ? InventoryDragGhost.HintTone.Neutral
+                : accepted ? InventoryDragGhost.HintTone.Accepted : InventoryDragGhost.HintTone.Rejected;
 
             dragGhost.Follow(eventData);
-            dragGhost.SetHint(Text(DropHintKey()), _dropTransfer?.IsAllowed() ?? true);
+            dragGhost.SetHint(Text(DropHintKey()), tone);
+
+            // Light up where the item would go: the hands for an Inventory item, the list for the held item.
+            Graphic destination = _dropTransfer == null ? null : _dragSource == DragSource.Inventory ? handsHighlight : storeHighlight;
+            ShowHighlight(destination, accepted);
         }
 
         // null means the item simply stays where it is when released here.
-        private InventoryTransfer? EvaluateDrop(bool overPanel)
+        private InventoryTransfer? EvaluateDrop(bool overStoredItems)
         {
             if (_dragSource == DragSource.Inventory)
-                return overPanel ? null : playerInventory.CheckTakeToCarry(_dragInstanceId);
+                return overStoredItems ? null : playerInventory.CheckTakeToCarry(_dragInstanceId);
 
-            if (!overPanel)
+            if (!overStoredItems)
                 return null;
 
             return IsCarrying(_dragInstanceId) ? playerInventory.CheckStoreCarried() : InventoryTransfer.Unavailable;
@@ -321,11 +344,21 @@ namespace GoLive.Inventory
                 _dragView.SetLifted(false);
 
             dragGhost.Hide();
+            ShowHighlight(null, false);
 
             _dragSource = DragSource.None;
             _dragView = null;
             _dragInstanceId = null;
             _dropTransfer = null;
+        }
+
+        private void ShowHighlight(Graphic destination, bool accepted)
+        {
+            storeHighlight.enabled = destination == storeHighlight;
+            handsHighlight.enabled = destination == handsHighlight;
+
+            if (destination != null)
+                destination.color = accepted ? acceptedHighlightColor : rejectedHighlightColor;
         }
 
         // Any change to the authoritative items while a drag is in flight makes its preview stale.
@@ -345,6 +378,7 @@ namespace GoLive.Inventory
         {
             RefreshTexts();
             RenderHands();
+            list.Render();
         }
 
         private void RenderHands()
@@ -352,14 +386,11 @@ namespace GoLive.Inventory
             if (!playerCarry.HasItem)
             {
                 heldItem.Clear();
-                heldTitleText.text = Text(HandsEmptyKey);
                 return;
             }
 
             WorldItem item = playerCarry.CarriedItem;
-
-            heldItem.Show(item.Instance.InstanceId, item.Definition);
-            heldTitleText.text = Text(HandsKey);
+            heldItem.Show(item.Instance.InstanceId, item.Definition, localization);
         }
 
         private void RenderCapacity()
@@ -371,9 +402,9 @@ namespace GoLive.Inventory
         {
             titleText.text = Text(TitleKey);
             closedHintText.text = Text(ClosedHintKey);
-
-            if (_feedbackUntil <= 0f)
-                ShowInstructions();
+            heldTitleText.text = Text(HandsKey);
+            heldEmptyText.text = Text(HandsEmptyKey);
+            hintText.text = Text(_feedbackUntil > 0f ? _feedbackKey : InstructionsKey);
         }
 
         private void ShowInstructions()
@@ -385,6 +416,7 @@ namespace GoLive.Inventory
 
         private void ShowFeedback(string key)
         {
+            _feedbackKey = key;
             _feedbackUntil = Time.unscaledTime + feedbackSeconds;
             hintText.text = Text(key);
             hintText.color = feedbackColor;
@@ -430,13 +462,17 @@ namespace GoLive.Inventory
                 localization != null &&
                 overlay != null &&
                 panel != null &&
-                grid != null &&
+                list != null &&
                 titleText != null &&
                 capacityText != null &&
                 hintText != null &&
                 closedHintText != null &&
+                storeHighlight != null &&
+                handsZone != null &&
                 heldItem != null &&
                 heldTitleText != null &&
+                heldEmptyText != null &&
+                handsHighlight != null &&
                 dragGhost != null &&
                 blockedWhileOpen != PlayerControlMask.None)
             {

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Item_Mug
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: mug
+  nameLocalizationKey: shop.product.mug.name
   category: 2
   worldPrefab: {fileID: 4586390524224575424, guid: d16cecdc8d14368469e4ed48cea77f97, type: 3}
   iconOverride: {fileID: 0}
-  generatedIcon: {fileID: 0}
+  generatedIcon: {fileID: 21300000, guid: 086fa222ef9522a448ce2afb63d26678, type: 3}
   canStoreInInventory: 1
   carryStyle: 0
   carryLocalPosition: {x: 0, y: -0.061, z: 0}

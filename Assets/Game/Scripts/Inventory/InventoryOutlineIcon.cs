@@ -3,13 +3,14 @@ using UnityEngine.UI;
 
 namespace GoLive.Inventory
 {
-    public enum InventoryIconShape { Backpack, Phone, Tasks, Broadcast, Map, Settings, Hand, Place, Use }
+    public enum InventoryIconShape { Backpack, Phone, Tasks, Broadcast, Map, Settings, Hand, Place, Use, Item, Grip }
 
     /// <summary>Small vector UI symbols. These never represent item artwork.</summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class InventoryOutlineIcon : MaskableGraphic
     {
         [field: SerializeField] public InventoryIconShape Shape { get; set; }
+        [field: SerializeField, Min(0.25f)] public float Thickness { get; set; } = 1f;
         protected override void OnPopulateMesh(VertexHelper mesh)
         {
             mesh.Clear();
@@ -46,6 +47,12 @@ namespace GoLive.Inventory
                     Line(mesh, 12, 29, 4, 18); Line(mesh, 4, 18, 7, 15); Line(mesh, 7, 15, 12, 21); break;
                 case InventoryIconShape.Place:
                     Box(mesh, 6, 13, 26, 29); Line(mesh, 16, 2, 16, 21); Line(mesh, 11, 16, 16, 21); Line(mesh, 16, 21, 21, 16); break;
+                case InventoryIconShape.Item:
+                    Line(mesh, 16, 4, 28, 10); Line(mesh, 28, 10, 16, 16); Line(mesh, 16, 16, 4, 10); Line(mesh, 4, 10, 16, 4);
+                    Line(mesh, 4, 10, 4, 23); Line(mesh, 4, 23, 16, 29); Line(mesh, 16, 29, 28, 23); Line(mesh, 28, 23, 28, 10); Line(mesh, 16, 16, 16, 29); break;
+                case InventoryIconShape.Grip:
+                    for (int row = 0; row < 3; row++) { Dot(mesh, 11, 8 + row * 8); Dot(mesh, 21, 8 + row * 8); }
+                    break;
                 default:
                     Arc(mesh, 16, 16, 12, 0, 360); Line(mesh, 13, 9, 22, 16); Line(mesh, 22, 16, 13, 23); Line(mesh, 13, 23, 13, 9); break;
             }
@@ -65,12 +72,22 @@ namespace GoLive.Inventory
                 Line(mesh, x + Mathf.Cos(a) * radius, y + Mathf.Sin(a) * radius, x + Mathf.Cos(b) * radius, y + Mathf.Sin(b) * radius);
             }
         }
+        private void Dot(VertexHelper mesh, float x, float y)
+        {
+            Rect rect = rectTransform.rect;
+            float half = rect.width / 32f * 2.2f;
+            Vector2 c = new(rect.xMin + x * rect.width / 32f, rect.yMax - y * rect.height / 32f);
+            int first = mesh.currentVertCount;
+            mesh.AddVert(c + new Vector2(-half, -half), color, Vector2.zero); mesh.AddVert(c + new Vector2(-half, half), color, Vector2.zero);
+            mesh.AddVert(c + new Vector2(half, half), color, Vector2.zero); mesh.AddVert(c + new Vector2(half, -half), color, Vector2.zero);
+            mesh.AddTriangle(first, first + 1, first + 2); mesh.AddTriangle(first, first + 2, first + 3);
+        }
         private void Line(VertexHelper mesh, float x, float y, float u, float v)
         {
             Rect rect = rectTransform.rect;
             Vector2 a = new(rect.xMin + x * rect.width / 32f, rect.yMax - y * rect.height / 32f);
             Vector2 b = new(rect.xMin + u * rect.width / 32f, rect.yMax - v * rect.height / 32f);
-            Vector2 side = new Vector2(-(b - a).y, (b - a).x).normalized * (rect.width / 32f * .7f);
+            Vector2 side = new Vector2(-(b - a).y, (b - a).x).normalized * (rect.width / 32f * .7f * Thickness);
             int first = mesh.currentVertCount;
             mesh.AddVert(a - side, color, Vector2.zero); mesh.AddVert(a + side, color, Vector2.zero);
             mesh.AddVert(b + side, color, Vector2.zero); mesh.AddVert(b - side, color, Vector2.zero);

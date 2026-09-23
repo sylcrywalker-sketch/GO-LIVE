@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Item_DeliveryPackage
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: delivery-package
+  nameLocalizationKey: item.delivery_package.name
   category: 2
   worldPrefab: {fileID: 970837341681119155, guid: 57c363b14e2c0a24e8fa81f37f4d17b4, type: 3}
   iconOverride: {fileID: 0}
-  generatedIcon: {fileID: 0}
+  generatedIcon: {fileID: 21300000, guid: 9d7a2a04fb8854240a4bf15125a8d209, type: 3}
   canStoreInInventory: 0
   carryStyle: 1
   carryLocalPosition: {x: -0.35, y: -0.3, z: 0.05}

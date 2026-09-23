@@ -11,7 +11,8 @@ namespace GoLive.Player
         Look = 1 << 1,
         Jump = 1 << 2,
         Interaction = 1 << 3,
-        All = Movement | Look | Jump | Interaction
+        Crouch = 1 << 4,
+        All = Movement | Look | Jump | Interaction | Crouch
     }
 
     public sealed class PlayerControlState

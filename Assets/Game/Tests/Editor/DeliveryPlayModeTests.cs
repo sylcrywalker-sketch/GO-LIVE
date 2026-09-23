@@ -227,6 +227,147 @@ namespace GoLive.Tests
         }
 
         [UnityTest]
+        public IEnumerator UnopenedPackageLyingInTheWorldOpensWhereItLies()
+        {
+            yield return new EnterPlayMode(false);
+            StartWorld();
+            yield return null;
+
+            ShopOrder order = Buy(SnackId);
+            Advance(90);
+            DeliveryPackageBehaviour package = Packages().Single();
+
+            Assert.That(WorldPrompt(package), Is.EqualTo("interaction.open"), "F offers Open while the package lies in the world");
+            Assert.That(_world.Carry.TryCarry(package.Item), Is.True, "E still takes the unopened package");
+            Assert.That(OpenPrompt(), Is.EqualTo("interaction.open"));
+            Assert.That(_world.Carry.Drop(), Is.True, "G still drops it");
+            Assert.That(package.Item.Instance.Location, Is.EqualTo(ItemLocation.World));
+
+            package.transform.SetPositionAndRotation(new Vector3(1.5f, 0f, 3f), Quaternion.Euler(0f, 35f, 0f));
+            Vector3 position = package.transform.position;
+            Quaternion rotation = package.transform.rotation;
+
+            Assert.That(WorldPrompt(package), Is.EqualTo("interaction.open"));
+            Assert.That(PressUseLookingAt(package), Is.True);
+
+            Assert.That(_world.Carry.HasItem, Is.False);
+            Assert.That(package.Item.Instance.Location, Is.EqualTo(ItemLocation.World));
+            Assert.That(package.transform.position, Is.EqualTo(position), "opened exactly where it lies");
+            Assert.That(package.transform.rotation, Is.EqualTo(rotation));
+            Assert.That(ClosedPartsActive(package), Is.False);
+
+            WorldItem banana = ItemsOf(BananaItemId).Single();
+            DeliveryRecord record = _world.Delivery.State.Records.Single();
+            Assert.That(record.OrderId, Is.EqualTo(order.OrderId));
+            Assert.That(record.Stage, Is.EqualTo(DeliveryStage.Opened));
+            Assert.That(record.FulfillmentInstanceId, Is.EqualTo(banana.Instance.InstanceId));
+            Assert.That(Vector3.Distance(banana.transform.position, package.ContentsAnchor.position), Is.LessThan(0.01f));
+
+            Assert.That(WorldPrompt(package), Is.Null, "no Open prompt once opened");
+            Assert.That(PressUseLookingAt(package), Is.False);
+            Assert.That(PressUseLookingAt(package), Is.False);
+
+            Assert.That(ItemsOf(BananaItemId), Has.Count.EqualTo(1));
+            Assert.That(Packages(), Has.Count.EqualTo(1));
+            Assert.That(_world.Wallet.Wallet.BalanceCents, Is.EqualTo(2300));
+            Assert.That(_world.Shop.Orders.Orders, Has.Count.EqualTo(1));
+
+            Assert.That(_world.Carry.TryCarry(package.Item), Is.True, "the opened box is still a physical item");
+            Assert.That(OpenPrompt(), Is.Null);
+            Assert.That(_world.Carry.Drop(), Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator HoldingAnotherItemDoesNotStopOpeningAPackageInTheWorld()
+        {
+            yield return new EnterPlayMode(false);
+            StartWorld();
+            yield return null;
+
+            Buy(GpuId);
+            Buy(SnackId);
+            Advance(151);
+
+            DeliveryPackageBehaviour gpuPackage = Packages().Single(package => IsPackageFor(package, GpuId));
+            DeliveryPackageBehaviour snackPackage = Packages().Single(package => package != gpuPackage);
+
+            Assert.That(_world.Carry.TryCarry(snackPackage.Item), Is.True);
+            Assert.That(PressUseLookingAt(gpuPackage), Is.True, "the carried package opens first");
+            Assert.That(ItemsOf(BananaItemId), Has.Count.EqualTo(1));
+            Assert.That(ItemsOf(GpuItemId), Is.Empty);
+
+            WorldItem banana = ItemsOf(BananaItemId).Single();
+            Assert.That(_world.Carry.TryCarry(banana), Is.True);
+            Assert.That(PressUseLookingAt(gpuPackage), Is.True, "hands busy with an item that has no Use: the looked-at package opens");
+            Assert.That(ItemsOf(GpuItemId), Has.Count.EqualTo(1));
+            Assert.That(_world.Carry.CarriedItem, Is.SameAs(banana));
+        }
+
+        [UnityTest]
+        public IEnumerator PackageOpenedInTheWorldSurvivesSaveAndRepeatedLoad()
+        {
+            yield return new EnterPlayMode(false);
+            StartWorld();
+            yield return null;
+
+            Buy(GpuId);
+            Advance(151);
+            DeliveryPackageBehaviour opened = Packages().Single();
+            string packageId = opened.Item.Instance.InstanceId;
+            Assert.That(PressUseLookingAt(opened), Is.True);
+
+            string gpuId = ItemsOf(GpuItemId).Single().Instance.InstanceId;
+            Assert.That(_world.TrySave(), Is.True);
+            string[] expectedIds = RuntimeItems().Select(item => item.Instance.InstanceId).OrderBy(id => id).ToArray();
+
+            SimulateFreshSession();
+
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.That(_world.TryLoad(), Is.True);
+                AssertRuntimeItems(expectedIds);
+            }
+
+            DeliveryPackageBehaviour package = Packages().Single();
+            DeliveryRecord record = _world.Delivery.State.Records.Single();
+            Assert.That(package.Item.Instance.InstanceId, Is.EqualTo(packageId));
+            Assert.That(record.Stage, Is.EqualTo(DeliveryStage.Opened));
+            Assert.That(record.FulfillmentInstanceId, Is.EqualTo(gpuId));
+            Assert.That(ClosedPartsActive(package), Is.False);
+
+            Assert.That(WorldPrompt(package), Is.Null, "a loaded opened package offers no Open");
+            Assert.That(PressUseLookingAt(package), Is.False);
+            Assert.That(ItemsOf(GpuItemId), Has.Count.EqualTo(1));
+            Assert.That(_world.Wallet.Wallet.BalanceCents, Is.EqualTo(1000));
+            Assert.That(_world.Shop.Orders.Orders, Has.Count.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator PackageLoadedUnopenedOpensInTheWorldOnce()
+        {
+            yield return new EnterPlayMode(false);
+            StartWorld();
+            yield return null;
+
+            Buy(GpuId);
+            Advance(151);
+            string packageId = Packages().Single().Item.Instance.InstanceId;
+            Assert.That(_world.TrySave(), Is.True);
+
+            SimulateFreshSession();
+            Assert.That(_world.TryLoad(), Is.True);
+
+            DeliveryPackageBehaviour package = Packages().Single();
+            Assert.That(package.Item.Instance.InstanceId, Is.EqualTo(packageId));
+            Assert.That(WorldPrompt(package), Is.EqualTo("interaction.open"));
+            Assert.That(PressUseLookingAt(package), Is.True);
+            Assert.That(PressUseLookingAt(package), Is.False);
+
+            Assert.That(ItemsOf(GpuItemId), Has.Count.EqualTo(1));
+            Assert.That(_world.Delivery.State.Records.Single().FulfillmentInstanceId, Is.EqualTo(ItemsOf(GpuItemId).Single().Instance.InstanceId));
+        }
+
+        [UnityTest]
         public IEnumerator SaveBeforeArrivalThenLoadAndAdvanceDeliversOnce()
         {
             yield return new EnterPlayMode(false);
@@ -676,6 +817,31 @@ namespace GoLive.Tests
             InteractionContext context = new(_world.Hands, _world.Hands.transform, InteractionAction.Use);
             _world.Carry.CarriedItem.TryGetInteractionPrompt(in context, out string key);
             return key;
+        }
+
+        // F as PlayerInteractor resolves it: the carried item first, then whatever the player is looking at.
+        private bool PressUseLookingAt(Component target)
+        {
+            InteractionContext context = new(_world.Hands, _world.Hands.transform, InteractionAction.Use);
+
+            if (_world.Carry.TryInteractCarried(in context))
+                return true;
+
+            return InteractionResolver.TryInteract(Candidates(target), in context, target);
+        }
+
+        private string WorldPrompt(Component target)
+        {
+            InteractionContext context = new(_world.Hands, _world.Hands.transform, InteractionAction.Use);
+            InteractionResolver.TryGetPromptKey(Candidates(target), in context, out string key);
+            return key;
+        }
+
+        private static List<MonoBehaviour> Candidates(Component target)
+        {
+            List<MonoBehaviour> candidates = new();
+            target.GetComponentInChildren<Collider>(true).GetComponentsInParent(false, candidates);
+            return candidates;
         }
 
         private bool IsPackageFor(DeliveryPackageBehaviour package, string productId)

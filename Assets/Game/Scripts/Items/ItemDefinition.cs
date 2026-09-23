@@ -19,6 +19,7 @@ namespace GoLive.Items
     public sealed class ItemDefinition : ScriptableObject
     {
         [SerializeField] private string itemId;
+        [SerializeField] private string nameLocalizationKey;
         [SerializeField] private ItemCategory category;
         [SerializeField] private GameObject worldPrefab;
         [SerializeField] private Sprite iconOverride;
@@ -29,6 +30,7 @@ namespace GoLive.Items
         [SerializeField] private Vector3 carryLocalEulerAngles;
 
         public string ItemId => itemId;
+        public string NameLocalizationKey => nameLocalizationKey;
         public ItemCategory Category => category;
         public GameObject WorldPrefab => worldPrefab;
         public Sprite InventoryIcon => iconOverride != null ? iconOverride : generatedIcon;

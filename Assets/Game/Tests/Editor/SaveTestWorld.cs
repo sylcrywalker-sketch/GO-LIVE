@@ -57,11 +57,18 @@ namespace GoLive.Tests
 
             Transform pivot = new GameObject("Test look pivot").transform;
             pivot.SetParent(Root.transform, false);
+            pivot.localPosition = new Vector3(0f, 1.6f, 0f);
 
             PlayerController player = Root.AddComponent<PlayerController>();
+            CharacterController body = Root.GetComponent<CharacterController>();
+            body.height = 1.9f;
+            body.radius = 0.3f;
+            body.center = new Vector3(0f, 0.95f, 0f);
+
             SetField(player, "lookPivot", pivot);
-            SetField(player, "_characterController", Root.GetComponent<CharacterController>());
+            SetField(player, "_characterController", body);
             SetField(player, "_lookPivotBaseRotation", Quaternion.identity);
+            typeof(PlayerController).GetMethod("CaptureStandingShape", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(player, null);
 
             Hands = new GameObject("Test hands");
             Hands.SetActive(false);

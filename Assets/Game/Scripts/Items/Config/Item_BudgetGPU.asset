@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Item_BudgetGPU
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: budget-gpu
+  nameLocalizationKey: shop.product.budget_gpu.name
   category: 1
   worldPrefab: {fileID: 1117846642983678498, guid: 27af136f78354674a9b7a2093b650fbf, type: 3}
   iconOverride: {fileID: 0}

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: BoxDefinition
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: cardboard_box
+  nameLocalizationKey: item.cardboard_box.name
   category: 2
-  worldPrefab: {fileID: 2243914451773714964, guid: e885429f3170fcb488706d49b40f7ac4, type: 3}
+  worldPrefab: {fileID: 6332208334858915743, guid: 9b2ac430ce781bb4aa7028fa7eb8db0f, type: 3}
   iconOverride: {fileID: 0}
   generatedIcon: {fileID: 21300000, guid: cc8f3d9f74c516e4fb098e3fc2e04532, type: 3}
   canStoreInInventory: 1

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Item_Router
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: router
+  nameLocalizationKey: shop.product.router.name
   category: 1
   worldPrefab: {fileID: 6351393861213309092, guid: 7aa2e4e609fcdab4db621c9806846f7c, type: 3}
   iconOverride: {fileID: 0}
-  generatedIcon: {fileID: 0}
+  generatedIcon: {fileID: 21300000, guid: 6a2335138d72b9a478e6941c8ffbb4e4, type: 3}
   canStoreInInventory: 1
   carryStyle: 0
   carryLocalPosition: {x: 0, y: -0.186, z: 0}

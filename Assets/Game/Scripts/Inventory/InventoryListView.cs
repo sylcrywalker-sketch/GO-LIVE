@@ -1,0 +1,142 @@
+using System;
+using System.Collections.Generic;
+using GoLive.Items;
+using GoLive.Localization;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+namespace GoLive.Inventory
+{
+    // Mirrors the one authoritative Inventory as a list of the stored items only, in Inventory order; capacity
+    // is shown by the owning screen. Any screen that shows the Inventory (the TAB overlay now, the PC Workbench
+    // later) binds a list and listens to its drag events.
+    [DisallowMultipleComponent]
+    public sealed class InventoryListView : MonoBehaviour
+    {
+        private const string EmptyTitleKey = "inventory.empty_title";
+        private const string EmptyHintKey = "inventory.empty_hint";
+
+        [SerializeField] private InventoryItemView[] rows = Array.Empty<InventoryItemView>();
+        [SerializeField] private RectTransform rowContent;
+        [SerializeField] private LayoutElement viewport;
+        [SerializeField, Min(1f)] private float maxViewportHeight = 380f;
+        [SerializeField] private GameObject emptyState;
+        [SerializeField] private TMP_Text emptyTitle;
+        [SerializeField] private TMP_Text emptyHint;
+
+        public event Action<InventoryItemView, PointerEventData> ItemDragStarted;
+        public event Action<InventoryItemView, PointerEventData> ItemDragged;
+        public event Action<InventoryItemView, PointerEventData> ItemDragEnded;
+
+        private PlayerInventory _owner;
+        private LocalizationContext _localization;
+
+        private void OnDestroy()
+        {
+            Unbind();
+        }
+
+        public bool Bind(PlayerInventory owner, LocalizationContext localization)
+        {
+            if (owner == _owner)
+                return owner != null;
+
+            Unbind();
+
+            if (owner == null ||
+                owner.Inventory == null ||
+                localization == null ||
+                owner.Inventory.Capacity > rows.Length ||
+                Array.IndexOf(rows, null) >= 0 ||
+                rowContent == null ||
+                viewport == null ||
+                emptyState == null ||
+                emptyTitle == null ||
+                emptyHint == null)
+            {
+                Debug.LogError($"{nameof(InventoryListView)} on {name} needs an initialized Player Inventory, localization, its layout references and one row per Inventory slot.", this);
+                return false;
+            }
+
+            _owner = owner;
+            _localization = localization;
+            _owner.Inventory.Changed += Render;
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                rows[i].DragStarted += ForwardDragStarted;
+                rows[i].Dragged += ForwardDragged;
+                rows[i].DragEnded += ForwardDragEnded;
+            }
+
+            Render();
+            return true;
+        }
+
+        public void Unbind()
+        {
+            if (_owner == null)
+                return;
+
+            _owner.Inventory.Changed -= Render;
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                if (rows[i] == null)
+                    continue;
+
+                rows[i].DragStarted -= ForwardDragStarted;
+                rows[i].Dragged -= ForwardDragged;
+                rows[i].DragEnded -= ForwardDragEnded;
+            }
+
+            _owner = null;
+            _localization = null;
+        }
+
+        // Rows exist only for stored items; the viewport grows with them up to maxViewportHeight, then scrolls.
+        public void Render()
+        {
+            if (_owner == null)
+                return;
+
+            IReadOnlyList<ItemInstance> items = _owner.Inventory.Items;
+            int shown = 0;
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                ItemDefinition definition = null;
+                bool filled = i < items.Count && _owner.TryGetDefinition(items[i].InstanceId, out definition);
+
+                if (filled)
+                {
+                    rows[i].Show(items[i].InstanceId, definition, _localization);
+                    shown++;
+                }
+                else
+                {
+                    rows[i].Clear();
+                }
+
+                rows[i].gameObject.SetActive(filled);
+            }
+
+            emptyTitle.text = _localization.Text(EmptyTitleKey);
+            emptyHint.text = _localization.Text(EmptyHintKey);
+            emptyState.SetActive(shown == 0);
+            viewport.gameObject.SetActive(shown > 0);
+
+            if (shown == 0 || !rowContent.gameObject.activeInHierarchy)
+                return;
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rowContent);
+            viewport.preferredHeight = Mathf.Min(rowContent.rect.height, maxViewportHeight);
+        }
+
+        private void ForwardDragStarted(InventoryItemView row, PointerEventData eventData) => ItemDragStarted?.Invoke(row, eventData);
+        private void ForwardDragged(InventoryItemView row, PointerEventData eventData) => ItemDragged?.Invoke(row, eventData);
+        private void ForwardDragEnded(InventoryItemView row, PointerEventData eventData) => ItemDragEnded?.Invoke(row, eventData);
+    }
+}

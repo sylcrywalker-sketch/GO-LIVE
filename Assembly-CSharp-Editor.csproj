@@ -53,11 +53,14 @@
     <Compile Include="Assets\Game\Tests\Editor\DeliveryStateTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\ShopCatalogDataTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\ShopCommerceTests.cs" />
+    <Compile Include="Assets\Game\Tests\Editor\InputBindingsTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\SaveTestWorld.cs" />
     <Compile Include="Assets\Game\Editor\Items\WorldItemIdentityAuthoring.cs" />
     <Compile Include="Assets\Game\Editor\Tools\ScriptCombiner.cs" />
     <Compile Include="Assets\Game\Tests\Editor\PhoneMessagesSaveTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\DeliveryPlayModeTests.cs" />
+    <Compile Include="Assets\Game\Tests\Editor\PlayerControlsPlayModeTests.cs" />
+    <Compile Include="Assets\Game\Tests\Editor\ItemContentTests.cs" />
     <Compile Include="Assets\Game\Editor\Items\ItemIconGenerator.cs" />
     <Compile Include="Assets\Game\Tests\Editor\PhoneMessagesTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\InventoryPlayModeTests.cs" />

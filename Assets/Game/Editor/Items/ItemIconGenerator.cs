@@ -1,335 +1,502 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using GoLive.Items;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace GoLive.Editor.Items
 {
+    // Inventory icons are rendered from each ItemDefinition's real World Prefab in an isolated preview scene: one
+    // fixed studio light rig, a 3/4 camera framed on the model, and a transparent background recovered from a
+    // render over black and one over white. iconOverride always wins; this tool only owns generatedIcon and writes
+    // one file per Item ID, so regenerating replaces the icon instead of adding another.
     public static class ItemIconGenerator
     {
-        private const string OutputFolder = "Assets/Game/UI/Generated/ItemIcons";
-        private const int OutputSize = 512;
-        private const float ContentFill = 0.82f;
-        private const double GenerationTimeoutSeconds = 10d;
-        private const int MinimumBackgroundTolerance = 28;
-        private const int MaximumBackgroundTolerance = 80;
-        private const int BackgroundTolerancePadding = 12;
+        public const string OutputFolder = "Assets/Game/UI/Generated/ItemIcons";
+        public const string ContentFolder = "Assets/Game";
+        public const int OutputSize = 512;
 
-        private static ItemDefinition _pendingDefinition;
-        private static double _generationStartedAt;
+        private const string DialogTitle = "GO! LIVE Item Icons";
+        private const int Supersampling = 4;
+        private const float ContentFill = 0.88f;
+        private const float CameraPitch = 26f;
+        private const float FlatModelCameraPitch = 42f;
+        private const float CameraYaw = -38f;
+        private const float BaseFieldOfView = 22f;
+        private const float FramingMargin = 1.04f;
+        private const float OpaqueAlpha = 0.02f;
+
+        // Very dark models are lifted towards this mean linear luminance (never darkened, never more than the cap)
+        // so black plastics stay readable on the dark Inventory panel.
+        private const float MinimumMeanLuminance = 0.075f;
+        private const float MaximumExposureLift = 1.5f;
+
+        private static readonly Color AmbientColor = new(0.36f, 0.37f, 0.4f);
+
+        private static readonly LightRig[] StudioLights =
+        {
+            // Key from the upper left, soft fill from the right, and a rim from behind that separates dark
+            // plastics from the dark Inventory background.
+            new(new Vector3(42f, 38f, 0f), new Color(1f, 0.97f, 0.93f), 1.25f),
+            new(new Vector3(8f, -58f, 0f), new Color(0.88f, 0.93f, 1f), 0.55f),
+            new(new Vector3(28f, 160f, 0f), Color.white, 1.1f)
+        };
+
+        [MenuItem("GO LIVE/Items/Generate Missing Item Icons")]
+        public static void GenerateMissingFromMenu()
+        {
+            ShowReport(GenerateIcons(FindItemDefinitions(), regenerateExisting: false));
+        }
+
+        [MenuItem("GO LIVE/Items/Regenerate All Item Icons")]
+        public static void RegenerateAllFromMenu()
+        {
+            ShowReport(GenerateIcons(FindItemDefinitions(), regenerateExisting: true));
+        }
 
         [MenuItem("GO LIVE/Items/Generate Selected Item Icon")]
-        public static void GenerateSelected()
+        public static void GenerateSelectedFromMenu()
         {
-            if (Selection.activeObject is not ItemDefinition definition)
+            ItemDefinition[] selected = Selection.GetFiltered<ItemDefinition>(SelectionMode.Assets);
+
+            if (selected.Length == 0)
             {
-                EditorUtility.DisplayDialog("GO! LIVE Item Icon", "Select an ItemDefinition asset first.", "OK");
+                EditorUtility.DisplayDialog(DialogTitle, "Select one or more ItemDefinition assets first.", "OK");
                 return;
+            }
+
+            ShowReport(GenerateIcons(selected, regenerateExisting: true, includeOverridden: true));
+        }
+
+        // Batch-mode entry point: -executeMethod GoLive.Editor.Items.ItemIconGenerator.GenerateMissingInBatch
+        public static void GenerateMissingInBatch()
+        {
+            ItemIconReport report = GenerateIcons(FindItemDefinitions(), regenerateExisting: false);
+            Debug.Log(report.Describe());
+
+            if (Application.isBatchMode)
+                EditorApplication.Exit(report.Failures.Count == 0 ? 0 : 1);
+        }
+
+        // Production item content: every ItemDefinition asset describes a physical item the player can pick up.
+        public static List<ItemDefinition> FindItemDefinitions()
+        {
+            List<ItemDefinition> definitions = new();
+
+            foreach (string guid in AssetDatabase.FindAssets($"t:{nameof(ItemDefinition)}", new[] { ContentFolder }))
+            {
+                ItemDefinition definition = AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+
+                if (definition != null)
+                    definitions.Add(definition);
+            }
+
+            definitions.Sort((left, right) => string.CompareOrdinal(left.name, right.name));
+            return definitions;
+        }
+
+        public static ItemIconReport GenerateIcons(
+            IReadOnlyList<ItemDefinition> definitions,
+            bool regenerateExisting,
+            bool includeOverridden = false,
+            string outputFolder = OutputFolder)
+        {
+            ItemIconReport report = new();
+
+            try
+            {
+                for (int i = 0; i < definitions.Count; i++)
+                {
+                    ItemDefinition definition = definitions[i];
+                    report.Checked++;
+
+                    if (!Application.isBatchMode)
+                        EditorUtility.DisplayProgressBar(DialogTitle, definition.name, i / (float)definitions.Count);
+
+                    if (HasOverride(definition))
+                    {
+                        report.Overridden.Add(definition.name);
+
+                        if (!includeOverridden)
+                            continue;
+                    }
+
+                    if (!regenerateExisting && GetGeneratedIcon(definition) != null)
+                    {
+                        report.AlreadyGenerated.Add(definition.name);
+                        continue;
+                    }
+
+                    if (TryGenerate(definition, outputFolder, out string error))
+                        report.Generated.Add(definition.name);
+                    else
+                        report.Failures.Add($"{definition.name}: {error}");
+                }
+            }
+            finally
+            {
+                if (!Application.isBatchMode)
+                    EditorUtility.ClearProgressBar();
+
+                AssetDatabase.SaveAssets();
+            }
+
+            return report;
+        }
+
+        public static bool TryGenerate(ItemDefinition definition, string outputFolder, out string error)
+        {
+            error = null;
+
+            if (definition == null)
+            {
+                error = "no ItemDefinition";
+                return false;
             }
 
             if (!ItemDefinition.IsValidItemId(definition.ItemId))
             {
-                EditorUtility.DisplayDialog("GO! LIVE Item Icon", "The selected ItemDefinition has an invalid Item ID.", "OK");
-                return;
+                error = $"invalid Item ID '{definition.ItemId}'";
+                return false;
             }
 
             if (definition.WorldPrefab == null)
             {
-                EditorUtility.DisplayDialog("GO! LIVE Item Icon", "Assign a World Prefab before generating an icon.", "OK");
-                return;
+                error = "no World Prefab to render";
+                return false;
             }
 
-            Stop();
-
-            _pendingDefinition = definition;
-            _generationStartedAt = EditorApplication.timeSinceStartup;
-
-            AssetPreview.GetAssetPreview(definition.WorldPrefab);
-
-            EditorApplication.update += Process;
-        }
-
-        private static void Process()
-        {
-            if (_pendingDefinition == null)
-            {
-                Stop();
-                return;
-            }
-
-            Texture2D preview = AssetPreview.GetAssetPreview(_pendingDefinition.WorldPrefab);
-
-            if (preview == null)
-            {
-                if (EditorApplication.timeSinceStartup - _generationStartedAt < GenerationTimeoutSeconds)
-                    return;
-
-                Debug.LogError($"Unity could not generate a preview for {_pendingDefinition.name}.", _pendingDefinition);
-                Stop();
-                return;
-            }
-
-            ItemDefinition definition = _pendingDefinition;
-            Texture2D readablePreview = null;
-            Texture2D transparentPreview = null;
-            Texture2D finalTexture = null;
+            Texture2D icon = null;
 
             try
             {
-                EnsureOutputFolder();
+                icon = RenderIcon(definition.WorldPrefab);
 
-                readablePreview = MakeReadable(preview);
-                transparentPreview = RemoveConnectedBackground(readablePreview);
+                string iconPath = $"{outputFolder}/{definition.ItemId}.png";
+                EnsureFolder(outputFolder);
+                File.WriteAllBytes(GetAbsolutePath(iconPath), icon.EncodeToPNG());
 
-                if (!TryGetOpaqueBounds(transparentPreview, out RectInt opaqueBounds))
-                    throw new InvalidOperationException($"Background removal produced no visible pixels for '{definition.ItemId}'.");
+                Sprite sprite = ImportAsSprite(iconPath);
 
-                finalTexture = CreateFittedTexture(transparentPreview, opaqueBounds);
-
-                string iconPath = $"{OutputFolder}/{definition.ItemId}.png";
-                File.WriteAllBytes(GetAbsolutePath(iconPath), finalTexture.EncodeToPNG());
-
-                AssetDatabase.ImportAsset(iconPath, ImportAssetOptions.ForceUpdate);
-
-                TextureImporter importer = AssetImporter.GetAtPath(iconPath) as TextureImporter;
-
-                if (importer == null)
-                    throw new IOException($"Unable to configure generated icon: {iconPath}");
-
-                importer.textureType = TextureImporterType.Sprite;
-                importer.spriteImportMode = SpriteImportMode.Single;
-                importer.alphaIsTransparency = true;
-                importer.mipmapEnabled = false;
-                importer.filterMode = FilterMode.Bilinear;
-                importer.maxTextureSize = OutputSize;
-                importer.textureCompression = TextureImporterCompression.CompressedHQ;
-                importer.SaveAndReimport();
-
-                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
-
-                if (sprite == null)
-                    throw new IOException($"Generated icon could not be loaded as a Sprite: {iconPath}");
-
-                Undo.RecordObject(definition, "Generate Item Icon");
-
-                SerializedObject serializedDefinition = new(definition);
-                SerializedProperty generatedIconProperty = serializedDefinition.FindProperty("generatedIcon");
-
-                if (generatedIconProperty == null)
-                    throw new InvalidOperationException($"Serialized field 'generatedIcon' was not found on {nameof(ItemDefinition)}.");
-
-                generatedIconProperty.objectReferenceValue = sprite;
-                serializedDefinition.ApplyModifiedProperties();
-
+                SerializedObject serialized = new(definition);
+                serialized.FindProperty("generatedIcon").objectReferenceValue = sprite;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(definition);
-                AssetDatabase.SaveAssets();
 
-                Debug.Log($"Generated transparent inventory icon for {definition.ItemId}: {iconPath}", definition);
+                return true;
             }
             catch (Exception exception)
             {
-                Debug.LogException(exception);
-
-                EditorUtility.DisplayDialog(
-                    "GO! LIVE Item Icon",
-                    $"Generation failed:\n\n{exception.Message}",
-                    "OK");
+                error = exception.Message;
+                return false;
             }
             finally
             {
-                DestroyImmediate(readablePreview);
-                DestroyImmediate(transparentPreview);
-                DestroyImmediate(finalTexture);
-                Stop();
+                if (icon != null)
+                    Object.DestroyImmediate(icon);
             }
         }
 
-        private static Texture2D RemoveConnectedBackground(Texture2D source)
+        // Renders the model into an OutputSize square: transparent background, model centred and scaled so its
+        // longer side fills ContentFill of the frame. The caller owns the returned texture.
+        public static Texture2D RenderIcon(GameObject prefab)
         {
-            int width = source.width;
-            int height = source.height;
+            if (prefab == null)
+                throw new ArgumentNullException(nameof(prefab));
 
-            Color32[] pixels = source.GetPixels32();
-            Color32 background = CalculateCornerBackground(pixels, width, height);
-            int tolerance = CalculateBackgroundTolerance(pixels, width, height, background);
-            int toleranceSquared = tolerance * tolerance;
+            int renderSize = OutputSize * Supersampling;
+            Scene scene = EditorSceneManager.NewPreviewScene();
 
-            bool[] visited = new bool[pixels.Length];
-            Queue<int> queue = new();
-
-            for (int x = 0; x < width; x++)
+            try
             {
-                TryEnqueueBackground(x, 0, width, pixels, background, toleranceSquared, visited, queue);
-                TryEnqueueBackground(x, height - 1, width, pixels, background, toleranceSquared, visited, queue);
+                GameObject model = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
+                model.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+                if (!TryGetVisibleBounds(model, out Bounds bounds))
+                    throw new InvalidOperationException($"'{prefab.name}' has no visible renderers.");
+
+                Camera camera = CreateCamera(scene, bounds);
+                CreateLights(scene, camera.transform.rotation);
+
+                Color[] overBlack = Render(camera, scene, Color.black, renderSize);
+                Color[] overWhite = Render(camera, scene, Color.white, renderSize);
+                float[] alpha = ExtractCutout(overBlack, overWhite);
+
+                if (!TryGetOpaqueBounds(alpha, renderSize, out RectInt opaque))
+                    throw new InvalidOperationException($"'{prefab.name}' rendered no visible pixels.");
+
+                if (opaque.xMin == 0 || opaque.yMin == 0 || opaque.xMax == renderSize || opaque.yMax == renderSize)
+                    throw new InvalidOperationException($"'{prefab.name}' touches the edge of the render and would be clipped.");
+
+                return Compose(overBlack, alpha, renderSize, opaque);
+            }
+            finally
+            {
+                EditorSceneManager.ClosePreviewScene(scene);
+            }
+        }
+
+        private static Camera CreateCamera(Scene scene, Bounds bounds)
+        {
+            GameObject cameraObject = new("Item Icon Camera");
+            SceneManager.MoveGameObjectToScene(cameraObject, scene);
+
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.enabled = false;
+            camera.cameraType = CameraType.Preview;
+            camera.scene = scene;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.allowMSAA = false;
+            camera.fieldOfView = BaseFieldOfView;
+
+            // Flat models (boards, keyboards) are seen more from above so their top face reads, not their edge.
+            float footprint = Mathf.Min(bounds.size.x, bounds.size.z);
+            float flatness = footprint > 0f ? Mathf.InverseLerp(0.5f, 0.15f, bounds.size.y / footprint) : 0f;
+            Quaternion rotation = Quaternion.Euler(Mathf.Lerp(CameraPitch, FlatModelCameraPitch, flatness), CameraYaw, 0f);
+            float radius = Mathf.Max(bounds.extents.magnitude, 0.001f);
+            float distance = radius / Mathf.Sin(BaseFieldOfView * 0.5f * Mathf.Deg2Rad);
+
+            camera.transform.SetPositionAndRotation(bounds.center - rotation * Vector3.forward * distance, rotation);
+            camera.nearClipPlane = Mathf.Max(0.001f, distance - radius * 1.5f);
+            camera.farClipPlane = distance + radius * 1.5f;
+
+            // Tighten the field of view around the projected bounds so the model uses the whole render.
+            float extent = 0f;
+
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 corner = bounds.center + Vector3.Scale(bounds.extents, new Vector3((i & 1) == 0 ? -1f : 1f, (i & 2) == 0 ? -1f : 1f, (i & 4) == 0 ? -1f : 1f));
+                Vector3 view = camera.transform.InverseTransformPoint(corner);
+                extent = Mathf.Max(extent, Mathf.Abs(view.x) / view.z, Mathf.Abs(view.y) / view.z);
             }
 
-            for (int y = 1; y < height - 1; y++)
+            camera.fieldOfView = 2f * Mathf.Atan(extent * FramingMargin) * Mathf.Rad2Deg;
+            return camera;
+        }
+
+        private static void CreateLights(Scene scene, Quaternion cameraRotation)
+        {
+            for (int i = 0; i < StudioLights.Length; i++)
             {
-                TryEnqueueBackground(0, y, width, pixels, background, toleranceSquared, visited, queue);
-                TryEnqueueBackground(width - 1, y, width, pixels, background, toleranceSquared, visited, queue);
+                GameObject lightObject = new($"Item Icon Light {i}");
+                SceneManager.MoveGameObjectToScene(lightObject, scene);
+                lightObject.transform.rotation = cameraRotation * Quaternion.Euler(StudioLights[i].Angles);
+
+                Light light = lightObject.AddComponent<Light>();
+                light.type = LightType.Directional;
+                light.color = StudioLights[i].Color;
+                light.intensity = StudioLights[i].Intensity;
+                light.shadows = LightShadows.None;
             }
+        }
 
-            while (queue.Count > 0)
+        private static Color[] Render(Camera camera, Scene scene, Color background, int size)
+        {
+            RenderTexture target = RenderTexture.GetTemporary(size, size, 24, RenderTextureFormat.ARGBHalf, RenderTextureReadWrite.Linear);
+            RenderTexture previous = RenderTexture.active;
+            Texture2D readback = null;
+
+            try
             {
-                int index = queue.Dequeue();
-                int x = index % width;
-                int y = index / width;
+                camera.targetTexture = target;
+                camera.backgroundColor = background;
 
-                pixels[index].a = 0;
+                Unsupported.SetOverrideLightingSettings(scene);
 
-                TryEnqueueBackground(x - 1, y, width, height, pixels, background, toleranceSquared, visited, queue);
-                TryEnqueueBackground(x + 1, y, width, height, pixels, background, toleranceSquared, visited, queue);
-                TryEnqueueBackground(x, y - 1, width, height, pixels, background, toleranceSquared, visited, queue);
-                TryEnqueueBackground(x, y + 1, width, height, pixels, background, toleranceSquared, visited, queue);
-            }
-
-            Texture2D result = new(width, height, TextureFormat.RGBA32, false);
-            result.SetPixels32(pixels);
-            result.Apply(false, false);
-
-            return result;
-        }
-
-        private static void TryEnqueueBackground(
-            int x,
-            int y,
-            int width,
-            Color32[] pixels,
-            Color32 background,
-            int toleranceSquared,
-            bool[] visited,
-            Queue<int> queue)
-        {
-            int height = pixels.Length / width;
-            TryEnqueueBackground(x, y, width, height, pixels, background, toleranceSquared, visited, queue);
-        }
-
-        private static void TryEnqueueBackground(
-            int x,
-            int y,
-            int width,
-            int height,
-            Color32[] pixels,
-            Color32 background,
-            int toleranceSquared,
-            bool[] visited,
-            Queue<int> queue)
-        {
-            if (x < 0 || x >= width || y < 0 || y >= height)
-                return;
-
-            int index = y * width + x;
-
-            if (visited[index])
-                return;
-
-            visited[index] = true;
-
-            Color32 pixel = pixels[index];
-
-            if (pixel.a <= 3 || ColorDistanceSquared(pixel, background) <= toleranceSquared)
-                queue.Enqueue(index);
-        }
-
-        private static Color32 CalculateCornerBackground(Color32[] pixels, int width, int height)
-        {
-            Color32 bottomLeft = pixels[0];
-            Color32 bottomRight = pixels[width - 1];
-            Color32 topLeft = pixels[(height - 1) * width];
-            Color32 topRight = pixels[height * width - 1];
-
-            return new Color32(
-                (byte)((bottomLeft.r + bottomRight.r + topLeft.r + topRight.r) / 4),
-                (byte)((bottomLeft.g + bottomRight.g + topLeft.g + topRight.g) / 4),
-                (byte)((bottomLeft.b + bottomRight.b + topLeft.b + topRight.b) / 4),
-                255);
-        }
-
-        private static int CalculateBackgroundTolerance(Color32[] pixels, int width, int height, Color32 background)
-        {
-            List<int> distances = new((width + height) * 2);
-
-            for (int x = 0; x < width; x++)
-            {
-                distances.Add(Mathf.RoundToInt(Mathf.Sqrt(ColorDistanceSquared(pixels[x], background))));
-                distances.Add(Mathf.RoundToInt(Mathf.Sqrt(ColorDistanceSquared(pixels[(height - 1) * width + x], background))));
-            }
-
-            for (int y = 1; y < height - 1; y++)
-            {
-                distances.Add(Mathf.RoundToInt(Mathf.Sqrt(ColorDistanceSquared(pixels[y * width], background))));
-                distances.Add(Mathf.RoundToInt(Mathf.Sqrt(ColorDistanceSquared(pixels[y * width + width - 1], background))));
-            }
-
-            distances.Sort();
-
-            int percentileIndex = Mathf.Clamp(Mathf.RoundToInt((distances.Count - 1) * 0.9f), 0, distances.Count - 1);
-            int tolerance = distances[percentileIndex] + BackgroundTolerancePadding;
-
-            return Mathf.Clamp(tolerance, MinimumBackgroundTolerance, MaximumBackgroundTolerance);
-        }
-
-        private static int ColorDistanceSquared(Color32 left, Color32 right)
-        {
-            int red = left.r - right.r;
-            int green = left.g - right.g;
-            int blue = left.b - right.b;
-
-            return red * red + green * green + blue * blue;
-        }
-
-        private static Texture2D CreateFittedTexture(Texture2D source, RectInt opaqueBounds)
-        {
-            Texture2D result = new(OutputSize, OutputSize, TextureFormat.RGBA32, false);
-            result.SetPixels32(new Color32[OutputSize * OutputSize]);
-
-            source.filterMode = FilterMode.Bilinear;
-            source.wrapMode = TextureWrapMode.Clamp;
-
-            int longestSide = Mathf.Max(opaqueBounds.width, opaqueBounds.height);
-            int targetLongestSide = Mathf.RoundToInt(OutputSize * ContentFill);
-            float scale = targetLongestSide / (float)longestSide;
-
-            int targetWidth = Mathf.Max(1, Mathf.RoundToInt(opaqueBounds.width * scale));
-            int targetHeight = Mathf.Max(1, Mathf.RoundToInt(opaqueBounds.height * scale));
-            int startX = (OutputSize - targetWidth) / 2;
-            int startY = (OutputSize - targetHeight) / 2;
-
-            for (int y = 0; y < targetHeight; y++)
-            {
-                for (int x = 0; x < targetWidth; x++)
+                try
                 {
-                    float sourceX = opaqueBounds.xMin + ((x + 0.5f) / targetWidth) * opaqueBounds.width;
-                    float sourceY = opaqueBounds.yMin + ((y + 0.5f) / targetHeight) * opaqueBounds.height;
+                    SphericalHarmonicsL2 ambient = new();
+                    ambient.AddAmbientLight(AmbientColor);
 
-                    Color color = source.GetPixelBilinear(sourceX / source.width, sourceY / source.height);
-                    result.SetPixel(startX + x, startY + y, color);
+                    RenderSettings.ambientMode = AmbientMode.Flat;
+                    RenderSettings.ambientLight = AmbientColor;
+                    RenderSettings.ambientProbe = ambient;
+                    RenderSettings.fog = false;
+
+                    camera.Render();
+                }
+                finally
+                {
+                    Unsupported.RestoreOverrideLightingSettings();
+                }
+
+                RenderTexture.active = target;
+                readback = new Texture2D(size, size, TextureFormat.RGBAHalf, false, true);
+                readback.ReadPixels(new Rect(0f, 0f, size, size), 0, 0);
+                readback.Apply(false);
+
+                return readback.GetPixels();
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                camera.targetTexture = null;
+                RenderTexture.ReleaseTemporary(target);
+
+                if (readback != null)
+                    Object.DestroyImmediate(readback);
+            }
+        }
+
+        // Over black a pixel is alpha * colour; over white it gains (1 - alpha). Opaque surfaces render the same
+        // on both backgrounds, so the difference is exactly the background that shows through.
+        private static float[] ExtractCutout(Color[] overBlack, Color[] overWhite)
+        {
+            float[] alpha = new float[overBlack.Length];
+
+            for (int i = 0; i < overBlack.Length; i++)
+            {
+                Color black = overBlack[i];
+                Color white = overWhite[i];
+                float background = Mathf.Max(white.r - black.r, Mathf.Max(white.g - black.g, white.b - black.b));
+
+                alpha[i] = Mathf.Clamp01(1f - background);
+            }
+
+            return alpha;
+        }
+
+        // Crops to the model, scales it so its longer side fills ContentFill of the icon, and area-averages the
+        // supersampled render (premultiplied, in linear space) into the final sRGB texture.
+        private static Texture2D Compose(Color[] premultiplied, float[] alpha, int sourceSize, RectInt opaque)
+        {
+            float scale = OutputSize * ContentFill / Mathf.Max(opaque.width, opaque.height);
+            float offsetX = (OutputSize - opaque.width * scale) * 0.5f;
+            float offsetY = (OutputSize - opaque.height * scale) * 0.5f;
+            float footprint = 1f / scale;
+
+            Color[] linear = new Color[OutputSize * OutputSize];
+            float luminanceSum = 0f;
+            float coverageSum = 0f;
+
+            for (int y = 0; y < OutputSize; y++)
+            {
+                float sourceY0 = opaque.yMin + (y - offsetY) * footprint;
+                float sourceY1 = sourceY0 + footprint;
+
+                for (int x = 0; x < OutputSize; x++)
+                {
+                    float sourceX0 = opaque.xMin + (x - offsetX) * footprint;
+                    float sourceX1 = sourceX0 + footprint;
+
+                    float weightSum = 0f;
+                    float alphaSum = 0f;
+                    float red = 0f;
+                    float green = 0f;
+                    float blue = 0f;
+
+                    int minY = Mathf.Max(0, Mathf.FloorToInt(sourceY0));
+                    int maxY = Mathf.Min(sourceSize - 1, Mathf.CeilToInt(sourceY1) - 1);
+                    int minX = Mathf.Max(0, Mathf.FloorToInt(sourceX0));
+                    int maxX = Mathf.Min(sourceSize - 1, Mathf.CeilToInt(sourceX1) - 1);
+
+                    for (int sy = minY; sy <= maxY; sy++)
+                    {
+                        float weightY = Mathf.Min(sy + 1, sourceY1) - Mathf.Max(sy, sourceY0);
+
+                        if (weightY <= 0f)
+                            continue;
+
+                        for (int sx = minX; sx <= maxX; sx++)
+                        {
+                            float weight = weightY * (Mathf.Min(sx + 1, sourceX1) - Mathf.Max(sx, sourceX0));
+
+                            if (weight <= 0f)
+                                continue;
+
+                            int index = sy * sourceSize + sx;
+                            Color colour = premultiplied[index];
+
+                            weightSum += weight;
+                            alphaSum += alpha[index] * weight;
+                            red += Mathf.Max(0f, colour.r) * weight;
+                            green += Mathf.Max(0f, colour.g) * weight;
+                            blue += Mathf.Max(0f, colour.b) * weight;
+                        }
+                    }
+
+                    if (weightSum <= 0f || alphaSum <= 0f)
+                        continue;
+
+                    Color straight = new(red / alphaSum, green / alphaSum, blue / alphaSum, Mathf.Clamp01(alphaSum / weightSum));
+                    linear[y * OutputSize + x] = straight;
+                    luminanceSum += (0.2126f * straight.r + 0.7152f * straight.g + 0.0722f * straight.b) * straight.a;
+                    coverageSum += straight.a;
                 }
             }
 
-            result.Apply(false, false);
+            float meanLuminance = coverageSum > 0f ? luminanceSum / coverageSum : 1f;
+            float lift = Mathf.Clamp(MinimumMeanLuminance / Mathf.Max(meanLuminance, 0.0001f), 1f, MaximumExposureLift);
+            Color32[] output = new Color32[linear.Length];
 
-            return result;
+            for (int i = 0; i < linear.Length; i++)
+            {
+                Color pixel = linear[i];
+
+                if (pixel.a <= 0f)
+                    continue;
+
+                output[i] = new Color32(
+                    ToSrgbByte(pixel.r * lift),
+                    ToSrgbByte(pixel.g * lift),
+                    ToSrgbByte(pixel.b * lift),
+                    (byte)Mathf.RoundToInt(pixel.a * 255f));
+            }
+
+            Texture2D texture = new(OutputSize, OutputSize, TextureFormat.RGBA32, false, false);
+            texture.SetPixels32(output);
+            texture.Apply(false, false);
+
+            return texture;
         }
 
-        private static bool TryGetOpaqueBounds(Texture2D texture, out RectInt bounds)
+        private static byte ToSrgbByte(float linear)
         {
-            Color32[] pixels = texture.GetPixels32();
+            return (byte)Mathf.RoundToInt(Mathf.LinearToGammaSpace(Mathf.Clamp01(linear)) * 255f);
+        }
 
-            int minX = texture.width;
-            int minY = texture.height;
+        private static bool TryGetVisibleBounds(GameObject model, out Bounds bounds)
+        {
+            bounds = default;
+            bool found = false;
+
+            foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>())
+            {
+                if (!renderer.enabled || renderer is not (MeshRenderer or SkinnedMeshRenderer))
+                    continue;
+
+                if (found)
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+                else
+                {
+                    bounds = renderer.bounds;
+                    found = true;
+                }
+            }
+
+            return found;
+        }
+
+        private static bool TryGetOpaqueBounds(float[] alpha, int size, out RectInt bounds)
+        {
+            int minX = size;
+            int minY = size;
             int maxX = -1;
             int maxY = -1;
 
-            for (int y = 0; y < texture.height; y++)
+            for (int y = 0; y < size; y++)
             {
-                for (int x = 0; x < texture.width; x++)
+                for (int x = 0; x < size; x++)
                 {
-                    Color32 pixel = pixels[y * texture.width + x];
-
-                    if (pixel.a <= 8)
+                    if (alpha[y * size + x] <= OpaqueAlpha)
                         continue;
 
                     minX = Mathf.Min(minX, x);
@@ -339,54 +506,57 @@ namespace GoLive.Editor.Items
                 }
             }
 
-            if (maxX < minX || maxY < minY)
-            {
-                bounds = default;
-                return false;
-            }
-
-            bounds = new RectInt(minX, minY, maxX - minX + 1, maxY - minY + 1);
-            return true;
+            bounds = maxX < minX ? default : new RectInt(minX, minY, maxX - minX + 1, maxY - minY + 1);
+            return maxX >= minX;
         }
 
-        private static Texture2D MakeReadable(Texture source)
+        private static Sprite ImportAsSprite(string iconPath)
         {
-            RenderTexture temporary = RenderTexture.GetTemporary(
-                source.width,
-                source.height,
-                0,
-                RenderTextureFormat.ARGB32,
-                RenderTextureReadWrite.sRGB);
+            AssetDatabase.ImportAsset(iconPath, ImportAssetOptions.ForceUpdate);
 
-            RenderTexture previous = RenderTexture.active;
+            TextureImporter importer = AssetImporter.GetAtPath(iconPath) as TextureImporter;
 
-            try
-            {
-                Graphics.Blit(source, temporary);
-                RenderTexture.active = temporary;
+            if (importer == null)
+                throw new IOException($"Unable to configure generated icon: {iconPath}");
 
-                Texture2D result = new(source.width, source.height, TextureFormat.RGBA32, false);
-                result.ReadPixels(new Rect(0f, 0f, source.width, source.height), 0, 0);
-                result.Apply(false, false);
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.sRGBTexture = true;
+            importer.alphaSource = TextureImporterAlphaSource.FromInput;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = true;
+            importer.filterMode = FilterMode.Trilinear;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.maxTextureSize = OutputSize;
+            importer.textureCompression = TextureImporterCompression.CompressedHQ;
+            importer.SaveAndReimport();
 
-                return result;
-            }
-            finally
-            {
-                RenderTexture.active = previous;
-                RenderTexture.ReleaseTemporary(temporary);
-            }
+            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
+            return sprite != null ? sprite : throw new IOException($"Generated icon could not be loaded as a Sprite: {iconPath}");
         }
 
-        private static void EnsureOutputFolder()
+        private static bool HasOverride(ItemDefinition definition)
         {
-            string absolutePath = GetAbsolutePath(OutputFolder);
+            return new SerializedObject(definition).FindProperty("iconOverride").objectReferenceValue != null;
+        }
 
-            if (Directory.Exists(absolutePath))
+        private static Object GetGeneratedIcon(ItemDefinition definition)
+        {
+            return new SerializedObject(definition).FindProperty("generatedIcon").objectReferenceValue;
+        }
+
+        private static void EnsureFolder(string assetFolder)
+        {
+            if (AssetDatabase.IsValidFolder(assetFolder))
                 return;
 
-            Directory.CreateDirectory(absolutePath);
-            AssetDatabase.Refresh();
+            string parent = Path.GetDirectoryName(assetFolder)?.Replace('\\', '/');
+
+            if (string.IsNullOrEmpty(parent))
+                throw new DirectoryNotFoundException($"Invalid icon folder: {assetFolder}");
+
+            EnsureFolder(parent);
+            AssetDatabase.CreateFolder(parent, Path.GetFileName(assetFolder));
         }
 
         private static string GetAbsolutePath(string assetPath)
@@ -399,17 +569,51 @@ namespace GoLive.Editor.Items
             return Path.Combine(projectRoot, assetPath);
         }
 
-        private static void DestroyImmediate(UnityEngine.Object target)
+        private static void ShowReport(ItemIconReport report)
         {
-            if (target != null)
-                UnityEngine.Object.DestroyImmediate(target);
+            string summary = report.Describe();
+
+            if (report.Failures.Count > 0)
+                Debug.LogError(summary);
+            else
+                Debug.Log(summary);
+
+            if (!Application.isBatchMode)
+                EditorUtility.DisplayDialog(DialogTitle, summary, "OK");
         }
 
-        private static void Stop()
+        private readonly struct LightRig
         {
-            EditorApplication.update -= Process;
-            _pendingDefinition = null;
-            _generationStartedAt = 0d;
+            public Vector3 Angles { get; }
+            public Color Color { get; }
+            public float Intensity { get; }
+
+            public LightRig(Vector3 angles, Color color, float intensity)
+            {
+                Angles = angles;
+                Color = color;
+                Intensity = intensity;
+            }
+        }
+    }
+
+    public sealed class ItemIconReport
+    {
+        public int Checked { get; set; }
+        public List<string> Overridden { get; } = new();
+        public List<string> AlreadyGenerated { get; } = new();
+        public List<string> Generated { get; } = new();
+        public List<string> Failures { get; } = new();
+
+        public string Describe()
+        {
+            StringBuilder builder = new();
+            builder.AppendLine($"Item icons: {Checked} definitions checked, {Generated.Count} generated, {AlreadyGenerated.Count} already had a generated icon, {Overridden.Count} use an authored override, {Failures.Count} failed.");
+
+            foreach (string failure in Failures)
+                builder.AppendLine($"  FAILED {failure}");
+
+            return builder.ToString();
         }
     }
 }

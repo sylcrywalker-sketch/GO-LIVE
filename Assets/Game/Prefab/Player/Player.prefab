@@ -251,6 +251,7 @@ MonoBehaviour:
   moveAction: {fileID: 4604759462622688867, guid: ba5e3c362a405394680d655225b61027, type: 3}
   lookAction: {fileID: -2600141063736078231, guid: ba5e3c362a405394680d655225b61027, type: 3}
   jumpAction: {fileID: -7514268375477890330, guid: ba5e3c362a405394680d655225b61027, type: 3}
+  crouchAction: {fileID: 1052384467368796675, guid: ba5e3c362a405394680d655225b61027, type: 3}
   moveSpeed: 4.5
   jumpHeight: 1.1
   gravity: 25

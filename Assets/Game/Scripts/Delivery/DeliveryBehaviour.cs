@@ -14,6 +14,11 @@ namespace GoLive.Delivery
         private const int SlotsPerRow = 3;
         private const int SlotRows = 2;
         private const float PlacementRayLength = 3f;
+        private const float PlacementStep = 0.1f;
+        private const int PlacementAttempts = 7;
+        private const float PlacementSkin = 0.01f;
+
+        private static readonly Collider[] PlacementHits = new Collider[1];
 
         [SerializeField] private ShopBehaviour shop;
         [SerializeField] private GameClockBehaviour gameClock;
@@ -147,11 +152,14 @@ namespace GoLive.Delivery
             }
         }
 
-        internal bool CanOpen(WorldItem package)
+        // An unopened package opens while it lies in the world or while this carrier holds it.
+        internal bool CanOpen(WorldItem package, PlayerCarry carry)
         {
             return isActiveAndEnabled &&
+                   carry != null &&
                    package != null &&
                    package.Instance != null &&
+                   (package.Instance.Location == ItemLocation.World || carry.CarriedItem == package) &&
                    State.TryGetRecordForPackage(package.Instance.InstanceId, out DeliveryRecord record) &&
                    !record.IsOpened;
         }
@@ -160,7 +168,7 @@ namespace GoLive.Delivery
         {
             WorldItem box = package != null ? package.Item : null;
 
-            if (carry == null || !CanOpen(box) || carry.CarriedItem != box)
+            if (!CanOpen(box, carry))
                 return false;
 
             State.TryGetRecordForPackage(box.Instance.InstanceId, out DeliveryRecord record);
@@ -176,10 +184,14 @@ namespace GoLive.Delivery
                 return false;
             }
 
-            Quaternion upright = Quaternion.Euler(0f, box.transform.eulerAngles.y, 0f);
+            // A carried package is set down upright first; a package in the world opens exactly where it lies.
+            if (carry.CarriedItem == box)
+            {
+                Quaternion upright = Quaternion.Euler(0f, box.transform.eulerAngles.y, 0f);
 
-            if (!carry.TryPlace(GetFloorPosition(box.transform.position), upright))
-                return false;
+                if (!carry.TryPlace(FindPlacement(box, carry, upright), upright))
+                    return false;
+            }
 
             ItemDefinition contents = product.FulfillmentItem;
             Transform anchor = package.ContentsAnchor;
@@ -295,6 +307,45 @@ namespace GoLive.Delivery
             float z = slot / SlotsPerRow * slotSpacing;
 
             return dropPoint.position + dropPoint.rotation * new Vector3(x, 0f, z);
+        }
+
+        // On the floor under the carried package; when that spot overlaps the carrier's body (the box swings close
+        // while looking down) or anything else, the next clear spot a little further in front of the carrier.
+        private static Vector3 FindPlacement(WorldItem box, PlayerCarry carry, Quaternion upright)
+        {
+            Vector3 under = GetFloorPosition(box.transform.position);
+
+            if (!box.TryGetComponent(out BoxCollider shape))
+                return under;
+
+            Vector3 forward = Vector3.ProjectOnPlane(carry.transform.forward, Vector3.up).normalized;
+
+            for (int i = 0; i < PlacementAttempts; i++)
+            {
+                Vector3 candidate = i == 0 ? under : GetFloorPosition(box.transform.position + forward * (PlacementStep * i));
+
+                if (IsClear(shape, candidate, upright))
+                    return candidate;
+            }
+
+            return under;
+        }
+
+        // The carried package's own colliders are disabled, so any overlap is something else; the test box is
+        // lifted off and shrunk from the floor it will stand on.
+        private static bool IsClear(BoxCollider shape, Vector3 position, Quaternion rotation)
+        {
+            Vector3 scale = shape.transform.lossyScale;
+            Vector3 halfExtents = Vector3.Scale(shape.size, scale) * 0.5f - Vector3.one * PlacementSkin;
+            Vector3 center = position + rotation * Vector3.Scale(shape.center, scale) + Vector3.up * (2f * PlacementSkin);
+
+            return Physics.OverlapBoxNonAlloc(
+                center,
+                halfExtents,
+                PlacementHits,
+                rotation,
+                Physics.DefaultRaycastLayers,
+                QueryTriggerInteraction.Ignore) == 0;
         }
 
         private static Vector3 GetFloorPosition(Vector3 from)

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Item_UsedMotherboard
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: used-motherboard
+  nameLocalizationKey: shop.product.used_motherboard.name
   category: 1
   worldPrefab: {fileID: 3202685724106341568, guid: 03543fa3925846c488b84ee52da7b77f, type: 3}
   iconOverride: {fileID: 0}
-  generatedIcon: {fileID: 0}
+  generatedIcon: {fileID: 21300000, guid: 4d76774280abfe34dadbb94c8429818c, type: 3}
   canStoreInInventory: 1
   carryStyle: 0
   carryLocalPosition: {x: 0, y: -0.022, z: 0}
