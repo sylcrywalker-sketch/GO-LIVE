@@ -37,6 +37,23 @@ namespace GoLive.Items
         public Vector3 CarryLocalPosition => carryLocalPosition;
         public Vector3 CarryLocalEulerAngles => carryLocalEulerAngles;
 
+        public bool TryGetRuntimePrefab(out WorldItem prefab)
+        {
+            prefab = worldPrefab != null ? worldPrefab.GetComponent<WorldItem>() : null;
+
+            if (prefab != null &&
+                prefab.Definition == this &&
+                prefab.IsRuntime &&
+                IsValidItemId(itemId) &&
+                prefab.GetComponentInChildren<Collider>(true) != null)
+            {
+                return true;
+            }
+
+            prefab = null;
+            return false;
+        }
+
         public static bool IsValidItemId(string value)
         {
             if (string.IsNullOrWhiteSpace(value) || value.Length > 80)

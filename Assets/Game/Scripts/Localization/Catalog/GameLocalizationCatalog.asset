@@ -52,6 +52,9 @@ MonoBehaviour:
   - _key: interaction.eat
     _russian: "\u0421\u044A\u0435\u0441\u0442\u044C"
     _english: Eat
+  - _key: interaction.open
+    _russian: "\u041E\u0442\u043A\u0440\u044B\u0442\u044C"
+    _english: Open
   - _key: hud.balance
     _russian: "\u0411\u0430\u043B\u0430\u043D\u0441"
     _english: Balance

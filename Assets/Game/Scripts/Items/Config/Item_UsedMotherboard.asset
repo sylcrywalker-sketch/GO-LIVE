@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: used-motherboard
   category: 1
-  worldPrefab: {fileID: 4330112294528256887, guid: 3c4622873f001094587b3b9ba6375d8b, type: 3}
+  worldPrefab: {fileID: 3202685724106341568, guid: 03543fa3925846c488b84ee52da7b77f, type: 3}
   iconOverride: {fileID: 0}
   generatedIcon: {fileID: 0}
   canStoreInInventory: 1
   carryStyle: 0
-  carryLocalPosition: {x: 0, y: 0, z: 0}
+  carryLocalPosition: {x: 0, y: -0.022, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}

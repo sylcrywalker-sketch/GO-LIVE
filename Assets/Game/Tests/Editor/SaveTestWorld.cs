@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using GoLive.Delivery;
 using GoLive.Economy;
 using GoLive.GameTime;
 using GoLive.Inventory;
@@ -19,25 +20,33 @@ using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
-    // Explicit EditMode composition of the current (v3) save runtime, not a substitute for Awake/Start or Play Mode verification.
+    // Explicit EditMode composition of the current (v4) save runtime, not a substitute for Awake/Start or Play Mode verification.
+    // Hands and Delivery stay inactive unless a Play Mode test calls StartPlayModeRuntime().
     internal sealed class SaveTestWorld : IDisposable
     {
         public const string BudgetGpuId = "budget-gpu";
         public const string SnackId = "test-snack";
 
         public GameObject Root { get; }
+        public GameObject Hands { get; }
         public GameSaveController Save { get; }
         public PhoneMessagesBehaviour Messages { get; }
         public GameClockBehaviour Clock { get; }
         public WalletBehaviour Wallet { get; }
         public ShopBehaviour Shop { get; }
+        public PlayerCarry Carry { get; }
+        public PlayerInventory Inventory { get; }
+        public PlayerNeedsBehaviour Needs { get; }
+        public DeliveryBehaviour Delivery { get; }
+        public Transform DropPoint { get; }
         public string Directory { get; }
         public string SavePath { get; }
 
         private readonly ShopCatalogConfig _catalog;
-        private readonly ItemDefinition[] _items;
+        private readonly GameObject _deliveryRoot;
+        private readonly GameObject _floor;
 
-        private SaveTestWorld(long walletCents)
+        private SaveTestWorld(long walletCents, ShopCatalogConfig catalog)
         {
             Directory = Path.Combine(Path.GetTempPath(), "GoLiveSaveTests", Guid.NewGuid().ToString("N"));
             System.IO.Directory.CreateDirectory(Directory);
@@ -54,17 +63,27 @@ namespace GoLive.Tests
             SetField(player, "_characterController", Root.GetComponent<CharacterController>());
             SetField(player, "_lookPivotBaseRotation", Quaternion.identity);
 
-            PlayerCarry carry = Root.AddComponent<PlayerCarry>();
-            PlayerInventory inventory = Root.AddComponent<PlayerInventory>();
-            SetField(carry, "carryAnchor", pivot);
-            SetField(inventory, "storedItemsRoot", pivot);
-            SetProperty(inventory, "Inventory", new GoLive.Inventory.Inventory(12));
+            Hands = new GameObject("Test hands");
+            Hands.SetActive(false);
+
+            Transform carryAnchor = new GameObject("Test carry anchor").transform;
+            carryAnchor.SetParent(Hands.transform, false);
+            carryAnchor.localPosition = new Vector3(0f, 1.4f, 0.7f);
+
+            Transform storage = new GameObject("Test inventory storage").transform;
+            storage.SetParent(Hands.transform, false);
+
+            Carry = Hands.AddComponent<PlayerCarry>();
+            Inventory = Hands.AddComponent<PlayerInventory>();
+            SetField(Carry, "carryAnchor", carryAnchor);
+            SetField(Inventory, "storedItemsRoot", storage);
+            SetProperty(Inventory, "Inventory", new GoLive.Inventory.Inventory(12));
 
             Clock = Root.AddComponent<GameClockBehaviour>();
             SetProperty(Clock, "Clock", new GameClock(1, 7, 12));
 
-            PlayerNeedsBehaviour needs = Root.AddComponent<PlayerNeedsBehaviour>();
-            SetProperty(needs, "Needs", new PlayerNeeds(new PlayerNeedsRules(100, 20, 4, 100, 100)));
+            Needs = Root.AddComponent<PlayerNeedsBehaviour>();
+            SetProperty(Needs, "Needs", new PlayerNeeds(new PlayerNeedsRules(100, 20, 4, 100, 100)));
 
             Wallet = Root.AddComponent<WalletBehaviour>();
             SetProperty(Wallet, "Wallet", new Wallet(walletCents));
@@ -75,13 +94,7 @@ namespace GoLive.Tests
             PlayerSleepController sleep = Root.AddComponent<PlayerSleepController>();
             Messages = Root.AddComponent<PhoneMessagesBehaviour>();
 
-            ItemDefinition gpu = ShopTestData.CreateItem(BudgetGpuId, ItemCategory.Electronics);
-            ItemDefinition snack = ShopTestData.CreateItem(SnackId, ItemCategory.Food);
-            _items = new[] { gpu, snack };
-
-            _catalog = ShopTestData.CreateCatalog(
-                ShopTestData.CreateProduct(BudgetGpuId, 1500, ItemCategory.Electronics, gpu, maxPurchases: 1, deliveryDelayMinutes: 150),
-                ShopTestData.CreateProduct(SnackId, 200, ItemCategory.Food, snack, maxPurchases: 0, deliveryDelayMinutes: 90));
+            _catalog = catalog != null ? catalog : CreateDefaultCatalog();
 
             Shop = Root.AddComponent<ShopBehaviour>();
             SetField(Shop, "wallet", Wallet);
@@ -89,22 +102,54 @@ namespace GoLive.Tests
             SetField(Shop, "catalog", _catalog);
             SetField(Shop, "_purchase", new ShopPurchase(Wallet.Wallet, Shop.Orders, Clock.Clock));
 
+            _floor = new GameObject("Test floor");
+            BoxCollider floor = _floor.AddComponent<BoxCollider>();
+            floor.center = new Vector3(0f, -0.5f, 0f);
+            floor.size = new Vector3(40f, 1f, 40f);
+
+            _deliveryRoot = new GameObject("Test delivery");
+            _deliveryRoot.SetActive(false);
+
+            DropPoint = new GameObject("Test drop point").transform;
+            DropPoint.position = new Vector3(0f, 0.01f, 2f);
+
+            Delivery = _deliveryRoot.AddComponent<DeliveryBehaviour>();
+            SetField(Delivery, "shop", Shop);
+            SetField(Delivery, "gameClock", Clock);
+            SetField(Delivery, "packageItem", ShopTestData.LoadItem(ShopTestData.DeliveryPackageItem));
+            SetField(Delivery, "dropPoint", DropPoint);
+
             Save = Root.AddComponent<GameSaveController>();
             SetField(Save, "_player", player);
-            SetField(Save, "_carry", carry);
-            SetField(Save, "_inventory", inventory);
+            SetField(Save, "_carry", Carry);
+            SetField(Save, "_inventory", Inventory);
             SetField(Save, "_gameClock", Clock);
-            SetField(Save, "_needs", needs);
+            SetField(Save, "_needs", Needs);
             SetField(Save, "_wallet", Wallet);
             SetField(Save, "_rent", rent);
             SetField(Save, "_sleep", sleep);
             SetField(Save, "_phoneMessages", Messages);
             SetField(Save, "_shop", Shop);
+            SetField(Save, "_delivery", Delivery);
         }
 
         public static SaveTestWorld Create(long walletCents)
         {
-            return new SaveTestWorld(walletCents);
+            return new SaveTestWorld(walletCents, null);
+        }
+
+        public static SaveTestWorld Create(long walletCents, ShopCatalogConfig catalog)
+        {
+            return new SaveTestWorld(walletCents, catalog);
+        }
+
+        // Real Awake/OnEnable/Start for the hands (carry + inventory) and the delivery owner; Start runs on the next frame.
+        public void StartPlayModeRuntime()
+        {
+            Assert.That(Application.isPlaying, Is.True, "Delivery runtime tests must run in Play Mode.");
+
+            Hands.SetActive(true);
+            _deliveryRoot.SetActive(true);
         }
 
         public static SceneSetup[] IsolateScene()
@@ -145,20 +190,38 @@ namespace GoLive.Tests
 
         public void Dispose()
         {
-            if (Root != null)
-                Object.DestroyImmediate(Root);
+            foreach (WorldItem item in Object.FindObjectsByType<WorldItem>(FindObjectsInactive.Include))
+            {
+                if (item.IsRuntime)
+                    Object.DestroyImmediate(item.gameObject);
+            }
+
+            DestroyIfAlive(Root);
+            DestroyIfAlive(Hands);
+            DestroyIfAlive(_deliveryRoot);
+            DestroyIfAlive(_floor);
+
+            if (DropPoint != null)
+                Object.DestroyImmediate(DropPoint.gameObject);
 
             if (_catalog != null)
                 Object.DestroyImmediate(_catalog);
 
-            foreach (ItemDefinition item in _items)
-            {
-                if (item != null)
-                    Object.DestroyImmediate(item);
-            }
-
             if (System.IO.Directory.Exists(Directory))
                 System.IO.Directory.Delete(Directory, true);
+        }
+
+        private static ShopCatalogConfig CreateDefaultCatalog()
+        {
+            return ShopTestData.CreateCatalog(
+                ShopTestData.CreateProduct(BudgetGpuId, 1500, ItemCategory.Electronics, ShopTestData.LoadItem(ShopTestData.BudgetGpuItem), maxPurchases: 1, deliveryDelayMinutes: 150),
+                ShopTestData.CreateProduct(SnackId, 200, ItemCategory.Food, ShopTestData.LoadItem(ShopTestData.BananaItem), maxPurchases: 0, deliveryDelayMinutes: 90));
+        }
+
+        private static void DestroyIfAlive(GameObject target)
+        {
+            if (target != null)
+                Object.DestroyImmediate(target);
         }
 
         private bool InvokeSaveMethod(string method)

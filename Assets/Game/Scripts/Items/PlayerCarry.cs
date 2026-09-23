@@ -53,6 +53,15 @@ namespace GoLive.Player
             return true;
         }
 
+        public bool TryPlace(Vector3 position, Quaternion rotation)
+        {
+            if (!HasItem || !_carriedItem.TryPlace(position, rotation))
+                return false;
+
+            _carriedItem = null;
+            return true;
+        }
+
         public bool TryInteractCarried(in InteractionContext context)
         {
             if (!HasItem)

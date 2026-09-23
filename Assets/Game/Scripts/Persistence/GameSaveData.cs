@@ -1,4 +1,5 @@
 using System;
+using GoLive.Delivery;
 using GoLive.Economy;
 using GoLive.Items;
 using GoLive.Phone;
@@ -20,6 +21,7 @@ namespace GoLive.Persistence
         public RentSaveData Rent;
         public PhoneMessagesSnapshot Messages;
         public ShopOrdersSnapshot Orders;
+        public DeliverySnapshot Delivery;
         public ItemSaveData[] Items = Array.Empty<ItemSaveData>();
     }
 

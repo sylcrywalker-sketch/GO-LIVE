@@ -1,4 +1,5 @@
 using System.IO;
+using GoLive.Delivery;
 using GoLive.Persistence;
 using GoLive.Phone;
 using GoLive.Shop;
@@ -43,14 +44,17 @@ namespace GoLive.Tests
         }
 
         [Test]
-        public void SaveFileIsSchemaV3WithTheOrdersSection()
+        public void SaveFileIsSchemaV4WithOrdersAndDeliverySections()
         {
             ShopOrder placed = _world.Shop.TryPurchase(GpuId).Order;
 
             Assert.That(_world.TrySave(), Is.True);
 
             GameSaveData data = _world.ReadSave();
-            Assert.That(data.Version, Is.EqualTo(3));
+            Assert.That(data.Version, Is.EqualTo(4));
+            Assert.That(data.Delivery, Is.Not.Null);
+            Assert.That(data.Delivery.Version, Is.EqualTo(DeliverySnapshot.CurrentVersion));
+            Assert.That(data.Delivery.Deliveries, Is.Empty);
             Assert.That(data.BalanceCents, Is.EqualTo(1000));
             Assert.That(data.Orders, Is.Not.Null);
             Assert.That(data.Orders.Version, Is.EqualTo(ShopOrdersSnapshot.CurrentVersion));
@@ -232,6 +236,47 @@ namespace GoLive.Tests
             AssertLoadRejectedWithoutTouchingLiveState();
         }
 
+        [TestCase("missing section")]
+        [TestCase("null section")]
+        [TestCase("empty section")]
+        [TestCase("missing deliveries array")]
+        public void CurrentSaveWithoutADeliverySectionIsRejected(string corruption)
+        {
+            _world.Shop.TryPurchase(GpuId);
+            Assert.That(_world.TrySave(), Is.True);
+
+            GameSaveData data = _world.ReadSave();
+            string json = JsonUtility.ToJson(data);
+            string deliveryField = "\"Delivery\":" + JsonUtility.ToJson(data.Delivery);
+            Assert.That(json, Does.Contain(deliveryField + ","));
+
+            json = corruption switch
+            {
+                "missing section" => json.Replace(deliveryField + ",", string.Empty),
+                "null section" => json.Replace(deliveryField, "\"Delivery\":null"),
+                "empty section" => json.Replace(deliveryField, "\"Delivery\":{}"),
+                _ => json.Replace(deliveryField, "\"Delivery\":{\"Version\":1}")
+            };
+
+            File.WriteAllText(_world.SavePath, json);
+            AssertLoadRejectedWithoutTouchingLiveState();
+        }
+
+        [Test]
+        public void MissingDeliveryOwnerRefusesSaveAndLoadWithoutOverwritingFile()
+        {
+            Assert.That(_world.TrySave(), Is.True);
+            string before = File.ReadAllText(_world.SavePath);
+
+            SaveTestWorld.SetField(_world.Save, "_delivery", null);
+
+            LogAssert.Expect(LogType.Error, $"GameSaveController on {_world.Root.name} has incomplete configuration.");
+            Assert.That(_world.TrySave(), Is.False);
+            LogAssert.Expect(LogType.Error, $"GameSaveController on {_world.Root.name} has incomplete configuration.");
+            Assert.That(_world.TryLoad(), Is.False);
+            Assert.That(File.ReadAllText(_world.SavePath), Is.EqualTo(before));
+        }
+
         [Test]
         public void MessagesWalletAndOrdersRestoreTogether()
         {
@@ -283,6 +328,7 @@ namespace GoLive.Tests
             AddIncoming("live-message");
 
             string messagesBefore = MessagesJson();
+            string deliveryBefore = JsonUtility.ToJson(_world.Delivery.CaptureSnapshot());
             long clockBefore = _world.Clock.Clock.Current.TotalSeconds;
             ShopOrderBook book = _world.Shop.Orders;
             int orderChanges = 0;
@@ -291,6 +337,7 @@ namespace GoLive.Tests
             LogAssert.Expect(LogType.Error, $"Save validation failed: {_world.SavePath}");
             Assert.That(_world.TryLoad(), Is.False);
 
+            Assert.That(JsonUtility.ToJson(_world.Delivery.CaptureSnapshot()), Is.EqualTo(deliveryBefore));
             Assert.That(Balance, Is.EqualTo(777));
             Assert.That(_world.Shop.Orders, Is.SameAs(book));
             Assert.That(book.Orders, Is.Empty);

@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: used-psu
   category: 1
-  worldPrefab: {fileID: 3928965849028373735, guid: 0e23c7f5c8a51df4e9b7f94527ff66ff, type: 3}
+  worldPrefab: {fileID: 952273285094322735, guid: 87c68de60e62c97489de0058f2246f8a, type: 3}
   iconOverride: {fileID: 0}
   generatedIcon: {fileID: 0}
   canStoreInInventory: 1
   carryStyle: 0
-  carryLocalPosition: {x: 0, y: 0, z: 0}
+  carryLocalPosition: {x: 0, y: -0.051, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}

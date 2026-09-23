@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: banana
   category: 0
-  worldPrefab: {fileID: 5818144976745710219, guid: d3befcb536f2be54ea241885b5a5b0b6, type: 3}
+  worldPrefab: {fileID: 1786087781561182519, guid: ebb7e516660bc6746b5ec1bd44c9aa9d, type: 3}
   iconOverride: {fileID: 0}
   generatedIcon: {fileID: 0}
   canStoreInInventory: 1

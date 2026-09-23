@@ -121,6 +121,12 @@ namespace GoLive.Shop
                 return false;
             }
 
+            if (IsAvailable && !fulfillmentItem.TryGetRuntimePrefab(out _))
+            {
+                error = $"Available product '{productId}' cannot be delivered: the World Prefab of '{fulfillmentItem.ItemId}' needs a root WorldItem for that Item Definition, a Collider and no scene instance ID.";
+                return false;
+            }
+
             if (IsAvailable && deliveryDelayMinutes <= 0)
             {
                 error = $"Available product '{productId}' requires a positive delivery delay.";

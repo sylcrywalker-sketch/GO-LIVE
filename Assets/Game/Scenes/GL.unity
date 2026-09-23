@@ -3358,6 +3358,7 @@ GameObject:
   - component: {fileID: 656476885}
   - component: {fileID: 656476894}
   - component: {fileID: 656476895}
+  - component: {fileID: 656476896}
   m_Layer: 0
   m_Name: '[GameSystems]'
   m_TagString: Untagged
@@ -3402,6 +3403,7 @@ MonoBehaviour:
   _sleep: {fileID: 7909901070399414412}
   _phoneMessages: {fileID: 656476894}
   _shop: {fileID: 656476895}
+  _delivery: {fileID: 656476896}
 --- !u!114 &656476886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3563,6 +3565,23 @@ MonoBehaviour:
   wallet: {fileID: 656476887}
   gameClock: {fileID: 656476893}
   catalog: {fileID: 11400000, guid: 635f0a67da4800941b2f158d43683951, type: 2}
+--- !u!114 &656476896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656476883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4639bccc48a462695c674d9e8cffe65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Delivery.DeliveryBehaviour
+  shop: {fileID: 656476895}
+  gameClock: {fileID: 656476893}
+  packageItem: {fileID: 11400000, guid: 5055ff9d795f66545ade2fab40908806, type: 2}
+  dropPoint: {fileID: 1900300568}
+  slotSpacing: 0.45
 --- !u!1 &727807390 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8508454858502885002, guid: 00d8304e0ea7d9f4f9ba65ccd3a6afbd, type: 3}
@@ -8686,6 +8705,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873253522}
   m_CullTransparentMesh: 1
+--- !u!1 &1900300567
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1900300568}
+  m_Layer: 0
+  m_Name: DeliveryDropPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1900300568
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900300567}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: 0.16, z: -20.45}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1907228004
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17399,3 +17449,4 @@ SceneRoots:
   - {fileID: 269826222}
   - {fileID: 1045194482}
   - {fileID: 2755437988383674490}
+  - {fileID: 1900300568}

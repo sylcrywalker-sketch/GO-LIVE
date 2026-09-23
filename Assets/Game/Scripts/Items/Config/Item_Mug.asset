@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
   itemId: mug
   category: 2
-  worldPrefab: {fileID: 1203331207564668038, guid: 5befdbe1ef899b04e9ebbfeecd9d5c3d, type: 3}
+  worldPrefab: {fileID: 4586390524224575424, guid: d16cecdc8d14368469e4ed48cea77f97, type: 3}
   iconOverride: {fileID: 0}
   generatedIcon: {fileID: 0}
   canStoreInInventory: 1
   carryStyle: 0
-  carryLocalPosition: {x: 0, y: 0, z: 0}
+  carryLocalPosition: {x: 0, y: -0.061, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}

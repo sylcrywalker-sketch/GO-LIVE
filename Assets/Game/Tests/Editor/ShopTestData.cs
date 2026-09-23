@@ -1,12 +1,24 @@
 using System.Reflection;
 using GoLive.Items;
 using GoLive.Shop;
+using UnityEditor;
 using UnityEngine;
 
 namespace GoLive.Tests
 {
     internal static class ShopTestData
     {
+        public const string BudgetGpuItem = "Item_BudgetGPU";
+        public const string BananaItem = "BananaDefinition";
+        public const string MugItem = "Item_Mug";
+        public const string DeliveryPackageItem = "Item_DeliveryPackage";
+
+        // Project definitions whose World Prefabs are physically deliverable runtime items.
+        public static ItemDefinition LoadItem(string assetName)
+        {
+            return AssetDatabase.LoadAssetAtPath<ItemDefinition>($"Assets/Game/Scripts/Items/Config/{assetName}.asset");
+        }
+
         public static ItemDefinition CreateItem(string itemId, ItemCategory category)
         {
             ItemDefinition item = ScriptableObject.CreateInstance<ItemDefinition>();

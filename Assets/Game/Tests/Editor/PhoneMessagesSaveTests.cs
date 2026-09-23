@@ -67,7 +67,7 @@ namespace GoLive.Tests
             Assert.That(data.Messages.Conversations[0].ContactId, Is.EqualTo("landlord"));
             Assert.That(data.Messages.Conversations[0].Messages[0].MessageId, Is.EqualTo("first"));
             Assert.That(data.Messages.Conversations[0].Messages[0].IsRead, Is.False);
-            Assert.That(data.Version, Is.EqualTo(3));
+            Assert.That(data.Version, Is.EqualTo(4));
             Assert.That(data.Orders, Is.Not.Null);
             Assert.That(data.Orders.Version, Is.EqualTo(ShopOrdersSnapshot.CurrentVersion));
             Assert.That(data.Orders.Orders, Is.Empty);
@@ -215,7 +215,7 @@ namespace GoLive.Tests
             var data = ReadSave();
             data.Messages.Conversations = null;
             string before = SnapshotJson();
-            object[] arguments = { data, null };
+            object[] arguments = { data, null, null };
             bool valid = (bool)typeof(GameSaveController).GetMethod("ValidateSaveData", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_save, arguments);
             Assert.That(valid, Is.False);
             Assert.That(SnapshotJson(), Is.EqualTo(before));
@@ -233,6 +233,7 @@ namespace GoLive.Tests
 
         [TestCase(1)]
         [TestCase(2)]
+        [TestCase(3)]
         public void OldSkeletonSaveVersionIsRejectedWithoutMigration(int version)
         {
             AddIncoming("current");
@@ -240,10 +241,13 @@ namespace GoLive.Tests
             Assert.That(Save(), Is.True);
             var data = ReadSave();
             data.Version = version;
-            // Skeleton saves predate the Orders section; version 1 also predates Messages.
-            string json = JsonUtility.ToJson(data).Replace("\"Orders\":" + JsonUtility.ToJson(data.Orders) + ",", string.Empty);
+            // Skeleton saves predate the Delivery section; version 2 also predates Orders and version 1 also predates Messages.
+            string json = JsonUtility.ToJson(data).Replace("\"Delivery\":" + JsonUtility.ToJson(data.Delivery) + ",", string.Empty);
+            if (version < 3)
+                json = json.Replace("\"Orders\":" + JsonUtility.ToJson(data.Orders) + ",", string.Empty);
             if (version == 1)
                 json = json.Replace("\"Messages\":" + JsonUtility.ToJson(data.Messages) + ",", string.Empty);
+            Assert.That(json, Does.Not.Contain("\"Delivery\":"));
             File.WriteAllText(_path, json);
             _wallet.Wallet.Restore(777);
             _shop.RestoreOrders(new ShopOrdersSnapshot());

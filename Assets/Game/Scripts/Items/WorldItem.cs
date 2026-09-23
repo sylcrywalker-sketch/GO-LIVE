@@ -14,6 +14,7 @@ namespace GoLive.Items
         public ItemDefinition Definition => definition;
         public ItemInstance Instance { get; private set; }
         public string AuthoredInstanceId => authoredInstanceId;
+        public bool IsRuntime => string.IsNullOrWhiteSpace(authoredInstanceId);
         public bool CanBeCarried => isActiveAndEnabled && Instance != null && Instance.Location == ItemLocation.World;
 
         private readonly List<MonoBehaviour> _interactionCandidates = new();
@@ -52,6 +53,20 @@ namespace GoLive.Items
             enabled = false;
         }
 
+        public static WorldItem SpawnRuntime(ItemDefinition definition, ItemInstance instance, Vector3 position, Quaternion rotation)
+        {
+            if (definition == null || instance == null || !definition.TryGetRuntimePrefab(out WorldItem prefab))
+                return null;
+
+            WorldItem item = Instantiate(prefab, position, rotation);
+
+            if (item.TryInitializeRuntime(instance))
+                return item;
+
+            DestroyImmediate(item.gameObject);
+            return null;
+        }
+
         public bool TryInitializeRuntime(ItemInstance instance)
         {
             if (Instance != null || instance == null || instance.DefinitionId != definition.ItemId)
@@ -59,6 +74,12 @@ namespace GoLive.Items
 
             Instance = instance;
             return true;
+        }
+
+        internal void DestroyRuntime()
+        {
+            if (IsRuntime)
+                DestroyImmediate(gameObject);
         }
 
         public bool TryInteract(in InteractionContext context)
@@ -145,6 +166,15 @@ namespace GoLive.Items
 
             RestoreColliderStates();
 
+            return true;
+        }
+
+        internal bool TryPlace(Vector3 position, Quaternion rotation)
+        {
+            if (!TryDrop(Vector3.zero))
+                return false;
+
+            transform.SetPositionAndRotation(position, rotation);
             return true;
         }
 

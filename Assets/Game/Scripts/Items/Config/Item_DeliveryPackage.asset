@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 507f4ce9fbbc7194daf26863701676de, type: 3}
-  m_Name: Item_UsedKeyboard
+  m_Name: Item_DeliveryPackage
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Items.ItemDefinition
-  itemId: used-keyboard
-  category: 1
-  worldPrefab: {fileID: 8089421684409601318, guid: 8f7ee953d6bb48642ac63b7903b8c222, type: 3}
+  itemId: delivery-package
+  category: 2
+  worldPrefab: {fileID: 970837341681119155, guid: 57c363b14e2c0a24e8fa81f37f4d17b4, type: 3}
   iconOverride: {fileID: 0}
   generatedIcon: {fileID: 0}
-  canStoreInInventory: 1
-  carryStyle: 0
-  carryLocalPosition: {x: 0, y: -0.031, z: 0}
+  canStoreInInventory: 0
+  carryStyle: 1
+  carryLocalPosition: {x: -0.35, y: -0.3, z: 0.05}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using GoLive.Delivery;
 using GoLive.Economy;
 using GoLive.GameTime;
 using GoLive.Inventory;
@@ -19,7 +20,7 @@ namespace GoLive.Persistence
     [DisallowMultipleComponent]
     public sealed class GameSaveController : MonoBehaviour
     {
-        private const int CurrentVersion = 3;
+        private const int CurrentVersion = 4;
         private const string AutosaveFileName = "autosave.json";
 
         [Header("Game State")]
@@ -33,6 +34,7 @@ namespace GoLive.Persistence
         [SerializeField] private PlayerSleepController _sleep;
         [SerializeField] private PhoneMessagesBehaviour _phoneMessages;
         [SerializeField] private ShopBehaviour _shop;
+        [SerializeField] private DeliveryBehaviour _delivery;
 
         private bool _bound;
 
@@ -267,6 +269,13 @@ namespace GoLive.Persistence
                             {
                                 Version = 0,
                                 Orders = null
+                            },
+
+                        Delivery =
+                            new DeliverySnapshot
+                            {
+                                Version = 0,
+                                Deliveries = null
                             }
                     };
 
@@ -276,7 +285,8 @@ namespace GoLive.Persistence
 
                 if (!ValidateSaveData(
                         data,
-                        out Dictionary<string, WorldItem> sceneItems))
+                        out Dictionary<string, WorldItem> sceneItems,
+                        out Dictionary<string, ItemDefinition> runtimeItems))
                 {
                     Debug.LogError(
                         $"Save validation failed: {path}");
@@ -286,7 +296,8 @@ namespace GoLive.Persistence
 
                 Apply(
                     data,
-                    sceneItems);
+                    sceneItems,
+                    runtimeItems);
 
                 Debug.Log(
                     $"GO! LIVE save loaded: {path}");
@@ -456,14 +467,22 @@ namespace GoLive.Persistence
                     _phoneMessages.Messages.CaptureSnapshot(),
 
                 Orders =
-                    _shop.CaptureOrders()
+                    _shop.CaptureOrders(),
+
+                Delivery =
+                    _delivery.CaptureSnapshot()
             };
         }
 
         private void Apply(
             GameSaveData data,
-            Dictionary<string, WorldItem> sceneItems)
+            Dictionary<string, WorldItem> sceneItems,
+            Dictionary<string, ItemDefinition> runtimeItems)
         {
+            SyncRuntimeItems(
+                sceneItems,
+                runtimeItems);
+
             Dictionary<int, WorldItem> inventoryByIndex =
                 new();
 
@@ -611,6 +630,10 @@ namespace GoLive.Persistence
             _shop.RestoreOrders(
                 data.Orders);
 
+            _delivery.Restore(
+                data.Delivery,
+                sceneItems);
+
             _rent.Restore(
                 new RentSnapshot(
                     data.Rent.AmountDueCents,
@@ -626,10 +649,14 @@ namespace GoLive.Persistence
 
         private bool ValidateSaveData(
             GameSaveData data,
-            out Dictionary<string, WorldItem> sceneItems)
+            out Dictionary<string, WorldItem> sceneItems,
+            out Dictionary<string, ItemDefinition> runtimeItems)
         {
             sceneItems =
                 BuildSceneItemMap();
+
+            runtimeItems =
+                null;
 
             if (data == null ||
                 data.Version != CurrentVersion ||
@@ -637,7 +664,8 @@ namespace GoLive.Persistence
                 data.Rent == null ||
                 data.Items == null ||
                 data.Messages == null ||
-                data.Orders == null)
+                data.Orders == null ||
+                data.Delivery == null)
             {
                 return false;
             }
@@ -656,6 +684,14 @@ namespace GoLive.Persistence
             if (!_shop.ValidateOrdersSnapshot(
                     data.Orders,
                     data.GameTimeSeconds))
+            {
+                return false;
+            }
+
+            if (!_delivery.TryResolveRuntimeItems(
+                    data.Delivery,
+                    data.Orders,
+                    out runtimeItems))
             {
                 return false;
             }
@@ -717,15 +753,13 @@ namespace GoLive.Persistence
                     return false;
                 }
 
-                if (!sceneItems.TryGetValue(
+                if (!TryGetExpectedDefinitionId(
                         item.InstanceId,
-                        out WorldItem worldItem))
-                {
-                    return false;
-                }
-
-                if (!string.Equals(
-                        worldItem.Definition.ItemId,
+                        sceneItems,
+                        runtimeItems,
+                        out string definitionId) ||
+                    !string.Equals(
+                        definitionId,
                         item.DefinitionId,
                         StringComparison.Ordinal))
                 {
@@ -769,7 +803,105 @@ namespace GoLive.Persistence
                     return false;
             }
 
+            foreach (string runtimeId in runtimeItems.Keys)
+            {
+                if (!savedIds.Contains(runtimeId))
+                    return false;
+            }
+
             return true;
+        }
+
+        private static bool TryGetExpectedDefinitionId(
+            string instanceId,
+            Dictionary<string, WorldItem> sceneItems,
+            Dictionary<string, ItemDefinition> runtimeItems,
+            out string definitionId)
+        {
+            definitionId =
+                null;
+
+            bool live =
+                sceneItems.TryGetValue(
+                    instanceId,
+                    out WorldItem liveItem);
+
+            if (runtimeItems.TryGetValue(
+                    instanceId,
+                    out ItemDefinition runtimeDefinition))
+            {
+                if (live &&
+                    (!liveItem.IsRuntime ||
+                     liveItem.Definition != runtimeDefinition))
+                {
+                    return false;
+                }
+
+                definitionId =
+                    runtimeDefinition.ItemId;
+
+                return true;
+            }
+
+            if (!live ||
+                liveItem.IsRuntime)
+            {
+                return false;
+            }
+
+            definitionId =
+                liveItem.Definition.ItemId;
+
+            return true;
+        }
+
+        private static void SyncRuntimeItems(
+            Dictionary<string, WorldItem> items,
+            Dictionary<string, ItemDefinition> runtimeItems)
+        {
+            List<string> staleIds =
+                new();
+
+            foreach (KeyValuePair<string, WorldItem> pair in items)
+            {
+                if (pair.Value.IsRuntime &&
+                    !runtimeItems.ContainsKey(pair.Key))
+                {
+                    staleIds.Add(pair.Key);
+                }
+            }
+
+            for (int i = 0; i < staleIds.Count; i++)
+            {
+                items[staleIds[i]].DestroyRuntime();
+                items.Remove(staleIds[i]);
+            }
+
+            foreach (KeyValuePair<string, ItemDefinition> pair in runtimeItems)
+            {
+                if (items.ContainsKey(pair.Key))
+                    continue;
+
+                WorldItem item =
+                    WorldItem.SpawnRuntime(
+                        pair.Value,
+                        new ItemInstance(
+                            pair.Key,
+                            pair.Value.ItemId,
+                            ItemLocation.World),
+                        Vector3.zero,
+                        Quaternion.identity);
+
+                if (item == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to spawn saved item {pair.Key}.");
+                }
+
+                items.Add(
+                    pair.Key,
+                    item);
+            }
         }
 
         private Dictionary<string, WorldItem>
@@ -839,7 +971,8 @@ namespace GoLive.Persistence
                 _rent != null &&
                 _sleep != null &&
                 _phoneMessages != null &&
-                _shop != null)
+                _shop != null &&
+                _delivery != null)
             {
                 return true;
             }
