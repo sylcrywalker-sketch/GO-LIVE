@@ -1,78 +1,85 @@
 using System;
-using System.Collections.Generic;
 using GoLive.Items;
+using GoLive.Localization;
 using GoLive.Player;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace GoLive.Inventory
 {
+    // TAB Inventory: a compact panel over the live world plus a card for the held item.
+    // A drag is transactional: while the pointer moves only the preview changes, and the single domain call
+    // (PlayerInventory.TryTakeToCarry / TryStoreCarriedItem) happens on a valid release. Closing, an invalid
+    // release or any item change during the drag leave every item exactly where it was.
     [DisallowMultipleComponent]
     public sealed class InventoryUiController : MonoBehaviour
     {
+        private const string TitleKey = "inventory.title";
+        private const string ClosedHintKey = "inventory.hint.closed";
+        private const string InstructionsKey = "inventory.hint.open";
+        private const string HandsKey = "inventory.hands";
+        private const string HandsEmptyKey = "inventory.hands_empty";
+        private const string DropTakeKey = "inventory.drop.take";
+        private const string DropSwapKey = "inventory.drop.swap";
+        private const string DropStoreKey = "inventory.drop.store";
+        private const string DropOutsideKey = "inventory.drop.outside";
+        private const string DropOnPanelKey = "inventory.drop.on_panel";
+        private const string NotStorableKey = "inventory.reject.not_storable";
+        private const string FullKey = "inventory.reject.full";
+        private const string HandsBusyKey = "inventory.reject.hands_busy";
+        private const string FailedKey = "inventory.reject.failed";
+
         [Header("Player")]
         [SerializeField] private PlayerInventory playerInventory;
         [SerializeField] private PlayerCarry playerCarry;
         [SerializeField] private PlayerController playerController;
+        [SerializeField] private LocalizationContext localization;
 
-        [Header("Root")]
+        [Header("Overlay")]
         [SerializeField] private CanvasGroup overlay;
-        [SerializeField] private TMP_Text inventoryHintText;
-
-        [Header("Inventory")]
+        [SerializeField] private RectTransform panel;
+        [SerializeField] private InventoryGridView grid;
+        [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text capacityText;
-        [SerializeField] private TMP_Text emptyText;
-        [SerializeField] private Button[] slotButtons = Array.Empty<Button>();
-        [SerializeField] private Image[] slotIcons = Array.Empty<Image>();
-        [SerializeField] private TMP_Text[] slotNames = Array.Empty<TMP_Text>();
-        [SerializeField] private TMP_Text[] slotQuantities = Array.Empty<TMP_Text>();
-        [SerializeField] private TMP_Text[] slotIconFallbacks = Array.Empty<TMP_Text>();
-        [SerializeField] private Image[] slotSelections = Array.Empty<Image>();
+        [SerializeField] private TMP_Text hintText;
+        [SerializeField] private TMP_Text closedHintText;
 
-        [Header("Categories")]
-        [SerializeField] private Button[] categoryButtons = Array.Empty<Button>();
-        [SerializeField] private Image[] categoryFocusLines = Array.Empty<Image>();
+        [Header("Hands")]
+        [SerializeField] private InventoryItemView heldItem;
+        [SerializeField] private TMP_Text heldTitleText;
 
-        [Header("Details")]
-        [SerializeField] private Image itemIcon;
-        [SerializeField] private TMP_Text itemIconFallback;
-        [SerializeField] private TMP_Text itemNameText;
-        [SerializeField] private TMP_Text categoryText;
-        [SerializeField] private TMP_Text descriptionText;
-        [SerializeField] private TMP_Text propertiesText;
-        [SerializeField] private Button takeButton;
-        [SerializeField] private Button dropSelectedButton;
+        [Header("Drag")]
+        [SerializeField] private InventoryDragGhost dragGhost;
 
-        [Header("Held Item")]
-        [SerializeField] private GameObject heldPanel;
-        [SerializeField] private Image heldIcon;
-        [SerializeField] private TMP_Text heldNameText;
-        [SerializeField] private TMP_Text heldInfoText;
-        [SerializeField] private Button storeHeldButton;
-        [SerializeField] private Button useHeldButton;
-        [SerializeField] private Button dropHeldButton;
-
-        [Header("Close")]
-        [SerializeField] private Button closeButton;
+        [Header("Behaviour")]
+        [SerializeField] private PlayerControlMask blockedWhileOpen = PlayerControlMask.Look | PlayerControlMask.Jump | PlayerControlMask.Interaction;
+        [SerializeField, Min(0.5f)] private float feedbackSeconds = 2.5f;
+        [SerializeField] private Color feedbackColor = new(1f, 0.66f, 0.58f, 1f);
 
         public bool IsOpen => _isOpen;
+        public bool IsDragging => _dragSource != DragSource.None;
 
-        private readonly List<ItemInstance> _visibleItems = new(12);
+        private enum DragSource
+        {
+            None,
+            Inventory,
+            Hands
+        }
 
-        private UnityAction[] _slotHandlers;
-        private UnityAction[] _categoryHandlers;
         private IDisposable _controlBlock;
         private CursorLockMode _previousCursorLockMode;
         private bool _previousCursorVisible;
-        private float _visibleOverlayAlpha;
+        private Color _instructionsColor;
+        private float _feedbackUntil;
         private bool _started;
         private bool _bound;
         private bool _isOpen;
-        private string _selectedInstanceId;
-        private string _emptyItemName;
-        private int _categoryIndex;
+
+        private DragSource _dragSource;
+        private InventoryItemView _dragView;
+        private string _dragInstanceId;
+        private InventoryTransfer? _dropTransfer;
 
         private void Awake()
         {
@@ -82,23 +89,7 @@ namespace GoLive.Inventory
                 return;
             }
 
-            _visibleOverlayAlpha = overlay.alpha;
-            _emptyItemName = itemNameText.text;
-            _slotHandlers = new UnityAction[slotButtons.Length];
-            _categoryHandlers = new UnityAction[categoryButtons.Length];
-
-            for (int i = 0; i < _slotHandlers.Length; i++)
-            {
-                int index = i;
-                _slotHandlers[i] = () => SelectSlot(index);
-            }
-
-            for (int i = 0; i < _categoryHandlers.Length; i++)
-            {
-                int index = i;
-                _categoryHandlers[i] = () => SelectCategory(index);
-            }
-
+            _instructionsColor = hintText.color;
             SetOverlayVisible(false);
         }
 
@@ -111,16 +102,8 @@ namespace GoLive.Inventory
                 return;
             }
 
-            if (playerInventory.Inventory.Capacity > slotButtons.Length)
-            {
-                Debug.LogError($"{nameof(InventoryUiController)} has fewer visual slots than the Inventory capacity.", this);
-                enabled = false;
-                return;
-            }
-
             _started = true;
             Bind();
-            Refresh();
         }
 
         private void OnEnable()
@@ -135,21 +118,30 @@ namespace GoLive.Inventory
             Unbind();
         }
 
+        private void Update()
+        {
+            if (_feedbackUntil > 0f && Time.unscaledTime >= _feedbackUntil)
+                ShowInstructions();
+        }
+
         public void Open()
         {
-            if (!_started || !isActiveAndEnabled || _isOpen)
+            if (!_started || !_bound || !isActiveAndEnabled || _isOpen)
                 return;
 
             _isOpen = true;
             _previousCursorLockMode = Cursor.lockState;
             _previousCursorVisible = Cursor.visible;
-            _controlBlock = playerController.Controls.Block(PlayerControlMask.All);
+            _controlBlock = playerController.Controls.Block(blockedWhileOpen);
 
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
+            grid.Render();
+            RenderCapacity();
+            RenderHands();
+            ShowInstructions();
             SetOverlayVisible(true);
-            Refresh();
         }
 
         public void Close()
@@ -157,6 +149,7 @@ namespace GoLive.Inventory
             if (!_isOpen)
                 return;
 
+            CancelDrag();
             _isOpen = false;
 
             _controlBlock?.Dispose();
@@ -173,20 +166,27 @@ namespace GoLive.Inventory
             if (_bound)
                 return;
 
+            if (!grid.Bind(playerInventory))
+            {
+                enabled = false;
+                return;
+            }
+
             _bound = true;
-            playerInventory.Inventory.Changed += OnInventoryChanged;
 
-            for (int i = 0; i < slotButtons.Length; i++)
-                slotButtons[i].onClick.AddListener(_slotHandlers[i]);
+            grid.ItemDragStarted += HandleInventoryDragStarted;
+            grid.ItemDragged += HandleDragged;
+            grid.ItemDragEnded += HandleDragEnded;
+            heldItem.DragStarted += HandleHandsDragStarted;
+            heldItem.Dragged += HandleDragged;
+            heldItem.DragEnded += HandleDragEnded;
+            playerInventory.Inventory.Changed += HandleInventoryChanged;
+            playerCarry.CarriedItemChanged += HandleCarriedItemChanged;
+            localization.LanguageChanged += HandleLanguageChanged;
 
-            for (int i = 0; i < categoryButtons.Length; i++)
-                categoryButtons[i].onClick.AddListener(_categoryHandlers[i]);
-
-            takeButton.onClick.AddListener(TakeSelected);
-            dropSelectedButton.onClick.AddListener(DropSelected);
-            storeHeldButton.onClick.AddListener(StoreHeld);
-            dropHeldButton.onClick.AddListener(DropHeld);
-            closeButton.onClick.AddListener(Close);
+            RefreshTexts();
+            RenderCapacity();
+            RenderHands();
         }
 
         private void Unbind()
@@ -195,331 +195,256 @@ namespace GoLive.Inventory
                 return;
 
             _bound = false;
-            playerInventory.Inventory.Changed -= OnInventoryChanged;
 
-            for (int i = 0; i < slotButtons.Length; i++)
-                slotButtons[i].onClick.RemoveListener(_slotHandlers[i]);
+            grid.ItemDragStarted -= HandleInventoryDragStarted;
+            grid.ItemDragged -= HandleDragged;
+            grid.ItemDragEnded -= HandleDragEnded;
+            heldItem.DragStarted -= HandleHandsDragStarted;
+            heldItem.Dragged -= HandleDragged;
+            heldItem.DragEnded -= HandleDragEnded;
+            playerInventory.Inventory.Changed -= HandleInventoryChanged;
+            playerCarry.CarriedItemChanged -= HandleCarriedItemChanged;
+            localization.LanguageChanged -= HandleLanguageChanged;
 
-            for (int i = 0; i < categoryButtons.Length; i++)
-                categoryButtons[i].onClick.RemoveListener(_categoryHandlers[i]);
-
-            takeButton.onClick.RemoveListener(TakeSelected);
-            dropSelectedButton.onClick.RemoveListener(DropSelected);
-            storeHeldButton.onClick.RemoveListener(StoreHeld);
-            dropHeldButton.onClick.RemoveListener(DropHeld);
-            closeButton.onClick.RemoveListener(Close);
+            grid.Unbind();
         }
 
-        private void OnInventoryChanged()
+        private void HandleInventoryDragStarted(InventoryItemView view, PointerEventData eventData)
         {
-            if (_isOpen)
-                Refresh();
+            BeginDrag(DragSource.Inventory, view, eventData);
         }
 
-        private void SelectSlot(int index)
+        private void HandleHandsDragStarted(InventoryItemView view, PointerEventData eventData)
         {
-            if (index < 0 || index >= _visibleItems.Count)
+            BeginDrag(DragSource.Hands, view, eventData);
+        }
+
+        private void BeginDrag(DragSource source, InventoryItemView view, PointerEventData eventData)
+        {
+            if (!_isOpen || IsDragging || view.IsEmpty)
                 return;
 
-            _selectedInstanceId = _visibleItems[index].InstanceId;
-            Refresh();
+            _dragSource = source;
+            _dragView = view;
+            _dragInstanceId = view.InstanceId;
+
+            view.SetLifted(true);
+            dragGhost.Show(view);
+            UpdateDrop(eventData);
         }
 
-        private void SelectCategory(int index)
+        private void HandleDragged(InventoryItemView view, PointerEventData eventData)
         {
-            if (index < 0 || index >= categoryButtons.Length)
+            if (view == _dragView)
+                UpdateDrop(eventData);
+        }
+
+        private void HandleDragEnded(InventoryItemView view, PointerEventData eventData)
+        {
+            if (view != _dragView)
                 return;
 
-            _categoryIndex = index;
-            _selectedInstanceId = null;
-            Refresh();
+            UpdateDrop(eventData);
+
+            DragSource source = _dragSource;
+            string instanceId = _dragInstanceId;
+            InventoryTransfer? transfer = _dropTransfer;
+
+            EndDrag();
+            Commit(source, instanceId, transfer);
         }
 
-        private void StoreHeld()
+        private void UpdateDrop(PointerEventData eventData)
+        {
+            bool overPanel = RectTransformUtility.RectangleContainsScreenPoint(panel, eventData.position, eventData.pressEventCamera);
+
+            _dropTransfer = EvaluateDrop(overPanel);
+
+            dragGhost.Follow(eventData);
+            dragGhost.SetHint(Text(DropHintKey()), _dropTransfer?.IsAllowed() ?? true);
+        }
+
+        // null means the item simply stays where it is when released here.
+        private InventoryTransfer? EvaluateDrop(bool overPanel)
+        {
+            if (_dragSource == DragSource.Inventory)
+                return overPanel ? null : playerInventory.CheckTakeToCarry(_dragInstanceId);
+
+            if (!overPanel)
+                return null;
+
+            return IsCarrying(_dragInstanceId) ? playerInventory.CheckStoreCarried() : InventoryTransfer.Unavailable;
+        }
+
+        private string DropHintKey()
+        {
+            if (_dropTransfer == null)
+                return _dragSource == DragSource.Inventory ? DropOutsideKey : DropOnPanelKey;
+
+            return _dropTransfer.Value switch
+            {
+                InventoryTransfer.Take => DropTakeKey,
+                InventoryTransfer.Swap => DropSwapKey,
+                InventoryTransfer.Store => DropStoreKey,
+                InventoryTransfer rejected => RejectionKey(rejected)
+            };
+        }
+
+        private void Commit(DragSource source, string instanceId, InventoryTransfer? transfer)
+        {
+            if (transfer == null)
+                return;
+
+            if (!transfer.Value.IsAllowed())
+            {
+                ShowFeedback(RejectionKey(transfer.Value));
+                return;
+            }
+
+            bool moved = source == DragSource.Inventory
+                ? playerInventory.TryTakeToCarry(instanceId)
+                : IsCarrying(instanceId) && playerInventory.TryStoreCarriedItem();
+
+            if (!moved)
+                ShowFeedback(FailedKey);
+        }
+
+        private void CancelDrag()
+        {
+            if (IsDragging)
+                EndDrag();
+        }
+
+        private void EndDrag()
+        {
+            if (_dragView != null)
+                _dragView.SetLifted(false);
+
+            dragGhost.Hide();
+
+            _dragSource = DragSource.None;
+            _dragView = null;
+            _dragInstanceId = null;
+            _dropTransfer = null;
+        }
+
+        // Any change to the authoritative items while a drag is in flight makes its preview stale.
+        private void HandleInventoryChanged()
+        {
+            RenderCapacity();
+            CancelDrag();
+        }
+
+        private void HandleCarriedItemChanged()
+        {
+            RenderHands();
+            CancelDrag();
+        }
+
+        private void HandleLanguageChanged(GameLanguage language)
+        {
+            RefreshTexts();
+            RenderHands();
+        }
+
+        private void RenderHands()
         {
             if (!playerCarry.HasItem)
-                return;
-
-            string instanceId = playerCarry.CarriedItem.Instance.InstanceId;
-
-            if (!playerInventory.TryStoreCarriedItem())
-                return;
-
-            _selectedInstanceId = instanceId;
-            Refresh();
-        }
-
-        private void TakeSelected()
-        {
-            if (string.IsNullOrWhiteSpace(_selectedInstanceId))
-                return;
-
-            if (!playerInventory.TryTakeToCarry(_selectedInstanceId))
-                return;
-
-            _selectedInstanceId = null;
-            Refresh();
-        }
-
-        private void DropSelected()
-        {
-            if (string.IsNullOrWhiteSpace(_selectedInstanceId) || playerCarry.HasItem)
-                return;
-
-            string instanceId = _selectedInstanceId;
-
-            if (!playerInventory.TryTakeToCarry(instanceId))
-                return;
-
-            if (!playerCarry.Drop())
             {
-                Debug.LogError($"Failed to drop Inventory item {instanceId}.", this);
+                heldItem.Clear();
+                heldTitleText.text = Text(HandsEmptyKey);
                 return;
             }
 
-            _selectedInstanceId = null;
-            Refresh();
+            WorldItem item = playerCarry.CarriedItem;
+
+            heldItem.Show(item.Instance.InstanceId, item.Definition);
+            heldTitleText.text = Text(HandsKey);
         }
 
-        private void DropHeld()
+        private void RenderCapacity()
         {
-            if (!playerCarry.Drop())
-                return;
-
-            Refresh();
-        }
-
-        private void Refresh()
-        {
-            RebuildVisibleItems();
-            ValidateSelection();
-            RenderSlots();
-            RenderCategories();
-            RenderDetails();
-            RenderHeldItem();
-            RenderActions();
-
             capacityText.text = $"{playerInventory.Inventory.Count} / {playerInventory.Inventory.Capacity}";
-            emptyText.gameObject.SetActive(_visibleItems.Count == 0);
         }
 
-        private void RebuildVisibleItems()
+        private void RefreshTexts()
         {
-            _visibleItems.Clear();
+            titleText.text = Text(TitleKey);
+            closedHintText.text = Text(ClosedHintKey);
 
-            IReadOnlyList<ItemInstance> items = playerInventory.Inventory.Items;
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                ItemInstance item = items[i];
-
-                if (_categoryIndex == 0)
-                {
-                    _visibleItems.Add(item);
-                    continue;
-                }
-
-                if (!playerInventory.TryGetDefinition(item.InstanceId, out ItemDefinition definition))
-                    continue;
-
-                if (MatchesCategory(definition, _categoryIndex))
-                    _visibleItems.Add(item);
-            }
+            if (_feedbackUntil <= 0f)
+                ShowInstructions();
         }
 
-        private void ValidateSelection()
+        private void ShowInstructions()
         {
-            if (!string.IsNullOrWhiteSpace(_selectedInstanceId))
-            {
-                for (int i = 0; i < _visibleItems.Count; i++)
-                {
-                    if (_visibleItems[i].InstanceId == _selectedInstanceId)
-                        return;
-                }
-            }
-
-            _selectedInstanceId = _visibleItems.Count > 0 ? _visibleItems[0].InstanceId : null;
+            _feedbackUntil = 0f;
+            hintText.text = Text(InstructionsKey);
+            hintText.color = _instructionsColor;
         }
 
-        private void RenderSlots()
+        private void ShowFeedback(string key)
         {
-            for (int i = 0; i < slotButtons.Length; i++)
-            {
-                bool occupied = i < _visibleItems.Count;
-
-                slotButtons[i].interactable = occupied;
-                slotSelections[i].enabled = occupied && _visibleItems[i].InstanceId == _selectedInstanceId;
-
-                if (!occupied)
-                {
-                    slotIcons[i].enabled = false;
-                    slotNames[i].text = string.Empty;
-                    slotQuantities[i].text = string.Empty;
-                    slotIconFallbacks[i].gameObject.SetActive(false);
-                    continue;
-                }
-
-                ItemInstance item = _visibleItems[i];
-                playerInventory.TryGetDefinition(item.InstanceId, out ItemDefinition definition);
-
-                Sprite icon = definition != null ? definition.InventoryIcon : null;
-
-                slotIcons[i].sprite = icon;
-                slotIcons[i].enabled = icon != null;
-                slotNames[i].text = definition != null ? FormatItemId(definition.ItemId) : item.DefinitionId;
-                slotQuantities[i].text = string.Empty;
-                slotIconFallbacks[i].gameObject.SetActive(icon == null);
-            }
-        }
-
-        private void RenderCategories()
-        {
-            for (int i = 0; i < categoryFocusLines.Length; i++)
-                categoryFocusLines[i].enabled = i == _categoryIndex;
-        }
-
-        private void RenderDetails()
-        {
-            if (string.IsNullOrWhiteSpace(_selectedInstanceId) || !playerInventory.TryGetDefinition(_selectedInstanceId, out ItemDefinition definition))
-            {
-                itemIcon.enabled = false;
-                itemIconFallback.gameObject.SetActive(false);
-                itemNameText.text = _emptyItemName;
-                categoryText.text = string.Empty;
-                descriptionText.text = string.Empty;
-                propertiesText.text = string.Empty;
-                return;
-            }
-
-            Sprite icon = definition.InventoryIcon;
-
-            itemIcon.sprite = icon;
-            itemIcon.enabled = icon != null;
-            itemIconFallback.gameObject.SetActive(icon == null);
-            itemNameText.text = FormatItemId(definition.ItemId);
-            categoryText.text = definition.Category.ToString();
-            descriptionText.text = string.Empty;
-            propertiesText.text = definition.CarryStyle.ToString();
-        }
-
-        private void RenderHeldItem()
-        {
-            bool hasItem = playerCarry.HasItem;
-
-            heldPanel.SetActive(hasItem);
-
-            if (!hasItem)
-                return;
-
-            ItemDefinition definition = playerCarry.CarriedItem.Definition;
-            Sprite icon = definition.InventoryIcon;
-
-            heldIcon.sprite = icon;
-            heldIcon.enabled = icon != null;
-            heldNameText.text = FormatItemId(definition.ItemId);
-            heldInfoText.text = definition.CarryStyle.ToString();
-        }
-
-        private void RenderActions()
-        {
-            bool hasSelection = !string.IsNullOrWhiteSpace(_selectedInstanceId);
-            bool handsFree = !playerCarry.HasItem;
-
-            takeButton.interactable = hasSelection && handsFree;
-            dropSelectedButton.interactable = hasSelection && handsFree;
-
-            bool canStoreHeld = playerCarry.HasItem &&
-                                playerCarry.CarriedItem.Definition.CanStoreInInventory &&
-                                !playerInventory.Inventory.IsFull;
-
-            storeHeldButton.interactable = canStoreHeld;
-            useHeldButton.interactable = false;
-            dropHeldButton.interactable = playerCarry.HasItem;
+            _feedbackUntil = Time.unscaledTime + feedbackSeconds;
+            hintText.text = Text(key);
+            hintText.color = feedbackColor;
         }
 
         private void SetOverlayVisible(bool visible)
         {
             overlay.gameObject.SetActive(visible);
-            overlay.alpha = visible ? _visibleOverlayAlpha : 0f;
+            overlay.alpha = visible ? 1f : 0f;
             overlay.interactable = visible;
             overlay.blocksRaycasts = visible;
-            inventoryHintText.gameObject.SetActive(!visible);
+            closedHintText.gameObject.SetActive(!visible);
+        }
+
+        private bool IsCarrying(string instanceId)
+        {
+            return playerCarry.HasItem &&
+                   playerCarry.CarriedItem.Instance != null &&
+                   string.Equals(playerCarry.CarriedItem.Instance.InstanceId, instanceId, StringComparison.Ordinal);
+        }
+
+        private string Text(string key)
+        {
+            return localization.Text(key);
+        }
+
+        private static string RejectionKey(InventoryTransfer transfer)
+        {
+            return transfer switch
+            {
+                InventoryTransfer.NotStorable => NotStorableKey,
+                InventoryTransfer.InventoryFull => FullKey,
+                InventoryTransfer.HandsBusy => HandsBusyKey,
+                _ => FailedKey
+            };
         }
 
         private bool ValidateConfiguration()
         {
-            if (playerInventory == null || playerCarry == null || playerController == null || overlay == null || inventoryHintText == null)
-                return LogInvalidConfiguration();
-
-            int slotCount = slotButtons.Length;
-
-            if (slotCount == 0 ||
-                slotIcons.Length != slotCount ||
-                slotNames.Length != slotCount ||
-                slotQuantities.Length != slotCount ||
-                slotIconFallbacks.Length != slotCount ||
-                slotSelections.Length != slotCount)
+            if (playerInventory != null &&
+                playerCarry != null &&
+                playerController != null &&
+                localization != null &&
+                overlay != null &&
+                panel != null &&
+                grid != null &&
+                titleText != null &&
+                capacityText != null &&
+                hintText != null &&
+                closedHintText != null &&
+                heldItem != null &&
+                heldTitleText != null &&
+                dragGhost != null &&
+                blockedWhileOpen != PlayerControlMask.None)
             {
-                return LogInvalidConfiguration();
+                return true;
             }
 
-            if (categoryButtons.Length != 4 || categoryFocusLines.Length != categoryButtons.Length)
-                return LogInvalidConfiguration();
-
-            if (capacityText == null ||
-                emptyText == null ||
-                itemIcon == null ||
-                itemIconFallback == null ||
-                itemNameText == null ||
-                categoryText == null ||
-                descriptionText == null ||
-                propertiesText == null)
-            {
-                return LogInvalidConfiguration();
-            }
-
-            if (heldPanel == null ||
-                heldIcon == null ||
-                heldNameText == null ||
-                heldInfoText == null ||
-                takeButton == null ||
-                dropSelectedButton == null ||
-                storeHeldButton == null ||
-                useHeldButton == null ||
-                dropHeldButton == null ||
-                closeButton == null)
-            {
-                return LogInvalidConfiguration();
-            }
-
-            return true;
-        }
-
-        private bool LogInvalidConfiguration()
-        {
             Debug.LogError($"{nameof(InventoryUiController)} on {name} has incomplete configuration.", this);
             return false;
-        }
-
-        private static bool MatchesCategory(ItemDefinition definition, int categoryIndex)
-        {
-            return categoryIndex switch
-            {
-                1 => definition.Category == ItemCategory.Food,
-                2 => definition.Category == ItemCategory.Electronics,
-                3 => definition.Category == ItemCategory.Household,
-                _ => true
-            };
-        }
-
-        private static string FormatItemId(string itemId)
-        {
-            if (string.IsNullOrWhiteSpace(itemId))
-                return string.Empty;
-
-            string value = itemId.Replace('_', ' ').Replace('-', ' ');
-
-            return char.ToUpperInvariant(value[0]) + value[1..];
         }
     }
 }

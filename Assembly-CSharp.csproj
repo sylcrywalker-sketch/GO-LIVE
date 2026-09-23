@@ -60,6 +60,7 @@
     <Compile Include="Assets\Game\Scripts\Economy\WalletBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneMessagesBehaviour.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
+    <Compile Include="Assets\Game\Scripts\Inventory\InventoryGridView.cs" />
     <Compile Include="Assets\Game\Scripts\Persistence\GameSaveController.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneMessages.cs" />
     <Compile Include="Assets\Game\Scripts\UI\GameTimeHudView.cs" />
@@ -103,8 +104,10 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Game\Scripts\Needs\PlayerNeeds.cs" />
+    <Compile Include="Assets\Game\Scripts\Inventory\InventoryItemView.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\ShopOrderRowView.cs" />
     <Compile Include="Assets\Game\Scripts\Time\GameTimeConfig.cs" />
+    <Compile Include="Assets\Game\Scripts\Delivery\DeliveryBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Time\GameClock.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneMessageScheduleConfig.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
@@ -114,7 +117,11 @@
     <Compile Include="Assets\Game\Scripts\Economy\WalletHudView.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Game\Scripts\UI\GamePauseController.cs" />
+    <Compile Include="Assets\Game\Scripts\Delivery\DeliveryPackageBehaviour.cs" />
+    <Compile Include="Assets\Game\Scripts\Inventory\InventoryDragGhost.cs" />
     <Compile Include="Assets\Game\Scripts\Items\ItemInstance.cs" />
+    <Compile Include="Assets\Game\Scripts\Delivery\DeliveryState.cs" />
+    <Compile Include="Assets\Game\Scripts\Inventory\InventoryTransfer.cs" />
     <Compile Include="Assets\Game\Scripts\Time\DayLightingView.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />

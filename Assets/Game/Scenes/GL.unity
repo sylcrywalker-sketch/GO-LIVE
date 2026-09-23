@@ -6310,10 +6310,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: '[HUD]'
       objectReference: {fileID: 0}
-    - target: {fileID: 3654450670814512709, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
-      propertyPath: _localization
-      value: 
-      objectReference: {fileID: 656476889}
     - target: {fileID: 4085790743714762592, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
       propertyPath: localization
       value: 
@@ -6342,14 +6338,14 @@ PrefabInstance:
       propertyPath: _playerNeeds
       value: 
       objectReference: {fileID: 656476888}
-    - target: {fileID: 6539852257059445507, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
-      propertyPath: _localization
-      value: 
-      objectReference: {fileID: 656476889}
     - target: {fileID: 6851119590339114333, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
       propertyPath: playerCarry
       value: 
       objectReference: {fileID: 4508383002762455266}
+    - target: {fileID: 6851119590339114333, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
+      propertyPath: localization
+      value: 
+      objectReference: {fileID: 656476889}
     - target: {fileID: 6851119590339114333, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
       propertyPath: playerInventory
       value: 
@@ -6358,14 +6354,6 @@ PrefabInstance:
       propertyPath: playerController
       value: 
       objectReference: {fileID: 2284904333071510471}
-    - target: {fileID: 7057346076417491370, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
-      propertyPath: _localization
-      value: 
-      objectReference: {fileID: 656476889}
-    - target: {fileID: 7104406634873919527, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
-      propertyPath: _localization
-      value: 
-      objectReference: {fileID: 656476889}
     - target: {fileID: 7361345685993378610, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
       propertyPath: _localization
       value: 
@@ -6382,14 +6370,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8478221620985276677, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
-      propertyPath: _localization
-      value: 
-      objectReference: {fileID: 656476889}
-    - target: {fileID: 8664644137531757763, guid: f4514b7bc81425d4ebcb082d10d86bda, type: 3}
-      propertyPath: _localization
-      value: 
-      objectReference: {fileID: 656476889}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

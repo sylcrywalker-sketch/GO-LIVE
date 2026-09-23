@@ -48,21 +48,10 @@ namespace GoLive.Inventory
 
         public bool TryGet(string instanceId, out ItemInstance item)
         {
-            item = null;
+            int index = IndexOf(instanceId);
 
-            if (string.IsNullOrWhiteSpace(instanceId))
-                return false;
-
-            for (int i = 0; i < _items.Count; i++)
-            {
-                if (!string.Equals(_items[i].InstanceId, instanceId, StringComparison.Ordinal))
-                    continue;
-
-                item = _items[i];
-                return true;
-            }
-
-            return false;
+            item = index >= 0 ? _items[index] : null;
+            return item != null;
         }
 
         public bool TryRemove(string instanceId, out ItemInstance item)
@@ -72,6 +61,25 @@ namespace GoLive.Inventory
 
             _items.Remove(item);
             _instanceIds.Remove(item.InstanceId);
+
+            Changed?.Invoke();
+            return true;
+        }
+
+        // Puts the replacement into the exact slot of instanceId, so a swap keeps the Inventory order.
+        public bool TryReplace(string instanceId, ItemInstance replacement)
+        {
+            if (replacement == null || replacement.Location != ItemLocation.Inventory || Contains(replacement.InstanceId))
+                return false;
+
+            int index = IndexOf(instanceId);
+
+            if (index < 0)
+                return false;
+
+            _instanceIds.Remove(_items[index].InstanceId);
+            _items[index] = replacement;
+            _instanceIds.Add(replacement.InstanceId);
 
             Changed?.Invoke();
             return true;
@@ -103,6 +111,20 @@ namespace GoLive.Inventory
 
             Changed?.Invoke();
             return true;
+        }
+
+        private int IndexOf(string instanceId)
+        {
+            if (string.IsNullOrWhiteSpace(instanceId))
+                return -1;
+
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (string.Equals(_items[i].InstanceId, instanceId, StringComparison.Ordinal))
+                    return i;
+            }
+
+            return -1;
         }
     }
 }

@@ -339,35 +339,17 @@ namespace GoLive.Persistence
                     i);
             }
 
-            WorldItem[] worldItems =
-                UnityEngine.Object.FindObjectsByType<WorldItem>(
-                    FindObjectsInactive.Include,
-                    FindObjectsSortMode.None);
+            Dictionary<string, WorldItem> worldItems =
+                BuildSceneItemMap();
 
             ItemSaveData[] itemData =
-                new ItemSaveData[worldItems.Length];
+                new ItemSaveData[worldItems.Count];
 
-            HashSet<string> instanceIds =
-                new(StringComparer.Ordinal);
+            int itemIndex =
+                0;
 
-            for (int i = 0; i < worldItems.Length; i++)
+            foreach (WorldItem item in worldItems.Values)
             {
-                WorldItem item =
-                    worldItems[i];
-
-                if (item.Instance == null)
-                {
-                    throw new InvalidOperationException(
-                        $"WorldItem '{item.name}' has no runtime ItemInstance.");
-                }
-
-                if (!instanceIds.Add(
-                        item.Instance.InstanceId))
-                {
-                    throw new InvalidOperationException(
-                        $"Duplicate ItemInstance ID detected: {item.Instance.InstanceId}");
-                }
-
                 int inventoryIndex =
                     inventoryIndices.TryGetValue(
                         item.Instance.InstanceId,
@@ -375,7 +357,7 @@ namespace GoLive.Persistence
                         ? index
                         : -1;
 
-                itemData[i] =
+                itemData[itemIndex++] =
                     new ItemSaveData
                     {
                         InstanceId =
@@ -753,13 +735,13 @@ namespace GoLive.Persistence
                     return false;
                 }
 
-                if (!TryGetExpectedDefinitionId(
+                if (!TryGetExpectedDefinition(
                         item.InstanceId,
                         sceneItems,
                         runtimeItems,
-                        out string definitionId) ||
+                        out ItemDefinition definition) ||
                     !string.Equals(
-                        definitionId,
+                        definition.ItemId,
                         item.DefinitionId,
                         StringComparison.Ordinal))
                 {
@@ -769,7 +751,8 @@ namespace GoLive.Persistence
                 if (item.Location ==
                     ItemLocation.Inventory)
                 {
-                    if (item.InventoryIndex < 0 ||
+                    if (!definition.CanStoreInInventory ||
+                        item.InventoryIndex < 0 ||
                         !inventoryIndices.Add(
                             item.InventoryIndex))
                     {
@@ -812,13 +795,13 @@ namespace GoLive.Persistence
             return true;
         }
 
-        private static bool TryGetExpectedDefinitionId(
+        private static bool TryGetExpectedDefinition(
             string instanceId,
             Dictionary<string, WorldItem> sceneItems,
             Dictionary<string, ItemDefinition> runtimeItems,
-            out string definitionId)
+            out ItemDefinition definition)
         {
-            definitionId =
+            definition =
                 null;
 
             bool live =
@@ -837,8 +820,8 @@ namespace GoLive.Persistence
                     return false;
                 }
 
-                definitionId =
-                    runtimeDefinition.ItemId;
+                definition =
+                    runtimeDefinition;
 
                 return true;
             }
@@ -849,8 +832,8 @@ namespace GoLive.Persistence
                 return false;
             }
 
-            definitionId =
-                liveItem.Definition.ItemId;
+            definition =
+                liveItem.Definition;
 
             return true;
         }
@@ -919,6 +902,9 @@ namespace GoLive.Persistence
             {
                 WorldItem item =
                     items[i];
+
+                if (item.IsDiscarded)
+                    continue;
 
                 if (item.Instance == null)
                 {

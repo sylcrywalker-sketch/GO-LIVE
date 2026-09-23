@@ -1,3 +1,4 @@
+using System;
 using GoLive.Interaction;
 using GoLive.Items;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace GoLive.Player
 
         public bool HasItem => _carriedItem != null;
         public WorldItem CarriedItem => _carriedItem;
+
+        public event Action CarriedItemChanged;
 
         internal Transform CarryAnchor => carryAnchor;
 
@@ -34,7 +37,7 @@ namespace GoLive.Player
             if (!item.TryBeginCarry(carryAnchor))
                 return false;
 
-            _carriedItem = item;
+            SetCarriedItem(item);
             return true;
         }
 
@@ -49,7 +52,7 @@ namespace GoLive.Player
             if (!item.TryDrop(velocity))
                 return false;
 
-            _carriedItem = null;
+            SetCarriedItem(null);
             return true;
         }
 
@@ -58,7 +61,7 @@ namespace GoLive.Player
             if (!HasItem || !_carriedItem.TryPlace(position, rotation))
                 return false;
 
-            _carriedItem = null;
+            SetCarriedItem(null);
             return true;
         }
 
@@ -78,7 +81,7 @@ namespace GoLive.Player
             if (!item.TryRemoveFromGame(ItemLocation.Carried))
                 return false;
 
-            _carriedItem = null;
+            SetCarriedItem(null);
             return true;
         }
 
@@ -94,7 +97,7 @@ namespace GoLive.Player
             if (!item.TryStoreInInventory(storageRoot))
                 return false;
 
-            _carriedItem = null;
+            SetCarriedItem(null);
             storedItem = item;
 
             return true;
@@ -108,7 +111,7 @@ namespace GoLive.Player
             if (!item.TryBeginCarryFromInventory(carryAnchor))
                 return false;
 
-            _carriedItem = item;
+            SetCarriedItem(item);
             return true;
         }
 
@@ -117,8 +120,17 @@ namespace GoLive.Player
             if (item != null && (item.Instance == null || item.Instance.Location != ItemLocation.Carried))
                 return false;
 
-            _carriedItem = item;
+            SetCarriedItem(item);
             return true;
+        }
+
+        private void SetCarriedItem(WorldItem item)
+        {
+            if (ReferenceEquals(_carriedItem, item))
+                return;
+
+            _carriedItem = item;
+            CarriedItemChanged?.Invoke();
         }
     }
 }

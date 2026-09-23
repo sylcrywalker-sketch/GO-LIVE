@@ -17,6 +17,8 @@ namespace GoLive.Items
         public bool IsRuntime => string.IsNullOrWhiteSpace(authoredInstanceId);
         public bool CanBeCarried => isActiveAndEnabled && Instance != null && Instance.Location == ItemLocation.World;
 
+        internal bool IsDiscarded { get; private set; }
+
         private readonly List<MonoBehaviour> _interactionCandidates = new();
 
         private Rigidbody _body;
@@ -55,15 +57,20 @@ namespace GoLive.Items
 
         public static WorldItem SpawnRuntime(ItemDefinition definition, ItemInstance instance, Vector3 position, Quaternion rotation)
         {
-            if (definition == null || instance == null || !definition.TryGetRuntimePrefab(out WorldItem prefab))
+            if (definition == null ||
+                instance == null ||
+                instance.DefinitionId != definition.ItemId ||
+                !definition.TryGetRuntimePrefab(out WorldItem prefab))
+            {
                 return null;
+            }
 
             WorldItem item = Instantiate(prefab, position, rotation);
 
             if (item.TryInitializeRuntime(instance))
                 return item;
 
-            DestroyImmediate(item.gameObject);
+            item.DestroyRuntime();
             return null;
         }
 
@@ -78,7 +85,15 @@ namespace GoLive.Items
 
         internal void DestroyRuntime()
         {
-            if (IsRuntime)
+            if (!IsRuntime || IsDiscarded)
+                return;
+
+            IsDiscarded = true;
+            gameObject.SetActive(false);
+
+            if (Application.isPlaying)
+                Destroy(gameObject);
+            else
                 DestroyImmediate(gameObject);
         }
 

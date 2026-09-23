@@ -237,18 +237,73 @@ namespace GoLive.Tests
             Assert.That(_world.TrySave(), Is.True);
 
             Advance(151);
-            string latePackageId = Packages().Single().Item.Instance.InstanceId;
+            DeliveryPackageBehaviour latePackage = Packages().Single();
+            string latePackageId = latePackage.Item.Instance.InstanceId;
 
             Assert.That(_world.TryLoad(), Is.True);
-            Assert.That(Packages(), Is.Empty, "the package that arrived after the save is not part of the loaded game");
+            Assert.That(latePackage.gameObject.activeSelf, Is.False, "discarded at once, destroyed at the end of the frame");
+            Assert.That(latePackage.Item.CanBeCarried, Is.False);
             Assert.That(_world.Delivery.State.Records, Is.Empty);
             Assert.That(_world.Shop.Orders.Orders.Single().Status, Is.EqualTo(ShopOrderStatus.Placed));
+
+            yield return null;
+
+            Assert.That(latePackage == null, Is.True);
+            Assert.That(Packages(), Is.Empty, "the package that arrived after the save is not part of the loaded game");
 
             Advance(151);
 
             DeliveryPackageBehaviour package = Packages().Single();
             Assert.That(package.Item.Instance.InstanceId, Is.Not.EqualTo(latePackageId));
             Assert.That(_world.Delivery.State.Records.Single().OrderId, Is.EqualTo(order.OrderId));
+        }
+
+        [UnityTest]
+        public IEnumerator SavingInTheSameFrameAsALoadNeverCapturesDiscardedItems()
+        {
+            yield return new EnterPlayMode(false);
+            StartWorld();
+            yield return null;
+
+            Buy(GpuId);
+            Assert.That(_world.TrySave(), Is.True);
+
+            Advance(151);
+            DeliveryPackageBehaviour latePackage = Packages().Single();
+            string latePackageId = latePackage.Item.Instance.InstanceId;
+
+            Assert.That(_world.TryLoad(), Is.True);
+            Assert.That(latePackage != null, Is.True, "Object.Destroy only runs at the end of the frame");
+            Assert.That(_world.TrySave(), Is.True);
+
+            GameSaveData saved = _world.ReadSave();
+            Assert.That(saved.Items.Any(item => item.InstanceId == latePackageId), Is.False);
+            Assert.That(saved.Delivery.Deliveries, Is.Empty);
+            Assert.That(_world.TryLoad(), Is.True);
+
+            yield return null;
+
+            Assert.That(latePackage == null, Is.True);
+            Assert.That(Packages(), Is.Empty);
+
+            Advance(151);
+            Assert.That(Packages(), Has.Count.EqualTo(1));
+        }
+
+        [UnityTest]
+        public IEnumerator RuntimeSpawnWithAMismatchedInstanceCreatesNothing()
+        {
+            yield return new EnterPlayMode(false);
+            StartWorld();
+            yield return null;
+
+            ItemDefinition gpu = ShopTestData.LoadItem(ShopTestData.BudgetGpuItem);
+            ItemInstance banana = new("mismatched-item", BananaItemId, ItemLocation.World);
+
+            Assert.That(WorldItem.SpawnRuntime(gpu, banana, Vector3.zero, Quaternion.identity), Is.Null);
+            Assert.That(RuntimeItems(), Is.Empty);
+            Assert.That(_world.TrySave(), Is.True);
+            Assert.That(_world.ReadSave().Items, Is.Empty);
         }
 
         [UnityTest]
@@ -505,7 +560,8 @@ namespace GoLive.Tests
                 "package item has another definition",
                 "fulfillment item missing from items",
                 "orphan runtime item",
-                "live item ids swapped between package and item")]
+                "live item ids swapped between package and item",
+                "delivery package saved in inventory")]
             string corruption)
         {
             yield return new EnterPlayMode(false);
@@ -551,6 +607,12 @@ namespace GoLive.Tests
                     opened.FulfillmentInstanceId = packageId;
                     savedPackage.InstanceId = itemId;
                     savedItem.InstanceId = packageId;
+                    break;
+                case "delivery package saved in inventory":
+                    Assert.That(items.Any(item => item.Location == ItemLocation.Inventory), Is.False, "index 0 is the only inventory slot in use");
+                    ItemSaveData storedPackage = items.Single(item => item.InstanceId == waiting.PackageInstanceId);
+                    storedPackage.Location = ItemLocation.Inventory;
+                    storedPackage.InventoryIndex = 0;
                     break;
             }
 
