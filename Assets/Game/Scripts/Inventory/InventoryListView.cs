@@ -10,8 +10,8 @@ using UnityEngine.UI;
 namespace GoLive.Inventory
 {
     // Mirrors the one authoritative Inventory as a list of the stored items only, in Inventory order; capacity
-    // is shown by the owning screen. Any screen that shows the Inventory (the TAB overlay now, the PC Workbench
-    // later) binds a list and listens to its drag events.
+    // is shown by the owning screen. Every screen that shows the Inventory (the TAB overlay, the PC Build Mode parts
+    // panel) binds its own list and listens to its drag or click events.
     [DisallowMultipleComponent]
     public sealed class InventoryListView : MonoBehaviour
     {
@@ -29,9 +29,11 @@ namespace GoLive.Inventory
         public event Action<InventoryItemView, PointerEventData> ItemDragStarted;
         public event Action<InventoryItemView, PointerEventData> ItemDragged;
         public event Action<InventoryItemView, PointerEventData> ItemDragEnded;
+        public event Action<InventoryItemView> ItemClicked;
 
         private PlayerInventory _owner;
         private LocalizationContext _localization;
+        private Action<InventoryItemView, ItemDefinition> _annotate;
 
         private void OnDestroy()
         {
@@ -69,6 +71,7 @@ namespace GoLive.Inventory
                 rows[i].DragStarted += ForwardDragStarted;
                 rows[i].Dragged += ForwardDragged;
                 rows[i].DragEnded += ForwardDragEnded;
+                rows[i].Clicked += ForwardClicked;
             }
 
             Render();
@@ -90,10 +93,19 @@ namespace GoLive.Inventory
                 rows[i].DragStarted -= ForwardDragStarted;
                 rows[i].Dragged -= ForwardDragged;
                 rows[i].DragEnded -= ForwardDragEnded;
+                rows[i].Clicked -= ForwardClicked;
             }
 
             _owner = null;
             _localization = null;
+            _annotate = null;
+        }
+
+        // Optional: the owning screen annotates every shown row after it is drawn (null draws plain rows).
+        public void SetRowAnnotator(Action<InventoryItemView, ItemDefinition> annotate)
+        {
+            _annotate = annotate;
+            Render();
         }
 
         // Rows exist only for stored items; the viewport grows with them up to maxViewportHeight, then scrolls.
@@ -113,6 +125,7 @@ namespace GoLive.Inventory
                 if (filled)
                 {
                     rows[i].Show(items[i].InstanceId, definition, _localization);
+                    _annotate?.Invoke(rows[i], definition);
                     shown++;
                 }
                 else
@@ -138,5 +151,6 @@ namespace GoLive.Inventory
         private void ForwardDragStarted(InventoryItemView row, PointerEventData eventData) => ItemDragStarted?.Invoke(row, eventData);
         private void ForwardDragged(InventoryItemView row, PointerEventData eventData) => ItemDragged?.Invoke(row, eventData);
         private void ForwardDragEnded(InventoryItemView row, PointerEventData eventData) => ItemDragEnded?.Invoke(row, eventData);
+        private void ForwardClicked(InventoryItemView row) => ItemClicked?.Invoke(row);
     }
 }

@@ -22,3 +22,4 @@ MonoBehaviour:
   carryStyle: 0
   carryLocalPosition: {x: 0, y: -0.021, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}
+  pcComponent: {fileID: 11400000, guid: 6cf8d976e208e2a409ef29ea32436cc8, type: 2}

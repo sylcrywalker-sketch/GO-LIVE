@@ -28,9 +28,6 @@ namespace GoLive.Inventory
         private const string DropStoreKey = "inventory.drop.store";
         private const string DropOutsideKey = "inventory.drop.outside";
         private const string DropOnPanelKey = "inventory.drop.on_panel";
-        private const string NotStorableKey = "inventory.reject.not_storable";
-        private const string FullKey = "inventory.reject.full";
-        private const string HandsBusyKey = "inventory.reject.hands_busy";
         private const string FailedKey = "inventory.reject.failed";
 
         [Header("Player")]
@@ -309,7 +306,7 @@ namespace GoLive.Inventory
                 InventoryTransfer.Take => DropTakeKey,
                 InventoryTransfer.Swap => DropSwapKey,
                 InventoryTransfer.Store => DropStoreKey,
-                InventoryTransfer rejected => RejectionKey(rejected)
+                InventoryTransfer rejected => rejected.MessageKey()
             };
         }
 
@@ -320,7 +317,7 @@ namespace GoLive.Inventory
 
             if (!transfer.Value.IsAllowed())
             {
-                ShowFeedback(RejectionKey(transfer.Value));
+                ShowFeedback(transfer.Value.MessageKey());
                 return;
             }
 
@@ -441,17 +438,6 @@ namespace GoLive.Inventory
         private string Text(string key)
         {
             return localization.Text(key);
-        }
-
-        private static string RejectionKey(InventoryTransfer transfer)
-        {
-            return transfer switch
-            {
-                InventoryTransfer.NotStorable => NotStorableKey,
-                InventoryTransfer.InventoryFull => FullKey,
-                InventoryTransfer.HandsBusy => HandsBusyKey,
-                _ => FailedKey
-            };
         }
 
         private bool ValidateConfiguration()

@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
-    // Runs the real delivery runtime in Play Mode: Awake/Start, Instantiate, physics, carry and the v4 save pipeline.
+    // Runs the real delivery runtime in Play Mode: Awake/Start, Instantiate, physics, carry and the v5 save pipeline.
     public sealed class DeliveryPlayModeTests
     {
         private const string GpuId = SaveTestWorld.BudgetGpuId;

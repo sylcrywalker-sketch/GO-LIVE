@@ -16,6 +16,7 @@ namespace GoLive.Items
         public string AuthoredInstanceId => authoredInstanceId;
         public bool IsRuntime => string.IsNullOrWhiteSpace(authoredInstanceId);
         public bool CanBeCarried => isActiveAndEnabled && Instance != null && Instance.Location == ItemLocation.World;
+        public bool IsInstalled => Instance != null && Instance.Location == ItemLocation.Installed;
 
         internal bool IsDiscarded { get; private set; }
 
@@ -24,6 +25,8 @@ namespace GoLive.Items
         private Rigidbody _body;
         private Collider[] _colliders;
         private bool[] _colliderEnabledStates;
+        private Renderer[] _hiddenRenderers;
+        private bool[] _hiddenRendererStates;
 
         private void Awake()
         {
@@ -153,14 +156,35 @@ namespace GoLive.Items
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
-            _body.linearVelocity = Vector3.zero;
-            _body.angularVelocity = Vector3.zero;
-            _body.isKinematic = true;
-            _body.useGravity = false;
-
+            FreezeBody();
             SetCollidersEnabled(false);
             gameObject.SetActive(false);
 
+            return true;
+        }
+
+        // Hands -> PC slot. The same object becomes part of the PC; which slot holds it is the PC assembly's record.
+        internal bool TryInstall(Transform installAnchor)
+        {
+            if (Instance == null || Instance.Location != ItemLocation.Carried || installAnchor == null)
+                return false;
+
+            if (!Instance.TryMove(ItemLocation.Carried, ItemLocation.Installed))
+                return false;
+
+            AttachToInstallAnchor(installAnchor);
+            return true;
+        }
+
+        internal bool TryBeginCarryFromInstalled(Transform anchor)
+        {
+            if (Instance == null || Instance.Location != ItemLocation.Installed || anchor == null)
+                return false;
+
+            if (!Instance.TryMove(ItemLocation.Installed, ItemLocation.Carried))
+                return false;
+
+            AttachToCarry(anchor);
             return true;
         }
 
@@ -213,10 +237,10 @@ namespace GoLive.Items
             transform.SetParent(null, true);
             transform.SetPositionAndRotation(position, rotation);
 
-            _body.linearVelocity = Vector3.zero;
-            _body.angularVelocity = Vector3.zero;
             _body.isKinematic = false;
             _body.useGravity = true;
+            _body.linearVelocity = Vector3.zero;
+            _body.angularVelocity = Vector3.zero;
 
             RestoreColliderStates();
 
@@ -234,13 +258,22 @@ namespace GoLive.Items
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
-            _body.linearVelocity = Vector3.zero;
-            _body.angularVelocity = Vector3.zero;
-            _body.isKinematic = true;
-            _body.useGravity = false;
-
+            FreezeBody();
             SetCollidersEnabled(false);
             gameObject.SetActive(false);
+
+            return true;
+        }
+
+        internal bool RestoreAsInstalled(ItemInstance instance, Transform installAnchor)
+        {
+            if (!CanRestore(instance, ItemLocation.Installed) || installAnchor == null)
+                return false;
+
+            Instance = instance;
+
+            gameObject.SetActive(true);
+            AttachToInstallAnchor(installAnchor);
 
             return true;
         }
@@ -265,11 +298,7 @@ namespace GoLive.Items
 
             Instance = instance;
 
-            _body.linearVelocity = Vector3.zero;
-            _body.angularVelocity = Vector3.zero;
-            _body.isKinematic = true;
-            _body.useGravity = false;
-
+            FreezeBody();
             transform.SetParent(null, true);
             SetCollidersEnabled(false);
             gameObject.SetActive(false);
@@ -279,16 +308,68 @@ namespace GoLive.Items
 
         private void AttachToCarry(Transform anchor)
         {
-            _body.linearVelocity = Vector3.zero;
-            _body.angularVelocity = Vector3.zero;
-            _body.isKinematic = true;
-            _body.useGravity = false;
-
+            FreezeBody();
             SetCollidersEnabled(false);
 
             transform.SetParent(anchor, false);
             transform.localPosition = definition.CarryLocalPosition;
             transform.localRotation = Quaternion.Euler(definition.CarryLocalEulerAngles);
+        }
+
+        // Installed hardware is part of the PC: it sits exactly on the slot's install anchor, never simulates and has
+        // no active colliders, so it neither falls nor answers the normal E pickup ray.
+        private void AttachToInstallAnchor(Transform anchor)
+        {
+            FreezeBody();
+            SetCollidersEnabled(false);
+
+            transform.SetParent(anchor, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+        }
+
+        // Presentation only, for a view with its own camera (PC Build Mode) that must not show what the hands hold.
+        // Item state, physics and colliders are untouched; the renderers come back exactly as they were.
+        internal void SetPresentationHidden(bool hidden)
+        {
+            if (hidden == (_hiddenRenderers != null))
+                return;
+
+            if (hidden)
+            {
+                _hiddenRenderers = GetComponentsInChildren<Renderer>(true);
+                _hiddenRendererStates = new bool[_hiddenRenderers.Length];
+
+                for (int i = 0; i < _hiddenRenderers.Length; i++)
+                {
+                    _hiddenRendererStates[i] = _hiddenRenderers[i].enabled;
+                    _hiddenRenderers[i].enabled = false;
+                }
+
+                return;
+            }
+
+            for (int i = 0; i < _hiddenRenderers.Length; i++)
+            {
+                if (_hiddenRenderers[i] != null)
+                    _hiddenRenderers[i].enabled = _hiddenRendererStates[i];
+            }
+
+            _hiddenRenderers = null;
+            _hiddenRendererStates = null;
+        }
+
+        // Only a free world item simulates; a kinematic body's velocity is left alone because Unity rejects writing it.
+        private void FreezeBody()
+        {
+            if (!_body.isKinematic)
+            {
+                _body.linearVelocity = Vector3.zero;
+                _body.angularVelocity = Vector3.zero;
+            }
+
+            _body.isKinematic = true;
+            _body.useGravity = false;
         }
 
         private bool CanRestore(ItemInstance instance, ItemLocation expectedLocation)

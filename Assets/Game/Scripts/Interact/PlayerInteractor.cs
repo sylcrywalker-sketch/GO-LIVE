@@ -131,10 +131,10 @@ namespace GoLive.Player
                 TryInteract(InteractionAction.Special, hasTarget, in hit);
         }
 
-        public string GetTakeBinding() => GetBindingDisplayString(takeAction);
-        public string GetUseBinding() => GetBindingDisplayString(useAction);
-        public string GetDropBinding() => GetBindingDisplayString(dropAction);
-        public string GetSpecialBinding() => GetBindingDisplayString(specialAction);
+        public string GetTakeBinding() => KeyHint(takeAction);
+        public string GetUseBinding() => KeyHint(useAction);
+        public string GetDropBinding() => KeyHint(dropAction);
+        public string GetSpecialBinding() => KeyHint(specialAction);
 
         private bool TryTakeTarget(bool hasTarget, in RaycastHit hit)
         {
@@ -244,9 +244,9 @@ namespace GoLive.Player
             return reference != null && reference.action != null;
         }
 
-        private static string GetBindingDisplayString(InputActionReference reference)
+        private static string KeyHint(InputActionReference reference)
         {
-            return HasAction(reference) ? reference.action.GetBindingDisplayString() : string.Empty;
+            return HasAction(reference) ? InputHints.Key(reference.action) : string.Empty;
         }
 
         private static void SetActionEnabled(InputActionReference reference, bool enabled)

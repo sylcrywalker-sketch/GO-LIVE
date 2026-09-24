@@ -460,3 +460,99 @@ MonoBehaviour:
   - _key: item.cardboard_box.name
     _russian: "\u041A\u0430\u0440\u0442\u043E\u043D\u043D\u0430\u044F \u043A\u043E\u0440\u043E\u0431\u043A\u0430"
     _english: Cardboard box
+  - _key: pc.workbench.enter
+    _russian: "\u0420\u0430\u0431\u043E\u0442\u0430\u0442\u044C \u0441 \u041F\u041A"
+    _english: "Work on PC"
+  - _key: pc.workbench.title
+    _russian: "\u0421\u0431\u043E\u0440\u043A\u0430 \u041F\u041A"
+    _english: "PC Workbench"
+  - _key: pc.workbench.hint.point
+    _russian: "\u041D\u0430\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u0430 \u043F\u043E\u0434\u0441\u0432\u0435\u0447\u0435\u043D\u043D\u043E\u0435 \u043C\u0435\u0441\u0442\u043E \u0432 \u043A\u043E\u0440\u043F\u0443\u0441\u0435"
+    _english: "Point at the highlighted place in the case"
+  - _key: pc.workbench.slot_empty
+    _russian: "\u041F\u0443\u0441\u0442\u043E"
+    _english: "Empty"
+  - _key: pc.slot.gpu
+    _russian: "\u0421\u043B\u043E\u0442 \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u044B"
+    _english: "Graphics Card Slot"
+  - _key: pc.install.gpu
+    _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0443"
+    _english: "Install GPU"
+  - _key: pc.remove.gpu
+    _russian: "\u0421\u043D\u044F\u0442\u044C \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0443"
+    _english: "Remove GPU"
+  - _key: pc.reject.not_hardware
+    _russian: "\u042D\u0442\u043E \u043D\u0435 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F \u0432 \u043A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440"
+    _english: "This doesn't go in a computer"
+  - _key: pc.reject.wrong_type
+    _russian: "\u042D\u0442\u0430 \u0434\u0435\u0442\u0430\u043B\u044C \u0441\u044E\u0434\u0430 \u043D\u0435 \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442"
+    _english: "This part doesn't go in this slot"
+  - _key: pc.reject.wrong_connector
+    _russian: "\u041D\u0435 \u0442\u043E\u0442 \u0440\u0430\u0437\u044A\u0451\u043C \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u0441\u043B\u043E\u0442\u0430"
+    _english: "Wrong connector for this slot"
+  - _key: pc.reject.slot_occupied
+    _russian: "\u0421\u043B\u043E\u0442 \u0443\u0436\u0435 \u0437\u0430\u043D\u044F\u0442"
+    _english: "This slot is already taken"
+  - _key: pc.reject.slot_empty
+    _russian: "\u0417\u0434\u0435\u0441\u044C \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u043E"
+    _english: "Nothing is installed here"
+  - _key: pc.reject.nothing_in_hands
+    _russian: "\u0412\u043E\u0437\u044C\u043C\u0438\u0442\u0435 \u0434\u0435\u0442\u0430\u043B\u044C \u0432 \u0440\u0443\u043A\u0438, \u0447\u0442\u043E\u0431\u044B \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"
+    _english: "Take the part in your hands to install it"
+  - _key: pc.reject.hands_busy
+    _russian: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0441\u0432\u043E\u0431\u043E\u0434\u0438\u0442\u0435 \u0440\u0443\u043A\u0438"
+    _english: "Free your hands first"
+  - _key: pc.reject.unavailable
+    _russian: "\u0421\u0435\u0439\u0447\u0430\u0441 \u044D\u0442\u043E \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u043D\u0435\u043B\u044C\u0437\u044F"
+    _english: "Can't do that right now"
+  - _key: pc.diagnostic.no_gpu.title
+    _russian: "\u041D\u0435\u0442 \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u044B"
+    _english: "No graphics card"
+  - _key: pc.diagnostic.no_gpu.detail
+    _russian: "\u041A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440 \u043C\u043E\u0436\u0435\u0442 \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C\u0441\u044F, \u043D\u043E \u0438\u0433\u0440\u044B \u0438 \u0441\u0442\u0440\u0438\u043C\u044B \u043F\u043E\u0439\u0434\u0443\u0442 \u0432 \u043D\u0438\u0437\u043A\u043E\u043C \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0435."
+    _english: "The computer may still start, but games and streams run at limited quality."
+  - _key: pc.workbench.missing
+    _russian: "\u043D\u0435\u0442"
+    _english: "missing"
+  - _key: pc.workbench.choose.title
+    _russian: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0435\u0442\u0430\u043B\u044C"
+    _english: "Choose a part"
+  - _key: pc.workbench.choose.detail
+    _russian: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0442\u0443\u044E\u0449\u0443\u044E \u0432 \u0438\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u0435 \u0441\u043F\u0440\u0430\u0432\u0430."
+    _english: "Click a PC part in the inventory on the right."
+  - _key: pc.workbench.controls
+    _russian: "[\u041B\u041A\u041C] \u0438\u043B\u0438 [{0}] \u2014 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C   \u00B7   [{1}] \u2014 \u0441\u043D\u044F\u0442\u044C   \u00B7   [{2}] \u0438\u043B\u0438 [Esc] \u2014 \u0432\u044B\u0439\u0442\u0438"
+    _english: "[LMB] or [{0}] install   \u00B7   [{1}] remove   \u00B7   [{2}] or [Esc] exit"
+  - _key: pc.workbench.click
+    _russian: "\u041B\u041A\u041C"
+    _english: "LMB"
+  - _key: pc.part.installable
+    _russian: "{0} \u00B7 \u043C\u043E\u0436\u043D\u043E \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"
+    _english: "{0} \u00B7 can be installed"
+  - _key: pc.part.slot_taken
+    _russian: "{0} \u00B7 \u043C\u0435\u0441\u0442\u043E \u0443\u0436\u0435 \u0437\u0430\u043D\u044F\u0442\u043E"
+    _english: "{0} \u00B7 its place is taken"
+  - _key: pc.part.no_place
+    _russian: "{0} \u00B7 \u043D\u0435\u043A\u0443\u0434\u0430 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"
+    _english: "{0} \u00B7 no place in this PC"
+  - _key: pc.part.not_part
+    _russian: "\u041D\u0435 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F \u0432 \u043A\u043E\u0440\u043F\u0443\u0441"
+    _english: "Doesn't go in the case"
+  - _key: pc.feedback.not_part
+    _russian: "\u00AB{0}\u00BB \u043D\u0435 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F \u0432 \u043A\u043E\u0440\u043F\u0443\u0441"
+    _english: "{0} doesn't go in the case"
+  - _key: pc.parts.hint
+    _russian: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u0434\u0435\u0442\u0430\u043B\u044C, \u0447\u0442\u043E\u0431\u044B \u0432\u0437\u044F\u0442\u044C \u0435\u0451 \u0432 \u0440\u0443\u043A\u0438."
+    _english: "Click a part to take it in hand."
+  - _key: pc.component.gpu
+    _russian: "\u0412\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0430"
+    _english: "Graphics card"
+  - _key: pc.reject.no_matching_slot
+    _russian: "\u0412 \u044D\u0442\u043E\u043C \u041F\u041A \u043D\u0435\u0442 \u043C\u0435\u0441\u0442\u0430 \u0434\u043B\u044F \u0442\u0430\u043A\u043E\u0439 \u0434\u0435\u0442\u0430\u043B\u0438"
+    _english: "This PC has no place for this part"
+  - _key: pc.component.motherboard
+    _russian: "\u041C\u0430\u0442\u0435\u0440\u0438\u043D\u0441\u043A\u0430\u044F \u043F\u043B\u0430\u0442\u0430"
+    _english: "Motherboard"
+  - _key: pc.component.psu
+    _russian: "\u0411\u043B\u043E\u043A \u043F\u0438\u0442\u0430\u043D\u0438\u044F"
+    _english: "Power supply"

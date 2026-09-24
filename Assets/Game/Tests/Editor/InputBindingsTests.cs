@@ -1,10 +1,13 @@
 using System.IO;
 using System.Linq;
+using GoLive.Interaction;
 using GoLive.Player;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.Utilities;
 
 namespace GoLive.Tests
 {
@@ -73,6 +76,49 @@ namespace GoLive.Tests
             string scene = File.ReadAllText(GameScene);
             Assert.That(scene.Split('\n').Count(line => line.Trim() == $"crouchAction: {{fileID: {fileId}, guid: {guid}, type: 3}}"), Is.EqualTo(1),
                 "the GL player controller references the same Crouch action");
+        }
+
+        // Hints name the physical keys the bindings use, whatever the OS keyboard layout calls them: a Russian layout
+        // reports the E key as "\u0423". Key names in hints come from InputHints, never from the live keyboard.
+        [Test]
+        public void KeyHintsNameTheBoundKeysWhateverTheKeyboardLayout()
+        {
+            InputActionAsset actions = Object.Instantiate(Asset);
+            Keyboard keyboard = InputSystem.AddDevice<Keyboard>();
+
+            try
+            {
+                actions.devices = new ReadOnlyArray<InputDevice>(new InputDevice[] { keyboard });
+                RenameKey(keyboard.eKey, "\u0423");
+                RenameKey(keyboard.fKey, "\u0410");
+                RenameKey(keyboard.gKey, "\u041F");
+                RenameKey(keyboard.bKey, "\u0418");
+                RenameKey(keyboard.qKey, "\u0419");
+
+                InputAction take = actions.FindAction("Player/Take", true);
+                Assert.That(take.GetBindingDisplayString(), Is.EqualTo("\u0423"), "the live key name follows the layout (the reported bug)");
+
+                Assert.That(InputHints.Key(take), Is.EqualTo("E"));
+                Assert.That(InputHints.Key(actions.FindAction("Player/Use", true)), Is.EqualTo("F"));
+                Assert.That(InputHints.Key(actions.FindAction("Player/Drop", true)), Is.EqualTo("G"));
+                Assert.That(InputHints.Key(actions.FindAction("Player/Special", true)), Is.EqualTo("B"));
+                Assert.That(InputHints.Key(actions.FindAction("Player/Phone", true)), Is.EqualTo("Q"));
+                Assert.That(InputHints.Key(actions.FindAction("Player/Inventory", true)), Is.EqualTo("Tab"));
+                Assert.That(InputHints.Key(null), Is.Empty);
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(keyboard);
+                Object.DestroyImmediate(actions);
+            }
+        }
+
+        private static void RenameKey(KeyControl key, string name)
+        {
+            // Read first: the device settles its own key names once, and must not overwrite the layout the test sets.
+            Assert.That(key.displayName, Is.Not.Null);
+            typeof(InputControl).GetProperty(nameof(InputControl.displayName)).SetValue(key, name);
+            Assert.That(key.displayName, Is.EqualTo(name));
         }
     }
 }

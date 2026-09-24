@@ -2,6 +2,7 @@ using System;
 using GoLive.Delivery;
 using GoLive.Economy;
 using GoLive.Items;
+using GoLive.PcBuilding;
 using GoLive.Phone;
 using GoLive.Shop;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace GoLive.Persistence
         public PhoneMessagesSnapshot Messages;
         public ShopOrdersSnapshot Orders;
         public DeliverySnapshot Delivery;
+        public PcAssemblySnapshot PcAssembly;
         public ItemSaveData[] Items = Array.Empty<ItemSaveData>();
     }
 

@@ -9,6 +9,7 @@ using GoLive.GameTime;
 using GoLive.Inventory;
 using GoLive.Items;
 using GoLive.Needs;
+using GoLive.PcBuilding;
 using GoLive.Phone;
 using GoLive.Player;
 using GoLive.Shop;
@@ -20,7 +21,7 @@ namespace GoLive.Persistence
     [DisallowMultipleComponent]
     public sealed class GameSaveController : MonoBehaviour
     {
-        private const int CurrentVersion = 4;
+        private const int CurrentVersion = 5;
         private const string AutosaveFileName = "autosave.json";
 
         [Header("Game State")]
@@ -35,6 +36,7 @@ namespace GoLive.Persistence
         [SerializeField] private PhoneMessagesBehaviour _phoneMessages;
         [SerializeField] private ShopBehaviour _shop;
         [SerializeField] private DeliveryBehaviour _delivery;
+        [SerializeField] private PcAssemblyBehaviour _pc;
 
         private bool _bound;
 
@@ -276,6 +278,13 @@ namespace GoLive.Persistence
                             {
                                 Version = 0,
                                 Deliveries = null
+                            },
+
+                        PcAssembly =
+                            new PcAssemblySnapshot
+                            {
+                                Version = 0,
+                                InstalledSlots = null
                             }
                     };
 
@@ -357,6 +366,11 @@ namespace GoLive.Persistence
                         ? index
                         : -1;
 
+                // Installed hardware has no world pose of its own: its slot places it on load, and PC Build Mode may
+                // be presenting the PC somewhere else right now. Saving that pose would persist a transient one.
+                bool installed =
+                    item.IsInstalled;
+
                 itemData[itemIndex++] =
                     new ItemSaveData
                     {
@@ -373,10 +387,14 @@ namespace GoLive.Persistence
                             inventoryIndex,
 
                         Position =
-                            item.transform.position,
+                            installed
+                                ? Vector3.zero
+                                : item.transform.position,
 
                         Rotation =
-                            item.transform.rotation
+                            installed
+                                ? Quaternion.identity
+                                : item.transform.rotation
                     };
             }
 
@@ -452,7 +470,10 @@ namespace GoLive.Persistence
                     _shop.CaptureOrders(),
 
                 Delivery =
-                    _delivery.CaptureSnapshot()
+                    _delivery.CaptureSnapshot(),
+
+                PcAssembly =
+                    _pc.CaptureSnapshot()
             };
         }
 
@@ -513,6 +534,15 @@ namespace GoLive.Persistence
                         ItemLocation.Removed =>
                             worldItem.RestoreAsRemoved(
                                 instance),
+
+                        ItemLocation.Installed =>
+                            _pc.TryGetInstallAnchor(
+                                data.PcAssembly,
+                                savedItem.InstanceId,
+                                out Transform installAnchor) &&
+                            worldItem.RestoreAsInstalled(
+                                instance,
+                                installAnchor),
 
                         _ =>
                             false
@@ -616,6 +646,10 @@ namespace GoLive.Persistence
                 data.Delivery,
                 sceneItems);
 
+            _pc.Restore(
+                data.PcAssembly,
+                sceneItems);
+
             _rent.Restore(
                 new RentSnapshot(
                     data.Rent.AmountDueCents,
@@ -647,7 +681,8 @@ namespace GoLive.Persistence
                 data.Items == null ||
                 data.Messages == null ||
                 data.Orders == null ||
-                data.Delivery == null)
+                data.Delivery == null ||
+                data.PcAssembly == null)
             {
                 return false;
             }
@@ -719,6 +754,11 @@ namespace GoLive.Persistence
             int carriedCount =
                 0;
 
+            // Installed hardware: the item says "installed", the PC says where. Its record must place every one of
+            // these in exactly one compatible slot.
+            Dictionary<string, PcComponentSpec> installedItems =
+                new(StringComparer.Ordinal);
+
             for (int i = 0; i < data.Items.Length; i++)
             {
                 ItemSaveData item =
@@ -771,6 +811,14 @@ namespace GoLive.Persistence
                 {
                     carriedCount++;
                 }
+
+                if (item.Location ==
+                    ItemLocation.Installed)
+                {
+                    installedItems.Add(
+                        item.InstanceId,
+                        definition.PcComponent);
+                }
             }
 
             if (inventoryCount >
@@ -792,7 +840,9 @@ namespace GoLive.Persistence
                     return false;
             }
 
-            return true;
+            return _pc.ValidateSnapshot(
+                data.PcAssembly,
+                installedItems);
         }
 
         private static bool TryGetExpectedDefinition(
@@ -934,6 +984,7 @@ namespace GoLive.Persistence
                 _needs.Needs != null &&
                 _wallet.Wallet != null &&
                 _shop.IsReady &&
+                _pc.Assembly != null &&
                 _rent.TryGetSnapshot(out _))
             {
                 return true;
@@ -958,7 +1009,8 @@ namespace GoLive.Persistence
                 _sleep != null &&
                 _phoneMessages != null &&
                 _shop != null &&
-                _delivery != null)
+                _delivery != null &&
+                _pc != null)
             {
                 return true;
             }

@@ -1,3 +1,4 @@
+using GoLive.PcBuilding;
 using UnityEngine;
 
 namespace GoLive.Items
@@ -29,6 +30,9 @@ namespace GoLive.Items
         [SerializeField] private Vector3 carryLocalPosition;
         [SerializeField] private Vector3 carryLocalEulerAngles;
 
+        [Tooltip("Only for PC hardware: what kind of component this is and what it plugs into. Empty for everything else.")]
+        [SerializeField] private PcComponentSpec pcComponent;
+
         public string ItemId => itemId;
         public string NameLocalizationKey => nameLocalizationKey;
         public ItemCategory Category => category;
@@ -38,6 +42,7 @@ namespace GoLive.Items
         public ItemCarryStyle CarryStyle => carryStyle;
         public Vector3 CarryLocalPosition => carryLocalPosition;
         public Vector3 CarryLocalEulerAngles => carryLocalEulerAngles;
+        public PcComponentSpec PcComponent => pcComponent;
 
         public bool TryGetRuntimePrefab(out WorldItem prefab)
         {

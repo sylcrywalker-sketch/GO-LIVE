@@ -9,9 +9,9 @@ using UnityEngine.UI;
 namespace GoLive.Inventory
 {
     // One item card: an Inventory row or the held-item row. It shows an item from its definition data and
-    // reports left-button drags to its owner; it never changes item state itself.
+    // reports left-button drags and clicks to its owner; it never changes item state itself.
     [DisallowMultipleComponent]
-    public sealed class InventoryItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+    public sealed class InventoryItemView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         [SerializeField] private Graphic background;
         [SerializeField] private CanvasGroup content;
@@ -31,9 +31,11 @@ namespace GoLive.Inventory
         public event Action<InventoryItemView, PointerEventData> DragStarted;
         public event Action<InventoryItemView, PointerEventData> Dragged;
         public event Action<InventoryItemView, PointerEventData> DragEnded;
+        public event Action<InventoryItemView> Clicked;
 
         private bool _dragging;
         private bool _hovered;
+        private Color? _detailColor; // the authored category-line colour, remembered before a note recolours it
 
         private void Awake()
         {
@@ -64,6 +66,8 @@ namespace GoLive.Inventory
             iconFallback.SetActive(sprite == null);
             title.text = ItemName(definition, localization);
             detail.text = localization.Text(CategoryKey(definition.Category));
+            _detailColor ??= detail.color;
+            detail.color = _detailColor.Value;
 
             SetFilled(true);
         }
@@ -84,6 +88,26 @@ namespace GoLive.Inventory
         public void SetLifted(bool lifted)
         {
             content.alpha = lifted ? 0.35f : 1f;
+        }
+
+        // A screen may replace the category line with its own note about the item (e.g. whether a part fits a PC)
+        // and fade items that do not matter there. Show resets both.
+        public void SetNote(string text, Color color)
+        {
+            _detailColor ??= detail.color;
+            detail.text = text;
+            detail.color = color;
+        }
+
+        public void SetDimmed(bool dimmed)
+        {
+            content.alpha = dimmed ? 0.45f : 1f;
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (isActiveAndEnabled && !IsEmpty && eventData.button == PointerEventData.InputButton.Left && !eventData.dragging)
+                Clicked?.Invoke(this);
         }
 
         public void OnBeginDrag(PointerEventData eventData)

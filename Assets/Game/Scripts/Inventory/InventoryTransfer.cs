@@ -21,5 +21,17 @@ namespace GoLive.Inventory
         {
             return transfer is InventoryTransfer.Store or InventoryTransfer.Take or InventoryTransfer.Swap;
         }
+
+        // Why nothing moved, as the one localized message every Inventory screen shows for it.
+        public static string MessageKey(this InventoryTransfer transfer)
+        {
+            return transfer switch
+            {
+                InventoryTransfer.NotStorable => "inventory.reject.not_storable",
+                InventoryTransfer.InventoryFull => "inventory.reject.full",
+                InventoryTransfer.HandsBusy => "inventory.reject.hands_busy",
+                _ => "inventory.reject.failed"
+            };
+        }
     }
 }

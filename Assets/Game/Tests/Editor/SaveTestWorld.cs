@@ -7,12 +7,14 @@ using GoLive.GameTime;
 using GoLive.Inventory;
 using GoLive.Items;
 using GoLive.Needs;
+using GoLive.PcBuilding;
 using GoLive.Persistence;
 using GoLive.Phone;
 using GoLive.Player;
 using GoLive.Shop;
 using GoLive.Sleep;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,12 +22,13 @@ using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
-    // Explicit EditMode composition of the current (v4) save runtime, not a substitute for Awake/Start or Play Mode verification.
-    // Hands and Delivery stay inactive unless a Play Mode test calls StartPlayModeRuntime().
+    // Explicit EditMode composition of the current (v5) save runtime, not a substitute for Awake/Start or Play Mode verification.
+    // Hands, Delivery and the PC stay inactive unless a Play Mode test calls StartPlayModeRuntime().
     internal sealed class SaveTestWorld : IDisposable
     {
         public const string BudgetGpuId = "budget-gpu";
         public const string SnackId = "test-snack";
+        public const string StudentPcPrefab = "Assets/Game/Prefab/PC/StudentPC.prefab";
 
         public GameObject Root { get; }
         public GameObject Hands { get; }
@@ -39,11 +42,13 @@ namespace GoLive.Tests
         public PlayerNeedsBehaviour Needs { get; }
         public DeliveryBehaviour Delivery { get; }
         public Transform DropPoint { get; }
+        public PcAssemblyBehaviour Pc { get; }
         public string Directory { get; }
         public string SavePath { get; }
 
         private readonly ShopCatalogConfig _catalog;
         private readonly GameObject _deliveryRoot;
+        private readonly GameObject _pcRoot;
         private readonly GameObject _floor;
 
         private SaveTestWorld(long walletCents, ShopCatalogConfig catalog)
@@ -126,6 +131,14 @@ namespace GoLive.Tests
             SetField(Delivery, "packageItem", ShopTestData.LoadItem(ShopTestData.DeliveryPackageItem));
             SetField(Delivery, "dropPoint", DropPoint);
 
+            // The real Student PC prefab (case, slots, assembly record); the GL scene adds the Workbench on top of it.
+            _pcRoot = new GameObject("Test PC holder");
+            _pcRoot.SetActive(false);
+            GameObject pc = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(StudentPcPrefab), _pcRoot.transform);
+            pc.transform.position = new Vector3(3f, 0.8f, 0f);
+            Pc = pc.GetComponent<PcAssemblyBehaviour>();
+            typeof(PcAssemblyBehaviour).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Pc, null);
+
             Save = Root.AddComponent<GameSaveController>();
             SetField(Save, "_player", player);
             SetField(Save, "_carry", Carry);
@@ -138,6 +151,7 @@ namespace GoLive.Tests
             SetField(Save, "_phoneMessages", Messages);
             SetField(Save, "_shop", Shop);
             SetField(Save, "_delivery", Delivery);
+            SetField(Save, "_pc", Pc);
         }
 
         public static SaveTestWorld Create(long walletCents)
@@ -150,13 +164,14 @@ namespace GoLive.Tests
             return new SaveTestWorld(walletCents, catalog);
         }
 
-        // Real Awake/OnEnable/Start for the hands (carry + inventory) and the delivery owner; Start runs on the next frame.
+        // Real Awake/OnEnable/Start for the hands (carry + inventory), the delivery owner and the PC; Start runs on the next frame.
         public void StartPlayModeRuntime()
         {
             Assert.That(Application.isPlaying, Is.True, "Delivery runtime tests must run in Play Mode.");
 
             Hands.SetActive(true);
             _deliveryRoot.SetActive(true);
+            _pcRoot.SetActive(true);
         }
 
         public static SceneSetup[] IsolateScene()
@@ -206,6 +221,7 @@ namespace GoLive.Tests
             DestroyIfAlive(Root);
             DestroyIfAlive(Hands);
             DestroyIfAlive(_deliveryRoot);
+            DestroyIfAlive(_pcRoot);
             DestroyIfAlive(_floor);
 
             if (DropPoint != null)

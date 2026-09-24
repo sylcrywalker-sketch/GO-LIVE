@@ -2,12 +2,15 @@ using System;
 
 namespace GoLive.Items
 {
+    // Where the one physical item is. Installed hardware sits inside a PC; which slot holds it is owned by the
+    // PC assembly, not by the item.
     public enum ItemLocation
     {
         World,
         Carried,
         Inventory,
-        Removed
+        Removed,
+        Installed
     }
 
     public sealed class ItemInstance

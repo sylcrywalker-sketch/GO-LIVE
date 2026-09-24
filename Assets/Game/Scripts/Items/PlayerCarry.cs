@@ -19,6 +19,7 @@ namespace GoLive.Player
         internal Transform CarryAnchor => carryAnchor;
 
         private WorldItem _carriedItem;
+        private bool _heldItemHidden;
 
         private void Awake()
         {
@@ -115,6 +116,38 @@ namespace GoLive.Player
             return true;
         }
 
+        // Hands -> PC slot: the held item becomes Installed on the anchor and the hands are empty afterwards.
+        internal bool TryInstallCarriedItem(Transform installAnchor, out WorldItem installedItem)
+        {
+            installedItem = null;
+
+            if (!HasItem)
+                return false;
+
+            WorldItem item = _carriedItem;
+
+            if (!item.TryInstall(installAnchor))
+                return false;
+
+            SetCarriedItem(null);
+            installedItem = item;
+
+            return true;
+        }
+
+        // PC slot -> hands, only into empty hands.
+        internal bool TryCarryFromInstalled(WorldItem item)
+        {
+            if (HasItem || item == null)
+                return false;
+
+            if (!item.TryBeginCarryFromInstalled(carryAnchor))
+                return false;
+
+            SetCarriedItem(item);
+            return true;
+        }
+
         internal bool RestoreCarriedItem(WorldItem item)
         {
             if (item != null && (item.Instance == null || item.Instance.Location != ItemLocation.Carried))
@@ -124,10 +157,32 @@ namespace GoLive.Player
             return true;
         }
 
+        // Presentation only: PC Build Mode looks through its own camera, so whatever the hands hold is not drawn
+        // meanwhile. An item that leaves the hands is always drawn again.
+        public void SetHeldItemHidden(bool hidden)
+        {
+            if (_heldItemHidden == hidden)
+                return;
+
+            _heldItemHidden = hidden;
+
+            if (_carriedItem != null)
+                _carriedItem.SetPresentationHidden(hidden);
+        }
+
         private void SetCarriedItem(WorldItem item)
         {
             if (ReferenceEquals(_carriedItem, item))
                 return;
+
+            if (_heldItemHidden)
+            {
+                if (_carriedItem != null)
+                    _carriedItem.SetPresentationHidden(false);
+
+                if (item != null)
+                    item.SetPresentationHidden(true);
+            }
 
             _carriedItem = item;
             CarriedItemChanged?.Invoke();

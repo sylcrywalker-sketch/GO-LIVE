@@ -1,5 +1,6 @@
 using System.IO;
 using GoLive.Delivery;
+using GoLive.PcBuilding;
 using GoLive.Persistence;
 using GoLive.Phone;
 using GoLive.Shop;
@@ -44,14 +45,17 @@ namespace GoLive.Tests
         }
 
         [Test]
-        public void SaveFileIsSchemaV4WithOrdersAndDeliverySections()
+        public void SaveFileIsSchemaV5WithOrdersDeliveryAndPcSections()
         {
             ShopOrder placed = _world.Shop.TryPurchase(GpuId).Order;
 
             Assert.That(_world.TrySave(), Is.True);
 
             GameSaveData data = _world.ReadSave();
-            Assert.That(data.Version, Is.EqualTo(4));
+            Assert.That(data.Version, Is.EqualTo(5));
+            Assert.That(data.PcAssembly, Is.Not.Null);
+            Assert.That(data.PcAssembly.Version, Is.EqualTo(PcAssembly.SnapshotVersion));
+            Assert.That(data.PcAssembly.InstalledSlots, Is.Empty);
             Assert.That(data.Delivery, Is.Not.Null);
             Assert.That(data.Delivery.Version, Is.EqualTo(DeliverySnapshot.CurrentVersion));
             Assert.That(data.Delivery.Deliveries, Is.Empty);
