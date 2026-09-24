@@ -72,7 +72,10 @@
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryUiController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcAssembly.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcWorkbenchBehaviour.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcComponentSlot.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Game\Scripts\Needs\PlayerNeedsConfig.cs" />
     <Compile Include="Assets\Game\Scripts\WASD\PlayerControlState.cs" />
@@ -97,6 +100,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhonePointerBehaviour.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcBuildModeSequence.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
     <Compile Include="Assets\Game\Scripts\Sleep\SleepConfig.cs" />
@@ -113,9 +117,12 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
     <Compile Include="Assets\Game\Scripts\Food\FoodConsumption.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcComponentSpec.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcInstallGhost.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\Game\Scripts\Economy\WalletHudView.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcAssemblyBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\UI\GamePauseController.cs" />
     <Compile Include="Assets\Game\Scripts\Delivery\DeliveryPackageBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryDragGhost.cs" />
@@ -123,6 +130,7 @@
     <Compile Include="Assets\Game\Scripts\Delivery\DeliveryState.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryTransfer.cs" />
     <Compile Include="Assets\Game\Scripts\Time\DayLightingView.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcWorkbenchHudView.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\DropdownSample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
     <Compile Include="Assets\Game\Scripts\Shop\ShopBehaviour.cs" />
@@ -131,7 +139,9 @@
     <Compile Include="Assets\Game\Scripts\HUD\HudBackdropGraphic.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcBuildPresentation.cs" />
     <Compile Include="Assets\Game\Scripts\Items\PlayerCarry.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcBuildInventoryView.cs" />
     <Compile Include="Assets\Game\Scripts\Persistence\GameSaveData.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
@@ -142,9 +152,11 @@
     <Compile Include="Assets\Game\Scripts\Phone\PhoneSession.cs" />
     <Compile Include="Assets\Game\Scripts\Shop\ShopCatalogConfig.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcCapabilities.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryOutlineIcon.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneMessagesSnapshot.cs" />
     <Compile Include="Assets\Game\Scripts\Localization\LocalizationRuntime.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcBuildCamera.cs" />
     <Compile Include="Assets\Game\Scripts\Localization\LocalizationCatalog.cs" />
     <Compile Include="Assets\Game\Scripts\Localization\LocalizationContext.cs" />
     <Compile Include="Assets\Game\Scripts\HUD\InteractionPromptView.cs" />
