@@ -17,7 +17,7 @@ MonoBehaviour:
   category: 1
   worldPrefab: {fileID: 3684037943413479898, guid: fff969fc88e44b86a18ab18488f1119d, type: 3}
   iconOverride: {fileID: 0}
-  generatedIcon: {fileID: 0}
+  generatedIcon: {fileID: 21300000, guid: 4a0e527f7de79034b8fb265d63b535d7, type: 3}
   canStoreInInventory: 1
   carryStyle: 0
   carryLocalPosition: {x: 0, y: -0.002, z: 0}

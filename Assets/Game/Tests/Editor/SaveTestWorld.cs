@@ -135,10 +135,12 @@ namespace GoLive.Tests
             SetField(Delivery, "packageItem", ShopTestData.LoadItem(ShopTestData.DeliveryPackageItem));
             SetField(Delivery, "dropPoint", DropPoint);
 
-            // The real Student PC prefab (case, slots, assembly record); the GL scene adds the Workbench on top of it.
+            // The real Student PC prefab (case, slots, assembly record); the GL scene adds the Workbench on top of it. A plain
+            // copy, like the PC in a running game: an Editor prefab instance would refuse to let its starter parts leave it.
             _pcRoot = new GameObject("Test PC holder");
             _pcRoot.SetActive(false);
-            GameObject pc = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(StudentPcPrefab), _pcRoot.transform);
+            GameObject pc = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(StudentPcPrefab), _pcRoot.transform);
+            pc.name = "StudentPC";
             pc.transform.position = new Vector3(3f, 0.8f, 0f);
             Pc = pc.GetComponent<PcAssemblyBehaviour>();
             typeof(PcAssemblyBehaviour).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Pc, null);

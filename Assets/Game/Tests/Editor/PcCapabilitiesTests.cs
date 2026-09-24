@@ -307,15 +307,15 @@ namespace GoLive.Tests
         [Test]
         public void EachDiagnosticCodeHasOneMeaning()
         {
-            Dictionary<PcDiagnosticCode, (PcDiagnosticSeverity, PcFunction)> expected = new()
+            Dictionary<PcDiagnosticCode, (PcDiagnosticSeverity, PcFunction, PcComponentType)> expected = new()
             {
-                [PcDiagnosticCode.MissingMotherboard] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn),
-                [PcDiagnosticCode.MissingCpu] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn),
-                [PcDiagnosticCode.MissingMemory] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn),
-                [PcDiagnosticCode.MissingPowerSupply] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn),
-                [PcDiagnosticCode.InsufficientPower] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn),
-                [PcDiagnosticCode.MissingStorage] = (PcDiagnosticSeverity.Blocker, PcFunction.Desktop),
-                [PcDiagnosticCode.NoDedicatedGpu] = (PcDiagnosticSeverity.Limitation, PcFunction.Gaming)
+                [PcDiagnosticCode.MissingMotherboard] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Motherboard),
+                [PcDiagnosticCode.MissingCpu] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Cpu),
+                [PcDiagnosticCode.MissingMemory] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Ram),
+                [PcDiagnosticCode.MissingPowerSupply] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Psu),
+                [PcDiagnosticCode.InsufficientPower] = (PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Psu),
+                [PcDiagnosticCode.MissingStorage] = (PcDiagnosticSeverity.Blocker, PcFunction.Desktop, PcComponentType.Storage),
+                [PcDiagnosticCode.NoDedicatedGpu] = (PcDiagnosticSeverity.Limitation, PcFunction.Gaming, PcComponentType.Gpu)
             };
 
             PcDiagnosticCode[] codes = System.Enum.GetValues(typeof(PcDiagnosticCode)).Cast<PcDiagnosticCode>().ToArray();
@@ -324,7 +324,7 @@ namespace GoLive.Tests
             foreach (PcDiagnosticCode code in codes)
             {
                 PcDiagnostic diagnostic = PcDiagnostic.For(code);
-                Assert.That((diagnostic.Severity, diagnostic.Affects), Is.EqualTo(expected[code]), code.ToString());
+                Assert.That((diagnostic.Severity, diagnostic.Affects, diagnostic.Component), Is.EqualTo(expected[code]), code.ToString());
                 Assert.That(diagnostic.TitleKey, Does.StartWith("pc.diagnostic.").And.EndWith(".title"));
                 Assert.That(diagnostic.DetailKey, Does.StartWith("pc.diagnostic.").And.EndWith(".detail"));
             }

@@ -38,9 +38,11 @@ namespace GoLive.Tests
         [SetUp]
         public void SetUp()
         {
+            // A plain copy of the prefab, like the PC in a running game: the cases below move starter parts around, which an
+            // Editor prefab instance refuses.
             _holder = new GameObject("Test PC holder");
             _holder.SetActive(false);
-            GameObject pc = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SaveTestWorld.StudentPcPrefab), _holder.transform);
+            GameObject pc = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(SaveTestWorld.StudentPcPrefab), _holder.transform);
             pc.name = "StudentPC";
             _pc = pc.GetComponent<PcAssemblyBehaviour>();
         }
@@ -141,6 +143,18 @@ namespace GoLive.Tests
         public void AListedPartAwayFromItsSlotIsRefused()
         {
             Item("ram-0").transform.SetParent(_pc.transform, false);
+
+            AssertRefused();
+        }
+
+        // Without the board among the starter parts, the processor and memory would sit on nothing.
+        [Test]
+        public void PartsWhoseHostPartIsNotPreinstalledAreRefused()
+        {
+            Item("motherboard-0").transform.SetParent(_pc.transform, false);
+            SerializedObject behaviour = new(_pc);
+            behaviour.FindProperty("preinstalled").DeleteArrayElementAtIndex(0);
+            behaviour.ApplyModifiedPropertiesWithoutUndo();
 
             AssertRefused();
         }

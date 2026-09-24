@@ -32,15 +32,15 @@ namespace GoLive.Tests
             "budget-gpu", "used-motherboard", "used-psu", "starter-motherboard", "starter-cpu", "starter-ram", "starter-hdd"
         };
 
-        // The Student PC's slots in layout order: ID, component type, connector, fixed in place.
-        private static readonly (string id, PcComponentType type, PcConnector connector, bool isFixed)[] StudentSlots =
+        // The Student PC's slots in layout order: ID, component type, connector, the slot it is mounted on (null: the case).
+        private static readonly (string id, PcComponentType type, PcConnector connector, string host)[] StudentSlots =
         {
-            ("motherboard-0", PcComponentType.Motherboard, PcConnector.MotherboardTray, true),
-            ("cpu-0", PcComponentType.Cpu, PcConnector.CpuSocket, false),
-            ("ram-0", PcComponentType.Ram, PcConnector.MemorySlot, false),
-            ("psu-0", PcComponentType.Psu, PcConnector.PowerSupplyBay, false),
-            ("storage-0", PcComponentType.Storage, PcConnector.SataStorage, false),
-            ("gpu-0", PcComponentType.Gpu, PcConnector.PcieX16, false)
+            ("motherboard-0", PcComponentType.Motherboard, PcConnector.MotherboardTray, null),
+            ("cpu-0", PcComponentType.Cpu, PcConnector.CpuSocket, "motherboard-0"),
+            ("ram-0", PcComponentType.Ram, PcConnector.MemorySlot, "motherboard-0"),
+            ("psu-0", PcComponentType.Psu, PcConnector.PowerSupplyBay, null),
+            ("storage-0", PcComponentType.Storage, PcConnector.SataStorage, null),
+            ("gpu-0", PcComponentType.Gpu, PcConnector.PcieX16, "motherboard-0")
         };
 
         private Scene _preview;
@@ -234,7 +234,7 @@ namespace GoLive.Tests
             PcAssemblyBehaviour assembly = pc.GetComponent<PcAssemblyBehaviour>();
             PcComponentSlot[] authored = pc.GetComponentsInChildren<PcComponentSlot>(true);
 
-            Assert.That(assembly.Slots.Select(slot => (slot.SlotId, slot.ComponentType, slot.Connector, slot.IsFixed)), Is.EqualTo(StudentSlots), "the slot table");
+            Assert.That(assembly.Slots.Select(slot => (slot.SlotId, slot.ComponentType, slot.Connector, slot.Spec.HostSlotId)), Is.EqualTo(StudentSlots), "the slot table");
             Assert.That(() => new PcAssembly(assembly.Slots.Select(slot => slot.Spec).ToArray()), Throws.Nothing, "valid IDs, defined types and connectors");
 
             Assert.That(assembly, Is.Not.Null);
@@ -250,6 +250,8 @@ namespace GoLive.Tests
                 Assert.That(slot.TechnicalLabel, Is.Not.Empty, slot.name);
             }
 
+            Assert.That(authored.Where(slot => slot.MountedOn != null).Select(slot => slot.MountedOn), Is.All.Matches<PcComponentSlot>(host => assembly.Slots.Contains(host)), "hosts are slots of this PC");
+
             PcComponentSlot gpu = authored.Single(slot => slot.SlotId == "gpu-0");
             Assert.That(gpu.ComponentType, Is.EqualTo(PcComponentType.Gpu));
             Assert.That(gpu.Connector, Is.EqualTo(PcConnector.PcieX16));
@@ -257,6 +259,21 @@ namespace GoLive.Tests
             Assert.That(gpu.InstallAnchor.localPosition, Is.EqualTo(Vector3.zero));
             Assert.That(gpu.InstallAnchor.localRotation, Is.EqualTo(Quaternion.identity));
             Assert.That(gpu.TechnicalLabel, Is.EqualTo("PCIe x16"));
+        }
+
+        // Presentation that sits on a removable part comes and goes with it: the processor's cooler never floats over an
+        // empty socket, or in the air once the motherboard is out. Everything else in Static Parts is on the case.
+        [Test]
+        public void TheProcessorCoolerComesAndGoesWithTheProcessor()
+        {
+            GameObject pc = AssetDatabase.LoadAssetAtPath<GameObject>(StudentPc);
+            PcComponentSlot[] slots = pc.GetComponentsInChildren<PcComponentSlot>(true);
+            Transform staticParts = pc.transform.Find("BuildPresentationRoot/StaticParts");
+            GameObject cooler = staticParts.Find("CPU Cooler").gameObject;
+
+            Assert.That(Field<GameObject[]>(slots.Single(slot => slot.SlotId == "cpu-0"), "installedWith"), Is.EqualTo(new[] { cooler }));
+            Assert.That(slots.Where(slot => slot.SlotId != "cpu-0").SelectMany(slot => Field<GameObject[]>(slot, "installedWith")), Is.Empty);
+            Assert.That(staticParts.Cast<Transform>().Select(part => part.name), Is.EquivalentTo(new[] { "CPU Cooler", "Rear Fan" }), "the rear fan is part of the case");
         }
 
         // The gameplay root (collider, record, place in the world) stays; everything the player sees of the PC sits under
@@ -302,7 +319,7 @@ namespace GoLive.Tests
             LocalizationCatalog catalog = AssetDatabase.LoadAssetAtPath<LocalizationCatalog>(Catalog);
             HashSet<string> keys = new();
 
-            foreach (System.Type type in new[] { typeof(PcWorkbenchBehaviour), typeof(PcBuildInventoryView) })
+            foreach (System.Type type in new[] { typeof(PcWorkbenchBehaviour), typeof(PcWorkbenchText), typeof(PcBuildInventoryView) })
             {
                 foreach (FieldInfo field in type.GetFields(BindingFlags.Static | BindingFlags.NonPublic).Where(field => field.IsLiteral && field.Name.EndsWith("Key")))
                     keys.Add((string)field.GetRawConstantValue());
@@ -313,8 +330,8 @@ namespace GoLive.Tests
 
             foreach (PcComponentSlot slot in AssetDatabase.LoadAssetAtPath<GameObject>(StudentPc).GetComponentsInChildren<PcComponentSlot>(true))
             {
-                keys.Add(slot.NameLocalizationKey);
                 keys.Add(slot.ComponentType.NameKey());
+                keys.Add(slot.ComponentType.ObjectNameKey());
                 keys.Add(slot.ComponentType.InstallPromptKey());
                 keys.Add(slot.ComponentType.RemovePromptKey());
             }
@@ -334,12 +351,23 @@ namespace GoLive.Tests
             string[] missing = keys.Where(key => !catalog.TryGetText(key, GameLanguage.Russian, out _) || !catalog.TryGetText(key, GameLanguage.English, out _)).OrderBy(key => key).ToArray();
             Assert.That(missing, Is.Empty);
 
-            // The weak power supply detail shows both numbers in each language.
+            // The weak power supply detail shows both numbers in each language; the texts that name parts take them.
             foreach (GameLanguage language in new[] { GameLanguage.Russian, GameLanguage.English })
             {
                 catalog.TryGetText(PcDiagnostic.For(PcDiagnosticCode.InsufficientPower).DetailKey, language, out string text);
                 Assert.That(string.Format(text, 174, 150), Does.Contain("174").And.Contain("150"), language.ToString());
+
+                foreach (string key in new[] { PcSlotCheck.HostMissing.MessageKey(), PcSlotCheck.MountedPartsInstalled.MessageKey(), "pc.list.and" })
+                {
+                    catalog.TryGetText(key, language, out string named);
+                    Assert.That(named, Does.Contain("{0}"), $"{language} {key}");
+                }
             }
+        }
+
+        private static T Field<T>(object owner, string name)
+        {
+            return (T)owner.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).GetValue(owner);
         }
 
         // The installed card sits inside the real case: clear of the side panel and the drive, bracket inside the rear.

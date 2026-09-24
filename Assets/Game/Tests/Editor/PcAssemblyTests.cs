@@ -216,6 +216,74 @@ namespace GoLive.Tests
             Assert.That(() => new PcAssembly(new[] { new PcSlotSpec("gpu-0", PcComponentType.Gpu, PcConnector.None) }), Throws.ArgumentException);
         }
 
+        // Mounting is slot data, not a motherboard rule: here a drive bay carries two expansion cards.
+        [Test]
+        public void APartMountedOnAnotherGoesInAfterItAndComesOutBeforeIt()
+        {
+            PcComponentSpec drive = Spec(PcComponentType.Storage, PcConnector.PcieX16);
+            PcAssembly pc = BayWithTwoCards();
+
+            Assert.That(pc.IsSlotPresent("bay-0"), Is.True, "a slot on the case is always there");
+            Assert.That(pc.IsSlotPresent("card-0"), Is.False, "no host part, no slot");
+            Assert.That(pc.CheckInstall("card-0", "card-a", _gpu), Is.EqualTo(PcSlotCheck.HostMissing));
+            Assert.That(pc.TryRecordInstall("card-0", "card-a", _gpu), Is.False);
+            Assert.That(pc.CheckPart(_gpu, out string slot), Is.EqualTo(PcSlotCheck.HostMissing));
+            Assert.That(slot, Is.EqualTo("card-0"), "the slot that waits for its host");
+            Assert.That(pc.CheckInstall("card-0", "card-a", _ram), Is.EqualTo(PcSlotCheck.WrongComponentType), "a part that could never go there says so first");
+
+            Assert.That(pc.TryRecordInstall("bay-0", "drive", drive), Is.True);
+            Assert.That(pc.IsSlotPresent("card-0") && pc.IsSlotPresent("card-1"), Is.True, "the host part brings its slots");
+            Assert.That(pc.CheckPart(_gpu, out slot), Is.EqualTo(PcSlotCheck.Allowed));
+            Assert.That(slot, Is.EqualTo("card-0"));
+            Assert.That(pc.TryRecordInstall("card-0", "card-a", _gpu), Is.True);
+            Assert.That(pc.TryRecordInstall("card-1", "card-b", _gpu), Is.True);
+
+            Assert.That(pc.CheckRemove("bay-0"), Is.EqualTo(PcSlotCheck.MountedPartsInstalled));
+            Assert.That(pc.InstalledOn("bay-0").Select(component => component.InstanceId), Is.EqualTo(new[] { "card-a", "card-b" }), "what has to come out first, in slot order");
+            Assert.That(pc.TryRecordRemoval("bay-0", out _), Is.False);
+            Assert.That(pc.IsSlotOccupied("bay-0"), Is.True, "a refused removal changes nothing");
+
+            Assert.That(pc.TryRecordRemoval("card-0", out _), Is.True);
+            Assert.That(pc.CheckRemove("bay-0"), Is.EqualTo(PcSlotCheck.MountedPartsInstalled), "one card is still on it");
+            Assert.That(pc.InstalledOn("bay-0").Select(component => component.InstanceId), Is.EqualTo(new[] { "card-b" }));
+
+            Assert.That(pc.TryRecordRemoval("card-1", out _), Is.True);
+            Assert.That(pc.CheckRemove("bay-0"), Is.EqualTo(PcSlotCheck.Allowed));
+            Assert.That(pc.TryRecordRemoval("bay-0", out string removed) && removed == "drive", Is.True);
+            Assert.That(pc.IsSlotPresent("card-0"), Is.False, "its slots went with it");
+            Assert.That(pc.CheckInstall("card-0", "card-a", _gpu), Is.EqualTo(PcSlotCheck.HostMissing));
+        }
+
+        [Test]
+        public void ASnapshotWithAPartOffItsHostIsRejected()
+        {
+            PcComponentSpec drive = Spec(PcComponentType.Storage, PcConnector.PcieX16);
+            PcAssembly pc = BayWithTwoCards();
+            Dictionary<string, PcComponentSpec> cardOnly = new() { ["card-a"] = _gpu };
+            Dictionary<string, PcComponentSpec> both = new() { ["drive"] = drive, ["card-a"] = _gpu };
+
+            Assert.That(pc.IsValidSnapshot(Snapshot(Record("card-0", "card-a")), cardOnly), Is.False, "a card in a bay that holds nothing");
+            Assert.That(() => pc.Restore(Snapshot(Record("card-0", "card-a")), cardOnly), Throws.ArgumentException);
+            Assert.That(pc.InstalledComponents, Is.Empty);
+
+            Assert.That(pc.IsValidSnapshot(Snapshot(Record("card-0", "card-a"), Record("bay-0", "drive")), both), Is.True, "record order does not matter");
+        }
+
+        [Test]
+        public void EveryHostIsASlotOfThisPcAndNoSlotHostsItself()
+        {
+            PcSlotSpec bay = new("bay-0", PcComponentType.Storage, PcConnector.PcieX16);
+
+            Assert.That(() => new PcAssembly(new[] { bay, new PcSlotSpec("card-0", PcComponentType.Gpu, PcConnector.PcieX16, "bay-9") }), Throws.ArgumentException, "unknown host");
+            Assert.That(() => new PcAssembly(new[] { new PcSlotSpec("card-0", PcComponentType.Gpu, PcConnector.PcieX16, "card-0") }), Throws.ArgumentException, "its own host");
+            Assert.That(() => new PcAssembly(new[]
+            {
+                new PcSlotSpec("card-0", PcComponentType.Gpu, PcConnector.PcieX16, "card-1"),
+                new PcSlotSpec("card-1", PcComponentType.Gpu, PcConnector.PcieX16, "card-0")
+            }), Throws.ArgumentException, "hosts that never reach the case");
+            Assert.That(() => BayWithTwoCards(), Throws.Nothing);
+        }
+
         // The full rules live in PcCapabilitiesTests; here only that capabilities read this record.
         [Test]
         public void CapabilitiesReadTheInstalledGraphicsCardFromTheRecord()
@@ -252,6 +320,21 @@ namespace GoLive.Tests
                 slots = new[] { ("gpu-0", PcComponentType.Gpu) };
 
             return new PcAssembly(slots.Select(slot => new PcSlotSpec(slot.id, slot.type, PcConnector.PcieX16)).ToArray());
+        }
+
+        private static PcAssembly BayWithTwoCards()
+        {
+            return new PcAssembly(new[]
+            {
+                new PcSlotSpec("bay-0", PcComponentType.Storage, PcConnector.PcieX16),
+                new PcSlotSpec("card-0", PcComponentType.Gpu, PcConnector.PcieX16, "bay-0"),
+                new PcSlotSpec("card-1", PcComponentType.Gpu, PcConnector.PcieX16, "bay-0")
+            });
+        }
+
+        private static PcAssemblySnapshot Snapshot(params PcInstalledSlotSnapshot[] records)
+        {
+            return new PcAssemblySnapshot { Version = PcAssembly.SnapshotVersion, InstalledSlots = records };
         }
 
         private PcComponentSpec Spec(PcComponentType type, PcConnector connector)

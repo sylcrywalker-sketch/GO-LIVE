@@ -168,8 +168,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4941955548054561194}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15436772, y: 0.57698596, z: -0.112154715, w: 0.7941531}
-  m_LocalPosition: {x: -0.530974, y: 0.21317126, z: -0.29411972}
+  m_LocalRotation: {x: 0.10143791, y: 0.62393653, z: -0.08214281, w: 0.7704974}
+  m_LocalPosition: {x: -0.5958778, y: 0.15137051, z: -0.22013883}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -224,7 +224,6 @@ MonoBehaviour:
   slotId: gpu-0
   componentType: 4
   connector: 1
-  nameLocalizationKey: pc.slot.gpu
   technicalLabel: PCIe x16
   installAnchor: {fileID: 1213779597298021721}
   targetBounds:
@@ -237,6 +236,8 @@ MonoBehaviour:
   hiddenWhileFilled:
   - {fileID: 5496621068839436787}
   - {fileID: 4171234994726435068}
+  installedWith: []
+  mountedOn: {fileID: 1601351638281650879}
 --- !u!1 &7252750479958447933
 GameObject:
   m_ObjectHideFlags: 0
@@ -622,6 +623,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2f0c5c7cbe99ba4b998254058dadbd1, type: 3}
+--- !u!1 &1596831957836769283 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6401494033518490282, guid: e2f0c5c7cbe99ba4b998254058dadbd1, type: 3}
+  m_PrefabInstance: {fileID: 5692473910885145257}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2117473131330958009 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6025108510962264080, guid: e2f0c5c7cbe99ba4b998254058dadbd1, type: 3}
@@ -676,7 +682,6 @@ MonoBehaviour:
   slotId: motherboard-0
   componentType: 0
   connector: 2
-  nameLocalizationKey: pc.slot.motherboard
   technicalLabel: Micro-ATX
   installAnchor: {fileID: 3210358517283894327}
   targetBounds:
@@ -687,7 +692,8 @@ MonoBehaviour:
   compatibleColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.1}
   targetedColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.15}
   hiddenWhileFilled: []
-  fixedInPlace: 1
+  installedWith: []
+  mountedOn: {fileID: 0}
 --- !u!1 &5320017120107392548
 GameObject:
   m_ObjectHideFlags: 0
@@ -859,7 +865,6 @@ MonoBehaviour:
   slotId: cpu-0
   componentType: 1
   connector: 4
-  nameLocalizationKey: pc.slot.cpu
   technicalLabel: CPU socket
   installAnchor: {fileID: 4435672120383560862}
   targetBounds:
@@ -870,7 +875,9 @@ MonoBehaviour:
   compatibleColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.1}
   targetedColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.15}
   hiddenWhileFilled: []
-  fixedInPlace: 0
+  installedWith:
+  - {fileID: 1596831957836769283}
+  mountedOn: {fileID: 1601351638281650879}
 --- !u!1 &1802711678188587846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,7 +1049,6 @@ MonoBehaviour:
   slotId: ram-0
   componentType: 3
   connector: 5
-  nameLocalizationKey: pc.slot.ram
   technicalLabel: DDR4 DIMM
   installAnchor: {fileID: 1785961774008984965}
   targetBounds:
@@ -1053,7 +1059,8 @@ MonoBehaviour:
   compatibleColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.1}
   targetedColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.15}
   hiddenWhileFilled: []
-  fixedInPlace: 0
+  installedWith: []
+  mountedOn: {fileID: 1601351638281650879}
 --- !u!1 &4964955804609319208
 GameObject:
   m_ObjectHideFlags: 0
@@ -1225,7 +1232,6 @@ MonoBehaviour:
   slotId: psu-0
   componentType: 5
   connector: 3
-  nameLocalizationKey: pc.slot.psu
   technicalLabel: ATX
   installAnchor: {fileID: 3239444139956876358}
   targetBounds:
@@ -1236,7 +1242,8 @@ MonoBehaviour:
   compatibleColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.1}
   targetedColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.15}
   hiddenWhileFilled: []
-  fixedInPlace: 0
+  installedWith: []
+  mountedOn: {fileID: 0}
 --- !u!1 &4790699187601880811
 GameObject:
   m_ObjectHideFlags: 0
@@ -1408,7 +1415,6 @@ MonoBehaviour:
   slotId: storage-0
   componentType: 6
   connector: 6
-  nameLocalizationKey: pc.slot.storage
   technicalLabel: '3.5" SATA'
   installAnchor: {fileID: 3955133174415509234}
   targetBounds:
@@ -1419,7 +1425,8 @@ MonoBehaviour:
   compatibleColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.1}
   targetedColor: {r: 0.35, g: 0.85, b: 0.5, a: 0.15}
   hiddenWhileFilled: []
-  fixedInPlace: 0
+  installedWith: []
+  mountedOn: {fileID: 0}
 --- !u!1 &3474203308855745892
 GameObject:
   m_ObjectHideFlags: 0

@@ -150,9 +150,6 @@ namespace GoLive.PcBuilding
             if (check != PcSlotCheck.Allowed)
                 return check;
 
-            if (slot.IsFixed)
-                return PcSlotCheck.FixedInPlace;
-
             return carry.HasItem ? PcSlotCheck.HandsBusy : PcSlotCheck.Allowed;
         }
 
@@ -232,8 +229,8 @@ namespace GoLive.PcBuilding
         }
 
         // The new-game record, validated as a whole before any item moves: the same snapshot rules a save must pass
-        // (known slots, one item per slot, one slot per item, matching component type and connector), plus the scene
-        // rules only authored content can break.
+        // (known slots, one item per slot, one slot per item, matching component type and connector, every part on an
+        // installed host part), plus the scene rules only authored content can break.
         private bool TryInstallPreinstalled(out string error)
         {
             PcInstalledSlotSnapshot[] records = new PcInstalledSlotSnapshot[preinstalled.Length];
@@ -291,7 +288,7 @@ namespace GoLive.PcBuilding
 
             if (!Assembly.IsValidSnapshot(record, specs))
             {
-                error = "has preinstalled parts that do not fit their slots (a slot used twice, or a wrong component type or connector)";
+                error = "has preinstalled parts that do not fit their slots (a slot used twice, a wrong component type or connector, or a part without the part it is mounted on)";
                 return false;
             }
 

@@ -34,13 +34,17 @@ namespace GoLive.PcBuilding
         NoDedicatedGpu
     }
 
-    // One human-readable finding about the PC: a short title and one line of detail as localization keys. The detail
-    // of InsufficientPower is a format string that takes {0} = RequiredWatts and {1} = AvailableWatts.
+    // One human-readable finding about the PC: the part it is about, a short title and one line of detail as
+    // localization keys. The detail of InsufficientPower is a format string that takes {0} = RequiredWatts and
+    // {1} = AvailableWatts.
     public readonly struct PcDiagnostic
     {
         public PcDiagnosticCode Code { get; }
         public PcDiagnosticSeverity Severity { get; }
         public PcFunction Affects { get; }
+
+        // The missing part, or the part that falls short (the power supply for InsufficientPower).
+        public PcComponentType Component { get; }
         public string TitleKey { get; }
         public string DetailKey { get; }
 
@@ -48,11 +52,12 @@ namespace GoLive.PcBuilding
         public int RequiredWatts { get; }
         public int AvailableWatts { get; }
 
-        private PcDiagnostic(PcDiagnosticCode code, PcDiagnosticSeverity severity, PcFunction affects, string token, int requiredWatts, int availableWatts)
+        private PcDiagnostic(PcDiagnosticCode code, PcDiagnosticSeverity severity, PcFunction affects, PcComponentType component, string token, int requiredWatts, int availableWatts)
         {
             Code = code;
             Severity = severity;
             Affects = affects;
+            Component = component;
             TitleKey = $"pc.diagnostic.{token}.title";
             DetailKey = $"pc.diagnostic.{token}.detail";
             RequiredWatts = requiredWatts;
@@ -64,13 +69,13 @@ namespace GoLive.PcBuilding
         {
             return code switch
             {
-                PcDiagnosticCode.MissingMotherboard => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, "no_motherboard", 0, 0),
-                PcDiagnosticCode.MissingCpu => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, "no_cpu", 0, 0),
-                PcDiagnosticCode.MissingMemory => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, "no_memory", 0, 0),
-                PcDiagnosticCode.MissingPowerSupply => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, "no_psu", 0, 0),
-                PcDiagnosticCode.InsufficientPower => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, "weak_psu", requiredWatts, availableWatts),
-                PcDiagnosticCode.MissingStorage => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.Desktop, "no_storage", 0, 0),
-                PcDiagnosticCode.NoDedicatedGpu => new PcDiagnostic(code, PcDiagnosticSeverity.Limitation, PcFunction.Gaming, "no_gpu", 0, 0),
+                PcDiagnosticCode.MissingMotherboard => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Motherboard, "no_motherboard", 0, 0),
+                PcDiagnosticCode.MissingCpu => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Cpu, "no_cpu", 0, 0),
+                PcDiagnosticCode.MissingMemory => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Ram, "no_memory", 0, 0),
+                PcDiagnosticCode.MissingPowerSupply => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Psu, "no_psu", 0, 0),
+                PcDiagnosticCode.InsufficientPower => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.PowerOn, PcComponentType.Psu, "weak_psu", requiredWatts, availableWatts),
+                PcDiagnosticCode.MissingStorage => new PcDiagnostic(code, PcDiagnosticSeverity.Blocker, PcFunction.Desktop, PcComponentType.Storage, "no_storage", 0, 0),
+                PcDiagnosticCode.NoDedicatedGpu => new PcDiagnostic(code, PcDiagnosticSeverity.Limitation, PcFunction.Gaming, PcComponentType.Gpu, "no_gpu", 0, 0),
                 _ => throw new ArgumentOutOfRangeException(nameof(code), code, "Unknown PC diagnostic.")
             };
         }

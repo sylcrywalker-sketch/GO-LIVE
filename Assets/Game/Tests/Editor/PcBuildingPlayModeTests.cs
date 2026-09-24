@@ -95,7 +95,7 @@ namespace GoLive.Tests
             Assert.That(ItemsOf(GpuItemId), Has.Count.EqualTo(1), "no duplicate GPU");
 
             Vector3 installedAt = gpu.transform.position;
-            yield return Frames(15);
+            yield return PlayModeWait.Frames(15);
             Assert.That(Vector3.Distance(gpu.transform.position, installedAt), Is.LessThan(1e-5f), "installed hardware never falls");
         }
 
@@ -209,7 +209,7 @@ namespace GoLive.Tests
 
             ScrambleGpu(gpu, slot);
             Assert.That(_world.TryLoad(), Is.True);
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             WorldItem loaded = ItemsOf(GpuItemId).Single();
             Assert.That(loaded.Instance.InstanceId, Is.EqualTo(id));
@@ -241,7 +241,7 @@ namespace GoLive.Tests
             for (int i = 0; i < 3; i++)
             {
                 Assert.That(_world.TryLoad(), Is.True, $"load #{i + 1}");
-                yield return null;
+                yield return PlayModeWait.Frames(1);
 
                 WorldItem loaded = ItemsOf(GpuItemId).Single();
                 Assert.That(loaded.Instance.InstanceId, Is.EqualTo(id));
@@ -267,14 +267,14 @@ namespace GoLive.Tests
 
             Assert.That(_world.TrySave(), Is.True);
             Assert.That(_world.TryLoad(), Is.True);
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             Assert.That(_world.Carry.CarriedItem.Instance.InstanceId, Is.EqualTo(id));
             Assert.That(_world.Pc.Assembly.IsSlotOccupied(GpuSlotId), Is.False);
 
             Assert.That(_world.Inventory.TryStoreCarriedItem(), Is.True);
             Assert.That(_world.TrySave(), Is.True);
             Assert.That(_world.TryLoad(), Is.True);
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Assert.That(ItemsOf(GpuItemId).Single().Instance.Location, Is.EqualTo(ItemLocation.Inventory));
             Assert.That(_world.Inventory.Inventory.Contains(id), Is.True);
@@ -302,7 +302,9 @@ namespace GoLive.Tests
                 "unknown slot id",
                 "unsupported pc version",
                 "missing pc section",
-                "blank item id")]
+                "blank item id",
+                "processor on a missing motherboard",
+                "graphics card on a missing motherboard")]
             string corruption)
         {
             yield return new EnterPlayMode(false);
@@ -354,6 +356,12 @@ namespace GoLive.Tests
                 case "unsupported pc version": data.PcAssembly.Version = 2; break;
                 case "missing pc section": json = JsonUtility.ToJson(data).Replace("\"PcAssembly\":" + JsonUtility.ToJson(data.PcAssembly) + ",", string.Empty); break;
                 case "blank item id": record.ItemInstanceId = " "; break;
+                case "processor on a missing motherboard": MoveToInventory(items, records, "motherboard-0", 0); break;
+                case "graphics card on a missing motherboard":
+                    MoveToInventory(items, records, "motherboard-0", 0);
+                    MoveToInventory(items, records, "cpu-0", 1);
+                    MoveToInventory(items, records, "ram-0", 2);
+                    break;
             }
 
             data.Items = items.ToArray();
@@ -423,7 +431,7 @@ namespace GoLive.Tests
             Assert.That(_world.Pc.TryPowerOn().Outcome, Is.EqualTo(PcPowerOnOutcome.Started), "no graphics card never blocks power-on");
 
             Vector3 psuAt = Installed("psu-0").transform.position;
-            yield return Frames(15);
+            yield return PlayModeWait.Frames(15);
             Assert.That(Vector3.Distance(Installed("psu-0").transform.position, psuAt), Is.LessThan(1e-5f), "starter parts never fall");
         }
 
@@ -458,7 +466,7 @@ namespace GoLive.Tests
             for (int i = 0; i < 2; i++)
             {
                 Assert.That(_world.TryLoad(), Is.True, $"load {i + 1}");
-                yield return null;
+                yield return PlayModeWait.Frames(1);
 
                 WorldItem loaded = Scene(id);
                 Assert.That(loaded, Is.SameAs(ram), "the same scene object, never a copy");
@@ -476,7 +484,7 @@ namespace GoLive.Tests
 
             Assert.That(_world.TrySave(), Is.True);
             Assert.That(_world.TryLoad(), Is.True);
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             Assert.That(Installed("ram-0").Instance.InstanceId, Is.EqualTo(id));
             AssertPartInstalledAt(Installed("ram-0"), slot);
             Assert.That(_world.Pc.Capabilities.CanPowerOn, Is.True);
@@ -501,7 +509,7 @@ namespace GoLive.Tests
             for (int i = 0; i < 3; i++)
             {
                 Assert.That(_world.TryLoad(), Is.True);
-                yield return null;
+                yield return PlayModeWait.Frames(1);
 
                 Assert.That(JsonUtility.ToJson(_world.Pc.CaptureSnapshot()), Is.EqualTo(record), $"load {i + 1}: same instances in the same slots");
                 Assert.That(Object.FindObjectsByType<WorldItem>(FindObjectsInactive.Include), Has.Length.EqualTo(sceneItems), "no duplicate item");
@@ -545,23 +553,131 @@ namespace GoLive.Tests
             Assert.That(_world.Pc.Capabilities.GamingGraphicsAvailable, Is.False);
         }
 
-        // The motherboard stays in for now: the processor and memory slots sit on it.
+        // Cases 1-5: the motherboard comes out only once nothing is mounted on it; each refusal names what is still on it,
+        // and then the same board goes into the hands.
         [UnityTest]
-        public IEnumerator TheMotherboardCannotBeTakenOut()
+        public IEnumerator TheMotherboardComesOutOnlyAfterEverythingMountedOnIt()
         {
             yield return new EnterPlayMode(false);
             yield return StartWorld();
 
-            PcComponentSlot slot = Slot("motherboard-0");
-            WorldItem board = Installed("motherboard-0");
+            InstallDeliveredGpu();
+            PcComponentSlot board = Slot("motherboard-0");
+            WorldItem motherboard = Installed("motherboard-0");
+            ItemInstance instance = motherboard.Instance;
+            GameObject cooler = _world.Pc.transform.Find("BuildPresentationRoot/StaticParts/CPU Cooler").gameObject;
+            Assert.That(cooler.activeSelf, Is.True, "the cooler sits on the installed processor");
 
-            Assert.That(slot.IsFixed, Is.True);
-            Assert.That(_world.Pc.CheckRemove(slot, _world.Carry), Is.EqualTo(PcSlotCheck.FixedInPlace));
-            Assert.That(PcSlotCheck.FixedInPlace.MessageKey(), Is.EqualTo("pc.reject.fixed"));
-            Assert.That(_world.Pc.TryRemoveToCarry(slot, _world.Carry), Is.False);
-            Assert.That(_world.Carry.HasItem, Is.False);
-            AssertPartInstalledAt(board, slot);
-            Assert.That(_world.Pc.Capabilities.HasMotherboard, Is.True);
+            AssertMotherboardStillCarries("cpu-0", "ram-0", "gpu-0");
+
+            TakeOutAndStore("cpu-0");
+            Assert.That(cooler.activeSelf, Is.False, "the cooler came off with the processor");
+            AssertMotherboardStillCarries("ram-0", "gpu-0");
+
+            TakeOutAndStore("ram-0");
+            AssertMotherboardStillCarries("gpu-0");
+
+            TakeOutAndStore("gpu-0");
+            Assert.That(_world.Pc.CheckRemove(board, _world.Carry), Is.EqualTo(PcSlotCheck.Allowed), "nothing is mounted on it any more");
+            Assert.That(_world.Pc.TryRemoveToCarry(board, _world.Carry), Is.True);
+
+            Assert.That(_world.Carry.CarriedItem, Is.SameAs(motherboard), "slot -> hands, the same board");
+            Assert.That(motherboard.Instance, Is.SameAs(instance));
+            Assert.That(instance.Location, Is.EqualTo(ItemLocation.Carried));
+            Assert.That(motherboard.transform.parent, Is.SameAs(_world.Carry.transform.GetChild(0)), "on the carry anchor");
+            Assert.That(_world.Pc.Assembly.IsSlotOccupied("motherboard-0"), Is.False);
+            Assert.That(new[] { "cpu-0", "ram-0", "gpu-0" }.Select(_world.Pc.Assembly.IsSlotPresent), Is.All.False, "its slots went with it");
+            Assert.That(_world.Pc.Capabilities.HasMotherboard || _world.Pc.Capabilities.CanPowerOn, Is.False);
+            Assert.That(Object.FindObjectsByType<WorldItem>(FindObjectsInactive.Include).Count(item => item.Instance != null && item.Instance.InstanceId == instance.InstanceId), Is.EqualTo(1), "no copy");
+        }
+
+        // Cases 6, 7 and 9: the removed board keeps its identity in the Inventory and through two loads; back in, its slots
+        // are there again and take their parts.
+        [UnityTest]
+        public IEnumerator RemovedMotherboardKeepsItsIdentityThroughTheInventoryAndSavesAndGoesBackIn()
+        {
+            yield return new EnterPlayMode(false);
+            yield return StartWorld();
+
+            WorldItem cpu = TakeOutAndStore("cpu-0");
+            WorldItem ram = TakeOutAndStore("ram-0");
+            WorldItem board = TakeOutAndStore("motherboard-0");
+            string id = board.Instance.InstanceId;
+
+            Assert.That(board.Instance.Location, Is.EqualTo(ItemLocation.Inventory), "hands -> Inventory");
+            Assert.That(_world.Inventory.Inventory.Contains(id), Is.True);
+            Assert.That(_world.TrySave(), Is.True);
+
+            GameSaveData saved = _world.ReadSave();
+            Assert.That(saved.Items.Single(item => item.InstanceId == id).Location, Is.EqualTo(ItemLocation.Inventory));
+            Assert.That(saved.PcAssembly.InstalledSlots.Select(record => record.SlotId), Is.EquivalentTo(new[] { "psu-0", "storage-0" }));
+
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.That(_world.TryLoad(), Is.True, $"load {i + 1}");
+                yield return PlayModeWait.Frames(1);
+
+                Assert.That(Scene(id), Is.SameAs(board), "the same scene object, never a copy");
+                Assert.That(board.Instance.Location, Is.EqualTo(ItemLocation.Inventory));
+                Assert.That(_world.Inventory.Inventory.Contains(id), Is.True);
+                Assert.That(_world.Pc.Assembly.IsSlotOccupied("motherboard-0"), Is.False);
+                Assert.That(_world.Pc.Assembly.IsSlotPresent("cpu-0"), Is.False, "no processor socket without the board");
+                Assert.That(Slot("motherboard-0").InstallAnchor.GetComponentsInChildren<WorldItem>(true), Is.Empty);
+                Assert.That(_world.Pc.Capabilities.CanPowerOn, Is.False);
+            }
+
+            Assert.That(_world.Inventory.TryTakeToCarry(id), Is.True);
+            Assert.That(_world.Pc.TryInstallCarried(Slot("motherboard-0"), _world.Carry), Is.True, "the same board goes back in");
+            Assert.That(Installed("motherboard-0"), Is.SameAs(board));
+            Assert.That(board.Instance.InstanceId, Is.EqualTo(id));
+
+            foreach ((string slotId, WorldItem part) in new[] { ("cpu-0", cpu), ("ram-0", ram) })
+            {
+                Assert.That(_world.Pc.Assembly.IsSlotPresent(slotId), Is.True, $"{slotId} is there again");
+                Assert.That(_world.Inventory.TryTakeToCarry(part.Instance.InstanceId), Is.True, slotId);
+                Assert.That(_world.Pc.CheckInstall(Slot(slotId), _world.Carry), Is.EqualTo(PcSlotCheck.Allowed), slotId);
+                Assert.That(_world.Pc.TryInstallCarried(Slot(slotId), _world.Carry), Is.True, slotId);
+            }
+
+            Assert.That(_world.Pc.Capabilities.CanPowerOn && _world.Pc.Capabilities.CanUseDesktop, Is.True, "the starter PC works again");
+            Assert.That(_world.TrySave(), Is.True);
+            Assert.That(_world.TryLoad(), Is.True);
+            yield return PlayModeWait.Frames(1);
+
+            Assert.That(_world.Pc.Assembly.InstalledComponents.Select(component => component.InstanceId), Is.EquivalentTo(_world.StarterItemIds), "every starter part in its slot as itself");
+
+            foreach (PcInstalledComponent component in _world.Pc.Assembly.InstalledComponents)
+                AssertPartInstalledAt(Installed(component.SlotId), Slot(component.SlotId));
+        }
+
+        // Case 8: with the board out, the processor, memory and graphics card stay in the hands and say what they wait for.
+        [UnityTest]
+        public IEnumerator NothingGoesOnAMissingMotherboard()
+        {
+            yield return new EnterPlayMode(false);
+            yield return StartWorld();
+
+            WorldItem gpu = DeliverGpu();
+            Assert.That(_world.Carry.TryCarry(gpu), Is.True);
+            Assert.That(_world.Inventory.TryStoreCarriedItem(), Is.True);
+            WorldItem cpu = TakeOutAndStore("cpu-0");
+            WorldItem ram = TakeOutAndStore("ram-0");
+            TakeOutAndStore("motherboard-0");
+
+            foreach ((string slotId, WorldItem part) in new[] { ("cpu-0", cpu), ("ram-0", ram), ("gpu-0", gpu) })
+            {
+                Assert.That(_world.Inventory.TryTakeToCarry(part.Instance.InstanceId), Is.True, slotId);
+                Assert.That(_world.Pc.CheckInstall(Slot(slotId), _world.Carry), Is.EqualTo(PcSlotCheck.HostMissing), slotId);
+                Assert.That(_world.Pc.TryInstallCarried(Slot(slotId), _world.Carry), Is.False, slotId);
+                Assert.That(_world.Carry.CarriedItem, Is.SameAs(part), $"{slotId}: still in the hands");
+                Assert.That(part.Instance.Location, Is.EqualTo(ItemLocation.Carried), slotId);
+                Assert.That(_world.Pc.Assembly.CheckPart(part.Definition.PcComponent, out string waiting), Is.EqualTo(PcSlotCheck.HostMissing), slotId);
+                Assert.That(waiting, Is.EqualTo(slotId));
+                Assert.That(_world.Inventory.TryStoreCarriedItem(), Is.True, slotId);
+            }
+
+            Assert.That(_world.Pc.Assembly.InstalledComponents.Select(component => component.SlotId), Is.EquivalentTo(new[] { "psu-0", "storage-0" }), "nothing was recorded");
+            Assert.That(new[] { "cpu-0", "ram-0", "gpu-0" }.Select(slotId => Slot(slotId).InstallAnchor.childCount), Is.All.Zero, "and nothing sits on the anchors");
         }
 
         // The new-game install runs once per lifetime: disabling and re-enabling the PC duplicates nothing.
@@ -575,9 +691,9 @@ namespace GoLive.Tests
             GameObject pc = _world.Pc.gameObject;
 
             pc.SetActive(false);
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             pc.SetActive(true);
-            yield return Frames(2);
+            yield return PlayModeWait.Frames(2);
 
             Assert.That(JsonUtility.ToJson(_world.Pc.CaptureSnapshot()), Is.EqualTo(record));
             Assert.That(_world.Pc.Assembly.InstalledComponents, Has.Count.EqualTo(5));
@@ -586,11 +702,12 @@ namespace GoLive.Tests
 
         // ---------------------------------------------------------------- helpers
 
+        // Waits for the PC's own Start: its new-game parts are installed only then.
         private IEnumerator StartWorld()
         {
             _world = SaveTestWorld.Create(2500);
             _world.StartPlayModeRuntime();
-            yield return null;
+            yield return PlayModeWait.Until(() => _world.Pc.IsReady, "the Student PC to install its new-game parts");
         }
 
         private WorldItem DeliverGpu()
@@ -666,6 +783,38 @@ namespace GoLive.Tests
                 Assert.That(_world.Carry.TryCarry(gpu), Is.True);
 
             Assert.That(_world.Carry.TryPlace(new Vector3(2f, 0.1f, -2f), Quaternion.identity), Is.True);
+        }
+
+        // Slot -> hands -> Inventory, the way the player takes a part out and puts it away.
+        private WorldItem TakeOutAndStore(string slotId)
+        {
+            WorldItem part = Installed(slotId);
+            Assert.That(_world.Pc.TryRemoveToCarry(Slot(slotId), _world.Carry), Is.True, slotId);
+            Assert.That(_world.Inventory.TryStoreCarriedItem(), Is.True, slotId);
+            return part;
+        }
+
+        // The motherboard refuses to come out while these slots hold parts, and says so without changing anything.
+        private void AssertMotherboardStillCarries(params string[] slotIds)
+        {
+            PcComponentSlot board = Slot("motherboard-0");
+            string label = string.Join(", ", slotIds);
+
+            Assert.That(_world.Pc.CheckRemove(board, _world.Carry), Is.EqualTo(PcSlotCheck.MountedPartsInstalled), label);
+            Assert.That(_world.Pc.Assembly.InstalledOn("motherboard-0").Select(component => component.SlotId), Is.EqualTo(slotIds), "what still has to come out");
+            Assert.That(_world.Pc.TryRemoveToCarry(board, _world.Carry), Is.False, label);
+            Assert.That(_world.Carry.HasItem, Is.False, label);
+            AssertPartInstalledAt(Installed("motherboard-0"), board);
+        }
+
+        // The part in this slot saved in the Inventory instead: a consistent save except for whatever sat on it.
+        private static void MoveToInventory(List<ItemSaveData> items, List<PcInstalledSlotSnapshot> records, string slotId, int index)
+        {
+            PcInstalledSlotSnapshot record = records.Single(candidate => candidate.SlotId == slotId);
+            ItemSaveData item = items.Single(candidate => candidate.InstanceId == record.ItemInstanceId);
+            records.Remove(record);
+            item.Location = ItemLocation.Inventory;
+            item.InventoryIndex = index;
         }
 
         private PcComponentSlot Slot(string slotId)
@@ -754,12 +903,6 @@ namespace GoLive.Tests
             return Object.FindObjectsByType<WorldItem>(FindObjectsInactive.Include)
                 .Where(item => item != null && item.IsRuntime && item.Instance != null)
                 .ToList();
-        }
-
-        private static IEnumerator Frames(int count)
-        {
-            for (int i = 0; i < count; i++)
-                yield return null;
         }
     }
 }

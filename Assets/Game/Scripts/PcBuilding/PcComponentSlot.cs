@@ -15,9 +15,10 @@ namespace GoLive.PcBuilding
         Targeted
     }
 
-    // One place in a PC where a component goes, authored in the PC prefab. Presentation only: where the installed
-    // part sits (InstallAnchor, also the ghost pose), where the pointer can pick the slot, its highlight and the case
-    // parts the component replaces. Which item fills it is the PcAssembly's record, never this object's.
+    // One place in a PC where a component goes, authored in the PC prefab. Its rule data (ID, component type, connector,
+    // the slot it is mounted on) becomes the assembly's PcSlotSpec; the rest is presentation: where the installed part sits
+    // (InstallAnchor, also the ghost pose), where the pointer can pick the slot, its highlight and the case parts that
+    // come and go with the part. Which item fills it is the PcAssembly's record, never this object's.
     [DisallowMultipleComponent]
     public sealed class PcComponentSlot : MonoBehaviour
     {
@@ -26,9 +27,7 @@ namespace GoLive.PcBuilding
         [SerializeField] private string slotId;
         [SerializeField] private PcComponentType componentType;
         [SerializeField] private PcConnector connector;
-        [SerializeField] private string nameLocalizationKey;
-
-        [Tooltip("Industry name shown under the friendly slot name, e.g. PCIe x16. Not translated.")]
+        [Tooltip("Industry name shown after the part's own name in PC Build Mode, e.g. PCIe x16. Not translated.")]
         [SerializeField] private string technicalLabel;
 
         [Tooltip("The installed component's root sits exactly here; the install ghost uses the same pose.")]
@@ -45,18 +44,20 @@ namespace GoLive.PcBuilding
         [Tooltip("Case parts the installed component replaces (e.g. expansion slot covers behind a graphics card bracket).")]
         [SerializeField] private GameObject[] hiddenWhileFilled = Array.Empty<GameObject>();
 
-        [Tooltip("The installed part can't be taken out for now. The motherboard: the processor and memory slots sit on it and do not move with it yet.")]
-        [SerializeField] private bool fixedInPlace;
+        [Tooltip("Presentation that belongs with the installed part and is no item of its own (the cooler on the processor): shown only while a part is installed here.")]
+        [SerializeField] private GameObject[] installedWith = Array.Empty<GameObject>();
+
+        [Tooltip("The slot whose part this one is mounted on: the processor socket, memory and expansion slots sit on the motherboard. A part goes in here only while that part is installed, and that part comes out only once this slot is empty. Empty for a slot on the case.")]
+        [SerializeField] private PcComponentSlot mountedOn;
 
         public string SlotId => slotId;
         public PcComponentType ComponentType => componentType;
         public PcConnector Connector => connector;
-        public string NameLocalizationKey => nameLocalizationKey;
         public string TechnicalLabel => technicalLabel;
         public Transform InstallAnchor => installAnchor;
         public Bounds TargetBounds => targetBounds;
-        public bool IsFixed => fixedInPlace;
-        public PcSlotSpec Spec => new(slotId, componentType, connector);
+        public PcComponentSlot MountedOn => mountedOn;
+        public PcSlotSpec Spec => new(slotId, componentType, connector, mountedOn != null ? mountedOn.SlotId : null);
 
         private MaterialPropertyBlock _highlightBlock;
         private bool _occupied;
@@ -73,8 +74,8 @@ namespace GoLive.PcBuilding
                 error = "needs a lowercase Slot ID";
             else if (connector == PcConnector.None)
                 error = "needs a connector";
-            else if (string.IsNullOrWhiteSpace(nameLocalizationKey))
-                error = "needs a name localization key";
+            else if (string.IsNullOrWhiteSpace(technicalLabel))
+                error = "needs a technical label";
             else if (installAnchor == null || !installAnchor.IsChildOf(transform))
                 error = "needs an Install Anchor inside the slot";
             else if (targetBounds.size.x <= 0f || targetBounds.size.y <= 0f || targetBounds.size.z <= 0f)
@@ -83,6 +84,10 @@ namespace GoLive.PcBuilding
                 error = "needs a highlight renderer";
             else if (Array.IndexOf(hiddenWhileFilled, null) >= 0)
                 error = "has an empty Hidden While Filled entry";
+            else if (Array.IndexOf(installedWith, null) >= 0)
+                error = "has an empty Installed With entry";
+            else if (mountedOn == this)
+                error = "is mounted on itself";
             else
                 error = null;
 
@@ -145,6 +150,13 @@ namespace GoLive.PcBuilding
             {
                 if (hiddenWhileFilled[i] != null)
                     hiddenWhileFilled[i].SetActive(!filled);
+            }
+
+            // Only a real part brings its companions: the install ghost shows the part alone.
+            for (int i = 0; i < installedWith.Length; i++)
+            {
+                if (installedWith[i] != null)
+                    installedWith[i].SetActive(_occupied);
             }
         }
 

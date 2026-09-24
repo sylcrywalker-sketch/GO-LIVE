@@ -37,6 +37,9 @@ namespace GoLive.PcBuilding
         public static string RemovePromptKey(this PcComponentType type) => "pc.remove." + Token(type);
         public static string NameKey(this PcComponentType type) => "pc.component." + Token(type);
 
+        // The part's name inside a sentence, as the thing acted on: "Сначала снимите {0}" / "Remove {0} first".
+        public static string ObjectNameKey(this PcComponentType type) => "pc.component." + Token(type) + ".object";
+
         private static string Token(PcComponentType type)
         {
             return type switch

@@ -34,10 +34,7 @@ namespace GoLive.Tests
         private const string GpuDefinition = "Item_BudgetGPU";
 
         private SceneSetup[] _previousScenes;
-        private InputSettings.EditorInputBehaviorInPlayMode _editorInput;
-        private InputSettings.BackgroundBehavior _backgroundBehavior;
-        private Keyboard _keyboard;
-        private Mouse _mouse;
+        private VirtualInput _input;
         private Vector2 _pointer;
 
         private PcWorkbenchBehaviour _workbench;
@@ -77,26 +74,11 @@ namespace GoLive.Tests
             SaveTestWorld.RestoreScene(_previousScenes);
         }
 
-        [SetUp]
-        public void RememberInputSettings()
-        {
-            _editorInput = InputSystem.settings.editorInputBehaviorInPlayMode;
-            _backgroundBehavior = InputSystem.settings.backgroundBehavior;
-        }
-
         [UnityTearDown]
         public IEnumerator TearDown()
         {
-            if (_keyboard != null)
-                InputSystem.RemoveDevice(_keyboard);
-
-            if (_mouse != null)
-                InputSystem.RemoveDevice(_mouse);
-
-            _keyboard = null;
-            _mouse = null;
-            InputSystem.settings.editorInputBehaviorInPlayMode = _editorInput;
-            InputSystem.settings.backgroundBehavior = _backgroundBehavior;
+            _input?.Dispose();
+            _input = null;
 
             if (Application.isPlaying)
                 yield return new ExitPlayMode();
@@ -136,10 +118,10 @@ namespace GoLive.Tests
                 gameplayRoot.AssertUnchanged("while the PC comes over");
                 Assert.That(Vector3.Distance(_camera.transform.position, eye), Is.LessThan(1e-4f), "the camera stays in the player's head");
                 travelled = Mathf.Max(travelled, Vector3.Distance(root.localPosition, restPosition) * _workbench.transform.lossyScale.x);
-                yield return null;
+                yield return PlayModeWait.Frames(1);
             }
 
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             gameplayRoot.AssertUnchanged("in the build view");
             Assert.That(_workbench.Phase, Is.EqualTo(PcBuildModePhase.Open));
             Assert.That(travelled, Is.GreaterThan(0.3f), "the PC itself came over to the player");
@@ -161,7 +143,7 @@ namespace GoLive.Tests
 
             Vector3 standing = _player.transform.position;
             yield return Hold(Key.W, Key.LeftCtrl);
-            yield return Frames(12);
+            yield return PlayModeWait.Frames(12);
             yield return Release();
             Assert.That(Vector3.Distance(Flat(_player.transform.position), Flat(standing)), Is.LessThan(0.005f), "W does not walk");
             Assert.That(_player.IsCrouching, Is.False, "Ctrl does not crouch");
@@ -179,10 +161,10 @@ namespace GoLive.Tests
             while (_workbench.Phase == PcBuildModePhase.Closing)
             {
                 gameplayRoot.AssertUnchanged("while the PC goes back");
-                yield return null;
+                yield return PlayModeWait.Frames(1);
             }
 
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             gameplayRoot.AssertUnchanged("after the build view");
             Assert.That(_workbench.Phase, Is.EqualTo(PcBuildModePhase.Closed));
             Assert.That(root.localPosition.Equals(restPosition) && root.localRotation.Equals(restRotation), Is.True, "the PC is exactly back in its place");
@@ -199,7 +181,7 @@ namespace GoLive.Tests
             Assert.That(Field<GamePauseController>(_router, "pause").IsPaused, Is.False, "Esc went to the build mode, not the pause menu");
             AssertPose(pose);
 
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
             yield return Press(Key.B, Action(_interactor, "specialAction"));
             yield return WaitForPhase(PcBuildModePhase.Open);
             yield return Press(Key.B, Action(_interactor, "specialAction"));
@@ -232,15 +214,15 @@ namespace GoLive.Tests
             float deadline = Time.realtimeSinceStartup + 3f;
 
             while (Amount("ApproachAmount") < 0.5f && Time.realtimeSinceStartup < deadline)
-                yield return null;
+                yield return PlayModeWait.Frames(1);
 
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             Vector3 before = root.position;
             Quaternion turnedBefore = root.rotation;
             Quaternion aimBefore = _camera.transform.rotation;
             Assert.That(Vector3.Distance(before, root.parent.TransformPoint(restPosition)), Is.GreaterThan(0.2f), "half-way: a jump back would be obvious");
             _workbench.Close();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             // One frame moves the PC at most a few centimetres (its step is clamped to 1/30 s); a jump would be tenths
             // of a metre. Batch frame times vary, so the bound is physical rather than the last step seen.
@@ -344,8 +326,10 @@ namespace GoLive.Tests
             Assert.That(Note(Row(motherboard)), Is.EqualTo(_localization.Format("pc.part.slot_taken", _localization.Text("pc.component.motherboard"))), "its place is taken by the starter board");
             Assert.That(Note(Row(banana)), Is.EqualTo(_localization.Text("pc.part.not_part")));
             Assert.That(RowAlpha(Row(banana)), Is.LessThan(1f), "non-parts are faded");
+            Assert.That(ShownRows(), Is.EqualTo(new[] { gpu, motherboard, banana }.Select(item => item.Instance.InstanceId)), "what fits right now first, other PC parts next, the rest last");
+            Assert.That(_inventory.Inventory.Items.Select(item => item.InstanceId), Is.EqualTo(new[] { gpu, banana, motherboard }.Select(item => item.Instance.InstanceId)), "the Inventory's own order is untouched");
             Assert.That(highlight.enabled, Is.True, "the empty slot shows where a part can go");
-            Assert.That(_hud.Status, Does.Contain(gpuName).And.Contain(_localization.Text("pc.workbench.missing")), "the status says what is missing");
+            Assert.That(ChecklistRow(gpuName), Does.Contain(MissingMark), "the status marks the missing graphics card");
 
             yield return Click(Centre(Row(banana).transform));
             Assert.That(_carry.HasItem, Is.False, "a banana stays in the Inventory");
@@ -387,7 +371,9 @@ namespace GoLive.Tests
             Assert.That(_workbench.IsGhostVisible, Is.False);
             Assert.That(highlight.enabled, Is.False, "nothing over an installed part");
             Assert.That(Note(Row(motherboard)), Is.Not.Empty);
-            Assert.That(_hud.Status, Does.Contain(_localization.Text(gpu.Definition.NameLocalizationKey)));
+            Assert.That(_hud.Status, Does.StartWith(Verdict("pc.status.ready_for_games")), "the card makes the PC ready for games");
+            Assert.That(ChecklistRow(gpuName), Does.Contain(InstalledMark));
+            Assert.That(_hud.Detail, Does.StartWith(_localization.Text(gpu.Definition.NameLocalizationKey)).And.Contain("PCIe x16"), "the part first, its technical label after it");
             Assert.That(_hud.Action, Does.StartWith("[F]").And.Contain(_localization.Text("pc.remove.gpu")));
 
             yield return Press(Key.F, Action(_interactor, "useAction"));
@@ -463,7 +449,7 @@ namespace GoLive.Tests
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = probe;
             canvas.planeDistance = probe.nearClipPlane + 0.05f;
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             Canvas.ForceUpdateCanvases();
 
             foreach (string block in new[] { "StatusPanel", "Card", "PartsPanel" })
@@ -513,7 +499,7 @@ namespace GoLive.Tests
 
             while ((_workbench.Phase == PcBuildModePhase.Opening || hiddenFrames == 0) && Time.realtimeSinceStartup < deadline)
             {
-                yield return null;
+                yield return PlayModeWait.Frames(1);
                 probe.transform.SetPositionAndRotation(_camera.transform.position, _camera.transform.rotation);
 
                 if (panel.gameObject.activeSelf)
@@ -546,10 +532,10 @@ namespace GoLive.Tests
             while (_workbench.Phase == PcBuildModePhase.Closing)
             {
                 back |= panel.gameObject.activeSelf && Amount("CoverAmount") > 0.5f;
-                yield return null;
+                yield return PlayModeWait.Frames(1);
             }
 
-            yield return null;
+            yield return PlayModeWait.Frames(1);
             Dispose(probe);
             Assert.That(back, Is.True, "the panel comes back the same way");
             Assert.That(panel.gameObject.activeSelf, Is.True);
@@ -590,7 +576,7 @@ namespace GoLive.Tests
             Assert.That(gpu.Instance.Location, Is.EqualTo(ItemLocation.Installed), "hands -> slot");
             Assert.That(_pc.Capabilities.GamingGraphicsAvailable, Is.True, "F: after the card");
             Assert.That(_pc.Capabilities.CanPlayCriticalStrike, Is.True, "with every starter part still installed");
-            Assert.That(_hud.Status, Does.Not.Contain(_localization.Text("pc.diagnostic.no_gpu.title")), "the limitation is gone from the status");
+            Assert.That(_hud.Status, Does.Not.Contain(_localization.Text("pc.diagnostic.no_gpu.detail")), "the limitation is gone from the status");
             Assert.That(gpu.transform.parent, Is.SameAs(_slot.InstallAnchor));
             Assert.That(gpu.transform.IsChildOf(root), Is.True, "the real GPU travels with the presented PC");
             Assert.That(Gpus(), Has.Length.EqualTo(1));
@@ -613,7 +599,7 @@ namespace GoLive.Tests
             for (int i = 0; i < 2; i++)
             {
                 Load(presented);
-                yield return Frames(3);
+                yield return PlayModeWait.Frames(3);
 
                 WorldItem loaded = Gpus().Single();
                 Assert.That(loaded.Instance.InstanceId, Is.EqualTo(id), $"load {i + 1}: the same GPU");
@@ -677,18 +663,24 @@ namespace GoLive.Tests
             Assert.That(_workbench.Open(), Is.True);
             yield return WaitForPhase(PcBuildModePhase.Open);
 
+            // What the PC can do, then the one thing that limits it, then the parts: each fact once.
             string status = _hud.Status;
             TestContext.WriteLine(status);
+            Assert.That(_hud.StatusTitle, Is.EqualTo(_localization.Text("pc.status.title")));
+            Assert.That(status, Does.StartWith(Verdict("pc.status.ready")), "it starts and reaches the desktop");
+            Assert.That(Occurrences(status, _localization.Text("pc.diagnostic.no_gpu.detail")), Is.EqualTo(1), "what the missing card costs, once");
 
             foreach (string slotId in StarterSlots)
             {
                 _pc.TryGetSlot(slotId, out PcComponentSlot slot);
-                _pc.TryGetInstalledItem(slot, out WorldItem part);
-                Assert.That(status, Does.Contain($"{_localization.Text(slot.ComponentType.NameKey())} — {_localization.Text(part.Definition.NameLocalizationKey)}"), slotId);
+                string name = _localization.Text(slot.ComponentType.NameKey());
+                Assert.That(ChecklistRow(name), Does.Contain(InstalledMark), slotId);
+                Assert.That(Occurrences(status, name), Is.EqualTo(1), $"{slotId}: one row, no repeated diagnostics");
             }
 
-            Assert.That(status, Does.Contain($"{_localization.Text("pc.component.gpu")} — {_localization.Text("pc.workbench.missing")}"));
-            Assert.That(status, Does.Contain(_localization.Text("pc.diagnostic.no_gpu.title")).And.Contain(_localization.Text("pc.diagnostic.no_gpu.detail")));
+            Assert.That(ChecklistRow(_localization.Text("pc.component.gpu")), Does.Contain(MissingMark));
+            Assert.That(Occurrences(status, _localization.Text("pc.component.gpu")), Is.EqualTo(1));
+            Assert.That(status, Does.Not.Contain(_localization.Text("pc.diagnostic.no_gpu.title")), "no second, verbose paragraph about the same card");
             Assert.That(status, Does.Not.Contain("starter-").And.Not.Contain("-0").And.Not.Contain(nameof(PcDiagnosticCode.NoDedicatedGpu)), "no internal IDs or enum names");
 
             foreach (WorldItem part in WorldItems().Where(item => !item.IsRuntime))
@@ -725,7 +717,8 @@ namespace GoLive.Tests
             Assert.That(instance.Location, Is.EqualTo(ItemLocation.Carried));
             Assert.That(_pc.Capabilities.CanPowerOn, Is.False);
             Assert.That(_pc.Capabilities.Diagnostics.First().Code, Is.EqualTo(PcDiagnosticCode.MissingMemory));
-            Assert.That(_hud.Status, Does.Contain(_localization.Text("pc.diagnostic.no_memory.title")), "the status says why the PC cannot start");
+            Assert.That(_hud.Status, Does.StartWith(Verdict("pc.status.wont_start")).And.Contain(_localization.Text("pc.status.install_marked")), "the status says the PC cannot start");
+            Assert.That(ChecklistRow(_localization.Text("pc.component.ram")), Does.Contain(MissingMark), "and marks what it needs");
 
             yield return Click(Centre(Field<InventoryItemView>(_parts, "heldItem").transform));
             Assert.That(_inventory.Inventory.Contains(id), Is.True, "hands -> Inventory");
@@ -738,7 +731,7 @@ namespace GoLive.Tests
             {
                 Assert.That(SaveTo(path), Is.True);
                 Assert.That(LoadFrom(path), Is.True);
-                yield return Frames(3);
+                yield return PlayModeWait.Frames(3);
 
                 Assert.That(_inventory.Inventory.Contains(id), Is.True, "loaded into the Inventory");
                 Assert.That(WorldItems().Single(item => item.Instance.InstanceId == id), Is.SameAs(ram));
@@ -764,7 +757,7 @@ namespace GoLive.Tests
 
                 Assert.That(SaveTo(path), Is.True);
                 Assert.That(LoadFrom(path), Is.True);
-                yield return Frames(3);
+                yield return PlayModeWait.Frames(3);
 
                 Assert.That(_pc.TryGetInstalledItem(ramSlot, out WorldItem loaded) && loaded.Instance.InstanceId == id, Is.True, "the same module in the same slot");
                 Assert.That(_pc.Capabilities.CanPowerOn, Is.True);
@@ -778,34 +771,134 @@ namespace GoLive.Tests
             }
         }
 
-        // The motherboard is fixed for now: the Workbench explains instead of taking it out.
+        // Case D in the real GL scene: the Workbench names what still sits on the motherboard, takes it out once nothing does,
+        // and brings it back; its slots come and go with it.
         [UnityTest]
-        public IEnumerator TheWorkbenchExplainsThatTheMotherboardStaysIn()
+        public IEnumerator TheMotherboardComesOutAfterWhatIsMountedOnItAndGoesBackIn()
         {
             yield return new EnterPlayMode(false);
             yield return Boot();
             yield return FaceThePc();
 
             Assert.That(_pc.TryGetSlot("motherboard-0", out PcComponentSlot board), Is.True);
+            Assert.That(_pc.TryGetSlot("cpu-0", out PcComponentSlot cpuSlot), Is.True);
+            Assert.That(_pc.TryGetSlot("ram-0", out PcComponentSlot ramSlot), Is.True);
+            Assert.That(_pc.TryGetInstalledItem(board, out WorldItem motherboard), Is.True);
+            Assert.That(_pc.TryGetInstalledItem(cpuSlot, out WorldItem cpu), Is.True);
+            Assert.That(_pc.TryGetInstalledItem(ramSlot, out WorldItem ram), Is.True);
+            string boardId = motherboard.Instance.InstanceId;
+            GameObject cooler = _presentation.PresentationRoot.Find("StaticParts/CPU Cooler").gameObject;
+
             Assert.That(_workbench.Open(), Is.True);
             yield return WaitForPhase(PcBuildModePhase.Open);
 
             yield return PointAt(board);
             Assert.That(_workbench.TargetSlot, Is.SameAs(board), "the bare board answers the pointer");
-            Assert.That(_hud.Action, Is.EqualTo(_localization.Text("pc.reject.fixed")));
+            string cpuAndMemory = _localization.Format("pc.list.and", _localization.Text("pc.component.cpu.object"), _localization.Text("pc.component.ram.object"));
+            Assert.That(_hud.Action, Is.EqualTo(_localization.Format("pc.reject.remove_first", cpuAndMemory)), "what has to come out first, in words");
             yield return Press(Key.F, Action(_interactor, "useAction"));
-
-            Assert.That(_carry.HasItem, Is.False);
+            Assert.That(_carry.HasItem, Is.False, "F changes nothing while parts sit on the board");
             Assert.That(_pc.Assembly.IsSlotOccupied("motherboard-0"), Is.True);
-            Assert.That(_pc.Capabilities.HasMotherboard, Is.True);
+
+            yield return TakeOutAndPutAway(cpuSlot, cpu);
+            Assert.That(cooler.activeSelf, Is.False, "the cooler came off with the processor");
+            yield return PointAt(board);
+            Assert.That(_hud.Action, Is.EqualTo(_localization.Format("pc.reject.remove_first", _localization.Text("pc.component.ram.object"))));
+
+            yield return TakeOutAndPutAway(ramSlot, ram);
+            yield return PointAt(board);
+            Assert.That(_hud.Action, Is.EqualTo($"[F] {_localization.Text("pc.remove.motherboard")}"), "nothing is on it any more");
+            yield return TakeOutAndPutAway(board, motherboard);
+
+            Assert.That(motherboard.Instance.InstanceId, Is.EqualTo(boardId));
+            Assert.That(motherboard.Instance.Location, Is.EqualTo(ItemLocation.Inventory));
+            Assert.That(_hud.Status, Does.StartWith(Verdict("pc.status.wont_start")));
+            Assert.That(ChecklistRow(_localization.Text("pc.component.motherboard")), Does.Contain(MissingMark));
+            Assert.That(Field<Renderer>(cpuSlot, "highlight").enabled || Field<Renderer>(ramSlot, "highlight").enabled || Field<Renderer>(_slot, "highlight").enabled, Is.False, "no socket or slot is shown without the board");
+            yield return PointAt(cpuSlot);
+            Assert.That(_workbench.TargetSlot, Is.Not.SameAs(cpuSlot), "the processor socket is gone with the board");
+
+            string needsBoard = _localization.Format("pc.reject.install_first", _localization.Text("pc.component.motherboard.object"));
+            Assert.That(Note(Row(cpu)), Is.EqualTo(needsBoard), "the parts panel says what the processor waits for");
+            Assert.That(Note(Row(motherboard)), Is.EqualTo(_localization.Format("pc.part.installable", _localization.Text("pc.component.motherboard"))));
+            Assert.That(ShownRows().First(), Is.EqualTo(boardId), "the board is what fits now");
+
+            yield return Click(Centre(Row(cpu).transform));
+            Assert.That(_carry.CarriedItem, Is.SameAs(cpu));
+            Assert.That(_hud.Action, Is.EqualTo(_localization.Format("pc.reject.install_first", _localization.Text("pc.component.motherboard.object"))), "the part in the hands says what it waits for");
+            yield return Click(Centre(Field<InventoryItemView>(_parts, "heldItem").transform));
+
+            yield return PutIn(board, motherboard);
+            Assert.That(_pc.Assembly.IsSlotPresent("cpu-0") && _pc.Assembly.IsSlotPresent("ram-0") && _pc.Assembly.IsSlotPresent("gpu-0"), Is.True, "the board brings its slots back");
+            Assert.That(motherboard.Instance.InstanceId, Is.EqualTo(boardId), "the same board");
+            yield return PutIn(cpuSlot, cpu);
+            Assert.That(cooler.activeSelf, Is.True, "and the cooler is back on the processor");
+            yield return PutIn(ramSlot, ram);
+
+            Assert.That(_pc.Capabilities.CanPowerOn && _pc.Capabilities.CanUseDesktop, Is.True);
+            Assert.That(_hud.Status, Does.StartWith(Verdict("pc.status.ready")));
+            Assert.That(_pc.Assembly.InstalledComponents.Select(component => component.SlotId), Is.EqualTo(StarterSlots));
 
             _workbench.Close();
             yield return WaitForPhase(PcBuildModePhase.Closed);
+            Assert.That(WorldItems().Count(item => item.Instance.InstanceId == boardId), Is.EqualTo(1), "one board, never a copy");
         }
 
         // ---------------------------------------------------------------- helpers
 
         private static readonly string[] StarterSlots = { "motherboard-0", "cpu-0", "ram-0", "psu-0", "storage-0" };
+        private const string InstalledMark = "\u25CF";
+        private const string MissingMark = "\u25CB";
+
+        // Point at the slot, F, then a click on the hands card: slot -> hands -> Inventory, as the player does it.
+        private IEnumerator TakeOutAndPutAway(PcComponentSlot slot, WorldItem part)
+        {
+            yield return PointAt(slot);
+            Assert.That(_workbench.TargetSlot, Is.SameAs(slot), slot.SlotId);
+            yield return Press(Key.F, Action(_interactor, "useAction"));
+            Assert.That(_carry.CarriedItem, Is.SameAs(part), $"{slot.SlotId}: slot -> hands");
+            yield return Click(Centre(Field<InventoryItemView>(_parts, "heldItem").transform));
+            Assert.That(_inventory.Inventory.Contains(part.Instance.InstanceId), Is.True, $"{slot.SlotId}: hands -> Inventory");
+        }
+
+        // A click on the part's row, then on the slot: Inventory -> hands -> slot.
+        private IEnumerator PutIn(PcComponentSlot slot, WorldItem part)
+        {
+            yield return Click(Centre(Row(part).transform));
+            Assert.That(_carry.CarriedItem, Is.SameAs(part), $"{slot.SlotId}: Inventory -> hands");
+            yield return PointAt(slot);
+            Assert.That(_workbench.IsGhostVisible, Is.True, $"{slot.SlotId}: the ghost shows where it goes");
+            yield return Click(_pointer);
+            Assert.That(part.Instance.Location, Is.EqualTo(ItemLocation.Installed), $"{slot.SlotId}: hands -> slot");
+            Assert.That(part.transform.parent, Is.SameAs(slot.InstallAnchor));
+        }
+
+        private string Verdict(string key)
+        {
+            return $"<size=140%><b><color=#{(key is "pc.status.ready" or "pc.status.ready_for_games" ? "8FE3A8" : "F29B8C")}>{_localization.Text(key)}</color></b></size>";
+        }
+
+        // The status line of one kind of part, e.g. the processor's.
+        private string ChecklistRow(string componentName)
+        {
+            return _hud.Status.Split('\n').Single(line => line.Contains($">{componentName}<"));
+        }
+
+        private static int Occurrences(string text, string part)
+        {
+            int count = 0;
+
+            for (int index = text.IndexOf(part, System.StringComparison.Ordinal); index >= 0; index = text.IndexOf(part, index + part.Length, System.StringComparison.Ordinal))
+                count++;
+
+            return count;
+        }
+
+        // The parts panel rows as shown, top to bottom.
+        private IEnumerable<string> ShownRows()
+        {
+            return Field<InventoryListView>(_parts, "list").GetComponentsInChildren<InventoryItemView>(false).Select(view => view.InstanceId);
+        }
 
         // A real save file through the GL scene's save controller (validation, apply), in a test-owned folder.
         private static bool SaveTo(string path)
@@ -822,17 +915,10 @@ namespace GoLive.Tests
 
         private IEnumerator Boot()
         {
-            yield return Frames(10);
+            yield return PlayModeWait.Frames(10);
 
-            InputSystem.settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
-            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
-
-            foreach (InputDevice stale in InputSystem.devices.Where(device => device is Keyboard or Mouse).ToList())
-                InputSystem.RemoveDevice(stale);
-
-            _keyboard = InputSystem.AddDevice<Keyboard>();
-            _mouse = InputSystem.AddDevice<Mouse>();
-            yield return Frames(2);
+            _input = new VirtualInput(withMouse: true);
+            yield return PlayModeWait.Frames(2);
 
             _workbench = Object.FindAnyObjectByType<PcWorkbenchBehaviour>();
             _pc = _workbench.GetComponent<PcAssemblyBehaviour>();
@@ -864,12 +950,12 @@ namespace GoLive.Tests
             Vector3 flat = Flat(target - position);
 
             _player.RestorePose(new PlayerPoseSnapshot(position, Quaternion.LookRotation(flat), 0f));
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
 
             Vector3 toTarget = target - _camera.transform.position;
             float pitch = -Mathf.Atan2(toTarget.y, Flat(toTarget).magnitude) * Mathf.Rad2Deg;
             _player.RestorePose(new PlayerPoseSnapshot(position, Quaternion.LookRotation(flat), pitch));
-            yield return Frames(6);
+            yield return PlayModeWait.Frames(6);
         }
 
         // Real-time wait (batch frames are sub-millisecond), plus the frame whose LateUpdate applies the final pose.
@@ -878,10 +964,10 @@ namespace GoLive.Tests
             float deadline = Time.realtimeSinceStartup + 5f;
 
             while (_workbench.Phase != phase && Time.realtimeSinceStartup < deadline)
-                yield return null;
+                yield return PlayModeWait.Frames(1);
 
             Assert.That(_workbench.Phase, Is.EqualTo(phase));
-            yield return null;
+            yield return PlayModeWait.Frames(1);
         }
 
         private WorldItem Spawn(string definitionAsset)
@@ -897,13 +983,13 @@ namespace GoLive.Tests
         {
             Assert.That(Object.FindAnyObjectByType<ShopBehaviour>().TryPurchase("budget-gpu").Succeeded, Is.True, "the Budget GPU is bought");
             Object.FindAnyObjectByType<GameClockBehaviour>().Clock.AdvanceMinutes(151);
-            yield return Frames(30);
+            yield return PlayModeWait.Frames(30);
 
             DeliveryPackageBehaviour package = Object.FindObjectsByType<DeliveryPackageBehaviour>(FindObjectsInactive.Exclude)
                 .Single(candidate => candidate.Item != null && candidate.Item.Instance != null);
             Assert.That(_carry.TryCarry(package.Item), Is.True);
             yield return Press(Key.F, Action(_interactor, "useAction"));
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
 
             delivered.Add(Gpus().Single());
             Assert.That(delivered[0].Instance.Location, Is.EqualTo(ItemLocation.World), "unpacked");
@@ -936,18 +1022,18 @@ namespace GoLive.Tests
             Vector3 screen = _camera.WorldToScreenPoint(slot.transform.TransformPoint(slot.TargetBounds.center));
             Assert.That(screen.z, Is.GreaterThan(0f));
             _pointer = screen;
-            InputSystem.QueueStateEvent(_mouse, new MouseState { position = _pointer });
-            yield return Frames(4);
+            InputSystem.QueueStateEvent(_input.Mouse, new MouseState { position = _pointer });
+            yield return PlayModeWait.Frames(4);
         }
 
         private IEnumerator Click(Vector2 position)
         {
-            InputSystem.QueueStateEvent(_mouse, new MouseState { position = position });
-            yield return Frames(2);
-            InputSystem.QueueStateEvent(_mouse, new MouseState { position = position, buttons = 1 });
-            yield return Frames(2);
-            InputSystem.QueueStateEvent(_mouse, new MouseState { position = position });
-            yield return Frames(3);
+            InputSystem.QueueStateEvent(_input.Mouse, new MouseState { position = position });
+            yield return PlayModeWait.Frames(2);
+            InputSystem.QueueStateEvent(_input.Mouse, new MouseState { position = position, buttons = 1 });
+            yield return PlayModeWait.Frames(2);
+            InputSystem.QueueStateEvent(_input.Mouse, new MouseState { position = position });
+            yield return PlayModeWait.Frames(3);
         }
 
         private IEnumerator Press(Key key, InputAction action)
@@ -958,27 +1044,27 @@ namespace GoLive.Tests
 
             for (int attempt = 0; attempt < 4 && performed == 0; attempt++)
             {
-                InputSystem.QueueStateEvent(_keyboard, new KeyboardState(key));
-                yield return Frames(2);
-                InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
-                yield return Frames(2);
+                InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState(key));
+                yield return PlayModeWait.Frames(2);
+                InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState());
+                yield return PlayModeWait.Frames(2);
             }
 
             action.performed -= OnPerformed;
             Assert.That(performed, Is.EqualTo(1), $"{key} reached '{action.name}' exactly once");
-            yield return Frames(1);
+            yield return PlayModeWait.Frames(1);
         }
 
         private IEnumerator Hold(params Key[] keys)
         {
-            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(keys));
-            yield return Frames(2);
+            InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState(keys));
+            yield return PlayModeWait.Frames(2);
         }
 
         private IEnumerator Release()
         {
-            InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
-            yield return Frames(2);
+            InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState());
+            yield return PlayModeWait.Frames(2);
         }
 
         private void AssertPose(PlayerPoseSnapshot expected)
@@ -1199,10 +1285,5 @@ namespace GoLive.Tests
             }
         }
 
-        private static IEnumerator Frames(int count)
-        {
-            for (int i = 0; i < count; i++)
-                yield return null;
-        }
     }
 }
