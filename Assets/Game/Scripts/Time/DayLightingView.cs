@@ -4,9 +4,10 @@ using UnityEngine.Rendering;
 
 namespace GoLive.GameTime
 {
-    // Time-of-day presentation of the apartment: sun direction and colour, the ambient gradient, the window daylight fills
-    // and the apartment lamps, interpolated between the four phase profiles (each profile is the look at the start of its
-    // phase). The room reflection probe is re-rendered as the light changes.
+    // Time-of-day presentation of the apartment: sun direction and colour, the ambient gradient, the window daylight fills,
+    // the apartment's lamps and the night look (cool window light, night colour grade), interpolated between the four
+    // phase profiles (each profile is the look at the start of its phase). The room reflection probe is re-rendered as
+    // the light changes.
     [DisallowMultipleComponent]
     public sealed class DayLightingView : MonoBehaviour
     {
@@ -32,8 +33,17 @@ namespace GoLive.GameTime
             [Tooltip("Scales the authored intensity of the window daylight fills.")]
             [field: SerializeField, Range(0f, 1f)] public float Daylight { get; private set; }
 
-            [Tooltip("Scales the authored intensity of the apartment lamps.")]
+            [Tooltip("Level of the kitchen and hallway ceiling lights.")]
             [field: SerializeField, Range(0f, 1f)] public float Lamps { get; private set; }
+
+            [Tooltip("Level of the main room's ceiling light.")]
+            [field: SerializeField, Range(0f, 1f)] public float RoomLight { get; private set; }
+
+            [Tooltip("Level of the desk lamp.")]
+            [field: SerializeField, Range(0f, 1f)] public float DeskLamp { get; private set; }
+
+            [Tooltip("How much of the night look is in: the cool light through the window and the night colour grade.")]
+            [field: SerializeField, Range(0f, 1f)] public float Night { get; private set; }
 
             public LightingProfile(
                 Color sunColor,
@@ -44,7 +54,10 @@ namespace GoLive.GameTime
                 Color ambientEquator,
                 Color ambientGround,
                 float daylight,
-                float lamps)
+                float lamps,
+                float roomLight,
+                float deskLamp,
+                float night)
             {
                 SunColor = sunColor;
                 SunIntensity = sunIntensity;
@@ -55,20 +68,27 @@ namespace GoLive.GameTime
                 AmbientGround = ambientGround;
                 Daylight = daylight;
                 Lamps = lamps;
+                RoomLight = roomLight;
+                DeskLamp = deskLamp;
+                Night = night;
             }
 
-            public static LightingProfile Lerp(LightingProfile from, LightingProfile to, float t)
+            // natural moves the sun, the ambient and the daylight fills; artificial moves the lamps and the night look.
+            public static LightingProfile Lerp(LightingProfile from, LightingProfile to, float natural, float artificial)
             {
                 return new LightingProfile(
-                    Color.Lerp(from.SunColor, to.SunColor, t),
-                    Mathf.Lerp(from.SunIntensity, to.SunIntensity, t),
-                    Mathf.Lerp(from.SunElevation, to.SunElevation, t),
-                    Mathf.LerpAngle(from.SunHeading, to.SunHeading, t),
-                    Color.Lerp(from.AmbientSky, to.AmbientSky, t),
-                    Color.Lerp(from.AmbientEquator, to.AmbientEquator, t),
-                    Color.Lerp(from.AmbientGround, to.AmbientGround, t),
-                    Mathf.Lerp(from.Daylight, to.Daylight, t),
-                    Mathf.Lerp(from.Lamps, to.Lamps, t));
+                    Color.Lerp(from.SunColor, to.SunColor, natural),
+                    Mathf.Lerp(from.SunIntensity, to.SunIntensity, natural),
+                    Mathf.Lerp(from.SunElevation, to.SunElevation, natural),
+                    Mathf.LerpAngle(from.SunHeading, to.SunHeading, natural),
+                    Color.Lerp(from.AmbientSky, to.AmbientSky, natural),
+                    Color.Lerp(from.AmbientEquator, to.AmbientEquator, natural),
+                    Color.Lerp(from.AmbientGround, to.AmbientGround, natural),
+                    Mathf.Lerp(from.Daylight, to.Daylight, natural),
+                    Mathf.Lerp(from.Lamps, to.Lamps, artificial),
+                    Mathf.Lerp(from.RoomLight, to.RoomLight, artificial),
+                    Mathf.Lerp(from.DeskLamp, to.DeskLamp, artificial),
+                    Mathf.Lerp(from.Night, to.Night, artificial));
             }
         }
 
@@ -78,8 +98,26 @@ namespace GoLive.GameTime
         [Tooltip("Window and courtyard daylight fills; their authored intensity is scaled by the profile's Daylight.")]
         [SerializeField] private Light[] daylightFills = Array.Empty<Light>();
 
-        [Tooltip("Apartment lamps; their authored intensity is scaled by the profile's Lamps.")]
-        [SerializeField] private Light[] lamps = Array.Empty<Light>();
+        [Tooltip("Kitchen and hallway ceiling lights, set to the profile's Lamps level.")]
+        [SerializeField] private PracticalLight[] lamps = Array.Empty<PracticalLight>();
+
+        [Tooltip("The main room's ceiling light, set to the profile's Room Light level.")]
+        [SerializeField] private PracticalLight[] roomLights = Array.Empty<PracticalLight>();
+
+        [Tooltip("The desk lamp, set to the profile's Desk Lamp level.")]
+        [SerializeField] private PracticalLight[] deskLamps = Array.Empty<PracticalLight>();
+
+        [Tooltip("Cool night light through the window and onto the courtyard; authored intensity scaled by the profile's Night.")]
+        [SerializeField] private Light[] nightFills = Array.Empty<Light>();
+
+        [Tooltip("Night colour grade; its weight is the profile's Night.")]
+        [SerializeField] private Volume nightGrade;
+
+        [Tooltip("Share of the night (22:00 to morning) that keeps the full night look before dawn starts to come in.")]
+        [SerializeField, Range(0f, 0.95f)] private float dawnStartsAt = 0.75f;
+
+        [Tooltip("Share of the day (10:00 to evening) before the lamps and the night look start to come in.")]
+        [SerializeField, Range(0f, 0.95f)] private float duskStartsAt = 0.75f;
 
         [Tooltip("Realtime probe (refresh via scripting) re-rendered whenever the game time has moved this far.")]
         [SerializeField] private ReflectionProbe roomReflections;
@@ -87,7 +125,7 @@ namespace GoLive.GameTime
 
         [Header("Morning (06:00)")]
         [SerializeField] private LightingProfile morning = new(
-            new Color(1f, 0.78f, 0.57f),
+            new Color(1f, 0.82f, 0.64f),
             2.8f,
             54f,
             290f,
@@ -95,6 +133,9 @@ namespace GoLive.GameTime
             new Color(0.35f, 0.33f, 0.3f),
             new Color(0.31f, 0.28f, 0.24f),
             0.85f,
+            0f,
+            0f,
+            0f,
             0f);
 
         [Header("Day (10:00)")]
@@ -107,6 +148,9 @@ namespace GoLive.GameTime
             new Color(0.39f, 0.37f, 0.345f),
             new Color(0.345f, 0.32f, 0.28f),
             1f,
+            0f,
+            0f,
+            0f,
             0f);
 
         [Header("Evening (18:00)")]
@@ -119,7 +163,10 @@ namespace GoLive.GameTime
             new Color(0.22f, 0.19f, 0.17f),
             new Color(0.18f, 0.15f, 0.13f),
             0.22f,
-            0.7f);
+            1f,
+            1f,
+            1f,
+            0.3f);
 
         [Header("Night (22:00)")]
         [SerializeField] private LightingProfile night = new(
@@ -127,14 +174,17 @@ namespace GoLive.GameTime
             0.14f,
             38f,
             250f,
-            new Color(0.06f, 0.07f, 0.095f),
-            new Color(0.055f, 0.055f, 0.065f),
-            new Color(0.04f, 0.04f, 0.045f),
-            0.03f,
+            new Color(0.2f, 0.195f, 0.19f),
+            new Color(0.19f, 0.18f, 0.17f),
+            new Color(0.175f, 0.16f, 0.145f),
+            0f,
+            0.5f,
+            0f,
+            1f,
             1f);
 
         private float[] _fillIntensities;
-        private float[] _lampIntensities;
+        private float[] _nightFillIntensities;
         private long _reflectionsRenderedAt = long.MinValue;
 
         private void Awake()
@@ -146,7 +196,7 @@ namespace GoLive.GameTime
             }
 
             _fillIntensities = AuthoredIntensities(daylightFills);
-            _lampIntensities = AuthoredIntensities(lamps);
+            _nightFillIntensities = AuthoredIntensities(nightFills);
         }
 
         private void Update()
@@ -162,12 +212,18 @@ namespace GoLive.GameTime
             DayPhaseSchedule schedule = gameClock.PhaseSchedule;
             DayPhase phase = schedule.GetPhase(time.MinuteOfDay);
             float progress = schedule.GetPhaseProgress(time.MinuteOfDay);
+            float natural = progress;
+            float artificial = progress;
 
-            // Nights stay dark until the approach of dawn instead of brightening from 22:00 on.
+            // The night look holds through the dark hours; dawn comes in only over the last part of the night.
             if (phase == DayPhase.Night)
-                progress = progress * progress * progress;
+                natural = artificial = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(dawnStartsAt, 1f, progress));
 
-            return LightingProfile.Lerp(GetProfile(phase), GetProfile(schedule.GetNextPhase(phase)), progress);
+            // The sun sinks all afternoon, but nobody switches a lamp on at noon: lamps and the night look wait for dusk.
+            if (phase == DayPhase.Day)
+                artificial = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(duskStartsAt, 1f, progress));
+
+            return LightingProfile.Lerp(GetProfile(phase), GetProfile(schedule.GetNextPhase(phase)), natural, artificial);
         }
 
         private void ApplyLighting(LightingProfile profile)
@@ -182,7 +238,13 @@ namespace GoLive.GameTime
             RenderSettings.ambientGroundColor = profile.AmbientGround;
 
             Scale(daylightFills, _fillIntensities, profile.Daylight);
-            Scale(lamps, _lampIntensities, profile.Lamps);
+            Scale(nightFills, _nightFillIntensities, profile.Night);
+            SetLevel(lamps, profile.Lamps);
+            SetLevel(roomLights, profile.RoomLight);
+            SetLevel(deskLamps, profile.DeskLamp);
+
+            if (nightGrade != null)
+                nightGrade.weight = profile.Night;
         }
 
         private void RefreshReflections(GameTimeSnapshot time)
@@ -221,6 +283,12 @@ namespace GoLive.GameTime
             }
         }
 
+        private static void SetLevel(PracticalLight[] fixtures, float level)
+        {
+            for (int i = 0; i < fixtures.Length; i++)
+                fixtures[i].SetLevel(level);
+        }
+
         private static float[] AuthoredIntensities(Light[] lights)
         {
             float[] intensities = new float[lights.Length];
@@ -236,14 +304,28 @@ namespace GoLive.GameTime
             if (gameClock != null &&
                 sun != null &&
                 Array.IndexOf(daylightFills, null) < 0 &&
-                Array.IndexOf(lamps, null) < 0 &&
+                Array.IndexOf(nightFills, null) < 0 &&
+                AreConfigured(lamps) &&
+                AreConfigured(roomLights) &&
+                AreConfigured(deskLamps) &&
                 (roomReflections == null || roomReflections.mode == ReflectionProbeMode.Realtime))
             {
                 return true;
             }
 
-            Debug.LogError($"{nameof(DayLightingView)} on {name} requires a Game Clock, a Sun, no missing lights in its lists and a realtime (or no) room reflection probe.", this);
+            Debug.LogError($"{nameof(DayLightingView)} on {name} requires a Game Clock, a Sun, no missing lights or lamps in its lists and a realtime (or no) room reflection probe.", this);
             return false;
+        }
+
+        private static bool AreConfigured(PracticalLight[] fixtures)
+        {
+            for (int i = 0; i < fixtures.Length; i++)
+            {
+                if (fixtures[i] == null || !fixtures[i].IsConfigured())
+                    return false;
+            }
+
+            return true;
         }
     }
 }

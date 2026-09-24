@@ -56,6 +56,10 @@ namespace GoLive.PcBuilding
         [SerializeField] private InputActionReference removeAction;
         [SerializeField] private InputActionReference toggleAction;
 
+        [Header("Presentation")]
+        [Tooltip("Optional soft light from the eye that keeps the open case readable when the room is dark; its authored intensity fades in and out with the build view.")]
+        [SerializeField] private Light workLight;
+
         // Opening, open or closing: the mode owns the controls until the closing presentation has finished.
         public bool IsOpen => _sequence.IsActive;
         public bool IsInteractive => _sequence.IsInteractive;
@@ -76,6 +80,7 @@ namespace GoLive.PcBuilding
         private CursorLockMode _previousCursorLockMode;
         private bool _previousCursorVisible;
         private int _openedFrame;
+        private float _workLightIntensity;
 
         private void Awake()
         {
@@ -91,6 +96,10 @@ namespace GoLive.PcBuilding
             _camera = new PcBuildCamera(playerCamera);
             _ghost = new PcInstallGhost(ghostMaterial);
             _text = new PcWorkbenchText(_pc, localization);
+
+            if (workLight != null)
+                _workLightIntensity = workLight.intensity;
+            SetWorkLight(0f);
         }
 
         // The keys are shared with PlayerInteractor, which owns their lifetime; the Workbench only makes sure they listen.
@@ -160,6 +169,7 @@ namespace GoLive.PcBuilding
             _presentation.SetCoverOpen(_sequence.CoverAmount);
             _camera.Apply(_sequence.ApproachAmount, _presentation.BuildViewRotation);
             hud.SetPresence(_sequence.Progress, _sequence.IsInteractive);
+            SetWorkLight(_sequence.Progress);
         }
 
         public bool CanInteract(in InteractionContext context)
@@ -244,6 +254,8 @@ namespace GoLive.PcBuilding
             if (hud != null)
                 hud.SetPresence(0f, false);
 
+            SetWorkLight(0f);
+
             if (playerCarry != null)
                 playerCarry.SetHeldItemHidden(false);
 
@@ -252,6 +264,15 @@ namespace GoLive.PcBuilding
 
             _controlBlock?.Dispose();
             _controlBlock = null;
+        }
+
+        private void SetWorkLight(float presence)
+        {
+            if (workLight == null)
+                return;
+
+            workLight.intensity = _workLightIntensity * presence;
+            workLight.enabled = presence > 0f;
         }
 
         // Only slots that are there: a slot on a part that is not installed (the processor socket without its motherboard)
