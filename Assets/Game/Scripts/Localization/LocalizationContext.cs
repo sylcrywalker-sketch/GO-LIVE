@@ -55,6 +55,22 @@ namespace GoLive.Localization
             }
         }
 
+        public string FormatCount(string key, long count)
+        {
+            if (!EnsureInitialized())
+                return $"[{key}]";
+
+            try
+            {
+                return _runtime.FormatCount(key, count);
+            }
+            catch (FormatException exception)
+            {
+                Debug.LogError($"Invalid localization format for counted key '{key}': {exception.Message}", _catalog);
+                return _runtime.Text(LocalizationRuntime.PluralKey(key, _runtime.CurrentLanguage, count));
+            }
+        }
+
         public void SetLanguage(GameLanguage language)
         {
             if (EnsureInitialized())

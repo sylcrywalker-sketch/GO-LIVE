@@ -113,6 +113,9 @@ namespace GoLive.GameTime
         public int Second => (int)(TotalSeconds % SecondsPerMinute);
         public int MinuteOfDay => Hour * 60 + Minute;
 
+        // The game calendar starts on a Monday: Day 1 is Monday, Day 7 Sunday.
+        public DayOfWeek DayOfWeek => (DayOfWeek)(Day % 7);
+
         public GameTimeSnapshot(long totalSeconds)
         {
             if (totalSeconds < 0)

@@ -1,3 +1,4 @@
+using System;
 using GoLive.Localization;
 using TMPro;
 using UnityEngine;
@@ -19,10 +20,26 @@ namespace GoLive.GameTime
         [FormerlySerializedAs("dayText")]
         [SerializeField] private TMP_Text _dayText;
 
+        [SerializeField] private TMP_Text _weekdayText;
         [SerializeField] private LocalizationContext _localization;
 
         private bool _started;
         private bool _bound;
+
+        public static string WeekdayKey(DayOfWeek day)
+        {
+            return day switch
+            {
+                DayOfWeek.Monday => "hud.weekday.monday",
+                DayOfWeek.Tuesday => "hud.weekday.tuesday",
+                DayOfWeek.Wednesday => "hud.weekday.wednesday",
+                DayOfWeek.Thursday => "hud.weekday.thursday",
+                DayOfWeek.Friday => "hud.weekday.friday",
+                DayOfWeek.Saturday => "hud.weekday.saturday",
+                DayOfWeek.Sunday => "hud.weekday.sunday",
+                _ => throw new ArgumentOutOfRangeException(nameof(day))
+            };
+        }
 
         private void Start()
         {
@@ -79,18 +96,18 @@ namespace GoLive.GameTime
 
         private void HandleDayChanged(int previousDay, int currentDay)
         {
-            RefreshDay(currentDay);
+            RefreshDay(_gameClock.Clock.Current);
         }
 
         private void HandleLanguageChanged(GameLanguage language)
         {
-            RefreshDay(_gameClock.Clock.Current.Day);
+            RefreshDay(_gameClock.Clock.Current);
         }
 
         private void Refresh(GameTimeSnapshot snapshot)
         {
             RefreshClock(snapshot);
-            RefreshDay(snapshot.Day);
+            RefreshDay(snapshot);
         }
 
         private void RefreshClock(GameTimeSnapshot snapshot)
@@ -98,9 +115,10 @@ namespace GoLive.GameTime
             _clockText.text = $"{snapshot.Hour:00}:{snapshot.Minute:00}";
         }
 
-        private void RefreshDay(int day)
+        private void RefreshDay(GameTimeSnapshot snapshot)
         {
-            _dayText.text = _localization.Format(DayLocalizationKey, day);
+            _dayText.text = _localization.Format(DayLocalizationKey, snapshot.Day);
+            _weekdayText.text = _localization.Text(WeekdayKey(snapshot.DayOfWeek));
         }
 
         private bool ValidateConfiguration()
@@ -109,6 +127,7 @@ namespace GoLive.GameTime
                 _gameClock.Clock != null &&
                 _clockText != null &&
                 _dayText != null &&
+                _weekdayText != null &&
                 _localization != null)
             {
                 return true;
