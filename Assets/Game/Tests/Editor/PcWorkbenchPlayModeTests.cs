@@ -341,7 +341,7 @@ namespace GoLive.Tests
             string gpuName = _localization.Text("pc.component.gpu");
             Assert.That(Note(Row(gpu)), Is.EqualTo(_localization.Format("pc.part.installable", gpuName)));
             Assert.That(RowAlpha(Row(gpu)), Is.EqualTo(1f));
-            Assert.That(Note(Row(motherboard)), Is.EqualTo(_localization.Format("pc.part.no_place", _localization.Text("pc.component.motherboard"))), "a PC part this PC has no place for");
+            Assert.That(Note(Row(motherboard)), Is.EqualTo(_localization.Format("pc.part.slot_taken", _localization.Text("pc.component.motherboard"))), "its place is taken by the starter board");
             Assert.That(Note(Row(banana)), Is.EqualTo(_localization.Text("pc.part.not_part")));
             Assert.That(RowAlpha(Row(banana)), Is.LessThan(1f), "non-parts are faded");
             Assert.That(highlight.enabled, Is.True, "the empty slot shows where a part can go");
@@ -577,6 +577,9 @@ namespace GoLive.Tests
             Quaternion restRotation = root.localRotation;
             Vector3 panelClosed = panel.localPosition;
 
+            Assert.That(_pc.Capabilities.GamingGraphicsAvailable, Is.False, "F: before the card");
+            Assert.That(_pc.Capabilities.CanPlayCriticalStrike, Is.False);
+
             Assert.That(_workbench.Open(), Is.True);
             yield return WaitForPhase(PcBuildModePhase.Open);
             yield return Click(Centre(Row(gpu).transform));
@@ -585,6 +588,9 @@ namespace GoLive.Tests
             yield return Click(_pointer);
 
             Assert.That(gpu.Instance.Location, Is.EqualTo(ItemLocation.Installed), "hands -> slot");
+            Assert.That(_pc.Capabilities.GamingGraphicsAvailable, Is.True, "F: after the card");
+            Assert.That(_pc.Capabilities.CanPlayCriticalStrike, Is.True, "with every starter part still installed");
+            Assert.That(_hud.Status, Does.Not.Contain(_localization.Text("pc.diagnostic.no_gpu.title")), "the limitation is gone from the status");
             Assert.That(gpu.transform.parent, Is.SameAs(_slot.InstallAnchor));
             Assert.That(gpu.transform.IsChildOf(root), Is.True, "the real GPU travels with the presented PC");
             Assert.That(Gpus(), Has.Length.EqualTo(1));
@@ -615,6 +621,8 @@ namespace GoLive.Tests
                 Assert.That(loaded.transform.parent, Is.SameAs(_slot.InstallAnchor));
                 Assert.That(root.localPosition.Equals(restPosition) && root.localRotation.Equals(restRotation), Is.True, "after a load the PC starts in its place");
                 Assert.That(panel.gameObject.activeSelf && panel.localPosition.Equals(panelClosed), Is.True, "with its side panel on");
+                Assert.That(_pc.Capabilities.CanPlayCriticalStrike, Is.True, $"load {i + 1}: the loaded card counts");
+                Assert.That(_pc.Assembly.InstalledComponents.Select(component => component.SlotId), Is.EqualTo(StarterSlots.Append("gpu-0")));
             }
 
             yield return FaceThePc();
@@ -633,11 +641,184 @@ namespace GoLive.Tests
             _workbench.Close();
             yield return WaitForPhase(PcBuildModePhase.Closed);
             Assert.That(Gpus().Single().Instance.InstanceId, Is.EqualTo(id), "still one GPU with its identity");
-            Assert.That(_pc.Assembly.InstalledComponents, Is.Empty);
+            Assert.That(_pc.Assembly.IsSlotOccupied("gpu-0"), Is.False);
+            Assert.That(_pc.Assembly.InstalledComponents.Select(component => component.SlotId), Is.EqualTo(StarterSlots), "the starter parts stay");
+            Assert.That(_pc.Capabilities.GamingGraphicsAvailable, Is.False, "F: the card is out again");
+            Assert.That(_pc.Capabilities.CanPlayCriticalStrike, Is.False);
+            Assert.That(_pc.Capabilities.CanPowerOn, Is.True);
             Assert.That(root.localPosition.Equals(restPosition) && root.localRotation.Equals(restRotation), Is.True);
         }
 
+        // Stage 2A, cases A and B in the real GL scene: the new game's PC is a real computer without a graphics card, and
+        // the Workbench says so in words.
+        [UnityTest]
+        public IEnumerator NewGamePcHasItsStarterPartsAndTheWorkbenchNamesTheMissingGraphicsCard()
+        {
+            yield return new EnterPlayMode(false);
+            yield return Boot();
+
+            foreach (string slotId in StarterSlots)
+            {
+                Assert.That(_pc.TryGetSlot(slotId, out PcComponentSlot slot), Is.True, slotId);
+                Assert.That(_pc.TryGetInstalledItem(slot, out WorldItem installed), Is.True, slotId);
+                Assert.That(installed.IsRuntime, Is.False, $"{slotId}: a scene-authored item");
+                Assert.That(installed.Instance.InstanceId, Is.EqualTo(installed.AuthoredInstanceId), $"{slotId}: its persistent scene identity");
+                Assert.That(installed.Instance.Location, Is.EqualTo(ItemLocation.Installed));
+                Assert.That(installed.transform.parent, Is.SameAs(slot.InstallAnchor));
+            }
+
+            Assert.That(WorldItems().Select(item => item.Instance.InstanceId), Is.Unique, "no duplicate identities in the scene");
+            PcCapabilities pc = _pc.Capabilities;
+            Assert.That(pc.CanPowerOn && pc.CanUseDesktop, Is.True);
+            Assert.That(pc.GamingGraphicsAvailable || pc.CanPlayCriticalStrike, Is.False);
+            Assert.That(_pc.TryPowerOn().Outcome, Is.EqualTo(PcPowerOnOutcome.Started));
+
+            yield return FaceThePc();
+            Assert.That(_workbench.Open(), Is.True);
+            yield return WaitForPhase(PcBuildModePhase.Open);
+
+            string status = _hud.Status;
+            TestContext.WriteLine(status);
+
+            foreach (string slotId in StarterSlots)
+            {
+                _pc.TryGetSlot(slotId, out PcComponentSlot slot);
+                _pc.TryGetInstalledItem(slot, out WorldItem part);
+                Assert.That(status, Does.Contain($"{_localization.Text(slot.ComponentType.NameKey())} — {_localization.Text(part.Definition.NameLocalizationKey)}"), slotId);
+            }
+
+            Assert.That(status, Does.Contain($"{_localization.Text("pc.component.gpu")} — {_localization.Text("pc.workbench.missing")}"));
+            Assert.That(status, Does.Contain(_localization.Text("pc.diagnostic.no_gpu.title")).And.Contain(_localization.Text("pc.diagnostic.no_gpu.detail")));
+            Assert.That(status, Does.Not.Contain("starter-").And.Not.Contain("-0").And.Not.Contain(nameof(PcDiagnosticCode.NoDedicatedGpu)), "no internal IDs or enum names");
+
+            foreach (WorldItem part in WorldItems().Where(item => !item.IsRuntime))
+                Assert.That(status, Does.Not.Contain(part.Instance.InstanceId));
+
+            _workbench.Close();
+            yield return WaitForPhase(PcBuildModePhase.Closed);
+        }
+
+        // Cases C and D: the real starter memory module out through the Workbench, into the Inventory, through a save
+        // file and back into its slot, one identity all the way.
+        [UnityTest]
+        public IEnumerator StarterMemoryComesOutThroughTheWorkbenchSurvivesASaveAndGoesBackIn()
+        {
+            yield return new EnterPlayMode(false);
+            yield return Boot();
+            yield return FaceThePc();
+
+            Assert.That(_pc.TryGetSlot("ram-0", out PcComponentSlot ramSlot), Is.True);
+            Assert.That(_pc.TryGetInstalledItem(ramSlot, out WorldItem ram), Is.True);
+            ItemInstance instance = ram.Instance;
+            string id = instance.InstanceId;
+            int items = WorldItems().Length;
+
+            Assert.That(_workbench.Open(), Is.True);
+            yield return WaitForPhase(PcBuildModePhase.Open);
+            yield return PointAt(ramSlot);
+            Assert.That(_workbench.TargetSlot, Is.SameAs(ramSlot), "the pointer finds the memory slot in the close-up");
+            Assert.That(_hud.Action, Does.Contain(_localization.Text("pc.remove.ram")));
+            yield return Press(Key.F, Action(_interactor, "useAction"));
+
+            Assert.That(_carry.CarriedItem, Is.SameAs(ram), "slot -> hands, the same item");
+            Assert.That(ram.Instance, Is.SameAs(instance));
+            Assert.That(instance.Location, Is.EqualTo(ItemLocation.Carried));
+            Assert.That(_pc.Capabilities.CanPowerOn, Is.False);
+            Assert.That(_pc.Capabilities.Diagnostics.First().Code, Is.EqualTo(PcDiagnosticCode.MissingMemory));
+            Assert.That(_hud.Status, Does.Contain(_localization.Text("pc.diagnostic.no_memory.title")), "the status says why the PC cannot start");
+
+            yield return Click(Centre(Field<InventoryItemView>(_parts, "heldItem").transform));
+            Assert.That(_inventory.Inventory.Contains(id), Is.True, "hands -> Inventory");
+            _workbench.Close();
+            yield return WaitForPhase(PcBuildModePhase.Closed);
+
+            string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "GoLiveSaveTests", System.Guid.NewGuid().ToString("N"), "save.json");
+
+            try
+            {
+                Assert.That(SaveTo(path), Is.True);
+                Assert.That(LoadFrom(path), Is.True);
+                yield return Frames(3);
+
+                Assert.That(_inventory.Inventory.Contains(id), Is.True, "loaded into the Inventory");
+                Assert.That(WorldItems().Single(item => item.Instance.InstanceId == id), Is.SameAs(ram));
+                Assert.That(_pc.Assembly.IsSlotOccupied("ram-0"), Is.False, "the memory slot stays empty");
+                Assert.That(_pc.Capabilities.CanPowerOn, Is.False, "the PC still cannot start");
+                Assert.That(WorldItems(), Has.Length.EqualTo(items), "no duplicate");
+
+                yield return FaceThePc();
+                Assert.That(_workbench.Open(), Is.True);
+                yield return WaitForPhase(PcBuildModePhase.Open);
+                yield return Click(Centre(Row(ram).transform));
+                Assert.That(_carry.CarriedItem, Is.SameAs(ram), "Inventory -> hands");
+                yield return PointAt(ramSlot);
+                Assert.That(_workbench.IsGhostVisible, Is.True);
+                yield return Click(_pointer);
+
+                Assert.That(ram.Instance.InstanceId, Is.EqualTo(id));
+                Assert.That(ram.Instance.Location, Is.EqualTo(ItemLocation.Installed), "hands -> slot");
+                Assert.That(ram.transform.parent, Is.SameAs(ramSlot.InstallAnchor));
+                Assert.That(_pc.Capabilities.CanPowerOn, Is.True, "it starts again");
+                _workbench.Close();
+                yield return WaitForPhase(PcBuildModePhase.Closed);
+
+                Assert.That(SaveTo(path), Is.True);
+                Assert.That(LoadFrom(path), Is.True);
+                yield return Frames(3);
+
+                Assert.That(_pc.TryGetInstalledItem(ramSlot, out WorldItem loaded) && loaded.Instance.InstanceId == id, Is.True, "the same module in the same slot");
+                Assert.That(_pc.Capabilities.CanPowerOn, Is.True);
+                Assert.That(_pc.Assembly.InstalledComponents.Select(component => component.SlotId), Is.EqualTo(StarterSlots));
+                Assert.That(WorldItems(), Has.Length.EqualTo(items));
+            }
+            finally
+            {
+                if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(path)))
+                    System.IO.Directory.Delete(System.IO.Path.GetDirectoryName(path), true);
+            }
+        }
+
+        // The motherboard is fixed for now: the Workbench explains instead of taking it out.
+        [UnityTest]
+        public IEnumerator TheWorkbenchExplainsThatTheMotherboardStaysIn()
+        {
+            yield return new EnterPlayMode(false);
+            yield return Boot();
+            yield return FaceThePc();
+
+            Assert.That(_pc.TryGetSlot("motherboard-0", out PcComponentSlot board), Is.True);
+            Assert.That(_workbench.Open(), Is.True);
+            yield return WaitForPhase(PcBuildModePhase.Open);
+
+            yield return PointAt(board);
+            Assert.That(_workbench.TargetSlot, Is.SameAs(board), "the bare board answers the pointer");
+            Assert.That(_hud.Action, Is.EqualTo(_localization.Text("pc.reject.fixed")));
+            yield return Press(Key.F, Action(_interactor, "useAction"));
+
+            Assert.That(_carry.HasItem, Is.False);
+            Assert.That(_pc.Assembly.IsSlotOccupied("motherboard-0"), Is.True);
+            Assert.That(_pc.Capabilities.HasMotherboard, Is.True);
+
+            _workbench.Close();
+            yield return WaitForPhase(PcBuildModePhase.Closed);
+        }
+
         // ---------------------------------------------------------------- helpers
+
+        private static readonly string[] StarterSlots = { "motherboard-0", "cpu-0", "ram-0", "psu-0", "storage-0" };
+
+        // A real save file through the GL scene's save controller (validation, apply), in a test-owned folder.
+        private static bool SaveTo(string path)
+        {
+            GameSaveController save = Object.FindAnyObjectByType<GameSaveController>();
+            return (bool)typeof(GameSaveController).GetMethod("TrySave", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(save, new object[] { path });
+        }
+
+        private static bool LoadFrom(string path)
+        {
+            GameSaveController save = Object.FindAnyObjectByType<GameSaveController>();
+            return (bool)typeof(GameSaveController).GetMethod("TryLoad", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(save, new object[] { path });
+        }
 
         private IEnumerator Boot()
         {
@@ -670,7 +851,9 @@ namespace GoLive.Tests
             _camera = Field<Camera>(_workbench, "playerCamera");
 
             Assert.That(_workbench.isActiveAndEnabled && _pc.isActiveAndEnabled && _presentation.isActiveAndEnabled && _hud.isActiveAndEnabled && _parts.isActiveAndEnabled, Is.True, "GL build mode is wired");
-            Assert.That(_pc.Assembly.InstalledComponents, Is.Empty, "a new game starts with an empty graphics card slot");
+            Assert.That(_pc.IsReady, Is.True);
+            Assert.That(_pc.Assembly.InstalledComponents.Select(component => component.SlotId), Is.EqualTo(StarterSlots), "a new game starts with the starter parts");
+            Assert.That(_pc.Assembly.IsSlotOccupied("gpu-0"), Is.False, "and an empty graphics card slot");
         }
 
         // In front of the desk, a little toward the room end, looking at the case.

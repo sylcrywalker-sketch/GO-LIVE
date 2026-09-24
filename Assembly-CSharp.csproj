@@ -153,6 +153,7 @@
     <Compile Include="Assets\Game\Scripts\Shop\ShopCatalogConfig.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Game\Scripts\PcBuilding\PcCapabilities.cs" />
+    <Compile Include="Assets\Game\Scripts\PcBuilding\PcPowerOn.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\InventoryOutlineIcon.cs" />
     <Compile Include="Assets\Game\Scripts\Phone\PhoneMessagesSnapshot.cs" />
     <Compile Include="Assets\Game\Scripts\Localization\LocalizationRuntime.cs" />

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 128d3a4318f5ec74e9e79154edc7c79b, type: 3}
-  m_Name: PcComponent_UsedPowerSupply
+  m_Name: PcComponent_StarterCpu
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.PcBuilding.PcComponentSpec
-  componentType: 5
-  connector: 3
-  powerDrawWatts: 0
-  powerCapacityWatts: 300
+  componentType: 1
+  connector: 4
+  powerDrawWatts: 65
+  powerCapacityWatts: 0

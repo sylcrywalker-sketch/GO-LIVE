@@ -61,6 +61,8 @@
     <Compile Include="Assets\Game\Tests\Editor\PhoneMessagesSaveTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\PcBuildingContentTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\PcAssemblyTests.cs" />
+    <Compile Include="Assets\Game\Tests\Editor\PcCapabilitiesTests.cs" />
+    <Compile Include="Assets\Game\Tests\Editor\PcPreinstalledPartsTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\DeliveryPlayModeTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\PlayerControlsPlayModeTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\ItemContentTests.cs" />

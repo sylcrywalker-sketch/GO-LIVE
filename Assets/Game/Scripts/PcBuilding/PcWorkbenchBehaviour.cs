@@ -183,7 +183,7 @@ namespace GoLive.PcBuilding
             return context.Action == InteractionAction.Special &&
                    !IsOpen &&
                    isActiveAndEnabled &&
-                   _pc.Assembly != null &&
+                   _pc.IsReady &&
                    context.Actor == playerController.gameObject;
         }
 
@@ -200,7 +200,7 @@ namespace GoLive.PcBuilding
 
         public bool Open()
         {
-            if (IsOpen || !isActiveAndEnabled || _pc.Assembly == null || !parts.Bind(playerInventory, playerCarry, localization, AnnotatePart))
+            if (IsOpen || !isActiveAndEnabled || !_pc.IsReady || !parts.Bind(playerInventory, playerCarry, localization, AnnotatePart))
                 return false;
 
             _sequence.Begin();
@@ -417,7 +417,9 @@ namespace GoLive.PcBuilding
             _previewSlot.SetPreview(true);
         }
 
-        // One line per slot of this PC (what is installed, what is missing) and what the missing parts cost.
+        // One line per slot of this PC, then each diagnostic: what it means for the PC in words first (title in the colour
+        // of its severity), numbers only where they help (watts). Installed parts are the quiet, smaller lines so what is
+        // missing stands out and the panel stays compact beside the close-up.
         private void RenderStatus()
         {
             _status.Clear();
@@ -431,16 +433,24 @@ namespace GoLive.PcBuilding
                 if (_status.Length > 0)
                     _status.Append('\n');
 
-                _status.Append("<color=#").Append(installed ? "8FE3A8" : "F2C46B").Append('>')
+                _status.Append(installed ? "<size=85%><color=#8FE3A8>" : "<color=#F2C46B>")
                     .Append(component).Append(" — ")
                     .Append(installed ? ItemName(item.Definition) : localization.Text(MissingKey))
-                    .Append("</color>");
+                    .Append(installed ? "</color></size>" : "</color>");
             }
 
             IReadOnlyList<PcDiagnostic> diagnostics = _pc.Capabilities.Diagnostics;
 
             for (int i = 0; i < diagnostics.Count; i++)
-                _status.Append("\n<size=85%><color=#A3ADB9>").Append(localization.Text(diagnostics[i].DetailKey)).Append("</color></size>");
+            {
+                PcDiagnostic diagnostic = diagnostics[i];
+
+                _status.Append("\n<color=#").Append(diagnostic.Severity == PcDiagnosticSeverity.Blocker ? "F29B8C" : "F2C46B").Append('>')
+                    .Append(localization.Text(diagnostic.TitleKey)).Append("</color>")
+                    .Append("\n<size=85%><color=#A3ADB9>")
+                    .Append(localization.Format(diagnostic.DetailKey, diagnostic.RequiredWatts, diagnostic.AvailableWatts))
+                    .Append("</color></size>");
+            }
 
             hud.RenderStatus(localization.Text(TitleKey), _status.ToString());
         }
@@ -531,7 +541,7 @@ namespace GoLive.PcBuilding
             return check switch
             {
                 PcSlotCheck.Allowed => PcWorkbenchHudView.Tone.Action,
-                PcSlotCheck.NothingInHands => PcWorkbenchHudView.Tone.Hint,
+                PcSlotCheck.NothingInHands or PcSlotCheck.FixedInPlace => PcWorkbenchHudView.Tone.Hint,
                 _ => PcWorkbenchHudView.Tone.Rejected
             };
         }

@@ -45,6 +45,9 @@ namespace GoLive.PcBuilding
         [Tooltip("Case parts the installed component replaces (e.g. expansion slot covers behind a graphics card bracket).")]
         [SerializeField] private GameObject[] hiddenWhileFilled = Array.Empty<GameObject>();
 
+        [Tooltip("The installed part can't be taken out for now. The motherboard: the processor and memory slots sit on it and do not move with it yet.")]
+        [SerializeField] private bool fixedInPlace;
+
         public string SlotId => slotId;
         public PcComponentType ComponentType => componentType;
         public PcConnector Connector => connector;
@@ -52,6 +55,7 @@ namespace GoLive.PcBuilding
         public string TechnicalLabel => technicalLabel;
         public Transform InstallAnchor => installAnchor;
         public Bounds TargetBounds => targetBounds;
+        public bool IsFixed => fixedInPlace;
         public PcSlotSpec Spec => new(slotId, componentType, connector);
 
         private MaterialPropertyBlock _highlightBlock;

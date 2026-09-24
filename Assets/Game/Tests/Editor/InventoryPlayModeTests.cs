@@ -8,6 +8,7 @@ using GoLive.Interaction;
 using GoLive.Inventory;
 using GoLive.Items;
 using GoLive.Localization;
+using GoLive.PcBuilding;
 using GoLive.Player;
 using GoLive.Shop;
 using NUnit.Framework;
@@ -902,10 +903,11 @@ namespace GoLive.Tests
             return $"{string.Join("\n", items)}\ninventory={string.Join(",", InventoryIds())}\nhands={hands}";
         }
 
+        // The items these cases create and move. The Student PC's own starter parts stay installed throughout.
         private static List<WorldItem> Items()
         {
             return Object.FindObjectsByType<WorldItem>(FindObjectsInactive.Include)
-                .Where(item => item.Instance != null)
+                .Where(item => item.Instance != null && item.GetComponentInParent<PcAssemblyBehaviour>(true) == null)
                 .ToList();
         }
 

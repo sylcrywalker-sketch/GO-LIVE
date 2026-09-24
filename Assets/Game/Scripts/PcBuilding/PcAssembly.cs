@@ -17,6 +17,9 @@ namespace GoLive.PcBuilding
         SlotOccupied,
         AlreadyInstalled,
         SlotEmpty,
+
+        // The installed part is fixed in this PC for now (PcComponentSlot.IsFixed): it can't be taken out.
+        FixedInPlace,
         NoMatchingSlot,
         NothingInHands,
         HandsBusy,
@@ -34,6 +37,7 @@ namespace GoLive.PcBuilding
                 PcSlotCheck.WrongConnector => "pc.reject.wrong_connector",
                 PcSlotCheck.SlotOccupied => "pc.reject.slot_occupied",
                 PcSlotCheck.SlotEmpty => "pc.reject.slot_empty",
+                PcSlotCheck.FixedInPlace => "pc.reject.fixed",
                 PcSlotCheck.NoMatchingSlot => "pc.reject.no_matching_slot",
                 PcSlotCheck.NothingInHands => "pc.reject.nothing_in_hands",
                 PcSlotCheck.HandsBusy => "pc.reject.hands_busy",

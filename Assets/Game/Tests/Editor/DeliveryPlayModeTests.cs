@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
-    // Runs the real delivery runtime in Play Mode: Awake/Start, Instantiate, physics, carry and the v5 save pipeline.
+    // Runs the real delivery runtime in Play Mode: Awake/Start, Instantiate, physics, carry and the v6 save pipeline.
     public sealed class DeliveryPlayModeTests
     {
         private const string GpuId = SaveTestWorld.BudgetGpuId;
@@ -444,7 +444,7 @@ namespace GoLive.Tests
             Assert.That(WorldItem.SpawnRuntime(gpu, banana, Vector3.zero, Quaternion.identity), Is.Null);
             Assert.That(RuntimeItems(), Is.Empty);
             Assert.That(_world.TrySave(), Is.True);
-            Assert.That(_world.ReadSave().Items, Is.Empty);
+            Assert.That(_world.ReadSave().Items.Select(item => item.InstanceId), Is.EquivalentTo(_world.StarterItemIds), "only the PC's own scene parts");
         }
 
         [UnityTest]

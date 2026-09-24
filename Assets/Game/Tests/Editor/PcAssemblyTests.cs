@@ -216,23 +216,24 @@ namespace GoLive.Tests
             Assert.That(() => new PcAssembly(new[] { new PcSlotSpec("gpu-0", PcComponentType.Gpu, PcConnector.None) }), Throws.ArgumentException);
         }
 
+        // The full rules live in PcCapabilitiesTests; here only that capabilities read this record.
         [Test]
-        public void CapabilitiesJudgeOnlyTheAuthoritativeGraphicsCard()
+        public void CapabilitiesReadTheInstalledGraphicsCardFromTheRecord()
         {
             PcAssembly pc = Pc();
 
             PcCapabilities without = PcCapabilities.Evaluate(pc);
             Assert.That(without.HasDedicatedGpu, Is.False);
             Assert.That(without.GamingGraphicsAvailable, Is.False);
-            Assert.That(without.Diagnostics.Single().Code, Is.EqualTo(PcDiagnosticCode.NoDedicatedGpu));
-            Assert.That(without.Diagnostics.Single().Severity, Is.EqualTo(PcDiagnosticSeverity.Limitation), "no GPU limits games and streams, it does not stop the PC");
+            Assert.That(without.Has(PcDiagnosticCode.NoDedicatedGpu), Is.True);
+            Assert.That(without.Diagnostics.Single(diagnostic => diagnostic.Code == PcDiagnosticCode.NoDedicatedGpu).Severity, Is.EqualTo(PcDiagnosticSeverity.Limitation), "no GPU limits games and streams, it does not stop the PC");
 
             pc.TryRecordInstall("gpu-0", "card", _gpu);
 
             PcCapabilities with = PcCapabilities.Evaluate(pc);
             Assert.That(with.HasDedicatedGpu, Is.True);
-            Assert.That(with.GamingGraphicsAvailable, Is.True);
-            Assert.That(with.Diagnostics, Is.Empty);
+            Assert.That(with.Has(PcDiagnosticCode.NoDedicatedGpu), Is.False);
+            Assert.That(with.GamingGraphicsAvailable, Is.False, "a card alone is not a PC that can start");
         }
 
         [Test]
