@@ -5,7 +5,7 @@ using UnityEngine;
 namespace GoLive.PcBuilding
 {
     // The PC Build Mode screen: the normal gameplay HUD fades out and the build UI (PC status, parts panel, slot card)
-    // fades in, following the build mode's timeline. Presentation only; the Workbench decides every text.
+    // fades in, following the build mode's timeline. Presentation only: every text comes from PcWorkbenchText.
     [DisallowMultipleComponent]
     public sealed class PcWorkbenchHudView : MonoBehaviour
     {
@@ -38,6 +38,7 @@ namespace GoLive.PcBuilding
         [SerializeField] private Color hintColor = new(0.64f, 0.68f, 0.73f, 1f);
 
         public bool IsVisible => buildUi != null && buildUi.alpha > 0f;
+        public string StatusTitle => titleText.text;
         public string Status => statusText.text;
         public string Title => cardTitleText.text;
         public string Detail => cardDetailText.text;

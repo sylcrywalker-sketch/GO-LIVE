@@ -21,7 +21,10 @@ namespace GoLive.Persistence
     [DisallowMultipleComponent]
     public sealed class GameSaveController : MonoBehaviour
     {
-        private const int CurrentVersion = 5;
+        // v6: the Student PC starts with its motherboard, processor, memory, power supply and drive as persistent scene
+        // items. An older save has none of them, and loading it would silently take them out of the PC, so v1-v5 are
+        // rejected instead of migrated (pre-release).
+        private const int CurrentVersion = 6;
         private const string AutosaveFileName = "autosave.json";
 
         [Header("Game State")]
@@ -984,7 +987,7 @@ namespace GoLive.Persistence
                 _needs.Needs != null &&
                 _wallet.Wallet != null &&
                 _shop.IsReady &&
-                _pc.Assembly != null &&
+                _pc.IsReady &&
                 _rent.TryGetSnapshot(out _))
             {
                 return true;

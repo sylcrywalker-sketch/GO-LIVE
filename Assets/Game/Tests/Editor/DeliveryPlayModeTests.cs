@@ -18,7 +18,7 @@ using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
-    // Runs the real delivery runtime in Play Mode: Awake/Start, Instantiate, physics, carry and the v5 save pipeline.
+    // Runs the real delivery runtime in Play Mode: Awake/Start, Instantiate, physics, carry and the v6 save pipeline.
     public sealed class DeliveryPlayModeTests
     {
         private const string GpuId = SaveTestWorld.BudgetGpuId;
@@ -57,7 +57,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             ShopOrder order = Buy(GpuId);
             Advance(149);
@@ -84,7 +84,7 @@ namespace GoLive.Tests
 
             _world.Delivery.enabled = false;
             _world.Delivery.enabled = true;
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Assert.That(Packages(), Has.Count.EqualTo(1));
             Assert.That(_world.Delivery.State.Records, Has.Count.EqualTo(1));
@@ -97,7 +97,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             ShopOrder order = Buy(GpuId);
             SleepService sleep = new(_world.Clock.Clock, _world.Needs.Needs, new SleepRules(1, 12, 8, 12.5f));
@@ -116,7 +116,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Buy(SnackId);
@@ -145,7 +145,7 @@ namespace GoLive.Tests
                 ShopTestData.CreateProduct("retired-widget", 300, ItemCategory.Household, null, available: false, deliveryDelayMinutes: 0));
 
             StartWorld(catalog);
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             long now = _world.Clock.Clock.Current.TotalSeconds;
             _world.Shop.RestoreOrders(new ShopOrdersSnapshot
@@ -179,7 +179,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             ShopOrder order = Buy(SnackId);
             Advance(90);
@@ -231,7 +231,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             ShopOrder order = Buy(SnackId);
             Advance(90);
@@ -282,7 +282,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Buy(SnackId);
@@ -308,7 +308,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Advance(151);
@@ -347,7 +347,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Advance(151);
@@ -372,7 +372,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             ShopOrder order = Buy(GpuId);
             Assert.That(_world.TrySave(), Is.True);
@@ -387,7 +387,7 @@ namespace GoLive.Tests
             Assert.That(_world.Delivery.State.Records, Is.Empty);
             Assert.That(_world.Shop.Orders.Orders.Single().Status, Is.EqualTo(ShopOrderStatus.Placed));
 
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Assert.That(latePackage == null, Is.True);
             Assert.That(Packages(), Is.Empty, "the package that arrived after the save is not part of the loaded game");
@@ -404,7 +404,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Assert.That(_world.TrySave(), Is.True);
@@ -422,7 +422,7 @@ namespace GoLive.Tests
             Assert.That(saved.Delivery.Deliveries, Is.Empty);
             Assert.That(_world.TryLoad(), Is.True);
 
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Assert.That(latePackage == null, Is.True);
             Assert.That(Packages(), Is.Empty);
@@ -436,7 +436,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             ItemDefinition gpu = ShopTestData.LoadItem(ShopTestData.BudgetGpuItem);
             ItemInstance banana = new("mismatched-item", BananaItemId, ItemLocation.World);
@@ -444,7 +444,7 @@ namespace GoLive.Tests
             Assert.That(WorldItem.SpawnRuntime(gpu, banana, Vector3.zero, Quaternion.identity), Is.Null);
             Assert.That(RuntimeItems(), Is.Empty);
             Assert.That(_world.TrySave(), Is.True);
-            Assert.That(_world.ReadSave().Items, Is.Empty);
+            Assert.That(_world.ReadSave().Items.Select(item => item.InstanceId), Is.EquivalentTo(_world.StarterItemIds), "only the PC's own scene parts");
         }
 
         [UnityTest]
@@ -452,7 +452,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             ShopOrder order = Buy(GpuId);
             Assert.That(_world.TrySave(), Is.True);
@@ -478,7 +478,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Advance(151);
@@ -513,7 +513,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Advance(151);
@@ -541,7 +541,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Advance(151);
@@ -581,7 +581,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Advance(151);
@@ -615,7 +615,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Buy(SnackId);
@@ -655,7 +655,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(SnackId);
             Advance(90);
@@ -707,7 +707,7 @@ namespace GoLive.Tests
         {
             yield return new EnterPlayMode(false);
             StartWorld();
-            yield return null;
+            yield return PlayModeWait.Frames(1);
 
             Buy(GpuId);
             Buy(SnackId);

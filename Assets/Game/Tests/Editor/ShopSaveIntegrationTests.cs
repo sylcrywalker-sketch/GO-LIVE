@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using GoLive.Delivery;
 using GoLive.PcBuilding;
 using GoLive.Persistence;
@@ -45,17 +46,18 @@ namespace GoLive.Tests
         }
 
         [Test]
-        public void SaveFileIsSchemaV5WithOrdersDeliveryAndPcSections()
+        public void SaveFileIsSchemaV6WithOrdersDeliveryAndPcSections()
         {
             ShopOrder placed = _world.Shop.TryPurchase(GpuId).Order;
 
             Assert.That(_world.TrySave(), Is.True);
 
             GameSaveData data = _world.ReadSave();
-            Assert.That(data.Version, Is.EqualTo(5));
+            Assert.That(data.Version, Is.EqualTo(6));
             Assert.That(data.PcAssembly, Is.Not.Null);
             Assert.That(data.PcAssembly.Version, Is.EqualTo(PcAssembly.SnapshotVersion));
-            Assert.That(data.PcAssembly.InstalledSlots, Is.Empty);
+            Assert.That(data.PcAssembly.InstalledSlots.Select(record => record.SlotId), Is.EquivalentTo(new[] { "motherboard-0", "cpu-0", "ram-0", "psu-0", "storage-0" }), "the Student PC's new-game parts");
+            Assert.That(data.PcAssembly.InstalledSlots.Select(record => record.ItemInstanceId), Is.EquivalentTo(_world.StarterItemIds));
             Assert.That(data.Delivery, Is.Not.Null);
             Assert.That(data.Delivery.Version, Is.EqualTo(DeliverySnapshot.CurrentVersion));
             Assert.That(data.Delivery.Deliveries, Is.Empty);

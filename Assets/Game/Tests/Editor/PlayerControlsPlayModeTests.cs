@@ -35,9 +35,8 @@ namespace GoLive.Tests
 
         private SceneSetup[] _previousScenes;
         private SaveTestWorld _world;
-        private Keyboard _keyboard;
-        private InputSettings.EditorInputBehaviorInPlayMode _editorInput;
-        private InputSettings.BackgroundBehavior _backgroundBehavior;
+        private VirtualInput _input;
+        private float? _previousCaptureDeltaTime;
 
         private PlayerController _player;
         private CharacterController _body;
@@ -56,16 +55,18 @@ namespace GoLive.Tests
             SaveTestWorld.RestoreScene(_previousScenes);
         }
 
-        [SetUp]
-        public void RememberInputSettings()
-        {
-            _editorInput = InputSystem.settings.editorInputBehaviorInPlayMode;
-            _backgroundBehavior = InputSystem.settings.backgroundBehavior;
-        }
-
         [UnityTearDown]
         public IEnumerator TearDown()
         {
+            // What outlives Play Mode first: the input devices and settings and the frame time this test changed.
+            _input?.Dispose();
+            _input = null;
+
+            if (_previousCaptureDeltaTime.HasValue)
+                Time.captureDeltaTime = _previousCaptureDeltaTime.Value;
+
+            _previousCaptureDeltaTime = null;
+
             for (int i = _created.Count - 1; i >= 0; i--)
             {
                 if (_created[i] != null)
@@ -75,14 +76,6 @@ namespace GoLive.Tests
             _created.Clear();
             _world?.Dispose();
             _world = null;
-
-            if (_keyboard != null)
-                InputSystem.RemoveDevice(_keyboard);
-
-            _keyboard = null;
-            InputSystem.settings.editorInputBehaviorInPlayMode = _editorInput;
-            InputSystem.settings.backgroundBehavior = _backgroundBehavior;
-            Time.captureDeltaTime = 0f;
 
             if (Application.isPlaying)
                 yield return new ExitPlayMode();
@@ -101,7 +94,7 @@ namespace GoLive.Tests
             float cameraHeight = _camera.transform.position.y;
 
             yield return Hold(Key.LeftCtrl);
-            yield return Frames(20);
+            yield return PlayModeWait.Frames(20);
 
             Assert.That(_player.IsCrouching, Is.True);
             Assert.That(_body.height, Is.EqualTo(CrouchHeight).Within(1e-5f));
@@ -110,7 +103,7 @@ namespace GoLive.Tests
             Assert.That(_camera.transform.position.y, Is.EqualTo(cameraHeight - (standingHeight - CrouchHeight)).Within(0.02f), "the view lowers with the capsule");
 
             yield return Release();
-            yield return Frames(20);
+            yield return PlayModeWait.Frames(20);
 
             Assert.That(_player.IsCrouching, Is.False);
             Assert.That(_body.height, Is.EqualTo(standingHeight));
@@ -129,7 +122,7 @@ namespace GoLive.Tests
             yield return MeasureSpeed(false, speed => walking = speed);
 
             _player.RestorePose(new PlayerPoseSnapshot(Vector3.zero, Quaternion.identity, 0f));
-            yield return Frames(5);
+            yield return PlayModeWait.Frames(5);
 
             float crouched = 0f;
             yield return MeasureSpeed(true, speed => crouched = speed);
@@ -149,14 +142,14 @@ namespace GoLive.Tests
             float standingEye = _viewPivot.localPosition.y;
 
             yield return Hold(Key.LeftCtrl);
-            yield return Frames(15);
+            yield return PlayModeWait.Frames(15);
             Assert.That(_player.IsCrouching, Is.True);
 
             GameObject ceiling = Box("Low ceiling", new Vector3(0f, CapsuleBottom() + 1.5f + 0.1f, 0f), new Vector3(3f, 0.2f, 3f));
             Physics.SyncTransforms();
 
             yield return Release();
-            yield return Frames(20);
+            yield return PlayModeWait.Frames(20);
 
             Assert.That(_player.IsCrouching, Is.True, "no standing up through the ceiling");
             Assert.That(_body.height, Is.EqualTo(CrouchHeight).Within(1e-5f));
@@ -164,13 +157,13 @@ namespace GoLive.Tests
 
             // Crouch-walking out from under it works; standing needs the whole capsule clear.
             yield return Hold(Key.W);
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
             yield return Release();
             Assert.That(_player.IsCrouching, Is.True);
 
             Object.DestroyImmediate(ceiling);
             Physics.SyncTransforms();
-            yield return Frames(20);
+            yield return PlayModeWait.Frames(20);
 
             Assert.That(_player.IsCrouching, Is.False, "stands once there is room and Ctrl is no longer held");
             Assert.That(_body.height, Is.EqualTo(standingHeight));
@@ -191,11 +184,11 @@ namespace GoLive.Tests
             for (int i = 0; i < 6; i++)
             {
                 yield return Hold(Key.LeftCtrl);
-                yield return Frames(i % 2 == 0 ? 4 : 15);
+                yield return PlayModeWait.Frames(i % 2 == 0 ? 4 : 15);
                 Assert.That(_player.IsCrouching, Is.True, $"cycle {i}");
 
                 yield return Release();
-                yield return Frames(15);
+                yield return PlayModeWait.Frames(15);
 
                 Assert.That(_body.height, Is.EqualTo(standingHeight), $"cycle {i}");
                 Assert.That(_body.center, Is.EqualTo(standingCenter), $"cycle {i}");
@@ -213,20 +206,20 @@ namespace GoLive.Tests
 
             IDisposable block = _player.Controls.Block(blocked);
             yield return Hold(Key.LeftCtrl);
-            yield return Frames(10);
+            yield return PlayModeWait.Frames(10);
             Assert.That(_player.IsCrouching, Is.False, $"{blocked} blocked: Ctrl does not crouch");
 
             block.Dispose();
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
             Assert.That(_player.IsCrouching, Is.True, "the held key applies once the block is released");
 
             block = _player.Controls.Block(blocked);
             yield return Release();
-            yield return Frames(10);
+            yield return PlayModeWait.Frames(10);
             Assert.That(_player.IsCrouching, Is.True, $"{blocked} blocked: releasing Ctrl does not stand up");
 
             block.Dispose();
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
             Assert.That(_player.IsCrouching, Is.False);
         }
 
@@ -247,11 +240,11 @@ namespace GoLive.Tests
             }
 
             yield return Hold(Key.LeftCtrl);
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
             Assert.That(_player.IsCrouching, Is.True);
 
             yield return Release();
-            yield return Frames(3);
+            yield return PlayModeWait.Frames(3);
             Assert.That(_player.IsCrouching, Is.False);
         }
 
@@ -269,7 +262,7 @@ namespace GoLive.Tests
             Assert.That(_player.IsCrouching, Is.True, "loaded under the shelf: crouched, not inside it");
             Assert.That(_body.height, Is.EqualTo(CrouchHeight).Within(1e-5f));
 
-            yield return Frames(10);
+            yield return PlayModeWait.Frames(10);
             Assert.That(_player.IsCrouching, Is.True);
 
             _player.RestorePose(new PlayerPoseSnapshot(Vector3.zero, Quaternion.identity, 0f));
@@ -283,7 +276,7 @@ namespace GoLive.Tests
             yield return StartDeliveryRig();
 
             DeliveryPackageBehaviour package = DeliverSnack();
-            yield return Frames(30);
+            yield return PlayModeWait.Frames(30);
             PlayerInteractor interactor = _player.GetComponent<PlayerInteractor>();
             PlayerCarry carry = _player.GetComponent<PlayerCarry>();
 
@@ -299,7 +292,7 @@ namespace GoLive.Tests
             yield return Press(Key.G, "Player/Drop");
             Assert.That(carry.HasItem, Is.False, "G drops the package");
             Assert.That(package.Item.Instance.Location, Is.EqualTo(ItemLocation.World));
-            yield return Frames(60);
+            yield return PlayModeWait.Frames(60);
 
             yield return AimAt(package.GetComponent<Collider>());
             Vector3 position = package.transform.position;
@@ -340,7 +333,7 @@ namespace GoLive.Tests
             yield return StartDeliveryRig();
 
             DeliveryPackageBehaviour package = DeliverSnack();
-            yield return Frames(30);
+            yield return PlayModeWait.Frames(30);
             PlayerCarry carry = _player.GetComponent<PlayerCarry>();
 
             yield return AimAt(package.GetComponent<Collider>());
@@ -361,7 +354,7 @@ namespace GoLive.Tests
             Assert.That(RuntimeItems("banana"), Has.Count.EqualTo(1));
 
             WorldItem banana = RuntimeItems("banana").Single();
-            yield return Frames(30);
+            yield return PlayModeWait.Frames(30);
             yield return AimAt(banana.GetComponentInChildren<Collider>());
             yield return Press(Key.E, "Player/Take");
             Assert.That(carry.CarriedItem, Is.SameAs(banana), "the delivered item can be picked up");
@@ -403,12 +396,11 @@ namespace GoLive.Tests
 
         private IEnumerator StartInput()
         {
-            InputSystem.settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
-            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
-            _keyboard = InputSystem.AddDevice<Keyboard>();
+            _input = new VirtualInput(withMouse: false);
+            _previousCaptureDeltaTime = Time.captureDeltaTime;
             Time.captureDeltaTime = FrameTime;
 
-            yield return null;
+            yield return PlayModeWait.Frames(1);
         }
 
         private IEnumerator StartRig(Vector3 position)
@@ -419,7 +411,7 @@ namespace GoLive.Tests
             CreatePlayer(position + Vector3.up * SpawnHeight, Quaternion.identity);
 
             // Let the CharacterController land and rest at its skin width before anything is measured.
-            yield return Frames(30);
+            yield return PlayModeWait.Frames(30);
         }
 
         private IEnumerator StartDeliveryRig()
@@ -430,7 +422,7 @@ namespace GoLive.Tests
             _world.StartPlayModeRuntime();
             CreatePlayer(new Vector3(0f, SpawnHeight, 0.6f), Quaternion.identity);
 
-            yield return Frames(30);
+            yield return PlayModeWait.Frames(30);
         }
 
         // The real prefab without the systems these tests do not compose (phone, inventory, food, sleep).
@@ -471,17 +463,17 @@ namespace GoLive.Tests
             if (crouched)
                 yield return Hold(Key.LeftCtrl);
 
-            yield return Frames(15);
+            yield return PlayModeWait.Frames(15);
             yield return Hold(crouched ? new[] { Key.LeftCtrl, Key.W } : new[] { Key.W });
-            yield return Frames(5);
+            yield return PlayModeWait.Frames(5);
 
             Vector3 start = _player.transform.position;
-            for (int i = 0; i < 30; i++)
-                yield return null;
+            float startTime = Time.time;
+            yield return PlayModeWait.Frames(30);
 
             Vector3 travelled = _player.transform.position - start;
             travelled.y = 0f;
-            result(travelled.magnitude / (30 * FrameTime));
+            result(travelled.magnitude / (Time.time - startTime));
 
             if (!crouched)
                 yield return Release();
@@ -513,7 +505,7 @@ namespace GoLive.Tests
 
                     _player.RestorePose(new PlayerPoseSnapshot(standAt, Quaternion.LookRotation(flat.normalized, Vector3.up), pitch));
                     Physics.SyncTransforms();
-                    yield return Frames(2);
+                    yield return PlayModeWait.Frames(2);
                 }
 
                 Ray ray = new(_camera.transform.position, _camera.transform.forward);
@@ -536,27 +528,27 @@ namespace GoLive.Tests
 
             action.performed -= Count;
             Assert.That(performed, Is.EqualTo(1), $"{key} reached {actionPath} exactly once");
-            yield return Frames(2);
+            yield return PlayModeWait.Frames(2);
         }
 
         private IEnumerator Tap(Key key)
         {
-            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(key));
-            yield return Frames(2);
-            InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
-            yield return Frames(2);
+            InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState(key));
+            yield return PlayModeWait.Frames(2);
+            InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState());
+            yield return PlayModeWait.Frames(2);
         }
 
         private IEnumerator Hold(params Key[] keys)
         {
-            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(keys));
-            yield return Frames(2);
+            InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState(keys));
+            yield return PlayModeWait.Frames(2);
         }
 
         private IEnumerator Release()
         {
-            InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
-            yield return Frames(2);
+            InputSystem.QueueStateEvent(_input.Keyboard, new KeyboardState());
+            yield return PlayModeWait.Frames(2);
         }
 
         private float CapsuleBottom()
@@ -585,10 +577,5 @@ namespace GoLive.Tests
                 .ToList();
         }
 
-        private static IEnumerator Frames(int count)
-        {
-            for (int i = 0; i < count; i++)
-                yield return null;
-        }
     }
 }

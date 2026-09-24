@@ -20,6 +20,6 @@ MonoBehaviour:
   generatedIcon: {fileID: 21300000, guid: 83aa97157ef9ad54a860d04026c6fcdb, type: 3}
   canStoreInInventory: 1
   carryStyle: 0
-  carryLocalPosition: {x: 0, y: -0.051, z: 0}
+  carryLocalPosition: {x: 0, y: -0.043, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}
   pcComponent: {fileID: 11400000, guid: 9a927b8a7a938984fbb73117752435b7, type: 2}

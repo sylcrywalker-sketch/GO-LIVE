@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using GoLive.Interaction;
 using GoLive.Inventory;
 using GoLive.Items;
@@ -19,28 +18,16 @@ namespace GoLive.PcBuilding
     // lights up the slots it fits; pointing at one shows the ghost of the actual part in its installed pose; a click or
     // E installs it and F takes an installed part back into empty hands. B or Esc (through GameUiInputRouter) plays the
     // same presentation backwards and only then gives control back.
-    // This behaviour owns the mode, the pointer target and presentation. The timeline is PcBuildModeSequence, the PC's
-    // movement is PcBuildPresentation, and every item state change is one call:
-    // PcAssemblyBehaviour.TryInstallCarried / TryRemoveToCarry or PlayerInventory.TryTakeToCarry / TryStoreCarriedItem.
+    // This behaviour owns the mode, the input, the pointer target and what is shown where. The timeline is
+    // PcBuildModeSequence, the PC's movement is PcBuildPresentation, every word on screen is PcWorkbenchText, and every item
+    // state change is one call: PcAssemblyBehaviour.TryInstallCarried / TryRemoveToCarry or PlayerInventory.TryTakeToCarry /
+    // TryStoreCarriedItem. Whether something may happen is always the PC's or the Inventory's answer, never decided here.
     [DisallowMultipleComponent]
     [RequireComponent(typeof(PcAssemblyBehaviour))]
     [RequireComponent(typeof(PcBuildPresentation))]
     public sealed class PcWorkbenchBehaviour : MonoBehaviour, IInteractable
     {
         private const string EnterPromptKey = "pc.workbench.enter";
-        private const string TitleKey = "pc.workbench.title";
-        private const string MissingKey = "pc.workbench.missing";
-        private const string ChooseTitleKey = "pc.workbench.choose.title";
-        private const string ChooseDetailKey = "pc.workbench.choose.detail";
-        private const string PointHintKey = "pc.workbench.hint.point";
-        private const string EmptySlotKey = "pc.workbench.slot_empty";
-        private const string ControlsKey = "pc.workbench.controls";
-        private const string ClickKey = "pc.workbench.click";
-        private const string InstallableKey = "pc.part.installable";
-        private const string SlotTakenKey = "pc.part.slot_taken";
-        private const string NoPlaceKey = "pc.part.no_place";
-        private const string NotPartKey = "pc.part.not_part";
-        private const string NotPartFeedbackKey = "pc.feedback.not_part";
 
         private const float ApproachSeconds = 0.6f;
         private const float CoverSeconds = 0.55f;
@@ -48,10 +35,6 @@ namespace GoLive.PcBuilding
         // A hitch slows the presentation down instead of making the PC jump.
         private const float MaxStepSeconds = 1f / 30f;
         private const float MaxPointerDistance = 3f;
-
-        private static readonly Color InstallableColor = new(0.56f, 0.89f, 0.66f, 1f);
-        private static readonly Color UnavailableColor = new(0.93f, 0.78f, 0.5f, 1f);
-        private static readonly Color NotPartColor = new(0.55f, 0.58f, 0.62f, 1f);
 
         [Header("PC")]
         [SerializeField] private Material ghostMaterial;
@@ -73,6 +56,10 @@ namespace GoLive.PcBuilding
         [SerializeField] private InputActionReference removeAction;
         [SerializeField] private InputActionReference toggleAction;
 
+        [Header("Presentation")]
+        [Tooltip("Optional soft light from the eye that keeps the open case readable when the room is dark; its authored intensity fades in and out with the build view.")]
+        [SerializeField] private Light workLight;
+
         // Opening, open or closing: the mode owns the controls until the closing presentation has finished.
         public bool IsOpen => _sequence.IsActive;
         public bool IsInteractive => _sequence.IsInteractive;
@@ -82,17 +69,18 @@ namespace GoLive.PcBuilding
         internal GameObject GhostRoot => _ghost?.Root;
 
         private readonly PcBuildModeSequence _sequence = new(ApproachSeconds, CoverSeconds, OverlapSeconds);
-        private readonly StringBuilder _status = new(256);
 
         private PcAssemblyBehaviour _pc;
         private PcBuildPresentation _presentation;
         private PcBuildCamera _camera;
         private PcInstallGhost _ghost;
+        private PcWorkbenchText _text;
         private PcComponentSlot _previewSlot;
         private IDisposable _controlBlock;
         private CursorLockMode _previousCursorLockMode;
         private bool _previousCursorVisible;
         private int _openedFrame;
+        private float _workLightIntensity;
 
         private void Awake()
         {
@@ -107,6 +95,11 @@ namespace GoLive.PcBuilding
 
             _camera = new PcBuildCamera(playerCamera);
             _ghost = new PcInstallGhost(ghostMaterial);
+            _text = new PcWorkbenchText(_pc, localization);
+
+            if (workLight != null)
+                _workLightIntensity = workLight.intensity;
+            SetWorkLight(0f);
         }
 
         // The keys are shared with PlayerInteractor, which owns their lifetime; the Workbench only makes sure they listen.
@@ -176,6 +169,7 @@ namespace GoLive.PcBuilding
             _presentation.SetCoverOpen(_sequence.CoverAmount);
             _camera.Apply(_sequence.ApproachAmount, _presentation.BuildViewRotation);
             hud.SetPresence(_sequence.Progress, _sequence.IsInteractive);
+            SetWorkLight(_sequence.Progress);
         }
 
         public bool CanInteract(in InteractionContext context)
@@ -183,7 +177,7 @@ namespace GoLive.PcBuilding
             return context.Action == InteractionAction.Special &&
                    !IsOpen &&
                    isActiveAndEnabled &&
-                   _pc.Assembly != null &&
+                   _pc.IsReady &&
                    context.Actor == playerController.gameObject;
         }
 
@@ -200,7 +194,7 @@ namespace GoLive.PcBuilding
 
         public bool Open()
         {
-            if (IsOpen || !isActiveAndEnabled || _pc.Assembly == null || !parts.Bind(playerInventory, playerCarry, localization, AnnotatePart))
+            if (IsOpen || !isActiveAndEnabled || !_pc.IsReady || !parts.Bind(playerInventory, playerCarry, localization, AnnotatePart, RankPart))
                 return false;
 
             _sequence.Begin();
@@ -260,6 +254,8 @@ namespace GoLive.PcBuilding
             if (hud != null)
                 hud.SetPresence(0f, false);
 
+            SetWorkLight(0f);
+
             if (playerCarry != null)
                 playerCarry.SetHeldItemHidden(false);
 
@@ -270,6 +266,17 @@ namespace GoLive.PcBuilding
             _controlBlock = null;
         }
 
+        private void SetWorkLight(float presence)
+        {
+            if (workLight == null)
+                return;
+
+            workLight.intensity = _workLightIntensity * presence;
+            workLight.enabled = presence > 0f;
+        }
+
+        // Only slots that are there: a slot on a part that is not installed (the processor socket without its motherboard)
+        // answers neither the pointer nor the highlight, so it never hides the place its host part goes.
         private void UpdateTarget()
         {
             PcComponentSlot target = null;
@@ -282,7 +289,7 @@ namespace GoLive.PcBuilding
 
                 for (int i = 0; i < slots.Count; i++)
                 {
-                    if (slots[i].Raycast(ray, out float distance) && distance < nearest)
+                    if (_pc.Assembly.IsSlotPresent(slots[i].SlotId) && slots[i].Raycast(ray, out float distance) && distance < nearest)
                     {
                         nearest = distance;
                         target = slots[i];
@@ -307,7 +314,7 @@ namespace GoLive.PcBuilding
             if (check == PcSlotCheck.Allowed)
                 _pc.TryInstallCarried(TargetSlot, playerCarry);
             else
-                hud.ShowFeedback(localization.Text(check.MessageKey()));
+                hud.ShowFeedback(_text.Reason(check, TargetSlot.SlotId));
         }
 
         private void RemoveFromTarget()
@@ -317,7 +324,7 @@ namespace GoLive.PcBuilding
             if (check == PcSlotCheck.Allowed)
                 _pc.TryRemoveToCarry(TargetSlot, playerCarry);
             else if (check != PcSlotCheck.SlotEmpty)
-                hud.ShowFeedback(localization.Text(check.MessageKey()));
+                hud.ShowFeedback(_text.Reason(check, TargetSlot.SlotId));
         }
 
         // Parts panel: a click on a PC part takes it into the hands (swapping a storable held item back); anything
@@ -329,7 +336,7 @@ namespace GoLive.PcBuilding
 
             if (definition.PcComponent == null)
             {
-                hud.ShowFeedback(localization.Format(NotPartFeedbackKey, ItemName(definition)));
+                hud.ShowFeedback(_text.NotAPart(definition));
                 return;
             }
 
@@ -382,14 +389,15 @@ namespace GoLive.PcBuilding
 
             bool preview = interactive && TargetSlot != null && _pc.CheckInstall(TargetSlot, playerCarry) == PcSlotCheck.Allowed;
             ShowGhost(preview ? held : null);
-            RenderStatus();
-            RenderCard(held, heldPart);
+            hud.RenderStatus(_text.StatusTitle, _text.Status());
+            RenderCard(held);
         }
 
-        // Green where the held part fits, a faint outline on other empty places, nothing over installed parts.
+        // Green where the held part fits, a faint outline on other empty places, nothing over installed parts or on slots
+        // that are not there.
         private PcSlotHighlight HighlightFor(PcComponentSlot slot, PcComponentSpec heldPart)
         {
-            if (_pc.Assembly.IsSlotOccupied(slot.SlotId))
+            if (_pc.Assembly.IsSlotOccupied(slot.SlotId) || !_pc.Assembly.IsSlotPresent(slot.SlotId))
                 return PcSlotHighlight.None;
 
             if (heldPart != null && PcAssembly.CheckCompatibility(slot.Spec, heldPart) == PcSlotCheck.Allowed)
@@ -417,123 +425,37 @@ namespace GoLive.PcBuilding
             _previewSlot.SetPreview(true);
         }
 
-        // One line per slot of this PC (what is installed, what is missing) and what the missing parts cost.
-        private void RenderStatus()
+        private void RenderCard(WorldItem held)
         {
-            _status.Clear();
-            IReadOnlyList<PcComponentSlot> slots = _pc.Slots;
+            PcWorkbenchText.Card card = TargetSlot == null
+                ? _text.HandsCard(held)
+                : _text.SlotCard(TargetSlot, SlotCheck(TargetSlot), Binding(installAction), Binding(removeAction));
 
-            for (int i = 0; i < slots.Count; i++)
-            {
-                string component = localization.Text(slots[i].ComponentType.NameKey());
-                bool installed = _pc.TryGetInstalledItem(slots[i], out WorldItem item);
-
-                if (_status.Length > 0)
-                    _status.Append('\n');
-
-                _status.Append("<color=#").Append(installed ? "8FE3A8" : "F2C46B").Append('>')
-                    .Append(component).Append(" — ")
-                    .Append(installed ? ItemName(item.Definition) : localization.Text(MissingKey))
-                    .Append("</color>");
-            }
-
-            IReadOnlyList<PcDiagnostic> diagnostics = _pc.Capabilities.Diagnostics;
-
-            for (int i = 0; i < diagnostics.Count; i++)
-                _status.Append("\n<size=85%><color=#A3ADB9>").Append(localization.Text(diagnostics[i].DetailKey)).Append("</color></size>");
-
-            hud.RenderStatus(localization.Text(TitleKey), _status.ToString());
+            hud.RenderCard(card.Title, card.Detail, card.Action, card.Tone, _text.Controls(Binding(installAction), Binding(removeAction), Binding(toggleAction)));
         }
 
-        private void RenderCard(WorldItem held, PcComponentSpec heldPart)
+        // What the keys would do on this slot right now: take the part out of a filled slot, put the held one into an empty one.
+        private PcSlotCheck SlotCheck(PcComponentSlot slot)
         {
-            string controls = localization.Format(ControlsKey, Binding(installAction), Binding(removeAction), Binding(toggleAction));
-
-            if (TargetSlot == null)
-            {
-                if (held == null)
-                {
-                    hud.RenderCard(localization.Text(ChooseTitleKey), localization.Text(ChooseDetailKey), null, PcWorkbenchHudView.Tone.Hint, controls);
-                    return;
-                }
-
-                PcSlotCheck fit = _pc.Assembly.CheckPart(heldPart, out _);
-                hud.RenderCard(
-                    ItemName(held.Definition),
-                    fit == PcSlotCheck.Allowed ? localization.Text(PointHintKey) : null,
-                    fit == PcSlotCheck.Allowed ? null : localization.Text(fit.MessageKey()),
-                    PcWorkbenchHudView.Tone.Rejected,
-                    controls);
-                return;
-            }
-
-            string title = localization.Text(TargetSlot.NameLocalizationKey);
-
-            if (_pc.TryGetInstalledItem(TargetSlot, out WorldItem installed))
-            {
-                PcSlotCheck removal = _pc.CheckRemove(TargetSlot, playerCarry);
-                string action = removal == PcSlotCheck.Allowed
-                    ? $"[{Binding(removeAction)}] {localization.Text(TargetSlot.ComponentType.RemovePromptKey())}"
-                    : localization.Text(removal.MessageKey());
-
-                hud.RenderCard(title, $"{TargetSlot.TechnicalLabel} · {ItemName(installed.Definition)}", action, Tone(removal), controls);
-                return;
-            }
-
-            PcSlotCheck install = _pc.CheckInstall(TargetSlot, playerCarry);
-            string installLine = install == PcSlotCheck.Allowed
-                ? $"[{localization.Text(ClickKey)} / {Binding(installAction)}] {localization.Text(TargetSlot.ComponentType.InstallPromptKey())}"
-                : localization.Text(install.MessageKey());
-
-            hud.RenderCard(title, $"{TargetSlot.TechnicalLabel} · {localization.Text(EmptySlotKey)}", installLine, Tone(install), controls);
+            return _pc.Assembly.IsSlotOccupied(slot.SlotId) ? _pc.CheckRemove(slot, playerCarry) : _pc.CheckInstall(slot, playerCarry);
         }
 
         // Parts panel rows: what each Inventory item means for this PC right now.
         private void AnnotatePart(InventoryItemView row, ItemDefinition definition)
         {
-            PcComponentSpec part = definition.PcComponent;
+            PcWorkbenchText.PartNote note = _text.Note(definition);
+            row.SetNote(note.Text, note.Color);
+            row.SetDimmed(note.Dimmed);
+        }
 
-            if (part == null)
-            {
-                row.SetNote(localization.Text(NotPartKey), NotPartColor);
-                row.SetDimmed(true);
-                return;
-            }
-
-            string component = localization.Text(part.ComponentType.NameKey());
-
-            switch (_pc.Assembly.CheckPart(part, out _))
-            {
-                case PcSlotCheck.Allowed:
-                    row.SetNote(localization.Format(InstallableKey, component), InstallableColor);
-                    break;
-                case PcSlotCheck.SlotOccupied:
-                    row.SetNote(localization.Format(SlotTakenKey, component), UnavailableColor);
-                    break;
-                default:
-                    row.SetNote(localization.Format(NoPlaceKey, component), UnavailableColor);
-                    break;
-            }
+        private int RankPart(ItemDefinition definition)
+        {
+            return _text.Note(definition).Rank;
         }
 
         private bool ClickedInTheBuildView()
         {
             return pointerInput.leftClick.action.WasPressedThisFrame() && !IsPointerOverUi();
-        }
-
-        private string ItemName(ItemDefinition definition)
-        {
-            return string.IsNullOrWhiteSpace(definition.NameLocalizationKey) ? definition.ItemId : localization.Text(definition.NameLocalizationKey);
-        }
-
-        private static PcWorkbenchHudView.Tone Tone(PcSlotCheck check)
-        {
-            return check switch
-            {
-                PcSlotCheck.Allowed => PcWorkbenchHudView.Tone.Action,
-                PcSlotCheck.NothingInHands => PcWorkbenchHudView.Tone.Hint,
-                _ => PcWorkbenchHudView.Tone.Rejected
-            };
         }
 
         private static bool IsPointerOverUi()

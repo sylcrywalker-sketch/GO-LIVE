@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using GoLive.Economy;
 using GoLive.GameTime;
+using GoLive.PcBuilding;
 using GoLive.Persistence;
 using GoLive.Phone;
 using GoLive.Shop;
@@ -67,7 +68,7 @@ namespace GoLive.Tests
             Assert.That(data.Messages.Conversations[0].ContactId, Is.EqualTo("landlord"));
             Assert.That(data.Messages.Conversations[0].Messages[0].MessageId, Is.EqualTo("first"));
             Assert.That(data.Messages.Conversations[0].Messages[0].IsRead, Is.False);
-            Assert.That(data.Version, Is.EqualTo(5));
+            Assert.That(data.Version, Is.EqualTo(6));
             Assert.That(data.Orders, Is.Not.Null);
             Assert.That(data.Orders.Version, Is.EqualTo(ShopOrdersSnapshot.CurrentVersion));
             Assert.That(data.Orders.Orders, Is.Empty);
@@ -235,6 +236,7 @@ namespace GoLive.Tests
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
+        [TestCase(5)]
         public void OldSkeletonSaveVersionIsRejectedWithoutMigration(int version)
         {
             AddIncoming("current");
@@ -242,16 +244,22 @@ namespace GoLive.Tests
             Assert.That(Save(), Is.True);
             var data = ReadSave();
             data.Version = version;
-            // Every older save predates the PC assembly section; versions 1-3 also predate Delivery, 2 and 1 Orders, 1 Messages.
-            string json = JsonUtility.ToJson(data).Replace("\"PcAssembly\":" + JsonUtility.ToJson(data.PcAssembly) + ",", string.Empty);
+            // Every older save predates the Student PC's starter hardware: none of its parts among the items, none in the
+            // PC record. Versions 1-4 also predate the PC assembly section, 1-3 Delivery, 2 and 1 Orders, 1 Messages.
+            data.Items = data.Items.Where(item => !_world.StarterItemIds.Contains(item.InstanceId)).ToArray();
+            data.PcAssembly.InstalledSlots = new PcInstalledSlotSnapshot[0];
+            string json = JsonUtility.ToJson(data);
+            if (version < 5)
+                json = json.Replace("\"PcAssembly\":" + JsonUtility.ToJson(data.PcAssembly) + ",", string.Empty);
             if (version < 4)
                 json = json.Replace("\"Delivery\":" + JsonUtility.ToJson(data.Delivery) + ",", string.Empty);
             if (version < 3)
                 json = json.Replace("\"Orders\":" + JsonUtility.ToJson(data.Orders) + ",", string.Empty);
             if (version == 1)
                 json = json.Replace("\"Messages\":" + JsonUtility.ToJson(data.Messages) + ",", string.Empty);
-            Assert.That(json, Does.Not.Contain("\"PcAssembly\":"));
+            Assert.That(json.Contains("\"PcAssembly\":"), Is.EqualTo(version == 5));
             File.WriteAllText(_path, json);
+            string pcBefore = JsonUtility.ToJson(_world.Pc.CaptureSnapshot());
             _wallet.Wallet.Restore(777);
             _shop.RestoreOrders(new ShopOrdersSnapshot());
             _clock.Clock.AdvanceMinutes(3);
@@ -265,6 +273,8 @@ namespace GoLive.Tests
             Assert.That(_shop.Orders.Orders, Is.Empty);
             Assert.That(_clock.Clock.Current.TotalSeconds, Is.EqualTo(clockBefore));
             Assert.That(_root.transform.position, Is.EqualTo(new Vector3(5, 0, 1)));
+            Assert.That(JsonUtility.ToJson(_world.Pc.CaptureSnapshot()), Is.EqualTo(pcBefore), "the starter hardware stays installed");
+            Assert.That(_world.Pc.Capabilities.CanPowerOn, Is.True);
         }
 
         [Test]

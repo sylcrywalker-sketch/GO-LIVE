@@ -176,6 +176,21 @@ namespace GoLive.Items
             return true;
         }
 
+        // New game: a scene-authored part that begins inside a PC goes World -> Installed once, before anything could
+        // have moved it; its PC calls this while it builds the starting record. Every other way into a slot goes
+        // through the hands (TryInstall).
+        internal bool TryStartInstalled(Transform installAnchor)
+        {
+            if (IsRuntime || Instance == null || Instance.Location != ItemLocation.World || installAnchor == null)
+                return false;
+
+            if (!Instance.TryMove(ItemLocation.World, ItemLocation.Installed))
+                return false;
+
+            AttachToInstallAnchor(installAnchor);
+            return true;
+        }
+
         internal bool TryBeginCarryFromInstalled(Transform anchor)
         {
             if (Instance == null || Instance.Location != ItemLocation.Installed || anchor == null)

@@ -9,8 +9,8 @@ using UnityEngine;
 namespace GoLive.PcBuilding
 {
     // The parts panel of PC Build Mode: the same Inventory as TAB, shown as a compact side list whose rows say what
-    // each item means for this PC, plus the part in the hands. A click on a row or on the hands card is reported to
-    // the Workbench, which decides what happens; this view never changes item state.
+    // each item means for this PC (parts that fit right now first), plus the part in the hands. A click on a row or on
+    // the hands card is reported to the Workbench, which decides what happens; this view never changes item state.
     [DisallowMultipleComponent]
     public sealed class PcBuildInventoryView : MonoBehaviour
     {
@@ -51,7 +51,7 @@ namespace GoLive.PcBuilding
             Unbind();
         }
 
-        public bool Bind(PlayerInventory inventory, PlayerCarry carry, LocalizationContext localization, Action<InventoryItemView, ItemDefinition> annotate)
+        public bool Bind(PlayerInventory inventory, PlayerCarry carry, LocalizationContext localization, Action<InventoryItemView, ItemDefinition> annotate, Func<ItemDefinition, int> rank)
         {
             if (IsBound)
                 return true;
@@ -70,6 +70,7 @@ namespace GoLive.PcBuilding
             _carry.CarriedItemChanged += RenderHands;
 
             list.SetRowAnnotator(annotate);
+            list.SetRowOrder(rank);
             Render();
             return true;
         }

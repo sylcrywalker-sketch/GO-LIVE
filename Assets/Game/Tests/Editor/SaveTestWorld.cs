@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using GoLive.Delivery;
 using GoLive.Economy;
@@ -22,7 +23,7 @@ using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
-    // Explicit EditMode composition of the current (v5) save runtime, not a substitute for Awake/Start or Play Mode verification.
+    // Explicit EditMode composition of the current (v6) save runtime, not a substitute for Awake/Start or Play Mode verification.
     // Hands, Delivery and the PC stay inactive unless a Play Mode test calls StartPlayModeRuntime().
     internal sealed class SaveTestWorld : IDisposable
     {
@@ -43,6 +44,9 @@ namespace GoLive.Tests
         public DeliveryBehaviour Delivery { get; }
         public Transform DropPoint { get; }
         public PcAssemblyBehaviour Pc { get; }
+
+        // The persistent scene IDs of the parts the Student PC comes with (never runtime items).
+        public string[] StarterItemIds { get; }
         public string Directory { get; }
         public string SavePath { get; }
 
@@ -131,13 +135,27 @@ namespace GoLive.Tests
             SetField(Delivery, "packageItem", ShopTestData.LoadItem(ShopTestData.DeliveryPackageItem));
             SetField(Delivery, "dropPoint", DropPoint);
 
-            // The real Student PC prefab (case, slots, assembly record); the GL scene adds the Workbench on top of it.
+            // The real Student PC prefab (case, slots, assembly record); the GL scene adds the Workbench on top of it. A plain
+            // copy, like the PC in a running game: an Editor prefab instance would refuse to let its starter parts leave it.
             _pcRoot = new GameObject("Test PC holder");
             _pcRoot.SetActive(false);
-            GameObject pc = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(StudentPcPrefab), _pcRoot.transform);
+            GameObject pc = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(StudentPcPrefab), _pcRoot.transform);
+            pc.name = "StudentPC";
             pc.transform.position = new Vector3(3f, 0.8f, 0f);
             Pc = pc.GetComponent<PcAssemblyBehaviour>();
             typeof(PcAssemblyBehaviour).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Pc, null);
+            StarterItemIds = pc.GetComponentsInChildren<WorldItem>(true).Select(item => item.AuthoredInstanceId).OrderBy(id => id, StringComparer.Ordinal).ToArray();
+
+            // EditMode runs no Awake/Start, so compose the PC's new game the way Play Mode does: its scene items first,
+            // then the PC installs them. Play Mode gets the real lifecycle from StartPlayModeRuntime instead.
+            if (!Application.isPlaying)
+            {
+                foreach (WorldItem item in pc.GetComponentsInChildren<WorldItem>(true))
+                    typeof(WorldItem).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(item, null);
+
+                typeof(PcAssemblyBehaviour).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Pc, null);
+                Assert.That(Pc.IsReady, Is.True, "the Student PC's new-game hardware is installed");
+            }
 
             Save = Root.AddComponent<GameSaveController>();
             SetField(Save, "_player", player);

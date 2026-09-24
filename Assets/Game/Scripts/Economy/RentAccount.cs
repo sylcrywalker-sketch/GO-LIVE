@@ -30,6 +30,26 @@ namespace GoLive.Economy
         public RentOutcome Outcome { get; }
         public long ProcessedThroughSeconds { get; }
 
+        public RentPhase Phase
+        {
+            get
+            {
+                if (Outcome == RentOutcome.Succeeded)
+                    return RentPhase.Completed;
+
+                if (Outcome == RentOutcome.Failed)
+                    return RentPhase.Failed;
+
+                if (SecondBillIssued)
+                    return AmountDueCents > 0 ? RentPhase.FinalPayment : RentPhase.FinalPaymentPaid;
+
+                if (FirstPaymentSettled)
+                    return RentPhase.AwaitingSecondBill;
+
+                return FirstDeadlineMissed ? RentPhase.FirstPaymentOverdue : RentPhase.FirstPayment;
+            }
+        }
+
         public RentSnapshot(
             long amountDueCents,
             bool firstPaymentSettled,
@@ -56,25 +76,7 @@ namespace GoLive.Economy
         public RentOutcome Outcome { get; private set; } = RentOutcome.Active;
         public long ProcessedThroughSeconds { get; private set; }
 
-        public RentPhase Phase
-        {
-            get
-            {
-                if (Outcome == RentOutcome.Succeeded)
-                    return RentPhase.Completed;
-
-                if (Outcome == RentOutcome.Failed)
-                    return RentPhase.Failed;
-
-                if (SecondBillIssued)
-                    return AmountDueCents > 0 ? RentPhase.FinalPayment : RentPhase.FinalPaymentPaid;
-
-                if (FirstPaymentSettled)
-                    return RentPhase.AwaitingSecondBill;
-
-                return FirstDeadlineMissed ? RentPhase.FirstPaymentOverdue : RentPhase.FirstPayment;
-            }
-        }
+        public RentPhase Phase => Current.Phase;
 
         public RentSnapshot Current => new(
             AmountDueCents,

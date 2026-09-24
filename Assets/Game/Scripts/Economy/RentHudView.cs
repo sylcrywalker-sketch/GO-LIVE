@@ -1,4 +1,4 @@
-using System.Globalization;
+using GoLive.GameTime;
 using GoLive.Localization;
 using TMPro;
 using UnityEngine;
@@ -8,18 +8,20 @@ namespace GoLive.Economy
     [DisallowMultipleComponent]
     public sealed class RentHudView : MonoBehaviour
     {
-        private const string FirstDueKey = "rent.first_due";
-        private const string OverdueKey = "rent.overdue";
-        private const string AwaitingSecondKey = "rent.awaiting_second";
-        private const string FinalDueKey = "rent.final_due";
-        private const string PaidKey = "rent.paid";
-        private const string FailedKey = "rent.failed";
-
         [SerializeField] private RentBehaviour _rent;
         [SerializeField] private RentConfig _config;
+        [SerializeField] private GameClockBehaviour _gameClock;
         [SerializeField] private LocalizationContext _localization;
         [SerializeField] private TMP_Text _objectiveText;
 
+        [Header("Deadline tone")]
+        [SerializeField] private Color _separatorColor = new(0.62f, 0.61f, 0.58f, 0.7f);
+        [SerializeField] private Color _upcomingColor = new(0.86f, 0.76f, 0.6f, 1f);
+        [SerializeField] private Color _dueTodayColor = new(0.95f, 0.71f, 0.43f, 1f);
+        [SerializeField] private Color _overdueColor = new(0.93f, 0.53f, 0.43f, 1f);
+
+        private RentRules _rules;
+        private bool _started;
         private bool _bound;
 
         private void Start()
@@ -30,16 +32,19 @@ namespace GoLive.Economy
                 return;
             }
 
+            _rules = _config.CreateRules();
+            _started = true;
             Bind();
-
-            if (_rent.TryGetSnapshot(out RentSnapshot snapshot))
-                Refresh(snapshot);
+            Refresh();
         }
 
         private void OnEnable()
         {
-            if (_rent != null && _localization != null)
-                Bind();
+            if (!_started)
+                return;
+
+            Bind();
+            Refresh();
         }
 
         private void OnDisable()
@@ -52,7 +57,8 @@ namespace GoLive.Economy
             if (_bound)
                 return;
 
-            _rent.Changed += Refresh;
+            _rent.Changed += HandleRentChanged;
+            _gameClock.Clock.DayChanged += HandleDayChanged;
             _localization.LanguageChanged += HandleLanguageChanged;
             _bound = true;
         }
@@ -62,79 +68,69 @@ namespace GoLive.Economy
             if (!_bound)
                 return;
 
-            _rent.Changed -= Refresh;
+            _rent.Changed -= HandleRentChanged;
+            _gameClock.Clock.DayChanged -= HandleDayChanged;
             _localization.LanguageChanged -= HandleLanguageChanged;
             _bound = false;
         }
 
+        private void HandleRentChanged(RentSnapshot snapshot)
+        {
+            Refresh();
+        }
+
+        private void HandleDayChanged(int previousDay, int currentDay)
+        {
+            Refresh();
+        }
+
         private void HandleLanguageChanged(GameLanguage language)
         {
-            if (_rent.TryGetSnapshot(out RentSnapshot snapshot))
-                Refresh(snapshot);
+            Refresh();
         }
 
-        private void Refresh(RentSnapshot snapshot)
+        private void Refresh()
         {
-            RentPhase phase = GetPhase(snapshot);
+            if (!_rent.TryGetSnapshot(out RentSnapshot snapshot))
+                return;
 
-            _objectiveText.text = phase switch
+            RentHudState state = RentHudPresentation.Evaluate(_rules, snapshot, _gameClock.Clock.Current);
+            RentHudText text = RentHudPresentation.Localize(state, _localization);
+
+            _objectiveText.text = text.Status == null
+                ? text.Lead
+                : $"{text.Lead}<color=#{Hex(_separatorColor)}>  •  </color><color=#{Hex(ToneOf(state.Status))}>{text.Status}</color>";
+        }
+
+        private Color ToneOf(RentHudStatus status)
+        {
+            return status switch
             {
-                RentPhase.FirstPayment => _localization.Format(
-                    FirstDueKey,
-                    FormatMoney(snapshot.AmountDueCents),
-                    _config.FirstDeadlineDay),
-
-                RentPhase.FirstPaymentOverdue => _localization.Format(
-                    OverdueKey,
-                    FormatMoney(snapshot.AmountDueCents),
-                    _config.SecondBillDay),
-
-                RentPhase.AwaitingSecondBill => _localization.Format(
-                    AwaitingSecondKey,
-                    _config.SecondBillDay),
-
-                RentPhase.FinalPayment => _localization.Format(
-                    FinalDueKey,
-                    FormatMoney(snapshot.AmountDueCents),
-                    _config.FinalDeadlineDay),
-
-                RentPhase.FinalPaymentPaid => _localization.Text(PaidKey),
-                RentPhase.Completed => _localization.Text(PaidKey),
-                RentPhase.Failed => _localization.Text(FailedKey),
-                _ => string.Empty
+                RentHudStatus.DueToday => _dueTodayColor,
+                RentHudStatus.Overdue => _overdueColor,
+                _ => _upcomingColor
             };
-        }
-
-        private RentPhase GetPhase(RentSnapshot snapshot)
-        {
-            if (snapshot.Outcome == RentOutcome.Succeeded)
-                return RentPhase.Completed;
-
-            if (snapshot.Outcome == RentOutcome.Failed)
-                return RentPhase.Failed;
-
-            if (snapshot.SecondBillIssued)
-                return snapshot.AmountDueCents > 0 ? RentPhase.FinalPayment : RentPhase.FinalPaymentPaid;
-
-            if (snapshot.FirstPaymentSettled)
-                return RentPhase.AwaitingSecondBill;
-
-            return snapshot.FirstDeadlineMissed ? RentPhase.FirstPaymentOverdue : RentPhase.FirstPayment;
         }
 
         private bool ValidateConfiguration()
         {
-            if (_rent != null && _config != null && _localization != null && _objectiveText != null)
+            if (_rent != null &&
+                _config != null &&
+                _gameClock != null &&
+                _gameClock.Clock != null &&
+                _localization != null &&
+                _objectiveText != null)
+            {
                 return true;
+            }
 
             Debug.LogError($"{nameof(RentHudView)} on {name} has incomplete configuration.", this);
             return false;
         }
 
-        private static string FormatMoney(long cents)
+        private static string Hex(Color color)
         {
-            decimal dollars = cents / 100m;
-            return $"${dollars.ToString("0.00", CultureInfo.InvariantCulture)}";
+            return ColorUtility.ToHtmlStringRGBA(color);
         }
     }
 }

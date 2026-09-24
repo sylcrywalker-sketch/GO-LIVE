@@ -6,17 +6,33 @@ using UnityEngine;
 
 namespace GoLive.PcBuilding
 {
-    // The physical PC in the scene: its authored slots, the PcAssembly record of what is installed where, and the
-    // two transactions that move one real item between the player's hands and a slot. Presentation of the slots
-    // follows the record; the Workbench only asks and calls.
+    // The physical PC in the scene: its authored slots, the PcAssembly record of what is installed where, the parts it
+    // comes with in a new game, and the two transactions that move one real item between the player's hands and a
+    // slot. Presentation of the slots follows the record; the Workbench only asks and calls.
     [DisallowMultipleComponent]
     public sealed class PcAssemblyBehaviour : MonoBehaviour
     {
+        // One part the PC comes with: a scene-authored item that sits on this slot's Install Anchor.
+        [Serializable]
+        private struct PreinstalledPart
+        {
+            public PcComponentSlot slot;
+            public WorldItem item;
+        }
+
         [SerializeField] private PcComponentSlot[] slots = Array.Empty<PcComponentSlot>();
+
+        [Tooltip("What this PC has installed when a new game starts. Each item is a scene item with a persistent ID, placed on its slot's Install Anchor.")]
+        [SerializeField] private PreinstalledPart[] preinstalled = Array.Empty<PreinstalledPart>();
 
         public PcAssembly Assembly { get; private set; }
         public IReadOnlyList<PcComponentSlot> Slots => slots;
+
+        // Computed from the record on every read, so it is never stale after an install or removal.
         public PcCapabilities Capabilities => PcCapabilities.Evaluate(Assembly);
+
+        // The record describes the game: the new-game parts are installed, or a save has been restored since.
+        public bool IsReady { get; private set; }
 
         // The installed WorldItems by instance ID, for the slots the Assembly says are filled.
         private readonly Dictionary<string, WorldItem> _installedItems = new(StringComparer.Ordinal);
@@ -27,6 +43,20 @@ namespace GoLive.PcBuilding
                 return;
 
             if (!TryBuildAssembly(out string error))
+            {
+                Debug.LogError($"{nameof(PcAssemblyBehaviour)} on {name} {error}.", this);
+                enabled = false;
+            }
+        }
+
+        // Unity runs every Awake of the loaded scene before any Start, so each preinstalled item already holds its scene
+        // ItemInstance here. Start runs once per lifetime; a later load replaces the record through Restore.
+        private void Start()
+        {
+            if (Assembly == null || IsReady)
+                return;
+
+            if (!TryInstallPreinstalled(out string error))
             {
                 Debug.LogError($"{nameof(PcAssemblyBehaviour)} on {name} {error}.", this);
                 enabled = false;
@@ -55,6 +85,12 @@ namespace GoLive.PcBuilding
             return Owns(slot) &&
                    Assembly.TryGetInstalled(slot.SlotId, out PcInstalledComponent component) &&
                    _installedItems.TryGetValue(component.InstanceId, out item);
+        }
+
+        // Pressing the power button now: answered from the installed hardware, changes nothing.
+        public PcPowerOnResult TryPowerOn()
+        {
+            return PcPowerOnResult.Attempt(Assembly);
         }
 
         // Read-only: what TryInstallCarried would do right now.
@@ -189,6 +225,87 @@ namespace GoLive.PcBuilding
                 specs.Add(pair.Key, pair.Value.Definition.PcComponent);
             }
 
+            ApplyRecord(snapshot, specs, installed);
+        }
+
+        // The new-game record, validated as a whole before any item moves: the same snapshot rules a save must pass
+        // (known slots, one item per slot, one slot per item, matching component type and connector, every part on an
+        // installed host part), plus the scene rules only authored content can break.
+        private bool TryInstallPreinstalled(out string error)
+        {
+            PcInstalledSlotSnapshot[] records = new PcInstalledSlotSnapshot[preinstalled.Length];
+            Dictionary<string, PcComponentSpec> specs = new(StringComparer.Ordinal);
+            Dictionary<string, WorldItem> items = new(StringComparer.Ordinal);
+
+            for (int i = 0; i < preinstalled.Length; i++)
+            {
+                PcComponentSlot slot = preinstalled[i].slot;
+                WorldItem item = preinstalled[i].item;
+
+                if (!Owns(slot))
+                {
+                    error = $"has preinstalled entry {i} without one of its own slots";
+                    return false;
+                }
+
+                // A scene item gets its ItemInstance in its own Awake, only when it is configured; one without had none.
+                if (item == null || item.IsRuntime || item.Instance == null || item.Instance.Location != ItemLocation.World)
+                {
+                    error = $"has preinstalled entry {i} ({slot.SlotId}) without a scene item that has a persistent ID and is still untouched";
+                    return false;
+                }
+
+                if (item.transform.parent != slot.InstallAnchor)
+                {
+                    error = $"has preinstalled item {item.name} away from the Install Anchor of slot {slot.SlotId}";
+                    return false;
+                }
+
+                if (!items.TryAdd(item.Instance.InstanceId, item))
+                {
+                    error = $"has preinstalled item {item.name} listed twice or sharing the ID {item.Instance.InstanceId}";
+                    return false;
+                }
+
+                specs.Add(item.Instance.InstanceId, item.Definition.PcComponent);
+                records[i] = new PcInstalledSlotSnapshot { SlotId = slot.SlotId, ItemInstanceId = item.Instance.InstanceId };
+            }
+
+            // An item left on an anchor but not listed would be a loose world item inside the PC with no slot record.
+            for (int i = 0; i < slots.Length; i++)
+            {
+                foreach (WorldItem child in slots[i].InstallAnchor.GetComponentsInChildren<WorldItem>(true))
+                {
+                    if (child.Instance == null || !items.TryGetValue(child.Instance.InstanceId, out WorldItem listed) || listed != child)
+                    {
+                        error = $"has item {child.name} on slot {slots[i].SlotId} that is not a preinstalled part";
+                        return false;
+                    }
+                }
+            }
+
+            PcAssemblySnapshot record = new() { Version = PcAssembly.SnapshotVersion, InstalledSlots = records };
+
+            if (!Assembly.IsValidSnapshot(record, specs))
+            {
+                error = "has preinstalled parts that do not fit their slots (a slot used twice, a wrong component type or connector, or a part without the part it is mounted on)";
+                return false;
+            }
+
+            for (int i = 0; i < preinstalled.Length; i++)
+            {
+                if (!preinstalled[i].item.TryStartInstalled(preinstalled[i].slot.InstallAnchor))
+                    throw new InvalidOperationException($"Validated preinstalled item {preinstalled[i].item.name} refused its slot.");
+            }
+
+            ApplyRecord(record, specs, items);
+            error = null;
+            return true;
+        }
+
+        // The one way a whole record is taken over (new game and load): the items already sit where it says.
+        private void ApplyRecord(PcAssemblySnapshot snapshot, IReadOnlyDictionary<string, PcComponentSpec> specs, IReadOnlyDictionary<string, WorldItem> installed)
+        {
             Assembly.Restore(snapshot, specs);
 
             _installedItems.Clear();
@@ -198,6 +315,8 @@ namespace GoLive.PcBuilding
 
             for (int i = 0; i < slots.Length; i++)
                 slots[i].SetOccupied(Assembly.IsSlotOccupied(slots[i].SlotId));
+
+            IsReady = true;
         }
 
         private bool Owns(PcComponentSlot slot)
