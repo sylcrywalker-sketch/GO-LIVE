@@ -1010,9 +1010,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.GameTime.PracticalLight
   lights:
-  - {fileID: 941884931899844857}
-  - {fileID: 1399615476999850585}
-  - {fileID: 486060142147795038}
+  - light: {fileID: 941884931899844857}
+    fullIntensity: 2.4
+  - light: {fileID: 1399615476999850585}
+    fullIntensity: 0.5
+  - light: {fileID: 486060142147795038}
+    fullIntensity: 0.2
   glowingParts:
   - renderer: {fileID: 1057384205768711665}
     fullEmission: {r: 9, g: 6.4, b: 3.8, a: 1}

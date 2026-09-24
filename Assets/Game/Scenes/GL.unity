@@ -2638,6 +2638,10 @@ PrefabInstance:
       propertyPath: m_AdditionalLightsShadowResolutionTier
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3914608565227052459, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
+      propertyPath: lights.Array.data[0].fullIntensity
+      value: 1.8
+      objectReference: {fileID: 0}
     - target: {fileID: 7987901640700340081, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
       propertyPath: m_Name
       value: Kitchen Ceiling Light
@@ -7446,6 +7450,10 @@ PrefabInstance:
     - target: {fileID: 3732381188392204664, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914608565227052459, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
+      propertyPath: lights.Array.data[0].fullIntensity
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 7987901640700340081, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
       propertyPath: m_Name
@@ -13875,6 +13883,10 @@ PrefabInstance:
     - target: {fileID: 3732381188392204664, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3914608565227052459, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
+      propertyPath: lights.Array.data[0].fullIntensity
+      value: 1.6
       objectReference: {fileID: 0}
     - target: {fileID: 7987901640700340081, guid: 66105f3d0daa12f4fa3e13c6c73932da, type: 3}
       propertyPath: m_Name
