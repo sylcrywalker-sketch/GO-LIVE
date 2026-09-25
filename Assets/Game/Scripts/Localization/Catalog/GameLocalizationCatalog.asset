@@ -1412,3 +1412,33 @@ MonoBehaviour:
   - _key: desktop.mail.stream.body_v2
     _russian: "{0}, \u0441\u043F\u0430\u0441\u0438\u0431\u043E \u0437\u0430 \u044D\u0444\u0438\u0440!\n\n\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C: {1}\n\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u043E\u043D\u043B\u0430\u0439\u043D: {2}\n\u041F\u0438\u043A \u0437\u0440\u0438\u0442\u0435\u043B\u0435\u0439: {3}\n\u041D\u043E\u0432\u044B\u0445 \u043F\u043E\u0434\u043F\u0438\u0441\u0447\u0438\u043A\u043E\u0432: {4}\n\u041F\u043B\u0430\u0442\u043D\u044B\u0445 \u043F\u043E\u0434\u043F\u0438\u0441\u043E\u043A: {5}\n\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430: ${6}\n\n\u0414\u043E \u0432\u0441\u0442\u0440\u0435\u0447\u0438 \u0432 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0444\u0438\u0440\u0435.\n\u041A\u043E\u043C\u0430\u043D\u0434\u0430 Trich"
     _english: "Thanks for streaming, {0}!\n\nDuration: {1}\nAverage viewers: {2}\nPeak viewers: {3}\nNew followers: {4}\nNew paid subscriptions: {5}\nSupport: ${6}\n\nSee you next stream.\nThe Trich team"
+  - _key: desktop.stream.voice.listening
+    _russian: "\u0413\u043E\u043B\u043E\u0441: \u0441\u043B\u0443\u0448\u0430\u044E"
+    _english: "Voice: listening"
+  - _key: desktop.stream.voice.ready
+    _russian: "\u0413\u043E\u043B\u043E\u0441: \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0441\u044F \u0432 \u044D\u0444\u0438\u0440\u0435"
+    _english: "Voice: on during streams"
+  - _key: desktop.stream.voice.loading
+    _russian: "\u0413\u043E\u043B\u043E\u0441: \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u043C\u043E\u0434\u0435\u043B\u0438\u2026"
+    _english: "Voice: loading model\u2026"
+  - _key: desktop.stream.voice.disabled
+    _russian: "\u0413\u043E\u043B\u043E\u0441: \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0432\u0430\u043D\u0438\u0435 \u043E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E"
+    _english: "Voice: recognition disabled"
+  - _key: desktop.stream.voice.microphone_unavailable
+    _russian: "\u0413\u043E\u043B\u043E\u0441: \u043C\u0438\u043A\u0440\u043E\u0444\u043E\u043D \u0441\u0438\u0441\u0442\u0435\u043C\u044B \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u0435\u043D"
+    _english: "Voice: system microphone unavailable"
+  - _key: desktop.stream.voice.model_missing
+    _russian: "\u0413\u043E\u043B\u043E\u0441: \u043C\u043E\u0434\u0435\u043B\u044C \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0432\u0430\u043D\u0438\u044F \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430"
+    _english: "Voice: speech model missing"
+  - _key: desktop.stream.voice.unavailable
+    _russian: "\u0413\u043E\u043B\u043E\u0441: \u0440\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0432\u0430\u043D\u0438\u0435 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E"
+    _english: "Voice: recognition unavailable"
+  - _key: desktop.stream.voice.language.auto
+    _russian: "\u0410\u0432\u0442\u043E RU/EN"
+    _english: "Auto RU/EN"
+  - _key: desktop.stream.voice.language.russian
+    _russian: "RU"
+    _english: "RU"
+  - _key: desktop.stream.voice.language.english
+    _russian: "EN"
+    _english: "EN"

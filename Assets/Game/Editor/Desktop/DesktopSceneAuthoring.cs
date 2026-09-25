@@ -169,6 +169,11 @@ namespace GoLive.Editor.Desktop
             var capture=root.AddComponent<DesktopCaptureSource>();
             Set(capture,"runtime",runtime);
             Set(One<StreamlyView>(),"capture",capture);
+            // The player's real OS microphone: independent of the in-game microphone item.
+            var voiceObject=new GameObject("Player voice input (OS microphone)");voiceObject.transform.SetParent(root.transform,false);
+            var voice=voiceObject.AddComponent<GoLive.Voice.VoiceInputBehaviour>();
+            Set(voice,"localization",One<LocalizationContext>());
+            Set(runtime,"voice",voice);Set(One<StreamlyView>(),"voice",voice);
         }
     }
 }

@@ -85,12 +85,29 @@ namespace GoLive.Editor.Desktop
             var image = ui.Rect("Scene preview", body, 434, 130, 708, 399).gameObject.AddComponent<RawImage>();
             image.raycastTarget = false;
             Set(view, "previewImage", image);
-            Set(view, "preview", ui.Text("Preview source", body, 434, 542, 708, 26, "", 15, ui.Muted));
+            Set(view, "preview", ui.Text("Preview source", body, 434, 542, 300, 26, "", 15, ui.Muted));
+            // Real OS microphone recognition shares the caption row: status (On/Off) and language chips.
+            VoiceChip(ui, view, body, "Voice status", 742, 318, "voiceStatus", "voiceToggle");
+            VoiceChip(ui, view, body, "Voice language", 1068, 74, "voiceLanguage", "voiceLanguageToggle");
             ui.Panel("Output divider", body, 434, 579, 708, 1, ui.Line);
             Set(view, "requirements", ui.Text("Output requirements", body, 434, 595, 410, 52, "", 17, ui.Muted));
             var start = ui.Button("desktop.stream.start", body, 868, 594, 274, 42, true);
             Set(view, "startStop", start);
             Set(view, "startStopText", DynamicCaption(start));
+        }
+
+        private static void VoiceChip(DesktopUiAuthoring ui, StreamlyView view, Transform body, string name, float x, float width,
+            string textField, string buttonField)
+        {
+            var text = ui.Text(name, body, x, 542, width, 26, "", 15, ui.Muted);
+            text.alignment = TextAlignmentOptions.Right;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.raycastTarget = true;
+            var button = text.gameObject.AddComponent<Button>();
+            button.transition = Selectable.Transition.None;
+            button.targetGraphic = text;
+            Set(view, textField, text);
+            Set(view, buttonField, button);
         }
 
         internal static void Donation(DesktopUiAuthoring source, DesktopRuntimeBehaviour runtime, Transform body)

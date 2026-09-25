@@ -29,18 +29,21 @@ namespace GoLive.Tests
             }
         }
 
-        public static IEnumerator Until(Func<bool> condition, string what)
+        public static IEnumerator Until(Func<bool> condition, string what) => Until(condition, what, StallSeconds);
+
+        // For waits on a person (real-microphone acceptance) rather than on the game.
+        public static IEnumerator Until(Func<bool> condition, string what, float seconds)
         {
             int startFrame = Time.frameCount;
-            float deadline = Time.realtimeSinceStartup + StallSeconds;
+            float deadline = Time.realtimeSinceStartup + seconds;
 
             while (!condition())
             {
                 if (Time.realtimeSinceStartup > deadline)
                 {
                     Assert.Fail(Time.frameCount == startFrame
-                        ? $"Waited {StallSeconds} s for {what} and the game ran no frame meanwhile: the Editor's player loop is not advancing (is the Editor paused?)."
-                        : $"Waited {StallSeconds} s ({Time.frameCount - startFrame} frames) for {what}.");
+                        ? $"Waited {seconds} s for {what} and the game ran no frame meanwhile: the Editor's player loop is not advancing (is the Editor paused?)."
+                        : $"Waited {seconds} s ({Time.frameCount - startFrame} frames) for {what}.");
                 }
 
                 yield return null;

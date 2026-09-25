@@ -35,12 +35,14 @@ namespace GoLive.Editor.Desktop
             var locale = One<LocalizationContext>();
             var previousView = One<StreamlyView>();
             var capture = new SerializedObject(previousView).FindProperty("capture").objectReferenceValue;
+            var voice = new SerializedObject(previousView).FindProperty("voice").objectReferenceValue;
             Transform body = previousView.transform;
             Object.DestroyImmediate(previousView);
             for (int i = body.childCount - 1; i >= 0; i--) Object.DestroyImmediate(body.GetChild(i).gameObject);
             var ui = new DesktopUiAuthoring(RequireAsset<TMP_FontAsset>("Assets/Game/UI/Fonts/Manrope/Manrope-Medium SDF.asset"), locale);
             DesktopBroadcastAuthoring.Streamly(ui, runtime, body);
             Set(body.GetComponent<StreamlyView>(), "capture", capture);
+            Set(body.GetComponent<StreamlyView>(), "voice", voice);
             DesktopLocalizationAuthoring.Apply(locale);
             Apply(runtime, One<PlayerController>(), One<PlayerCarry>());
             EditorSceneManager.MarkSceneDirty(runtime.gameObject.scene);

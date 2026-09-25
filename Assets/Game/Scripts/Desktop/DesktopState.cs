@@ -25,6 +25,8 @@ namespace GoLive.Desktop
         public TrichChannel Trich { get; } = new();
         public DonationAccount Donation { get; } = new();
         public StreamSession Stream { get; }
+        // The player's recognized speech admitted into the live broadcast (transient, never saved).
+        public StreamSpeechFeed SpeechFeed { get; }
         public PcPeripherals Peripherals { get; }
         public int RestoreGeneration { get; private set; }
         private readonly IReadOnlyList<DesktopAppDefinition> _apps;
@@ -37,6 +39,7 @@ namespace GoLive.Desktop
             Peripherals = peripherals ?? new PcPeripherals();
             Stream = new StreamSession(Trich, Donation, Peripherals, audienceTuning, audienceSeeds);
             Stream.Completed += CompleteStream;
+            SpeechFeed = new StreamSpeechFeed(Stream);
         }
         public string EnsureSystemApps()
         {
@@ -115,6 +118,10 @@ namespace GoLive.Desktop
                 ? $"{minutes / 60}:{minutes % 60:00}:{(int)(whole % 60):00}"
                 : $"{minutes}:{(int)(whole % 60):00}";
         }
-        public void Dispose() => Stream.Completed -= CompleteStream;
+        public void Dispose()
+        {
+            Stream.Completed -= CompleteStream;
+            SpeechFeed.Dispose();
+        }
     }
 }

@@ -1,3 +1,4 @@
+using GoLive.Voice;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,13 @@ namespace GoLive.Desktop
         [SerializeField] private RawImage previewImage;
         // The shared broadcast source: preview shows exactly what the live stream sends.
         [SerializeField] private DesktopCaptureSource capture;
+        // The player's REAL microphone recognition (not the in-game microphone row): status and the player's
+        // On/Off and language choices. Optional; hidden when the scene has no voice bridge.
+        [SerializeField] private VoiceInputBehaviour voice;
+        [SerializeField] private TMP_Text voiceStatus;
+        [SerializeField] private Button voiceToggle;
+        [SerializeField] private TMP_Text voiceLanguage;
+        [SerializeField] private Button voiceLanguageToggle;
         [SerializeField] private Button[] quality;
         // Same order as the authored rows: channel, internet, microphone, webcam, quality.
         [SerializeField] private TMP_Text[] readinessTexts;
@@ -43,7 +51,20 @@ namespace GoLive.Desktop
                 StreamQuality value = (StreamQuality)i;
                 quality[i].onClick.AddListener(() => ShowResult(State.Stream.SetQuality(value)));
             }
+            if (voiceToggle != null) voiceToggle.onClick.AddListener(() =>
+            {
+                if (VoiceReady) voice.SetEnabled(!voice.Recognition.Enabled);
+                RefreshVoice();
+            });
+            if (voiceLanguageToggle != null) voiceLanguageToggle.onClick.AddListener(() =>
+            {
+                if (VoiceReady) voice.SetLanguage(voice.Recognition.Language == SpeechLanguage.English
+                    ? SpeechLanguage.Auto : voice.Recognition.Language + 1);
+                RefreshVoice();
+            });
         }
+
+        private bool VoiceReady => voice != null && voice.Recognition != null;
 
         private void ShowResult(string error)
         {
@@ -58,7 +79,9 @@ namespace GoLive.Desktop
                 capture.AddPreviewViewer();
                 capture.Changed += RefreshPreview;
             }
+            if (VoiceReady) voice.Recognition.StatusChanged += RefreshVoice;
             RefreshPreview();
+            RefreshVoice();
             base.OnEnable();
         }
 
@@ -70,7 +93,36 @@ namespace GoLive.Desktop
                 capture.Changed -= RefreshPreview;
                 capture.RemovePreviewViewer();
             }
+            if (VoiceReady) voice.Recognition.StatusChanged -= RefreshVoice;
             if (previewImage != null) previewImage.texture = null;
+        }
+
+        private void RefreshVoice()
+        {
+            if (voiceStatus == null || voiceLanguage == null) return;
+            bool shown = VoiceReady;
+            voiceStatus.gameObject.SetActive(shown);
+            voiceLanguage.gameObject.SetActive(shown);
+            if (!shown) return;
+            VoiceStatus state = voice.Recognition.Status;
+            voiceStatus.text = T(state switch
+            {
+                VoiceStatus.Disabled => "desktop.stream.voice.disabled",
+                VoiceStatus.Idle => "desktop.stream.voice.ready",
+                VoiceStatus.Loading => "desktop.stream.voice.loading",
+                VoiceStatus.Listening => "desktop.stream.voice.listening",
+                VoiceStatus.MicrophoneUnavailable => "desktop.stream.voice.microphone_unavailable",
+                VoiceStatus.ModelMissing => "desktop.stream.voice.model_missing",
+                _ => "desktop.stream.voice.unavailable"
+            });
+            voiceStatus.color = state switch
+            {
+                VoiceStatus.Listening => new Color(.42f, .79f, .60f),
+                VoiceStatus.Disabled or VoiceStatus.Idle or VoiceStatus.Loading => new Color(.61f, .65f, .72f),
+                _ => new Color(.94f, .76f, .39f)
+            };
+            voiceLanguage.text = T("desktop.stream.voice.language." + voice.Recognition.Language.ToString().ToLowerInvariant());
+            voiceLanguage.color = voice.Recognition.Enabled ? new Color(.71f, .60f, .85f) : new Color(.45f, .48f, .54f);
         }
 
         // The view owns no render resource; it only displays the capture source's current frame.
@@ -125,6 +177,7 @@ namespace GoLive.Desktop
             connect.interactable = offline;
             channelCode.interactable = paste.interactable = offline && !stream.IsConnected;
             RefreshPreview();
+            RefreshVoice();
             for (int i = 0; i < quality.Length; i++)
             {
                 quality[i].interactable = offline && (int)stream.Quality != i;

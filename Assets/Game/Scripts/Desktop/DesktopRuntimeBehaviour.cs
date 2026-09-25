@@ -4,6 +4,7 @@ using GoLive.Economy;
 using GoLive.GameTime;
 using GoLive.PcBuilding;
 using GoLive.Player;
+using GoLive.Voice;
 using UnityEngine;
 
 namespace GoLive.Desktop
@@ -20,6 +21,8 @@ namespace GoLive.Desktop
         [SerializeField] private WalletBehaviour wallet;
         [SerializeField, Min(0)] private float uploadMbps = 5f;
         [SerializeField] private AudienceTuning audienceTuning = new();
+        // Optional real-microphone bridge. Without it (or when it fails) broadcasts simply have no speech events.
+        [SerializeField] private VoiceInputBehaviour voice;
         public DesktopState State { get; private set; }
         public DesktopAppCatalog Catalog => catalog;
         public PcPeripheralsBehaviour PeripheralRig => peripherals;
@@ -64,6 +67,8 @@ namespace GoLive.Desktop
             Session.Changed += PowerChanged;
             peripherals.State.Changed += PowerChanged;
             _payout = new DonationPayout(State.Donation, wallet.Wallet);
+            State.Stream.Changed += RequestVoice;
+            if (voice != null && voice.Recognition != null) voice.Recognition.Recognized += OfferSpeech;
             _bound = true;
             HardwareChanged();
             IsReady = true;
@@ -81,6 +86,9 @@ namespace GoLive.Desktop
             session.Reset();
             _payout.Dispose();
             _payout = null;
+            State.Stream.Changed -= RequestVoice;
+            if (voice != null && voice.Recognition != null) voice.Recognition.Recognized -= OfferSpeech;
+            if (voice != null) voice.SetListening(false);
             _bound = false;
             IsReady = false;
         }
@@ -106,6 +114,14 @@ namespace GoLive.Desktop
                 if (!State.Storage.IsInstalled(app.Id)) State.Windows.Close(app.Id);
             PowerChanged();
         }
+
+        // The real microphone is open only while a broadcast is starting or live (and the player allows it).
+        private void RequestVoice()
+        {
+            if (voice != null) voice.SetListening(State.Stream.State == StreamState.Starting || State.Stream.State == StreamState.Live);
+        }
+
+        private void OfferSpeech(RecognizedSpeech speech) => State.SpeechFeed.Offer(speech);
 
         private void PowerChanged()
         {
