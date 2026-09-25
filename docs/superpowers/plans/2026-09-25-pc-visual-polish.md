@@ -19,7 +19,7 @@ Blue waves (#07549B, #149BE8, #57C5EE), blue glass taskbar/titlebars (#123654), 
 - [x] Root: compact Hub data-driven authored cards including Web, search; simple drive rows and Web Back/Forward/Home using local navigation. Hardware status rows with monochrome icons, green checks / red required / yellow optional; preserve ghost and installation.
 - [x] Root: run authoring serially, update presentation expectations to new actual controls, then real 1920×1080 RU/EN flow captures for every required state including default/configured Trich. Use current 666-test baseline and preserve all domain assertions.
 - [x] Independent reviewer: check state/input/save regressions and compare screenshots with authoritative targets. Root resolves findings, runs full EditMode plus standalone PlayMode, records exact counts/console/limitations.
-- [ ] Root: preserve baseline edits via semantic scene/catalog blobs, restore generated baseline files, commit visual change and evidence without merging main.
+- [x] Root: preserve baseline edits via semantic scene/catalog blobs, restore generated baseline files, commit visual change and evidence without merging main.
 
 ## Shared authoring API and boundaries
 
