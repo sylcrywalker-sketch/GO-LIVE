@@ -11,10 +11,12 @@ namespace GoLive.Desktop
     {
         [SerializeField] private PcAssemblyBehaviour pc;
         [SerializeField] private PcSessionBehaviour session;
+        [SerializeField] private PcPeripheralsBehaviour peripherals;
         [SerializeField] private DesktopAppCatalog catalog;
         [SerializeField, Min(0)] private float uploadMbps = 5f;
         public DesktopState State { get; private set; }
         public DesktopAppCatalog Catalog => catalog;
+        public PcPeripheralsBehaviour PeripheralRig => peripherals;
         public PcSession Session => session.Session;
         public PcCapabilities Capabilities { get; private set; }
         public float UploadMbps => uploadMbps;
@@ -26,18 +28,18 @@ namespace GoLive.Desktop
 
         private void Awake()
         {
-            if (pc == null || session == null || catalog == null || catalog.ValidationError != null)
+            if (pc == null || session == null || peripherals == null || catalog == null || catalog.ValidationError != null)
             {
-                Debug.LogError("Desktop requires an authored PC, session and valid app catalog.", this);
+                Debug.LogError("Desktop requires an authored PC, peripheral rig, session and valid app catalog.", this);
                 enabled = false;
                 return;
             }
-            State = new DesktopState(catalog.Apps);
+            State = new DesktopState(catalog.Apps, peripherals.State);
         }
 
         private void Update()
         {
-            if (!_bound && pc.IsReady) Bind();
+            if (!_bound && pc.IsReady && peripherals.IsReady) Bind();
             if (IsReady) State.Stream.Tick(Time.deltaTime);
         }
 
@@ -45,6 +47,7 @@ namespace GoLive.Desktop
         {
             pc.Assembly.Changed += HardwareChanged;
             Session.Changed += PowerChanged;
+            peripherals.State.Changed += PowerChanged;
             _bound = true;
             HardwareChanged();
             IsReady = true;
@@ -56,6 +59,7 @@ namespace GoLive.Desktop
             if (!_bound) return;
             pc.Assembly.Changed -= HardwareChanged;
             Session.Changed -= PowerChanged;
+            peripherals.State.Changed -= PowerChanged;
             State.Stream.Abort();
             State.Windows.CloseAll();
             session.Reset();
@@ -85,7 +89,18 @@ namespace GoLive.Desktop
             PowerChanged();
         }
 
-        private void PowerChanged() => State.Stream.RefreshEnvironment(Capabilities, Session.Power == PcPowerState.Running, uploadMbps);
+        private void PowerChanged()
+        {
+            if (!_restoring) State.Stream.RefreshEnvironment(Capabilities, Session.Power == PcPowerState.Running, uploadMbps);
+        }
+
+        public void SetUploadMbps(float value)
+        {
+            if (!DesktopAccountValidation.FiniteNonnegative(value)) throw new ArgumentOutOfRangeException(nameof(value));
+            if (uploadMbps == value) return;
+            uploadMbps = value;
+            if (_bound) PowerChanged();
+        }
 
         public bool Open(DesktopAppId id)
         {
@@ -117,7 +132,7 @@ namespace GoLive.Desktop
         public void EndRestore(bool bootstrapSystemApps = false)
         {
             try { ProjectHardware(bootstrapSystemApps); }
-            finally { State.EndRestore(); _restoring = false; }
+            finally { State.EndRestore(); _restoring = false; PowerChanged(); }
         }
     }
 }

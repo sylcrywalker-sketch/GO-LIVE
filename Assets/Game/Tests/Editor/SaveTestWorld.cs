@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -49,6 +50,7 @@ namespace GoLive.Tests
         public DesktopRuntimeBehaviour Desktop { get; }
         public PcSessionBehaviour PcSession { get; }
         public PlayerController Player { get; }
+        public PcPeripheralsBehaviour Peripherals { get; }
 
         // The persistent scene IDs of the parts the Student PC comes with (never runtime items).
         public string[] StarterItemIds { get; }
@@ -58,6 +60,9 @@ namespace GoLive.Tests
         private readonly ShopCatalogConfig _catalog;
         private readonly GameObject _deliveryRoot;
         private readonly GameObject _pcRoot;
+        private readonly GameObject _peripheralRoot;
+        private readonly List<WorldItem> _peripheralItems = new();
+        private readonly List<GameObject> _peripheralItemRoots = new();
         private readonly GameObject _floor;
         private readonly WorldItem[] _starterItems;
         private readonly DesktopAppCatalog _desktopCatalog;
@@ -107,6 +112,11 @@ namespace GoLive.Tests
             SetField(Carry, "carryAnchor", carryAnchor);
             SetField(Inventory, "storedItemsRoot", storage);
             SetProperty(Inventory, "Inventory", new GoLive.Inventory.Inventory(12));
+            if (!Application.isPlaying)
+            {
+                InvokeLifecycle(Carry, "Awake");
+                InvokeLifecycle(Inventory, "Awake");
+            }
 
             Clock = Root.AddComponent<GameClockBehaviour>();
             SetProperty(Clock, "Clock", new GameClock(1, 7, 12));
@@ -171,6 +181,19 @@ namespace GoLive.Tests
                 Assert.That(Pc.IsReady, Is.True, "the Student PC's new-game hardware is installed");
             }
 
+            // External devices are opt-in. The general fixture still contains exactly the original five PC parts.
+            _peripheralRoot = new GameObject("Test peripherals");
+            _peripheralRoot.SetActive(false);
+            Peripherals = _peripheralRoot.AddComponent<PcPeripheralsBehaviour>();
+            PcPeripheralSocket microphone = CreatePeripheralSocket(PcPeripheralKind.Microphone);
+            PcPeripheralSocket webcam = CreatePeripheralSocket(PcPeripheralKind.Webcam);
+            SetField(Peripherals, "microphoneSocket", microphone);
+            SetField(Peripherals, "webcamSocket", webcam);
+            SetField(Peripherals, "playerCarry", Carry);
+            SetField(Peripherals, "playerController", Player);
+            InvokeLifecycle(Peripherals, "Awake");
+            if (!Application.isPlaying) InvokeLifecycle(Peripherals, "Start");
+
             _desktopCatalog = ScriptableObject.CreateInstance<DesktopAppCatalog>();
             SetField(_desktopCatalog, "apps", DesktopStorageTests.Definitions());
             PcSession = Root.AddComponent<PcSessionBehaviour>();
@@ -201,6 +224,7 @@ namespace GoLive.Tests
             Desktop = Root.AddComponent<DesktopRuntimeBehaviour>();
             SetField(Desktop, "pc", Pc);
             SetField(Desktop, "session", PcSession);
+            SetField(Desktop, "peripherals", Peripherals);
             SetField(Desktop, "catalog", _desktopCatalog);
             InvokeLifecycle(Desktop, "Awake");
             BindDesktopWhenPcReady();
@@ -239,6 +263,62 @@ namespace GoLive.Tests
             Hands.SetActive(true);
             _deliveryRoot.SetActive(true);
             _pcRoot.SetActive(true);
+            _peripheralRoot.SetActive(true);
+        }
+
+        // Creates the real authored definition/prefab as a persistent scene item, without inferring a connection.
+        public WorldItem CreatePeripheral(PcPeripheralKind kind)
+        {
+            string definitionName = kind switch
+            {
+                PcPeripheralKind.Microphone => "Item_UsedMicrophone",
+                PcPeripheralKind.Webcam => "Item_UsedWebcam",
+                _ => throw new ArgumentOutOfRangeException(nameof(kind))
+            };
+            ItemDefinition definition = ShopTestData.LoadItem(definitionName);
+            Assert.That(definition, Is.Not.Null, definitionName);
+            Assert.That(definition.PeripheralKind, Is.EqualTo(kind));
+            Assert.That(definition.TryGetRuntimePrefab(out WorldItem prefab), Is.True);
+            GameObject holder = new("Test peripheral item holder");
+            holder.SetActive(false);
+            _peripheralItemRoots.Add(holder);
+            WorldItem item = Object.Instantiate(prefab, holder.transform);
+            SetField(item, "authoredInstanceId", "test-peripheral-" + kind.ToString().ToLowerInvariant() + "-" + _peripheralItems.Count);
+            _peripheralItems.Add(item);
+            if (!Application.isPlaying) InvokeLifecycle(item, "Awake");
+            holder.SetActive(true);
+            return item;
+        }
+
+        public WorldItem ConnectMicrophone() => ConnectPeripheral(PcPeripheralKind.Microphone);
+
+        public WorldItem ConnectPeripheral(PcPeripheralKind kind)
+        {
+            // In EditMode the fixture explicitly composes lifecycle; PlayMode callers start and await the runtime.
+            if (!Application.isPlaying)
+            {
+                Hands.SetActive(true);
+                _peripheralRoot.SetActive(true);
+            }
+            Assert.That(Peripherals.IsReady, Is.True);
+            WorldItem item = CreatePeripheral(kind);
+            Assert.That(Carry.TryCarry(item), Is.True);
+            Assert.That(Peripherals.TryConnectCarried(kind, Carry), Is.True);
+            return item;
+        }
+
+        private PcPeripheralSocket CreatePeripheralSocket(PcPeripheralKind kind)
+        {
+            var socketObject = new GameObject(kind + " socket");
+            socketObject.transform.SetParent(_peripheralRoot.transform, false);
+            var anchor = new GameObject("Install anchor").transform;
+            anchor.SetParent(socketObject.transform, false);
+            var socket = socketObject.AddComponent<PcPeripheralSocket>();
+            SetField(socket, "kind", kind);
+            SetField(socket, "installAnchor", anchor);
+            SetField(socket, "peripherals", Peripherals);
+            SetField(socket, "interactionCollider", socketObject.AddComponent<BoxCollider>());
+            return socket;
         }
 
         public static SceneSetup[] IsolateScene()
@@ -296,11 +376,16 @@ namespace GoLive.Tests
             foreach (WorldItem item in _starterItems)
                 if (item != null)
                     Object.DestroyImmediate(item.gameObject);
+            foreach (WorldItem item in _peripheralItems)
+                if (item != null)
+                    Object.DestroyImmediate(item.gameObject);
+            foreach (GameObject holder in _peripheralItemRoots) DestroyIfAlive(holder);
 
             DestroyIfAlive(Root);
             DestroyIfAlive(Hands);
             DestroyIfAlive(_deliveryRoot);
             DestroyIfAlive(_pcRoot);
+            DestroyIfAlive(_peripheralRoot);
             DestroyIfAlive(_floor);
 
             if (DropPoint != null)
@@ -343,7 +428,7 @@ namespace GoLive.Tests
 
         private void BindDesktopWhenPcReady()
         {
-            if (Pc.IsReady && !Desktop.IsReady)
+            if (Pc.IsReady && Peripherals.IsReady && !Desktop.IsReady)
                 InvokeLifecycle(Desktop, "Bind");
         }
 
