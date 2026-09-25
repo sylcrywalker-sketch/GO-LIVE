@@ -13,6 +13,7 @@ namespace GoLive.PcBuilding
     }
 
     // Owns explicit connections only. World transfers and saved item identity are verified by the bridge.
+    // These are fictional character-owned items, independent of OS microphones and future voice/STT input.
     public sealed class PcPeripherals
     {
         private string _microphoneId = "";

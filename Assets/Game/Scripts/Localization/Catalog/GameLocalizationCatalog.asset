@@ -1407,5 +1407,5 @@ MonoBehaviour:
     _russian: "\u041F\u041A \u043D\u0435 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442 \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u043E"
     _english: PC cannot support this quality
   - _key: desktop.stream.microphone_missing
-    _russian: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043C\u0438\u043A\u0440\u043E\u0444\u043E\u043D \u043A \u043A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440\u0443."
-    _english: Connect a microphone to the computer.
+    _russian: "Без игрового микрофона качество звука ниже."
+    _english: Without an in-game microphone, stream audio quality is reduced.

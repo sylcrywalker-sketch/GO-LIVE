@@ -115,17 +115,18 @@ namespace GoLive.Desktop
             connectText.text = T(stream.IsConnected ? "desktop.stream.disconnect" : "desktop.stream.connect");
             channelIdentity.text = State.Trich.IsRegistered ? State.Trich.Name : T("desktop.stream.channel_empty");
             string check = offline ? readiness.ErrorKey : null;
-            requirements.text = T(check ?? (offline ? "desktop.stream.ready"
+            requirements.text = T(check ?? readiness.WarningKey ?? (offline ? "desktop.stream.ready"
                 : stream.State == StreamState.Live ? "desktop.stream.output_active"
                 : "desktop.stream.state." + stream.State.ToString().ToLowerInvariant()));
-            requirements.color = check == null ? new Color(.52f, .79f, .64f) : new Color(.96f, .42f, .44f);
+            requirements.color = check != null ? new Color(.96f, .42f, .44f)
+                : readiness.WarningKey != null ? new Color(.94f, .76f, .39f) : new Color(.52f, .79f, .64f);
             RefreshReadinessRow(0, readiness.ChannelReady,
                 T(readiness.ChannelReady ? "desktop.stream.connected" : "desktop.stream.not_connected"));
             RefreshReadinessRow(1, readiness.InternetReady, readiness.InternetReady
                 ? F("desktop.stream.readiness.internet_ready", runtime.UploadMbps)
                 : T("desktop.stream.readiness.internet_missing"));
             RefreshReadinessRow(2, readiness.MicrophoneReady, T(readiness.MicrophoneReady
-                ? "desktop.stream.readiness.microphone_ready" : "desktop.stream.readiness.microphone_missing"));
+                ? "desktop.stream.readiness.microphone_ready" : "desktop.stream.readiness.microphone_missing"), true);
             RefreshReadinessRow(3, readiness.WebcamReady, T(readiness.WebcamReady
                 ? "desktop.stream.readiness.webcam_ready" : "desktop.stream.readiness.webcam_missing"), true);
             RefreshReadinessRow(4, readiness.QualitySupported, T(readiness.QualitySupported

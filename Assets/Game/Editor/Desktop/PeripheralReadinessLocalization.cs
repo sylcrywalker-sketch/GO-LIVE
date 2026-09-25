@@ -17,7 +17,7 @@ namespace GoLive.Editor.Desktop
             "desktop.stream.readiness.webcam_missing|Веб-камера не подключена|Webcam not connected",
             "desktop.stream.readiness.quality_ready|Качество поддерживается ПК|PC supports selected quality",
             "desktop.stream.readiness.quality_missing|ПК не поддерживает качество|PC cannot support this quality",
-            "desktop.stream.microphone_missing|Подключите микрофон к компьютеру.|Connect a microphone to the computer."
+            "desktop.stream.microphone_missing|Без игрового микрофона качество звука ниже.|Without an in-game microphone, stream audio quality is reduced."
         };
     }
 }

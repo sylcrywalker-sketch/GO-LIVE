@@ -1,5 +1,7 @@
 # Stream peripheral readiness implementation plan
 
+> Historical implementation plan. Its mandatory-microphone start/abort rule is superseded by [the readiness correction](2026-09-25-stream-peripheral-readiness-correction.md): the fictional microphone is optional, independent of real voice capture, and its removal never interrupts a broadcast. See the updated `docs/StreamPeripheralReadinessReport.md` for current behavior and validation.
+
 > Execute the approved request in this session. Root owns domain validation, persistence, integration and Unity runs. Independent workers own world connection bridges and compact Streamly presentation. No worker launches Unity or edits the shared scene.
 
 **Goal:** Start a normal broadcast only when the actual connected microphone, Trich connection, network and selected PC quality are ready; a webcam remains optional.

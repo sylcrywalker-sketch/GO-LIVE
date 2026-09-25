@@ -30,13 +30,14 @@ namespace GoLive.Tests
         }
 
         [Test]
-        public void AChannelAndWorkingPcWithoutConnectedMicrophoneCannotStart()
+        public void AChannelAndWorkingPcWithoutConnectedMicrophoneCanStart()
         {
             var channel = DesktopAccountTests.RegisteredChannel();
             var session = new StreamSession(channel, new DonationAccount());
             Assert.That(session.Connect(channel.ChannelCode), Is.Null);
-            Assert.That(session.Start(_desktop, true, 5), Is.EqualTo("desktop.stream.microphone_missing"));
-            Assert.That(session.State, Is.EqualTo(StreamState.Offline));
+            Assert.That(session.Start(_desktop, true, 5), Is.Null);
+            session.Tick(.75f);
+            Assert.That(session.State, Is.EqualTo(StreamState.Live));
         }
 
         [Test]

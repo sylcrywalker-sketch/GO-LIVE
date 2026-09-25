@@ -258,7 +258,6 @@ namespace GoLive.Desktop
             if (!powered) return "desktop.stream.pc_off";
             if (!capabilities.CanUseDesktop) return "desktop.stream.desktop_required";
             if (!DesktopAccountValidation.FiniteNonnegative(uploadMbps) || uploadMbps == 0) return "desktop.stream.internet_missing";
-            if (!_peripherals.HasMicrophone) return "desktop.stream.microphone_missing";
             if (Quality == StreamQuality.High && !capabilities.GamingGraphicsAvailable) return "desktop.stream.gpu_required";
             return uploadMbps < MinimumUpload ? "desktop.stream.upload_low" : null;
         }

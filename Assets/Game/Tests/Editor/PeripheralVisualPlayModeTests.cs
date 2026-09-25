@@ -84,6 +84,9 @@ namespace GoLive.Tests
             yield return SitAndFocus();
             yield return CaptureReadinessPair("02-microphone-missing", view, true, true, false, true, true);
             Assert.That(Field<TMP_Text>(view, "requirements").text, Is.EqualTo(_localization.Text("desktop.stream.microphone_missing")));
+            Assert.That(Field<Button>(view, "startStop").interactable, Is.True, "fictional microphone is optional");
+            yield return StartBroadcast(view);
+            yield return StopBroadcast(view);
             yield return StandFromDesktop();
             Assert.That(inventory.TryTakeToCarry(micId), Is.True);
             yield return UsePeripheralSocket(micSocket, "pc.peripheral.connect");
@@ -115,12 +118,23 @@ namespace GoLive.Tests
             yield return CaptureReadinessPair("03-webcam-missing", view, true, true, true, false, true);
             // Camera-free preflight also allows a fresh normal start, through the same real button.
             yield return StartBroadcast(view);
+            long completedBeforeMicRemoval = _runtime.State.Trich.CompletedStreams;
             yield return StandFromDesktop();
             yield return UsePeripheralSocket(micSocket, "pc.peripheral.disconnect");
-            Assert.That(_runtime.State.Stream.State, Is.EqualTo(StreamState.Offline), "mandatory mic loss aborts an active stream");
+            Assert.That(_runtime.State.Stream.State, Is.EqualTo(StreamState.Live), "optional mic loss keeps the broadcast running");
+            Assert.That(_runtime.State.Trich.CompletedStreams, Is.EqualTo(completedBeforeMicRemoval));
             Assert.That(carry.CarriedItem, Is.SameAs(microphone));
             Assert.That(Object.FindObjectsByType<WorldItem>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .Count(item => item.Instance != null && item.Instance.InstanceId == micId), Is.EqualTo(1));
+            Assert.That(inventory.TryStoreCarriedItem(), Is.True);
+            yield return SitAndFocus();
+            yield return CaptureReadinessPair("08-live-without-microphone", view, true, true, false, false, true);
+            _runtime.SetUploadMbps(0);
+            Assert.That(_runtime.State.Stream.State, Is.EqualTo(StreamState.Offline));
+            Assert.That(_runtime.State.Trich.CompletedStreams, Is.EqualTo(completedBeforeMicRemoval + 1));
+            Assert.That(Field<Button>(view, "startStop").interactable, Is.False);
+            Assert.That(Field<TMP_Text>(view, "requirements").text, Is.EqualTo(_localization.Text("desktop.stream.internet_missing")));
+            Assert.That(Field<TMP_Text>(view, "requirements").color.g, Is.LessThan(.5f), "required failure takes priority over mic warning");
             LogAssert.NoUnexpectedReceived();
         }
 
@@ -139,8 +153,15 @@ namespace GoLive.Tests
             {
                 Assert.That(marks[i].enabled, Is.EqualTo(expected[i]));
                 Assert.That(warnings[i].enabled, Is.EqualTo(!expected[i]));
-                if (!expected[i]) Assert.That(texts[i].color.g, i == 3 ? Is.GreaterThan(.7f) : Is.LessThan(.5f));
+                if (!expected[i])
+                {
+                    bool optional = i == 2 || i == 3;
+                    Assert.That(texts[i].color.g, optional ? Is.GreaterThan(.7f) : Is.LessThan(.5f));
+                    Assert.That(warnings[i].color, Is.EqualTo(texts[i].color));
+                }
             }
+            if (!readiness.MicrophoneReady && (readiness.CanStart || _runtime.State.Stream.State == StreamState.Live))
+                Assert.That(Field<TMP_Text>(view, "requirements").color, Is.EqualTo(texts[2].color), "audio quality warning stays yellow offline and live");
             _localization.SetLanguage(GameLanguage.Russian);
             yield return CaptureApp("peripheral-ru-" + state, DesktopAppId.Streamly);
             _localization.SetLanguage(GameLanguage.English);

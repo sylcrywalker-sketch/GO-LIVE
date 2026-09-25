@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using GoLive.Desktop;
 using GoLive.PcBuilding;
 using NUnit.Framework;
@@ -42,6 +43,7 @@ namespace GoLive.Tests
             Assert.That(result.WebcamReady, Is.True);
             Assert.That(result.QualitySupported, Is.True);
             Assert.That(result.ErrorKey, Is.Null);
+            Assert.That(result.WarningKey, Is.Null);
             Assert.That(result.CanStart, Is.True);
             Assert.That(stream.CheckStart(_gaming, true, 6), Is.Null);
             Assert.That(stream.Start(_gaming, true, 6), Is.Null);
@@ -61,14 +63,16 @@ namespace GoLive.Tests
             Assert.That(result.WebcamReady, Is.False);
             Assert.That(result.QualitySupported, Is.False);
             Assert.That(result.ErrorKey, Is.EqualTo("desktop.stream.not_connected"));
+            Assert.That(result.WarningKey, Is.EqualTo("desktop.stream.microphone_missing"));
             Assert.That(result.CanStart, Is.False);
         }
 
-        [Test]
-        public void MissingMicrophoneCannotEnterStartingOrEmitAStateChange()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void MissingMicrophoneAllowsANormalBroadcast(bool webcam)
         {
             var devices = new PcPeripherals();
-            Assert.That(devices.TryConnect(PcPeripheralKind.Webcam, "camera"), Is.True);
+            if (webcam) Assert.That(devices.TryConnect(PcPeripheralKind.Webcam, "camera"), Is.True);
             var stream = ConnectedStream(devices);
             int changes = 0;
             stream.Changed += () => changes++;
@@ -78,15 +82,16 @@ namespace GoLive.Tests
             Assert.That(result.ChannelReady, Is.True);
             Assert.That(result.InternetReady, Is.True);
             Assert.That(result.MicrophoneReady, Is.False);
-            Assert.That(result.WebcamReady, Is.True, "a webcam cannot substitute for a microphone");
+            Assert.That(result.WebcamReady, Is.EqualTo(webcam));
             Assert.That(result.QualitySupported, Is.True);
-            Assert.That(result.ErrorKey, Is.EqualTo("desktop.stream.microphone_missing"));
-            Assert.That(result.CanStart, Is.False);
+            Assert.That(result.ErrorKey, Is.Null);
+            Assert.That(result.WarningKey, Is.EqualTo("desktop.stream.microphone_missing"));
+            Assert.That(result.CanStart, Is.True);
             Assert.That(stream.CheckStart(_desktop, true, 5), Is.EqualTo(result.ErrorKey));
             Assert.That(stream.Start(_desktop, true, 5), Is.EqualTo(result.ErrorKey));
             stream.Tick(1);
-            Assert.That(stream.State, Is.EqualTo(StreamState.Offline));
-            Assert.That(changes, Is.Zero);
+            Assert.That(stream.State, Is.EqualTo(StreamState.Live));
+            Assert.That(changes, Is.GreaterThan(0));
         }
 
         [Test]
@@ -169,15 +174,16 @@ namespace GoLive.Tests
         }
 
         [Test]
-        public void RemovingLiveMicrophoneAbortsExactlyOnceIncludingReentrantRefresh()
+        public void RemovingLiveMicrophoneKeepsBroadcastRunningAndRefreshesObservers()
         {
             var devices = ConnectedDevices(true);
             var stream = ConnectedStream(devices);
             var summaries = new List<StreamSummary>();
-            stream.Completed += summary =>
+            stream.Completed += summaries.Add;
+            StreamReadiness observed = default;
+            stream.Changed += () =>
             {
-                summaries.Add(summary);
-                stream.RefreshEnvironment(_desktop, true, 5);
+                observed = stream.EvaluateReadiness(_desktop, true, 5);
             };
             Assert.That(stream.Start(_desktop, true, 5), Is.Null);
             stream.Tick(10.75f);
@@ -188,15 +194,23 @@ namespace GoLive.Tests
             stream.RefreshEnvironment(_desktop, true, 5);
             stream.Tick(10);
 
-            Assert.That(stream.State, Is.EqualTo(StreamState.Offline));
-            Assert.That(summaries.Count, Is.EqualTo(1));
-            Assert.That(summaries[0].Aborted, Is.True);
-            Assert.That(summaries[0].DurationSeconds, Is.EqualTo(10));
-            Assert.That(stream.CheckStart(_desktop, true, 5), Is.EqualTo("desktop.stream.microphone_missing"));
+            Assert.That(stream.State, Is.EqualTo(StreamState.Live));
+            Assert.That(summaries, Is.Empty);
+            Assert.That(stream.DurationSeconds, Is.EqualTo(20));
+            Assert.That(observed.MicrophoneReady, Is.False);
+            Assert.That(observed.WarningKey, Is.EqualTo("desktop.stream.microphone_missing"));
+
+            Assert.That(devices.TryConnect(PcPeripheralKind.Microphone, "microphone"), Is.True);
+            stream.RefreshEnvironment(_desktop, true, 5);
+            Assert.That(observed.MicrophoneReady, Is.True);
+            Assert.That(observed.WarningKey, Is.Null);
+            Assert.That(stream.State, Is.EqualTo(StreamState.Live));
+            Assert.That(stream.DurationSeconds, Is.EqualTo(20));
+            Assert.That(summaries, Is.Empty);
         }
 
         [Test]
-        public void RemovingMicrophoneDuringStartingCancelsWithoutPublishingASummary()
+        public void RemovingMicrophoneDuringStartingContinuesWithoutPublishingASummary()
         {
             var devices = ConnectedDevices(false);
             var stream = ConnectedStream(devices);
@@ -209,7 +223,8 @@ namespace GoLive.Tests
             stream.RefreshEnvironment(_desktop, true, 5);
             stream.Tick(1);
 
-            Assert.That(stream.State, Is.EqualTo(StreamState.Offline));
+            Assert.That(stream.State, Is.EqualTo(StreamState.Live));
+            Assert.That(stream.DurationSeconds, Is.EqualTo(.75));
             Assert.That(completions, Is.Zero);
         }
 
@@ -234,6 +249,63 @@ namespace GoLive.Tests
             stream.Tick(2);
             Assert.That(stream.DurationSeconds, Is.EqualTo(12));
             Assert.That(completions, Is.Zero);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void InternetLossStillAbortsExactlyOnceWithOrWithoutMicrophone(bool microphone)
+        {
+            var stream = ConnectedStream(microphone ? ConnectedDevices(false) : new PcPeripherals());
+            var summaries = new List<StreamSummary>();
+            stream.Completed += summary =>
+            {
+                summaries.Add(summary);
+                stream.RefreshEnvironment(_desktop, true, 0);
+            };
+            Assert.That(stream.Start(_desktop, true, 5), Is.Null);
+            stream.Tick(10.75f);
+
+            stream.RefreshEnvironment(_desktop, true, 0);
+            stream.RefreshEnvironment(_desktop, true, 0);
+            stream.Tick(10);
+
+            Assert.That(stream.State, Is.EqualTo(StreamState.Offline));
+            Assert.That(summaries.Count, Is.EqualTo(1));
+            Assert.That(summaries[0].Aborted, Is.True);
+            Assert.That(summaries[0].DurationSeconds, Is.EqualTo(10));
+            StreamReadiness result = stream.EvaluateReadiness(_desktop, true, 0);
+            Assert.That(result.ErrorKey, Is.EqualTo("desktop.stream.internet_missing"));
+            Assert.That(result.WarningKey, Is.EqualTo(microphone ? null : "desktop.stream.microphone_missing"));
+            Assert.That(result.CanStart, Is.False);
+        }
+
+        [Test]
+        public void PeripheralContractAndStoredStateUseOnlyFictionalEquipmentData()
+        {
+            // Keep real voice adapters, recognizers and ItemInstance objects out of this domain contract.
+            var allowed = new HashSet<Type>
+            {
+                typeof(void), typeof(bool), typeof(string), typeof(Action), typeof(int).MakeByRefType(),
+                typeof(PcPeripheralKind), typeof(PcPeripheralsSnapshot),
+                typeof(IReadOnlyDictionary<string, PcPeripheralKind>)
+            };
+            const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
+                BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+            foreach (Type type in new[] { typeof(PcPeripherals), typeof(PcPeripheralsSnapshot) })
+            {
+                Assert.That(type.BaseType, Is.EqualTo(typeof(object)));
+                foreach (FieldInfo field in type.GetFields(flags))
+                    Assert.That(allowed.Contains(field.FieldType), Is.True, field.ToString());
+                foreach (ConstructorInfo constructor in type.GetConstructors(flags))
+                    foreach (ParameterInfo parameter in constructor.GetParameters())
+                        Assert.That(allowed.Contains(parameter.ParameterType), Is.True, constructor.ToString());
+                foreach (MethodInfo method in type.GetMethods(flags))
+                {
+                    Assert.That(allowed.Contains(method.ReturnType), Is.True, method.ToString());
+                    foreach (ParameterInfo parameter in method.GetParameters())
+                        Assert.That(allowed.Contains(parameter.ParameterType), Is.True, method.ToString());
+                }
+            }
         }
 
         [Test]
