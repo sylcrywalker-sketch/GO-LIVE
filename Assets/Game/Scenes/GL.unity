@@ -47722,7 +47722,7 @@ MonoBehaviour:
   streamStatus: {fileID: 428897023}
   preview: {fileID: 342726986}
   previewImage: {fileID: 70995210}
-  previewCamera: {fileID: 1935207841}
+  capture: {fileID: 2019358072}
   quality:
   - {fileID: 308958291}
   - {fileID: 889394152}
@@ -85483,89 +85483,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1934967145}
   m_CullTransparentMesh: 1
---- !u!1 &1935207840
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1935207842}
-  - component: {fileID: 1935207841}
-  m_Layer: 0
-  m_Name: Streamly room preview camera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!20 &1935207841
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935207840}
-  m_Enabled: 0
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.08
-  far clip plane: 1000
-  field of view: 65
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: -2
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967263
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &1935207842
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935207840}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.008258159, y: 0.98941624, z: -0.062523276, w: -0.13068345}
-  m_LocalPosition: {x: 11.947774, y: 1.9097824, z: -13.413139}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2019358071}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1946078870
 GameObject:
   m_ObjectHideFlags: 0
@@ -87044,6 +86961,7 @@ GameObject:
   - component: {fileID: 2019358070}
   - component: {fileID: 2019358069}
   - component: {fileID: 2019358068}
+  - component: {fileID: 2019358072}
   m_Layer: 0
   m_Name: Desktop System
   m_TagString: Untagged
@@ -87197,9 +87115,21 @@ Transform:
   - {fileID: 1836659228}
   - {fileID: 1342624672}
   - {fileID: 624434203}
-  - {fileID: 1935207842}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2019358072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019358067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23ca5c33160841ed886c193b6e211f23, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Desktop.DesktopCaptureSource
+  runtime: {fileID: 2019358069}
 --- !u!1 &2019873011
 GameObject:
   m_ObjectHideFlags: 0

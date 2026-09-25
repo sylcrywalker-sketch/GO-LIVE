@@ -21,15 +21,13 @@ namespace GoLive.Desktop
         [SerializeField] private TMP_Text streamStatus;
         [SerializeField] private TMP_Text preview;
         [SerializeField] private RawImage previewImage;
-        [SerializeField] private Camera previewCamera;
+        // The shared broadcast source: preview shows exactly what the live stream sends.
+        [SerializeField] private DesktopCaptureSource capture;
         [SerializeField] private Button[] quality;
         // Same order as the authored rows: channel, internet, microphone, webcam, quality.
         [SerializeField] private TMP_Text[] readinessTexts;
         [SerializeField] private DesktopGlyphGraphic[] readinessMarks;
         [SerializeField] private DesktopGlyphGraphic[] readinessWarnings;
-        private RenderTexture _previewTexture;
-        private RenderTexture _previousTarget;
-        private bool _cameraWasEnabled;
         private int _restoreGeneration = -1;
 
         private void Awake()
@@ -55,47 +53,36 @@ namespace GoLive.Desktop
 
         protected override void OnEnable()
         {
-            BeginPreview();
+            if (capture != null)
+            {
+                capture.AddPreviewViewer();
+                capture.Changed += RefreshPreview;
+            }
+            RefreshPreview();
             base.OnEnable();
         }
 
         protected override void OnDisable()
         {
             base.OnDisable();
-            EndPreview();
-        }
-
-        // The authored camera owns its scene pose. This view owns only its visible preview resource.
-        private void BeginPreview()
-        {
-            if (previewCamera == null || previewImage == null || _previewTexture != null) return;
-            _previousTarget = previewCamera.targetTexture;
-            _cameraWasEnabled = previewCamera.enabled;
-            _previewTexture = new RenderTexture(960, 540, 24)
+            if (capture != null)
             {
-                name = "Streamly scene preview",
-                filterMode = FilterMode.Bilinear,
-                antiAliasing = 1
-            };
-            _previewTexture.Create();
-            previewCamera.targetTexture = _previewTexture;
-            previewImage.texture = _previewTexture;
-            previewCamera.enabled = true;
-        }
-
-        private void EndPreview()
-        {
-            if (_previewTexture == null) return;
-            if (previewCamera != null)
-            {
-                previewCamera.targetTexture = _previousTarget;
-                previewCamera.enabled = _cameraWasEnabled;
+                capture.Changed -= RefreshPreview;
+                capture.RemovePreviewViewer();
             }
             if (previewImage != null) previewImage.texture = null;
-            _previewTexture.Release();
-            Destroy(_previewTexture);
-            _previewTexture = null;
-            _previousTarget = null;
+        }
+
+        // The view owns no render resource; it only displays the capture source's current frame.
+        private void RefreshPreview()
+        {
+            if (preview == null || previewImage == null) return;
+            bool available = capture != null && capture.IsAvailable;
+            Texture frame = available ? capture.Frame : null;
+            previewImage.texture = frame;
+            previewImage.uvRect = capture != null ? capture.FrameUv : new Rect(0, 0, 1, 1);
+            previewImage.enabled = frame != null;
+            preview.text = T(available ? "desktop.stream.preview_screen" : "desktop.stream.preview_unavailable");
         }
 
         protected override void Refresh()
@@ -137,8 +124,7 @@ namespace GoLive.Desktop
             startStop.image.color = offline ? new Color(.42f, .27f, .62f) : new Color(.65f, .19f, .22f);
             connect.interactable = offline;
             channelCode.interactable = paste.interactable = offline && !stream.IsConnected;
-            preview.text = T(previewCamera != null ? "desktop.stream.preview_scene" : "desktop.stream.preview_unavailable");
-            previewImage.enabled = previewCamera != null;
+            RefreshPreview();
             for (int i = 0; i < quality.Length; i++)
             {
                 quality[i].interactable = offline && (int)stream.Quality != i;

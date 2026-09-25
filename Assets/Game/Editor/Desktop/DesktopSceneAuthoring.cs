@@ -59,7 +59,7 @@ namespace GoLive.Editor.Desktop
             DesktopShellAuthoring.Build(ui,root.transform,runtime,shellView,catalog,One<GoLive.GameTime.GameClockBehaviour>());
             DesktopBroadcastAuthoring.Overlay(ui,runtime,root.transform);
             BuildMonitor(ui,root.transform,screen,session,runtime,catalog);
-            BuildPreviewCamera(root.transform,screen,camera);
+            BuildCaptureSource(root,runtime);
             PeripheralSceneAuthoring.Apply(runtime,player,carry);
             PcWorkbenchUxAuthoring.Apply();
             EditorSceneManager.MarkSceneDirty(root.scene);
@@ -162,18 +162,12 @@ namespace GoLive.Editor.Desktop
             Set(feedbackView,"session",session);Set(feedbackView,"localization",ui.Localization);Set(feedbackView,"panel",panel.gameObject);Set(feedbackView,"message",message);
             Debug.Log($"Monitor authored center={geometry.Center} normal={geometry.Normal} size={geometry.Width}x{geometry.Height}; seat={anchor.position}.");
         }
-        private static void BuildPreviewCamera(Transform root,PcScreenView screen,Camera playerCamera)
+        // The broadcast source is the displayed desktop itself, shared by Streamly preview and the live stream.
+        private static void BuildCaptureSource(GameObject root,DesktopRuntimeBehaviour runtime)
         {
-            var geometry=MonitorScreenGeometry.Read(screen.GetComponent<MeshFilter>(),screen.GetComponent<Renderer>());
-            var preview=new GameObject("Streamly room preview camera").AddComponent<Camera>();
-            preview.transform.SetParent(root,false);
-            preview.CopyFrom(playerCamera);
-            preview.transform.position=geometry.Center+geometry.Normal*.10f+Vector3.up*.58f;
-            preview.transform.rotation=Quaternion.LookRotation(Quaternion.AngleAxis(-75,Vector3.up)*geometry.Normal-Vector3.up*.24f,Vector3.up);
-            preview.fieldOfView=65;preview.nearClipPlane=.08f;preview.depth=-2;
-            preview.cullingMask=playerCamera.cullingMask&~(1<<5);
-            preview.enabled=false;preview.targetTexture=null;
-            Set(One<StreamlyView>(),"previewCamera",preview);
+            var capture=root.AddComponent<DesktopCaptureSource>();
+            Set(capture,"runtime",runtime);
+            Set(One<StreamlyView>(),"capture",capture);
         }
     }
 }
