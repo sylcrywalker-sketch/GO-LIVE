@@ -735,7 +735,7 @@ namespace GoLive.Tests
 
         private void Buy(string productId)
         {
-            Assert.That(_world.Shop.TryPurchase(productId).Succeeded, Is.True, productId);
+            ShopTestData.BuyOne(_world.Shop, productId);
 
             if (productId == SnackId)
             {

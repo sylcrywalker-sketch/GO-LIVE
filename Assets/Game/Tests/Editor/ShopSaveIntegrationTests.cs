@@ -48,7 +48,7 @@ namespace GoLive.Tests
         [Test]
         public void SaveFileIsSchemaV6WithOrdersDeliveryAndPcSections()
         {
-            ShopOrder placed = _world.Shop.TryPurchase(GpuId).Order;
+            ShopOrder placed = ShopTestData.BuyOne(_world.Shop, GpuId);
 
             Assert.That(_world.TrySave(), Is.True);
 
@@ -78,9 +78,8 @@ namespace GoLive.Tests
         [Test]
         public void BudgetGpuPurchaseSurvivesSaveAndLoad()
         {
-            ShopPurchaseResult purchase = _world.Shop.TryPurchase(GpuId);
+            ShopOrder purchase = ShopTestData.BuyOne(_world.Shop, GpuId);
 
-            Assert.That(purchase.Succeeded, Is.True);
             Assert.That(Balance, Is.EqualTo(1000));
             Assert.That(_world.Shop.Orders.Orders, Has.Count.EqualTo(1));
             Assert.That(_world.TrySave(), Is.True);
@@ -94,26 +93,27 @@ namespace GoLive.Tests
             Assert.That(_world.Shop.Orders.Orders, Has.Count.EqualTo(1));
 
             ShopOrder loaded = _world.Shop.Orders.Orders[0];
-            Assert.That(loaded.OrderId, Is.EqualTo(purchase.Order.OrderId));
+            Assert.That(loaded.OrderId, Is.EqualTo(purchase.OrderId));
             Assert.That(loaded.ProductId, Is.EqualTo(GpuId));
             Assert.That(loaded.PaidPriceCents, Is.EqualTo(1500));
-            Assert.That(loaded.PlacedAt.TotalSeconds, Is.EqualTo(purchase.Order.PlacedAt.TotalSeconds));
-            Assert.That(loaded.DeliveryDueAt.TotalSeconds, Is.EqualTo(purchase.Order.DeliveryDueAt.TotalSeconds));
+            Assert.That(loaded.PlacedAt.TotalSeconds, Is.EqualTo(purchase.PlacedAt.TotalSeconds));
+            Assert.That(loaded.DeliveryDueAt.TotalSeconds, Is.EqualTo(purchase.DeliveryDueAt.TotalSeconds));
             Assert.That(loaded.Status, Is.EqualTo(ShopOrderStatus.Placed));
         }
 
         [Test]
         public void LoadedOrderKeepsTheBudgetGpuPurchaseLimit()
         {
-            _world.Shop.TryPurchase(GpuId);
+            ShopTestData.BuyOne(_world.Shop, GpuId);
             Assert.That(_world.TrySave(), Is.True);
 
             _world.Wallet.Wallet.Restore(2500);
             _world.Shop.RestoreOrders(new ShopOrdersSnapshot());
             Assert.That(_world.TryLoad(), Is.True);
 
-            Assert.That(_world.Shop.EvaluatePurchase(GpuId), Is.EqualTo(ShopPurchaseResultCode.PurchaseLimitReached));
-            Assert.That(_world.Shop.TryPurchase(GpuId).Code, Is.EqualTo(ShopPurchaseResultCode.PurchaseLimitReached));
+            Assert.That(_world.Shop.EvaluateAddToCart(GpuId), Is.EqualTo(ShopPurchaseResultCode.PurchaseLimitReached));
+            Assert.That(_world.Shop.TryAddToCart(GpuId), Is.EqualTo(ShopPurchaseResultCode.PurchaseLimitReached));
+            Assert.That(_world.Shop.CartLines, Is.Empty);
             Assert.That(Balance, Is.EqualTo(1000));
             Assert.That(_world.Shop.Orders.Orders, Has.Count.EqualTo(1));
         }
@@ -121,7 +121,7 @@ namespace GoLive.Tests
         [Test]
         public void RepeatedLoadOfTheSameSaveNeverDuplicatesOrders()
         {
-            _world.Shop.TryPurchase(GpuId);
+            ShopTestData.BuyOne(_world.Shop, GpuId);
             Assert.That(_world.TrySave(), Is.True);
 
             ShopOrderBook book = _world.Shop.Orders;
@@ -145,12 +145,12 @@ namespace GoLive.Tests
             Assert.That(data.Orders.Version, Is.EqualTo(ShopOrdersSnapshot.CurrentVersion));
             Assert.That(data.Orders.Orders, Is.Empty);
 
-            _world.Shop.TryPurchase(GpuId);
+            ShopTestData.BuyOne(_world.Shop, GpuId);
 
             Assert.That(_world.TryLoad(), Is.True);
             Assert.That(_world.Shop.Orders.Orders, Is.Empty);
             Assert.That(Balance, Is.EqualTo(2500));
-            Assert.That(_world.Shop.EvaluatePurchase(GpuId), Is.EqualTo(ShopPurchaseResultCode.Success));
+            Assert.That(_world.Shop.EvaluateAddToCart(GpuId), Is.EqualTo(ShopPurchaseResultCode.Success));
         }
 
         [TestCase("duplicate order id")]
@@ -166,7 +166,7 @@ namespace GoLive.Tests
         [TestCase("unsupported version")]
         public void InvalidOrdersRejectTheWholeSaveBeforeAnyStateChanges(string corruption)
         {
-            _world.Shop.TryPurchase(GpuId);
+            ShopTestData.BuyOne(_world.Shop, GpuId);
             AddIncoming("saved-message");
             Assert.That(_world.TrySave(), Is.True);
 
@@ -221,7 +221,7 @@ namespace GoLive.Tests
         [TestCase("missing orders array")]
         public void CurrentSaveWithoutAnOrdersSectionIsRejected(string corruption)
         {
-            _world.Shop.TryPurchase(GpuId);
+            ShopTestData.BuyOne(_world.Shop, GpuId);
             Assert.That(_world.TrySave(), Is.True);
 
             GameSaveData data = _world.ReadSave();
@@ -248,7 +248,7 @@ namespace GoLive.Tests
         [TestCase("missing deliveries array")]
         public void CurrentSaveWithoutADeliverySectionIsRejected(string corruption)
         {
-            _world.Shop.TryPurchase(GpuId);
+            ShopTestData.BuyOne(_world.Shop, GpuId);
             Assert.That(_world.TrySave(), Is.True);
 
             GameSaveData data = _world.ReadSave();
@@ -289,8 +289,8 @@ namespace GoLive.Tests
             AddIncoming("rent-reminder");
             _world.Messages.Messages.MarkConversationRead("landlord");
             AddIncoming("rent-final");
-            _world.Shop.TryPurchase(GpuId);
-            _world.Shop.TryPurchase(SaveTestWorld.SnackId);
+            ShopTestData.BuyOne(_world.Shop, GpuId);
+            ShopTestData.BuyOne(_world.Shop, SaveTestWorld.SnackId);
             string messages = MessagesJson();
             string orders = OrdersJson();
 
@@ -306,6 +306,56 @@ namespace GoLive.Tests
             Assert.That(Balance, Is.EqualTo(800));
             Assert.That(OrdersJson(), Is.EqualTo(orders));
             Assert.That(_world.Shop.Orders.CountActive(), Is.EqualTo(2));
+        }
+
+        [Test]
+        public void CartIsNotSaved()
+        {
+            ShopTestData.BuyOne(_world.Shop, GpuId);
+            Assert.That(_world.Shop.TryAddToCart(SaveTestWorld.SnackId), Is.EqualTo(ShopPurchaseResultCode.Success));
+
+            Assert.That(_world.TrySave(), Is.True);
+
+            string json = File.ReadAllText(_world.SavePath);
+            GameSaveData data = _world.ReadSave();
+            Assert.That(data.Version, Is.EqualTo(6), "the save schema is unchanged");
+            Assert.That(json, Does.Not.Contain(SaveTestWorld.SnackId), "a product only in the cart is nowhere in the save");
+            Assert.That(json, Does.Not.Contain("Cart"));
+            Assert.That(data.Orders.Orders.Select(order => order.ProductId), Is.EqualTo(new[] { GpuId }));
+            Assert.That(typeof(GameSaveData).GetFields().Any(field => field.Name.Contains("Cart")), Is.False, "no cart section in the schema");
+        }
+
+        [Test]
+        public void LoadEmptiesTheCartAndKeepsPaidOrders()
+        {
+            ShopOrder paid = ShopTestData.BuyOne(_world.Shop, GpuId);
+            Assert.That(_world.TrySave(), Is.True);
+
+            Assert.That(_world.Shop.TryAddToCart(SaveTestWorld.SnackId), Is.EqualTo(ShopPurchaseResultCode.Success));
+            Assert.That(_world.Shop.TryAddToCart(SaveTestWorld.SnackId), Is.EqualTo(ShopPurchaseResultCode.Success));
+            Assert.That(_world.Shop.CartItemCount, Is.EqualTo(2));
+
+            Assert.That(_world.TryLoad(), Is.True);
+
+            Assert.That(_world.Shop.CartLines, Is.Empty, "the cart is session state, a load starts it empty");
+            Assert.That(_world.Shop.CartItemCount, Is.Zero);
+            Assert.That(_world.Shop.Orders.Orders.Select(order => order.OrderId), Is.EqualTo(new[] { paid.OrderId }));
+            Assert.That(Balance, Is.EqualTo(1000));
+        }
+
+        [Test]
+        public void RejectedLoadKeepsTheCart()
+        {
+            Assert.That(_world.TrySave(), Is.True);
+            GameSaveData data = _world.ReadSave();
+            data.Orders.Version = 99;
+            File.WriteAllText(_world.SavePath, JsonUtility.ToJson(data));
+
+            Assert.That(_world.Shop.TryAddToCart(SaveTestWorld.SnackId), Is.EqualTo(ShopPurchaseResultCode.Success));
+
+            LogAssert.Expect(LogType.Error, $"Save validation failed: {_world.SavePath}");
+            Assert.That(_world.TryLoad(), Is.False);
+            Assert.That(_world.Shop.GetCartQuantity(SaveTestWorld.SnackId), Is.EqualTo(1), "nothing changes when a save is rejected");
         }
 
         [Test]

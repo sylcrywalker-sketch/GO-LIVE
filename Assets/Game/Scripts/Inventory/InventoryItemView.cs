@@ -65,7 +65,7 @@ namespace GoLive.Inventory
             icon.enabled = sprite != null;
             iconFallback.SetActive(sprite == null);
             title.text = ItemName(definition, localization);
-            detail.text = localization.Text(CategoryKey(definition.Category));
+            detail.text = localization.Text(ItemCategoryLocalization.GetKey(definition.Category));
             _detailColor ??= detail.color;
             detail.color = _detailColor.Value;
 
@@ -169,16 +169,6 @@ namespace GoLive.Inventory
 
             string value = definition.ItemId.Replace('_', ' ').Replace('-', ' ');
             return char.ToUpperInvariant(value[0]) + value[1..];
-        }
-
-        private static string CategoryKey(ItemCategory category)
-        {
-            return category switch
-            {
-                ItemCategory.Food => "inventory.food",
-                ItemCategory.Electronics => "inventory.electronics",
-                _ => "inventory.household"
-            };
         }
     }
 }

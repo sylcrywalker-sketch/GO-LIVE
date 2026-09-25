@@ -240,7 +240,7 @@ namespace GoLive.Tests
         public void OldSkeletonSaveVersionIsRejectedWithoutMigration(int version)
         {
             AddIncoming("current");
-            _shop.TryPurchase(SaveTestWorld.BudgetGpuId);
+            ShopTestData.BuyOne(_shop, SaveTestWorld.BudgetGpuId);
             Assert.That(Save(), Is.True);
             var data = ReadSave();
             data.Version = version;

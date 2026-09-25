@@ -116,7 +116,7 @@ namespace GoLive.Tests
             SetField(Shop, "wallet", Wallet);
             SetField(Shop, "gameClock", Clock);
             SetField(Shop, "catalog", _catalog);
-            SetField(Shop, "_purchase", new ShopPurchase(Wallet.Wallet, Shop.Orders, Clock.Clock));
+            SetField(Shop, "_checkout", new ShopCheckout(Wallet.Wallet, Shop.Orders, Clock.Clock));
 
             _floor = new GameObject("Test floor");
             BoxCollider floor = _floor.AddComponent<BoxCollider>();

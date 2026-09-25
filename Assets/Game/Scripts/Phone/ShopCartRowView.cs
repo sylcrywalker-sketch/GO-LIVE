@@ -1,122 +1,112 @@
 using System;
-using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace GoLive.Phone
 {
+    // What one cart row shows, ready to draw.
+    public readonly struct ShopCartRowData
+    {
+        public string ProductId { get; }
+        public Sprite Image { get; }
+        public string Name { get; }
+        public string CategoryName { get; }
+        public string LinePrice { get; }
+        public string Quantity { get; }
+        public bool CanAddOne { get; }
+
+        public ShopCartRowData(
+            string productId,
+            Sprite image,
+            string name,
+            string categoryName,
+            string linePrice,
+            string quantity,
+            bool canAddOne)
+        {
+            ProductId = productId;
+            Image = image;
+            Name = name;
+            CategoryName = categoryName;
+            LinePrice = linePrice;
+            Quantity = quantity;
+            CanAddOne = canAddOne;
+        }
+    }
+
+    // One cart line: [image] name / category / line price, then [-] quantity [+] [x]. The buttons only ask; the cart
+    // itself is owned by ShopBehaviour.
     [DisallowMultipleComponent]
     public sealed class ShopCartRowView : MonoBehaviour
     {
-        [SerializeField] private GameObject _thumbnail;
         [SerializeField] private Image _image;
-
         [SerializeField] private TMP_Text _name;
         [SerializeField] private TMP_Text _category;
-        [SerializeField] private TMP_Text _price;
+        [SerializeField] private TMP_Text _linePrice;
         [SerializeField] private TMP_Text _quantity;
+        [SerializeField] private Button _removeOne;
+        [SerializeField] private Button _addOne;
+        [SerializeField] private Button _removeAll;
 
-        [SerializeField] private Button _addOneButton;
-        [SerializeField] private Button _removeOneButton;
-        [SerializeField] private Button _removeAllButton;
+        public string ProductId { get; private set; }
 
-        public event Action<string> AddOneClicked;
-        public event Action<string> RemoveOneClicked;
-        public event Action<string> RemoveAllClicked;
+        public event Action<string> AddOneRequested;
+        public event Action<string> RemoveOneRequested;
+        public event Action<string> RemoveAllRequested;
 
         public bool IsConfigured =>
-            _thumbnail != null &&
             _image != null &&
             _name != null &&
             _category != null &&
-            _price != null &&
+            _linePrice != null &&
             _quantity != null &&
-            _addOneButton != null &&
-            _removeOneButton != null &&
-            _removeAllButton != null;
-
-        private string _productId;
+            _removeOne != null &&
+            _addOne != null &&
+            _removeAll != null;
 
         private void Awake()
         {
-            if (!IsConfigured)
-            {
-                Debug.LogError(
-                    $"{nameof(ShopCartRowView)} on {name} has incomplete configuration.",
-                    this);
-
-                enabled = false;
-                return;
-            }
-
-            _addOneButton.onClick.AddListener(HandleAddOne);
-            _removeOneButton.onClick.AddListener(HandleRemoveOne);
-            _removeAllButton.onClick.AddListener(HandleRemoveAll);
+            _removeOne.onClick.AddListener(HandleRemoveOne);
+            _addOne.onClick.AddListener(HandleAddOne);
+            _removeAll.onClick.AddListener(HandleRemoveAll);
         }
 
         private void OnDestroy()
         {
-            if (_addOneButton != null)
-                _addOneButton.onClick.RemoveListener(HandleAddOne);
-
-            if (_removeOneButton != null)
-                _removeOneButton.onClick.RemoveListener(HandleRemoveOne);
-
-            if (_removeAllButton != null)
-                _removeAllButton.onClick.RemoveListener(HandleRemoveAll);
+            _removeOne.onClick.RemoveListener(HandleRemoveOne);
+            _addOne.onClick.RemoveListener(HandleAddOne);
+            _removeAll.onClick.RemoveListener(HandleRemoveAll);
         }
 
-        public void Show(
-            string productId,
-            Sprite image,
-            string productName,
-            string category,
-            string linePrice,
-            int quantity,
-            bool canAddOne)
+        public void Show(in ShopCartRowData data)
         {
-            if (string.IsNullOrWhiteSpace(productId))
-            {
-                throw new ArgumentException(
-                    "Product ID is required.",
-                    nameof(productId));
-            }
+            ProductId = data.ProductId;
 
-            if (quantity <= 0)
-                throw new ArgumentOutOfRangeException(nameof(quantity));
+            _image.sprite = data.Image;
+            _image.enabled = data.Image != null;
 
-            _productId = productId;
+            _name.text = data.Name;
+            _category.text = data.CategoryName;
+            _linePrice.text = data.LinePrice;
+            _quantity.text = data.Quantity;
 
-            _image.sprite = image;
-            _thumbnail.SetActive(image != null);
-
-            _name.text = productName;
-            _category.text = category;
-            _price.text = linePrice;
-            _quantity.text = quantity.ToString(CultureInfo.InvariantCulture);
-
-            _addOneButton.interactable = canAddOne;
-            _removeOneButton.interactable = true;
-            _removeAllButton.interactable = true;
+            _addOne.interactable = data.CanAddOne;
         }
 
         private void HandleAddOne()
         {
-            if (!string.IsNullOrWhiteSpace(_productId))
-                AddOneClicked?.Invoke(_productId);
+            AddOneRequested?.Invoke(ProductId);
         }
 
         private void HandleRemoveOne()
         {
-            if (!string.IsNullOrWhiteSpace(_productId))
-                RemoveOneClicked?.Invoke(_productId);
+            RemoveOneRequested?.Invoke(ProductId);
         }
 
         private void HandleRemoveAll()
         {
-            if (!string.IsNullOrWhiteSpace(_productId))
-                RemoveAllClicked?.Invoke(_productId);
+            RemoveAllRequested?.Invoke(ProductId);
         }
     }
 }

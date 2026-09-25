@@ -796,9 +796,7 @@ namespace GoLive.Tests
 
         private ShopOrder Buy(string productId)
         {
-            ShopPurchaseResult result = _world.Shop.TryPurchase(productId);
-            Assert.That(result.Succeeded, Is.True, $"{productId}: {result.Code}");
-            return result.Order;
+            return ShopTestData.BuyOne(_world.Shop, productId);
         }
 
         private void Advance(double minutes)

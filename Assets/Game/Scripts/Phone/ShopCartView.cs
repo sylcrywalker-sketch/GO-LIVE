@@ -1,212 +1,126 @@
 using System;
 using System.Collections.Generic;
+using GoLive.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace GoLive.Phone
 {
-    public readonly struct ShopCartLineViewData
-    {
-        public string ProductId { get; }
-        public Sprite Image { get; }
-        public string ProductName { get; }
-        public string Category { get; }
-        public string LinePrice { get; }
-        public int Quantity { get; }
-        public bool CanAddOne { get; }
-
-        public ShopCartLineViewData(
-            string productId,
-            Sprite image,
-            string productName,
-            string category,
-            string linePrice,
-            int quantity,
-            bool canAddOne)
-        {
-            ProductId = productId;
-            Image = image;
-            ProductName = productName;
-            Category = category;
-            LinePrice = linePrice;
-            Quantity = quantity;
-            CanAddOne = canAddOne;
-        }
-    }
-
+    // The cart page: one row per cart line, the total and "place order". It owns no cart state; every button raises a
+    // request and PhoneShopView sends it to ShopBehaviour.
     [DisallowMultipleComponent]
     public sealed class ShopCartView : MonoBehaviour
     {
         [SerializeField] private ScrollRect _list;
         [SerializeField] private ShopCartRowView _rowTemplate;
         [SerializeField] private TMP_Text _empty;
+        [SerializeField] private GameObject _footer;
         [SerializeField] private TMP_Text _total;
-        [SerializeField] private TMP_Text _status;
+        [SerializeField] private TMP_Text _problem;
         [SerializeField] private Button _checkout;
         [SerializeField] private TMP_Text _checkoutLabel;
+        [SerializeField] private Color _checkoutLabelColor = new(0.082f, 0.125f, 0.165f, 1f);
+        [SerializeField] private Color _checkoutLabelDisabledColor = new(0.557f, 0.616f, 0.667f, 1f);
 
         public event Action<string> AddOneRequested;
         public event Action<string> RemoveOneRequested;
         public event Action<string> RemoveAllRequested;
         public event Action CheckoutRequested;
 
+        private readonly List<ShopCartRowView> _rows = new();
+
         public bool IsConfigured =>
             _list != null &&
             _list.content != null &&
             _rowTemplate != null &&
             _rowTemplate.IsConfigured &&
+            !_rowTemplate.gameObject.activeSelf &&
             _empty != null &&
+            _footer != null &&
             _total != null &&
-            _status != null &&
+            _problem != null &&
             _checkout != null &&
             _checkoutLabel != null;
 
-        private readonly List<ShopCartRowView> _rows = new();
-        private bool _bound;
-
-        private void Awake()
-        {
-            if (!IsConfigured)
-            {
-                Debug.LogError(
-                    $"{nameof(ShopCartView)} on {name} has incomplete configuration.",
-                    this);
-
-                enabled = false;
-                return;
-            }
-
-            _rowTemplate.gameObject.SetActive(false);
-        }
-
         private void OnEnable()
         {
-            Bind();
+            _checkout.onClick.AddListener(HandleCheckout);
+
+            _list.StopMovement();
+            _list.content.anchoredPosition = new Vector2(_list.content.anchoredPosition.x, 0f);
         }
 
         private void OnDisable()
         {
-            Unbind();
+            _checkout.onClick.RemoveListener(HandleCheckout);
         }
 
         private void OnDestroy()
         {
-            Unbind();
-
             for (int i = 0; i < _rows.Count; i++)
-                UnbindRow(_rows[i]);
+            {
+                if (_rows[i] == null)
+                    continue;
+
+                _rows[i].AddOneRequested -= HandleAddOne;
+                _rows[i].RemoveOneRequested -= HandleRemoveOne;
+                _rows[i].RemoveAllRequested -= HandleRemoveAll;
+            }
         }
 
-        public void Render(
-            IReadOnlyList<ShopCartLineViewData> lines,
-            string emptyText,
-            string totalText,
-            string checkoutText,
-            string statusText,
-            bool checkoutInteractable)
+        public void SetVisible(bool visible)
         {
-            if (lines == null)
-                throw new ArgumentNullException(nameof(lines));
+            if (gameObject.activeSelf != visible)
+                gameObject.SetActive(visible);
+        }
 
-            for (int i = 0; i < lines.Count; i++)
+        // problem: why the cart cannot be ordered right now, or null.
+        public void Show(IReadOnlyList<ShopCartRowData> rows, string total, bool canCheckout, string problem, LocalizationContext localization)
+        {
+            for (int i = 0; i < rows.Count; i++)
             {
-                ShopCartLineViewData line = lines[i];
                 ShopCartRowView row = GetRow(i);
 
-                row.Show(
-                    line.ProductId,
-                    line.Image,
-                    line.ProductName,
-                    line.Category,
-                    line.LinePrice,
-                    line.Quantity,
-                    line.CanAddOne);
+                row.Show(rows[i]);
 
-                row.gameObject.SetActive(true);
+                if (!row.gameObject.activeSelf)
+                    row.gameObject.SetActive(true);
             }
 
-            for (int i = lines.Count; i < _rows.Count; i++)
+            for (int i = rows.Count; i < _rows.Count; i++)
                 _rows[i].gameObject.SetActive(false);
 
-            bool isEmpty = lines.Count == 0;
+            bool hasLines = rows.Count > 0;
 
-            _empty.text = emptyText;
-            _empty.gameObject.SetActive(isEmpty);
+            _empty.text = localization.Text(ShopText.CartEmptyKey);
+            _empty.gameObject.SetActive(!hasLines);
+            _footer.SetActive(hasLines);
 
-            _total.text = totalText;
-            _total.gameObject.SetActive(!isEmpty);
+            _total.text = total;
+            _checkoutLabel.text = localization.Text(ShopText.CheckoutKey);
+            _checkoutLabel.color = canCheckout ? _checkoutLabelColor : _checkoutLabelDisabledColor;
+            _checkout.interactable = canCheckout;
 
-            _checkoutLabel.text = checkoutText;
-            _checkout.interactable = !isEmpty && checkoutInteractable;
-
-            bool hasStatus = !string.IsNullOrWhiteSpace(statusText);
-            _status.text = hasStatus ? statusText : string.Empty;
-            _status.gameObject.SetActive(hasStatus);
-        }
-
-        public void ScrollToTop()
-        {
-            if (_list == null || _list.content == null)
-                return;
-
-            _list.StopMovement();
-
-            RectTransform content = _list.content;
-            content.anchoredPosition =
-                new Vector2(content.anchoredPosition.x, 0f);
+            bool hasProblem = hasLines && !string.IsNullOrEmpty(problem);
+            _problem.text = hasProblem ? problem : string.Empty;
+            _problem.gameObject.SetActive(hasProblem);
         }
 
         private ShopCartRowView GetRow(int index)
         {
             while (_rows.Count <= index)
             {
-                ShopCartRowView row =
-                    Instantiate(_rowTemplate, _list.content);
+                ShopCartRowView row = Instantiate(_rowTemplate, _list.content);
+                row.name = $"CartRow{_rows.Count}";
+                row.AddOneRequested += HandleAddOne;
+                row.RemoveOneRequested += HandleRemoveOne;
+                row.RemoveAllRequested += HandleRemoveAll;
 
-                row.name = $"CartRow_{_rows.Count:00}";
-                BindRow(row);
                 _rows.Add(row);
             }
 
             return _rows[index];
-        }
-
-        private void Bind()
-        {
-            if (_bound || _checkout == null)
-                return;
-
-            _checkout.onClick.AddListener(HandleCheckout);
-            _bound = true;
-        }
-
-        private void Unbind()
-        {
-            if (!_bound)
-                return;
-
-            if (_checkout != null)
-                _checkout.onClick.RemoveListener(HandleCheckout);
-
-            _bound = false;
-        }
-
-        private void BindRow(ShopCartRowView row)
-        {
-            row.AddOneClicked += HandleAddOne;
-            row.RemoveOneClicked += HandleRemoveOne;
-            row.RemoveAllClicked += HandleRemoveAll;
-        }
-
-        private void UnbindRow(ShopCartRowView row)
-        {
-            if (row == null)
-                return;
-
-            row.AddOneClicked -= HandleAddOne;
-            row.RemoveOneClicked -= HandleRemoveOne;
-            row.RemoveAllClicked -= HandleRemoveAll;
         }
 
         private void HandleAddOne(string productId)

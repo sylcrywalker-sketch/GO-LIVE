@@ -498,10 +498,10 @@ namespace GoLive.Tests
             Assert.That(Field<TMP_Text>(_ui, "capacityText").text, Is.EqualTo("3 / 12"));
 
             Assert.That(Row(0).Title, Is.EqualTo(Text("shop.product.banana.name")), "names come from the definition's localization key");
-            Assert.That(Field<TMP_Text>(Row(0), "detail").text, Is.EqualTo(Text("inventory.food")));
+            Assert.That(Field<TMP_Text>(Row(0), "detail").text, Is.EqualTo(Text("category.food")), "the one category mapping the Shop uses too");
             Assert.That(Row(1).Title, Is.EqualTo(Text("shop.product.mug.name")));
             Assert.That(Row(2).Title, Is.EqualTo("Test gadget"), "a definition without a name key still gets a readable name");
-            Assert.That(Field<TMP_Text>(Row(2), "detail").text, Is.EqualTo(Text("inventory.household")));
+            Assert.That(Field<TMP_Text>(Row(2), "detail").text, Is.EqualTo(Text("category.household")));
             Assert.That(Field<GameObject>(Row(2), "iconFallback").activeSelf, Is.True, "missing icon falls back to the neutral glyph");
             Assert.That(Row(2).Icon, Is.Null);
         }
@@ -758,8 +758,7 @@ namespace GoLive.Tests
 
         private DeliveryPackageBehaviour DeliverPackage(string productId)
         {
-            ShopPurchaseResult result = _world.Shop.TryPurchase(productId);
-            Assert.That(result.Succeeded, Is.True, $"{productId}: {result.Code}");
+            ShopTestData.BuyOne(_world.Shop, productId);
 
             _world.Clock.Clock.AdvanceMinutes(151);
             return Object.FindObjectsByType<DeliveryPackageBehaviour>(FindObjectsInactive.Include).Single();

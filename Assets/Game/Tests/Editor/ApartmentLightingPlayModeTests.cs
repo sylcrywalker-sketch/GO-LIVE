@@ -121,6 +121,26 @@ namespace GoLive.Tests
             Assert.That(_nightGrade.weight, Is.InRange(0.05f, 0.95f), "dawn comes in over the end of the night");
         }
 
+        // Each lamp at full level is the intensity it was authored with, per instance: the three ceiling globes share a
+        // prefab but not a brightness.
+        [UnityTest]
+        public IEnumerator EveryLampShinesWithItsOwnAuthoredIntensity()
+        {
+            yield return new EnterPlayMode(false);
+            yield return Boot();
+
+            yield return AdvanceTo(18, 0);
+            AssertLevels(desk: 1f, room: 1f, hallway: 1f, "at 18:00");
+            AssertIntensities(_kitchenLight, 1.8f);
+            AssertIntensities(_roomLight, 2.4f);
+            AssertIntensities(_hallwayLight, 1.6f);
+            AssertIntensities(_deskLamp, 2.4f, 0.5f, 0.2f);
+
+            yield return AdvanceTo(23, 0);
+            AssertIntensities(_hallwayLight, 0.8f);
+            AssertIntensities(_kitchenLight, 0.9f);
+        }
+
         [UnityTest]
         public IEnumerator TheMonitorGoesDarkWhenThePcCanNotReachADesktop()
         {
@@ -197,6 +217,19 @@ namespace GoLive.Tests
             Assert.That(_roomLight.Level, Is.EqualTo(room).Within(0.01f), $"room ceiling light {when}");
             Assert.That(_hallwayLight.Level, Is.EqualTo(hallway).Within(0.01f), $"hallway light {when}");
             Assert.That(_kitchenLight.Level, Is.EqualTo(hallway).Within(0.01f), $"kitchen light {when}");
+        }
+
+        private static void AssertIntensities(PracticalLight lamp, params float[] expected)
+        {
+            UnityEditor.SerializedProperty lights = new UnityEditor.SerializedObject(lamp).FindProperty("lights");
+            Assert.That(lights.arraySize, Is.EqualTo(expected.Length), lamp.name);
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Light light = (Light)lights.GetArrayElementAtIndex(i).FindPropertyRelative("light").objectReferenceValue;
+                Assert.That(light.intensity, Is.EqualTo(expected[i]).Within(1e-4f), $"{lamp.name} light {i}");
+                Assert.That(light.enabled, Is.True, $"{lamp.name} light {i} is on");
+            }
         }
 
         private void AssertScreen(Renderer monitor, Light glow, bool on, string when)

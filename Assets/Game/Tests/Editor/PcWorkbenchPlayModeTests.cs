@@ -981,7 +981,7 @@ namespace GoLive.Tests
         // A Budget GPU the way the game gets one: bought in the Shop, delivered, and taken out of its package with F.
         private IEnumerator DeliverGpu(List<WorldItem> delivered)
         {
-            Assert.That(Object.FindAnyObjectByType<ShopBehaviour>().TryPurchase("budget-gpu").Succeeded, Is.True, "the Budget GPU is bought");
+            ShopTestData.BuyOne(Object.FindAnyObjectByType<ShopBehaviour>(), "budget-gpu");
             Object.FindAnyObjectByType<GameClockBehaviour>().Clock.AdvanceMinutes(151);
             yield return PlayModeWait.Frames(30);
 

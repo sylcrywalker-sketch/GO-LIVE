@@ -17,7 +17,8 @@ namespace GoLive.Shop
         [SerializeField] private string productId;
         [SerializeField] private string nameLocalizationKey;
         [SerializeField] private string descriptionLocalizationKey;
-        [SerializeField] private string categoryLocalizationKey;
+
+        [Tooltip("The broad category: the storefront shelf, and the category line shown for the product. Must match the fulfillment item's category.")]
         [SerializeField] private ItemCategory category;
         [SerializeField] private bool showInFeatured;
         [SerializeField, Min(1)] private long priceCents = 100;
@@ -30,7 +31,6 @@ namespace GoLive.Shop
         public string ProductId => productId;
         public string NameLocalizationKey => nameLocalizationKey;
         public string DescriptionLocalizationKey => descriptionLocalizationKey;
-        public string CategoryLocalizationKey => categoryLocalizationKey;
         public ItemCategory Category => category;
         public bool ShowInFeatured => showInFeatured;
         public long PriceCents => priceCents;
@@ -42,6 +42,12 @@ namespace GoLive.Shop
 
         public bool IsAvailable => availability == ShopProductAvailability.Available;
         public bool HasPurchaseLimit => maxPurchases > 0;
+
+        // What the Shop shows for the product: its own image, otherwise the icon of the item it delivers.
+        public Sprite DisplayImage =>
+            image != null ? image :
+            fulfillmentItem != null ? fulfillmentItem.InventoryIcon :
+            null;
 
         internal ShopPurchaseOffer CreatePurchaseOffer()
         {
@@ -70,12 +76,6 @@ namespace GoLive.Shop
             if (string.IsNullOrWhiteSpace(descriptionLocalizationKey))
             {
                 error = $"Product '{productId}' has no description localization key.";
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(categoryLocalizationKey))
-            {
-                error = $"Product '{productId}' has no category localization key.";
                 return false;
             }
 

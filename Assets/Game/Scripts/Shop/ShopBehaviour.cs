@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace GoLive.Shop
 {
+    // Unity side of the Shop: wires the catalog, the wallet and the clock to the plain C# commerce objects it owns (the
+    // cart, the order book and the one checkout) and exposes them as commands and queries. The purchase rules live in
+    // ShopCheckout; this class only turns cart lines and catalog products into checkout lines.
     [DisallowMultipleComponent]
     public sealed class ShopBehaviour : MonoBehaviour
     {
@@ -13,27 +16,25 @@ namespace GoLive.Shop
         [SerializeField] private GameClockBehaviour gameClock;
         [SerializeField] private ShopCatalogConfig catalog;
 
+        // Paid orders: persistent, saved through CaptureOrders/RestoreOrders and consumed by Delivery.
         public ShopOrderBook Orders { get; } = new();
-        public ShopCart Cart { get; } = new();
-
-        public bool IsReady => Checkout != null;
+        public bool IsReady => _checkout != null;
 
         public IReadOnlyList<ShopProductDefinition> Products =>
-            catalog != null
-                ? catalog.Products
-                : Array.Empty<ShopProductDefinition>();
+            catalog != null ? catalog.Products : Array.Empty<ShopProductDefinition>();
 
+        // The session's cart. Transient: never saved, emptied by a load.
+        public IReadOnlyList<ShopCartLine> CartLines => _cart.Lines;
+        public int CartItemCount => _cart.TotalQuantity;
+
+        // The balance, the orders or the cart changed.
         public event Action Changed;
 
-        // Kept for compatibility with the existing test/runtime setup.
-        // ShopPurchase is now only an adapter over one ShopCheckout instance.
-        private ShopPurchase _purchase;
+        private readonly ShopCart _cart = new();
 
+        private ShopCheckout _checkout;
         private bool _started;
         private bool _bound;
-
-        private ShopCheckout Checkout =>
-            _purchase?.Checkout;
 
         private void Awake()
         {
@@ -46,8 +47,7 @@ namespace GoLive.Shop
             if (!isActiveAndEnabled)
                 return;
 
-            if (wallet.Wallet == null ||
-                gameClock.Clock == null)
+            if (wallet.Wallet == null || gameClock.Clock == null)
             {
                 Debug.LogError(
                     $"{nameof(ShopBehaviour)} could not access initialized Wallet or Game Clock.",
@@ -57,7 +57,7 @@ namespace GoLive.Shop
                 return;
             }
 
-            _purchase = new ShopPurchase(
+            _checkout = new ShopCheckout(
                 wallet.Wallet,
                 Orders,
                 gameClock.Clock);
@@ -79,260 +79,119 @@ namespace GoLive.Shop
             Unbind();
         }
 
-        // ==========================================================
-        // CATALOG
-        // ==========================================================
-
-        public bool TryGetProduct(
-            string productId,
-            out ShopProductDefinition product)
+        public bool TryGetProduct(string productId, out ShopProductDefinition product)
         {
             product = null;
 
             if (catalog == null)
                 return false;
 
-            return catalog.TryGetProduct(
-                productId,
-                out product);
+            return catalog.TryGetProduct(productId, out product);
         }
 
-        // ==========================================================
-        // SINGLE-PRODUCT COMPATIBILITY API
-        // ==========================================================
-
-        public ShopPurchaseResultCode EvaluatePurchase(
-            string productId)
+        public int GetCartQuantity(string productId)
         {
-            if (!TryGetProduct(
-                    productId,
-                    out ShopProductDefinition product))
-            {
-                return ShopPurchaseResultCode.ProductNotFound;
-            }
+            return _cart.GetQuantity(productId);
+        }
 
-            if (_purchase == null)
+        // Whether one more unit fits the product's terms, counting what the cart already holds. Funds are checked at
+        // checkout, not here.
+        public ShopPurchaseResultCode EvaluateAddToCart(string productId)
+        {
+            if (!TryGetProduct(productId, out ShopProductDefinition product))
+                return ShopPurchaseResultCode.ProductNotFound;
+
+            if (_checkout == null)
                 return ShopPurchaseResultCode.NotReady;
 
-            ShopPurchaseOffer offer =
-                product.CreatePurchaseOffer();
+            long requested = (long)_cart.GetQuantity(productId) + 1;
 
-            return _purchase.Evaluate(in offer);
+            if (requested > int.MaxValue)
+                return ShopPurchaseResultCode.PurchaseLimitReached;
+
+            return _checkout.EvaluateQuantity(product.CreatePurchaseOffer(), (int)requested);
         }
 
-        public ShopPurchaseResult TryPurchase(
-            string productId)
+        // Adds one unit to the cart. Never charges the wallet and never places an order.
+        public ShopPurchaseResultCode TryAddToCart(string productId)
         {
-            if (!TryGetProduct(
-                    productId,
-                    out ShopProductDefinition product))
+            ShopPurchaseResultCode evaluation = EvaluateAddToCart(productId);
+
+            if (evaluation != ShopPurchaseResultCode.Success)
+                return evaluation;
+
+            return _cart.TryAdd(productId)
+                ? ShopPurchaseResultCode.Success
+                : ShopPurchaseResultCode.InvalidRequest;
+        }
+
+        public bool TryRemoveOneFromCart(string productId)
+        {
+            return _cart.TryRemoveOne(productId);
+        }
+
+        public bool TryRemoveFromCart(string productId)
+        {
+            return _cart.TryRemoveAll(productId);
+        }
+
+        public ShopPurchaseResultCode EvaluateCheckout()
+        {
+            if (_checkout == null)
+                return ShopPurchaseResultCode.NotReady;
+
+            return TryCreateCartLines(out ShopCheckoutLine[] lines, out ShopPurchaseResultCode code)
+                ? _checkout.Evaluate(lines)
+                : code;
+        }
+
+        // The cart at the catalog's current prices.
+        public long GetCartTotalCents()
+        {
+            return TryCreateCartLines(out ShopCheckoutLine[] lines, out _) &&
+                   ShopCheckout.TryCalculateTotal(lines, out long totalCents)
+                ? totalCents
+                : 0;
+        }
+
+        // Pays for the whole cart in one transaction. The cart empties only once the purchase has been committed.
+        public ShopCheckoutResult TryCheckout()
+        {
+            if (_checkout == null)
+                return ShopCheckoutResult.Failure(ShopPurchaseResultCode.NotReady);
+
+            if (!TryCreateCartLines(out ShopCheckoutLine[] lines, out ShopPurchaseResultCode code))
+                return ShopCheckoutResult.Failure(code);
+
+            int ordersBefore = Orders.Orders.Count;
+
+            try
             {
-                return ShopPurchaseResult.Failure(
-                    ShopPurchaseResultCode.ProductNotFound);
+                return _checkout.TryCheckout(lines);
             }
-
-            if (_purchase == null)
+            finally
             {
-                return ShopPurchaseResult.Failure(
-                    ShopPurchaseResultCode.NotReady);
+                // ShopCheckout is the only writer of new orders: a grown order book means the cart has been paid for,
+                // also when a Wallet or Orders subscriber threw after the commit. Paid lines never stay in the cart.
+                if (Orders.Orders.Count != ordersBefore)
+                    _cart.Clear();
             }
-
-            ShopPurchaseOffer offer =
-                product.CreatePurchaseOffer();
-
-            return _purchase.TryPurchase(in offer);
         }
 
-        // ==========================================================
-        // CART
-        // ==========================================================
-
-        public ShopCartAddResultCode EvaluateAddToCart(
-            string productId)
-        {
-            if (!IsReady)
-                return ShopCartAddResultCode.NotReady;
-
-            if (!TryGetProduct(
-                    productId,
-                    out ShopProductDefinition product))
-            {
-                return ShopCartAddResultCode.ProductNotFound;
-            }
-
-            if (!product.IsAvailable)
-                return ShopCartAddResultCode.Unavailable;
-
-            if (product.MaxPurchases > 0)
-            {
-                int alreadyPurchased =
-                    Orders.CountForProduct(productId);
-
-                int inCart =
-                    Cart.GetQuantity(productId);
-
-                if (alreadyPurchased + inCart >=
-                    product.MaxPurchases)
-                {
-                    return ShopCartAddResultCode.PurchaseLimitReached;
-                }
-            }
-
-            return ShopCartAddResultCode.Success;
-        }
-
-        public ShopCartAddResultCode TryAddToCart(
-            string productId)
-        {
-            ShopCartAddResultCode result =
-                EvaluateAddToCart(productId);
-
-            if (result != ShopCartAddResultCode.Success)
-                return result;
-
-            Cart.AddOne(productId);
-            return ShopCartAddResultCode.Success;
-        }
-
-        public bool TryRemoveOneFromCart(
-            string productId)
-        {
-            return Cart.RemoveOne(productId);
-        }
-
-        public bool TryRemoveFromCart(
-            string productId)
-        {
-            return Cart.RemoveAll(productId);
-        }
-
-        public bool TryGetCartTotal(
-            out long totalCents)
-        {
-            totalCents = 0;
-
-            IReadOnlyList<ShopCartEntry> entries =
-                Cart.Entries;
-
-            for (int i = 0; i < entries.Count; i++)
-            {
-                ShopCartEntry entry = entries[i];
-
-                if (!TryGetProduct(
-                        entry.ProductId,
-                        out ShopProductDefinition product))
-                {
-                    totalCents = 0;
-                    return false;
-                }
-
-                totalCents = checked(
-                    totalCents +
-                    checked(product.PriceCents * entry.Quantity));
-            }
-
-            return true;
-        }
-
-        public ShopCheckoutResultCode EvaluateCartCheckout()
-        {
-            if (!IsReady)
-                return ShopCheckoutResultCode.NotReady;
-
-            ShopCheckoutResultCode buildResult =
-                TryBuildCheckoutLines(
-                    out ShopCheckoutLine[] lines);
-
-            if (buildResult != ShopCheckoutResultCode.Success)
-                return buildResult;
-
-            return Checkout.Evaluate(lines);
-        }
-
-        public ShopCheckoutResult TryCheckoutCart()
-        {
-            if (!IsReady)
-            {
-                return ShopCheckoutResult.Failure(
-                    ShopCheckoutResultCode.NotReady);
-            }
-
-            ShopCheckoutResultCode buildResult =
-                TryBuildCheckoutLines(
-                    out ShopCheckoutLine[] lines);
-
-            if (buildResult != ShopCheckoutResultCode.Success)
-                return ShopCheckoutResult.Failure(buildResult);
-
-            ShopCheckoutResult result =
-                Checkout.TryCheckout(lines);
-
-            if (result.Succeeded)
-                Cart.Clear();
-
-            return result;
-        }
-
-        private ShopCheckoutResultCode TryBuildCheckoutLines(
-            out ShopCheckoutLine[] lines)
-        {
-            lines = Array.Empty<ShopCheckoutLine>();
-
-            IReadOnlyList<ShopCartEntry> entries =
-                Cart.Entries;
-
-            if (entries.Count == 0)
-                return ShopCheckoutResultCode.EmptyCart;
-
-            ShopCheckoutLine[] result =
-                new ShopCheckoutLine[entries.Count];
-
-            for (int i = 0; i < entries.Count; i++)
-            {
-                ShopCartEntry entry = entries[i];
-
-                if (!TryGetProduct(
-                        entry.ProductId,
-                        out ShopProductDefinition product))
-                {
-                    return ShopCheckoutResultCode.ProductNotFound;
-                }
-
-                result[i] = new ShopCheckoutLine(
-                    product.CreatePurchaseOffer(),
-                    entry.Quantity);
-            }
-
-            lines = result;
-            return ShopCheckoutResultCode.Success;
-        }
-
-        // ==========================================================
-        // DELIVERY / ORDERS
-        // ==========================================================
-
-        public bool TryEstimateDelivery(
-            string productId,
-            out GameTimeSnapshot deliveryDueAt)
+        public bool TryEstimateDelivery(string productId, out GameTimeSnapshot deliveryDueAt)
         {
             deliveryDueAt = default;
 
-            if (!TryGetProduct(
-                    productId,
-                    out ShopProductDefinition product) ||
+            if (!TryGetProduct(productId, out ShopProductDefinition product) ||
                 !product.IsAvailable ||
                 gameClock.Clock == null)
             {
                 return false;
             }
 
-            ShopPurchaseOffer offer =
-                product.CreatePurchaseOffer();
+            ShopPurchaseOffer offer = product.CreatePurchaseOffer();
 
-            deliveryDueAt =
-                offer.GetDeliveryDueAt(
-                    gameClock.Clock.Current);
-
+            deliveryDueAt = offer.GetDeliveryDueAt(gameClock.Clock.Current);
             return true;
         }
 
@@ -341,42 +200,27 @@ namespace GoLive.Shop
             return Orders.CaptureSnapshot();
         }
 
-        public void RestoreOrders(
-            ShopOrdersSnapshot snapshot)
+        // A load replaces the paid orders and empties the transient cart.
+        public void RestoreOrders(ShopOrdersSnapshot snapshot)
         {
             if (gameClock.Clock == null)
-            {
-                throw new InvalidOperationException(
-                    "Game Clock is not initialized.");
-            }
+                throw new InvalidOperationException("Game Clock is not initialized.");
 
-            long currentGameTimeSeconds =
-                gameClock.Clock.Current.TotalSeconds;
+            long currentGameTimeSeconds = gameClock.Clock.Current.TotalSeconds;
 
-            if (!ValidateOrdersSnapshot(
-                    snapshot,
-                    currentGameTimeSeconds))
-            {
-                throw new ArgumentException(
-                    "Shop orders snapshot is invalid.",
-                    nameof(snapshot));
-            }
+            if (!ValidateOrdersSnapshot(snapshot, currentGameTimeSeconds))
+                throw new ArgumentException("Shop orders snapshot is invalid.", nameof(snapshot));
 
+            _cart.Clear();
             Orders.Restore(snapshot);
-
-            // Cart is intentionally transient and never survives Load.
-            Cart.Clear();
         }
 
         public bool ValidateOrdersSnapshot(
             ShopOrdersSnapshot snapshot,
             long currentGameTimeSeconds)
         {
-            if (snapshot == null ||
-                currentGameTimeSeconds < 0)
-            {
+            if (snapshot == null || currentGameTimeSeconds < 0)
                 return false;
-            }
 
             ShopOrderBook candidate = new();
 
@@ -389,36 +233,24 @@ namespace GoLive.Shop
                 return false;
             }
 
-            for (int i = 0;
-                 i < candidate.Orders.Count;
-                 i++)
+            for (int i = 0; i < candidate.Orders.Count; i++)
             {
-                ShopOrder order =
-                    candidate.Orders[i];
+                ShopOrder order = candidate.Orders[i];
 
-                if (!catalog.TryGetProduct(
-                        order.ProductId,
-                        out ShopProductDefinition product))
-                {
+                if (!catalog.TryGetProduct(order.ProductId, out ShopProductDefinition product))
                     return false;
-                }
 
-                if (order.PlacedAt.TotalSeconds >
-                    currentGameTimeSeconds)
-                {
+                if (order.PlacedAt.TotalSeconds > currentGameTimeSeconds)
                     return false;
-                }
 
                 if (order.Status == ShopOrderStatus.Delivered &&
-                    order.DeliveryDueAt.TotalSeconds >
-                    currentGameTimeSeconds)
+                    order.DeliveryDueAt.TotalSeconds > currentGameTimeSeconds)
                 {
                     return false;
                 }
 
                 if (product.MaxPurchases > 0 &&
-                    candidate.CountForProduct(order.ProductId) >
-                    product.MaxPurchases)
+                    candidate.CountForProduct(order.ProductId) > product.MaxPurchases)
                 {
                     return false;
                 }
@@ -427,17 +259,12 @@ namespace GoLive.Shop
             return true;
         }
 
-        public bool TryGetOrder(
-            string orderId,
-            out ShopOrder order)
+        public bool TryGetOrder(string orderId, out ShopOrder order)
         {
-            return Orders.TryGetOrder(
-                orderId,
-                out order);
+            return Orders.TryGetOrder(orderId, out order);
         }
 
-        public bool TryMarkDelivered(
-            string orderId)
+        public bool TryMarkDelivered(string orderId)
         {
             if (gameClock.Clock == null)
                 return false;
@@ -447,26 +274,36 @@ namespace GoLive.Shop
                 gameClock.Clock.Current);
         }
 
-        // ==========================================================
-        // EVENTS / LIFECYCLE
-        // ==========================================================
+        private bool TryCreateCartLines(out ShopCheckoutLine[] lines, out ShopPurchaseResultCode code)
+        {
+            IReadOnlyList<ShopCartLine> cart = _cart.Lines;
+
+            lines = new ShopCheckoutLine[cart.Count];
+
+            for (int i = 0; i < cart.Count; i++)
+            {
+                if (!TryGetProduct(cart[i].ProductId, out ShopProductDefinition product))
+                {
+                    lines = null;
+                    code = ShopPurchaseResultCode.ProductNotFound;
+                    return false;
+                }
+
+                lines[i] = new ShopCheckoutLine(product.CreatePurchaseOffer(), cart[i].Quantity);
+            }
+
+            code = ShopPurchaseResultCode.Success;
+            return true;
+        }
 
         private void Bind()
         {
-            if (_bound ||
-                wallet.Wallet == null)
-            {
+            if (_bound || wallet.Wallet == null)
                 return;
-            }
 
-            wallet.Wallet.BalanceChanged +=
-                HandleBalanceChanged;
-
-            Orders.Changed +=
-                HandleOrdersChanged;
-
-            Cart.Changed +=
-                HandleCartChanged;
+            wallet.Wallet.BalanceChanged += HandleBalanceChanged;
+            Orders.Changed += HandleStateChanged;
+            _cart.Changed += HandleStateChanged;
 
             _bound = true;
         }
@@ -476,34 +313,21 @@ namespace GoLive.Shop
             if (!_bound)
                 return;
 
-            if (wallet != null &&
-                wallet.Wallet != null)
-            {
-                wallet.Wallet.BalanceChanged -=
-                    HandleBalanceChanged;
-            }
+            if (wallet != null && wallet.Wallet != null)
+                wallet.Wallet.BalanceChanged -= HandleBalanceChanged;
 
-            Orders.Changed -=
-                HandleOrdersChanged;
-
-            Cart.Changed -=
-                HandleCartChanged;
+            Orders.Changed -= HandleStateChanged;
+            _cart.Changed -= HandleStateChanged;
 
             _bound = false;
         }
 
-        private void HandleBalanceChanged(
-            long balanceCents)
+        private void HandleBalanceChanged(long balanceCents)
         {
             Changed?.Invoke();
         }
 
-        private void HandleOrdersChanged()
-        {
-            Changed?.Invoke();
-        }
-
-        private void HandleCartChanged()
+        private void HandleStateChanged()
         {
             Changed?.Invoke();
         }

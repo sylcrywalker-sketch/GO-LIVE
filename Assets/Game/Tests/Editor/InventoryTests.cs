@@ -1,3 +1,4 @@
+using System;
 using GoLive.Items;
 using GoLive.Localization;
 using NUnit.Framework;
@@ -71,6 +72,23 @@ namespace GoLive.Tests
 
                 Assert.That(catalog.TryGetText(definition.NameLocalizationKey, GameLanguage.Russian, out _), Is.True, $"{definition.name}: Russian name");
                 Assert.That(catalog.TryGetText(definition.NameLocalizationKey, GameLanguage.English, out _), Is.True, $"{definition.name}: English name");
+            }
+        }
+
+        // Inventory rows and the Phone Shop name a category through ItemCategoryLocalization, which refuses a value
+        // outside the three broad categories instead of guessing one.
+        [Test]
+        public void EveryItemIsInOneOfTheBroadCategories()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:ItemDefinition", new[] { "Assets/Game" });
+
+            Assert.That(guids, Is.Not.Empty);
+
+            foreach (string guid in guids)
+            {
+                ItemDefinition definition = AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(guid));
+
+                Assert.That(Enum.IsDefined(typeof(ItemCategory), definition.Category), Is.True, $"{definition.name}: category");
             }
         }
 

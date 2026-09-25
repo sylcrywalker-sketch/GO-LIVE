@@ -943,10 +943,11 @@ namespace GoLive.Persistence
         private Dictionary<string, WorldItem>
             BuildSceneItemMap()
         {
+            // Inactive items count too (stored, installed, removed). No order is needed: the map is keyed by ID and
+            // Capture sorts what it writes.
             WorldItem[] items =
                 UnityEngine.Object.FindObjectsByType<WorldItem>(
-                    FindObjectsInactive.Include,
-                    FindObjectsSortMode.None);
+                    FindObjectsInactive.Include);
 
             Dictionary<string, WorldItem> result =
                 new(StringComparer.Ordinal);

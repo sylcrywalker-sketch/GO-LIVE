@@ -1,6 +1,7 @@
 using System.Reflection;
 using GoLive.Items;
 using GoLive.Shop;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
@@ -41,7 +42,6 @@ namespace GoLive.Tests
             Set(product, "productId", productId);
             Set(product, "nameLocalizationKey", $"test.{productId}.name");
             Set(product, "descriptionLocalizationKey", $"test.{productId}.description");
-            Set(product, "categoryLocalizationKey", "test.category");
             Set(product, "category", category);
             Set(product, "showInFeatured", featured);
             Set(product, "priceCents", priceCents);
@@ -57,6 +57,24 @@ namespace GoLive.Tests
             ShopCatalogConfig catalog = ScriptableObject.CreateInstance<ShopCatalogConfig>();
             Set(catalog, "products", products);
             return catalog;
+        }
+
+        // The game's only way to buy: one unit into the cart, then the whole cart through the one checkout.
+        public static ShopCheckoutResult Buy(ShopBehaviour shop, string productId)
+        {
+            ShopPurchaseResultCode added = shop.TryAddToCart(productId);
+            Assert.That(added, Is.EqualTo(ShopPurchaseResultCode.Success), $"{productId} goes into the cart");
+
+            return shop.TryCheckout();
+        }
+
+        // A single-unit order for tests that only need one placed order of a product.
+        public static ShopOrder BuyOne(ShopBehaviour shop, string productId)
+        {
+            ShopCheckoutResult result = Buy(shop, productId);
+            Assert.That(result.Succeeded, Is.True, $"{productId}: {result.Code}");
+            Assert.That(result.Orders, Has.Count.EqualTo(1));
+            return result.Orders[0];
         }
 
         public static void Set(object target, string field, object value)

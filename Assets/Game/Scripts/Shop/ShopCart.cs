@@ -4,159 +4,115 @@ using System.Collections.ObjectModel;
 
 namespace GoLive.Shop
 {
-    public enum ShopCartAddResultCode
-    {
-        Success = 0,
-        NotReady = 1,
-        ProductNotFound = 2,
-        Unavailable = 3,
-        PurchaseLimitReached = 4
-    }
-
-    public readonly struct ShopCartEntry
+    public readonly struct ShopCartLine
     {
         public string ProductId { get; }
         public int Quantity { get; }
 
-        public ShopCartEntry(
-            string productId,
-            int quantity)
+        public ShopCartLine(string productId, int quantity)
         {
-            if (!ShopId.IsValid(productId))
-                throw new ArgumentException("Product ID is invalid.", nameof(productId));
-
-            if (quantity <= 0)
-                throw new ArgumentOutOfRangeException(nameof(quantity));
-
             ProductId = productId;
             Quantity = quantity;
         }
     }
 
-    /// <summary>
-    /// Transient cart state for the current game session.
-    /// Owns only ProductId -> Quantity. It never owns prices, money or orders.
-    /// </summary>
+    // The player's basket for this session: Product ID → quantity, in the order products were first added. It knows
+    // nothing about prices, stock or purchase limits (ShopCheckout owns those rules) and is never saved.
     public sealed class ShopCart
     {
-        private readonly List<ShopCartEntry> _entries = new();
-        private readonly Dictionary<string, int> _indices =
-            new(StringComparer.Ordinal);
-        private readonly ReadOnlyCollection<ShopCartEntry> _readOnlyEntries;
-
-        public IReadOnlyList<ShopCartEntry> Entries => _readOnlyEntries;
-        public bool IsEmpty => _entries.Count == 0;
+        public IReadOnlyList<ShopCartLine> Lines { get; }
+        public int TotalQuantity { get; private set; }
+        public bool IsEmpty => _lines.Count == 0;
 
         public event Action Changed;
 
-        public int TotalQuantity
-        {
-            get
-            {
-                int total = 0;
-
-                for (int i = 0; i < _entries.Count; i++)
-                    total = checked(total + _entries[i].Quantity);
-
-                return total;
-            }
-        }
+        private readonly List<ShopCartLine> _lines = new();
 
         public ShopCart()
         {
-            _readOnlyEntries =
-                new ReadOnlyCollection<ShopCartEntry>(_entries);
+            Lines = new ReadOnlyCollection<ShopCartLine>(_lines);
         }
 
         public int GetQuantity(string productId)
         {
-            if (!ShopId.IsValid(productId))
-                return 0;
-
-            return _indices.TryGetValue(productId, out int index)
-                ? _entries[index].Quantity
-                : 0;
+            int index = IndexOf(productId);
+            return index >= 0 ? _lines[index].Quantity : 0;
         }
 
-        internal void AddOne(string productId)
+        public bool TryAdd(string productId)
         {
-            if (!ShopId.IsValid(productId))
-                throw new ArgumentException("Product ID is invalid.", nameof(productId));
+            if (!ShopId.IsValid(productId) || TotalQuantity == int.MaxValue)
+                return false;
 
-            if (_indices.TryGetValue(productId, out int index))
-            {
-                ShopCartEntry current = _entries[index];
+            int index = IndexOf(productId);
 
-                _entries[index] = new ShopCartEntry(
-                    current.ProductId,
-                    checked(current.Quantity + 1));
-            }
+            if (index < 0)
+                _lines.Add(new ShopCartLine(productId, 1));
             else
-            {
-                _indices.Add(productId, _entries.Count);
-                _entries.Add(new ShopCartEntry(productId, 1));
-            }
+                _lines[index] = new ShopCartLine(productId, _lines[index].Quantity + 1);
 
-            Changed?.Invoke();
-        }
-
-        internal bool RemoveOne(string productId)
-        {
-            if (!ShopId.IsValid(productId) ||
-                !_indices.TryGetValue(productId, out int index))
-            {
-                return false;
-            }
-
-            ShopCartEntry current = _entries[index];
-
-            if (current.Quantity > 1)
-            {
-                _entries[index] = new ShopCartEntry(
-                    current.ProductId,
-                    current.Quantity - 1);
-
-                Changed?.Invoke();
-                return true;
-            }
-
-            RemoveAt(index);
+            TotalQuantity++;
             Changed?.Invoke();
             return true;
         }
 
-        internal bool RemoveAll(string productId)
+        public bool TryRemoveOne(string productId)
         {
-            if (!ShopId.IsValid(productId) ||
-                !_indices.TryGetValue(productId, out int index))
-            {
-                return false;
-            }
+            int index = IndexOf(productId);
 
-            RemoveAt(index);
+            if (index < 0)
+                return false;
+
+            int quantity = _lines[index].Quantity;
+
+            if (quantity == 1)
+                _lines.RemoveAt(index);
+            else
+                _lines[index] = new ShopCartLine(productId, quantity - 1);
+
+            TotalQuantity--;
             Changed?.Invoke();
             return true;
         }
 
-        internal void Clear()
+        public bool TryRemoveAll(string productId)
         {
-            if (_entries.Count == 0)
-                return;
+            int index = IndexOf(productId);
 
-            _entries.Clear();
-            _indices.Clear();
+            if (index < 0)
+                return false;
+
+            TotalQuantity -= _lines[index].Quantity;
+            _lines.RemoveAt(index);
+
             Changed?.Invoke();
+            return true;
         }
 
-        private void RemoveAt(int index)
+        public bool Clear()
         {
-            string productId = _entries[index].ProductId;
+            if (_lines.Count == 0)
+                return false;
 
-            _entries.RemoveAt(index);
-            _indices.Remove(productId);
+            _lines.Clear();
+            TotalQuantity = 0;
 
-            for (int i = index; i < _entries.Count; i++)
-                _indices[_entries[i].ProductId] = i;
+            Changed?.Invoke();
+            return true;
+        }
+
+        private int IndexOf(string productId)
+        {
+            if (!ShopId.IsValid(productId))
+                return -1;
+
+            for (int i = 0; i < _lines.Count; i++)
+            {
+                if (string.Equals(_lines[i].ProductId, productId, StringComparison.Ordinal))
+                    return i;
+            }
+
+            return -1;
         }
     }
 }
