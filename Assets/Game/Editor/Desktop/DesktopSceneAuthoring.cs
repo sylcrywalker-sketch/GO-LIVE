@@ -47,6 +47,7 @@ namespace GoLive.Editor.Desktop
             Set(session,"monitorCollider",monitorCollider);
             Set(session,"monitorAction",InputReference("Use"));Set(session,"focusAction",InputReference("PhoneSubmit"));
             Set(runtime,"pc",pc);Set(runtime,"session",session);Set(runtime,"catalog",catalog);
+            Set(runtime,"clock",One<GoLive.GameTime.GameClockBehaviour>());Set(runtime,"wallet",One<GoLive.Economy.WalletBehaviour>());
             Set(screen,"session",session);Set(workbench,"session",session);Set(One<GameUiInputRouter>(),"pcSession",session);
             Set(One<GameSaveController>(),"_desktop",runtime);
             var caseInteractable=pc.GetComponent<PcCaseInteractable>();

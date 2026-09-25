@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using GoLive.Economy;
+using GoLive.GameTime;
 using GoLive.PcBuilding;
 using GoLive.Player;
 using UnityEngine;
@@ -13,7 +15,11 @@ namespace GoLive.Desktop
         [SerializeField] private PcSessionBehaviour session;
         [SerializeField] private PcPeripheralsBehaviour peripherals;
         [SerializeField] private DesktopAppCatalog catalog;
+        // The audience follows the game clock; accepted donations are paid into the wallet.
+        [SerializeField] private GameClockBehaviour clock;
+        [SerializeField] private WalletBehaviour wallet;
         [SerializeField, Min(0)] private float uploadMbps = 5f;
+        [SerializeField] private AudienceTuning audienceTuning = new();
         public DesktopState State { get; private set; }
         public DesktopAppCatalog Catalog => catalog;
         public PcPeripheralsBehaviour PeripheralRig => peripherals;
@@ -25,22 +31,31 @@ namespace GoLive.Desktop
         public event Action<string> Feedback;
         private bool _bound;
         private bool _restoring;
+        private DonationPayout _payout;
 
         private void Awake()
         {
-            if (pc == null || session == null || peripherals == null || catalog == null || catalog.ValidationError != null)
+            if (pc == null || session == null || peripherals == null || clock == null || wallet == null ||
+                catalog == null || catalog.ValidationError != null)
             {
-                Debug.LogError("Desktop requires an authored PC, peripheral rig, session and valid app catalog.", this);
+                Debug.LogError("Desktop requires an authored PC, peripheral rig, session, clock, wallet and valid app catalog.", this);
                 enabled = false;
                 return;
             }
-            State = new DesktopState(catalog.Apps, peripherals.State);
+            string tuningError = audienceTuning?.Validate() ?? "Audience tuning is missing.";
+            if (tuningError != null)
+            {
+                Debug.LogError(tuningError, this);
+                enabled = false;
+                return;
+            }
+            State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning);
         }
 
         private void Update()
         {
-            if (!_bound && pc.IsReady && peripherals.IsReady) Bind();
-            if (IsReady) State.Stream.Tick(Time.deltaTime);
+            if (!_bound && pc.IsReady && peripherals.IsReady && clock.Clock != null && wallet.Wallet != null) Bind();
+            if (IsReady) State.Stream.Tick(Time.deltaTime, clock.Clock.Current.MinuteOfDay);
         }
 
         private void Bind()
@@ -48,6 +63,7 @@ namespace GoLive.Desktop
             pc.Assembly.Changed += HardwareChanged;
             Session.Changed += PowerChanged;
             peripherals.State.Changed += PowerChanged;
+            _payout = new DonationPayout(State.Donation, wallet.Wallet);
             _bound = true;
             HardwareChanged();
             IsReady = true;
@@ -63,6 +79,8 @@ namespace GoLive.Desktop
             State.Stream.Abort();
             State.Windows.CloseAll();
             session.Reset();
+            _payout.Dispose();
+            _payout = null;
             _bound = false;
             IsReady = false;
         }

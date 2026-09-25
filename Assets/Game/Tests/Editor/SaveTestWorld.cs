@@ -226,6 +226,8 @@ namespace GoLive.Tests
             SetField(Desktop, "session", PcSession);
             SetField(Desktop, "peripherals", Peripherals);
             SetField(Desktop, "catalog", _desktopCatalog);
+            SetField(Desktop, "clock", Clock);
+            SetField(Desktop, "wallet", Wallet);
             InvokeLifecycle(Desktop, "Awake");
             BindDesktopWhenPcReady();
 

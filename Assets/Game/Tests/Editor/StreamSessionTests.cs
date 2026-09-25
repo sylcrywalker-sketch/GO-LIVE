@@ -11,6 +11,8 @@ namespace GoLive.Tests
 {
     public sealed class StreamSessionTests
     {
+        // Game-clock minute used where the time of day is not under test (18:00, inside prime time).
+        internal const int PrimeTime = 18 * 60;
         private readonly List<Object> _created = new();
         private PcCapabilities _desktop;
         private PcCapabilities _gaming;
@@ -36,7 +38,7 @@ namespace GoLive.Tests
             var session = new StreamSession(channel, new DonationAccount());
             Assert.That(session.Connect(channel.ChannelCode), Is.Null);
             Assert.That(session.Start(_desktop, true, 5), Is.Null);
-            session.Tick(.75f);
+            session.Tick(.75f, PrimeTime);
             Assert.That(session.State, Is.EqualTo(StreamState.Live));
         }
 
@@ -88,7 +90,7 @@ namespace GoLive.Tests
         {
             var session = Connected(out _, out _);
             session.Start(_desktop, true, 5);
-            if (state != StreamState.Starting) session.Tick(10.75f);
+            if (state != StreamState.Starting) session.Tick(10.75f, PrimeTime);
             if (state == StreamState.Stopping) session.Stop();
             double elapsed = session.DurationSeconds;
             int changes = 0;
@@ -106,20 +108,27 @@ namespace GoLive.Tests
         [Test]
         public void DisconnectPreservesFinishedBroadcastAndSavedSupport()
         {
-            var session = Connected(out _, out var donations);
+            var session = Connected(out _, out var donations, BusyAudience());
             int completions = 0;
-            session.Completed += _ => completions++;
+            StreamSummary summary = null;
+            session.Completed += value => { completions++; summary = value; };
             session.Start(_desktop, true, 5);
-            session.Tick(60.75f);
+            session.Tick(60.75f, PrimeTime);
             session.Stop();
-            session.Tick(0.25f);
+            session.Tick(0.25f, PrimeTime);
             int chatCount = session.Chat.Count;
+            AudienceSimulation audience = session.Audience;
             Assert.That(session.Disconnect(), Is.Null);
             Assert.That(session.DurationSeconds, Is.EqualTo(60));
             Assert.That(session.Chat.Count, Is.EqualTo(chatCount));
-            Assert.That(session.Followers, Is.EqualTo(4));
-            Assert.That(session.DonationCents, Is.EqualTo(200));
-            Assert.That(donations.TotalCents, Is.EqualTo(200));
+            Assert.That(chatCount, Is.GreaterThan(0));
+            Assert.That(session.Audience, Is.SameAs(audience));
+            Assert.That(audience.IsFinished, Is.True);
+            Assert.That(audience.Follows, Is.GreaterThan(0));
+            Assert.That(summary.Followers, Is.EqualTo(audience.Follows));
+            Assert.That(session.DonationCents, Is.GreaterThan(0));
+            Assert.That(summary.DonationCents, Is.EqualTo(session.DonationCents));
+            Assert.That(donations.TotalCents, Is.EqualTo(session.DonationCents));
             Assert.That(completions, Is.EqualTo(1));
         }
 
@@ -158,17 +167,17 @@ namespace GoLive.Tests
             Assert.That(session.State, Is.EqualTo(StreamState.Starting));
             Assert.That(session.Start(_desktop, true, 5), Is.EqualTo("desktop.stream.busy"));
             Assert.That(session.SetQuality(StreamQuality.High), Is.EqualTo("desktop.stream.busy"));
-            session.Tick(0.5f);
+            session.Tick(0.5f, PrimeTime);
             Assert.That(session.State, Is.EqualTo(StreamState.Starting));
-            session.Tick(0.25f);
+            session.Tick(0.25f, PrimeTime);
             Assert.That(session.State, Is.EqualTo(StreamState.Live));
-            session.Tick(20);
+            session.Tick(20, PrimeTime);
             Assert.That(session.Stop(), Is.Null);
             Assert.That(session.State, Is.EqualTo(StreamState.Stopping));
             Assert.That(session.Stop(), Is.EqualTo("desktop.stream.not_live"));
-            session.Tick(0.25f);
+            session.Tick(0.25f, PrimeTime);
             session.Abort();
-            session.Tick(1);
+            session.Tick(1, PrimeTime);
             Assert.That(session.State, Is.EqualTo(StreamState.Offline));
             Assert.That(summaries.Count, Is.EqualTo(1));
             Assert.That(summaries[0].DurationSeconds, Is.EqualTo(20));
@@ -180,16 +189,20 @@ namespace GoLive.Tests
         [Test]
         public void LiveActivityIsDeterministicAcrossFrameSizesAndBounded()
         {
-            var one = Connected(out _, out var oneDonations);
-            var many = Connected(out _, out var manyDonations);
+            var one = Connected(out _, out var oneDonations, BusyAudience());
+            var many = Connected(out _, out var manyDonations, BusyAudience());
             one.Start(_desktop, true, 5);
             many.Start(_desktop, true, 5);
-            one.Tick(3600.75f);
-            for (int i = 0; i < 14403; i++) many.Tick(0.25f);
+            one.Tick(3600.75f, PrimeTime);
+            for (int i = 0; i < 14403; i++) many.Tick(0.25f, PrimeTime);
             Assert.That(one.DurationSeconds, Is.EqualTo(many.DurationSeconds));
-            Assert.That(one.Viewers, Is.GreaterThan(0));
-            Assert.That(one.Viewers, Is.EqualTo(many.Viewers));
-            Assert.That(one.Followers, Is.EqualTo(many.Followers));
+            Assert.That(one.Audience.CurrentViewers, Is.GreaterThan(0));
+            Assert.That(one.Audience.CurrentViewers, Is.EqualTo(many.Audience.CurrentViewers));
+            Assert.That(one.Audience.PeakViewers, Is.EqualTo(many.Audience.PeakViewers));
+            Assert.That(one.Audience.AverageViewers, Is.EqualTo(many.Audience.AverageViewers));
+            Assert.That(one.Audience.Follows, Is.EqualTo(many.Audience.Follows));
+            Assert.That(one.Audience.Subscriptions, Is.EqualTo(many.Audience.Subscriptions));
+            Assert.That(one.DonationCents, Is.GreaterThan(0));
             Assert.That(one.DonationCents, Is.EqualTo(many.DonationCents));
             Assert.That(oneDonations.TotalCents, Is.EqualTo(manyDonations.TotalCents));
             Assert.That(one.Chat.Count, Is.EqualTo(StreamSession.MaximumChatMessages));
@@ -206,7 +219,7 @@ namespace GoLive.Tests
             StreamSummary summary = null;
             session.Completed += value => { completions++; summary = value; };
             session.Start(_desktop, true, 5);
-            session.Tick(10.75f);
+            session.Tick(10.75f, PrimeTime);
             session.Stop();
             session.RefreshEnvironment(_desktop, false, 5);
             session.RefreshEnvironment(_desktop, false, 5);
@@ -223,7 +236,7 @@ namespace GoLive.Tests
             int completions = 0;
             session.Completed += _ => completions++;
             session.Start(_desktop, true, 5);
-            session.Tick(0.5f);
+            session.Tick(0.5f, PrimeTime);
             session.Abort();
             Assert.That(session.State, Is.EqualTo(StreamState.Offline));
             Assert.That(completions, Is.Zero);
@@ -233,14 +246,14 @@ namespace GoLive.Tests
         [Test]
         public void LosingGpuAtHighQualityAbortsAndNeverEmitsFurtherDonations()
         {
-            var session = Connected(out _, out var donations);
+            var session = Connected(out _, out var donations, BusyAudience());
             session.SetQuality(StreamQuality.High);
             session.Start(_gaming, true, 6);
-            session.Tick(60.75f);
+            session.Tick(60.75f, PrimeTime);
             Assert.That(donations.TotalCents, Is.GreaterThan(0));
             session.RefreshEnvironment(_desktop, true, 6);
             long before = donations.TotalCents;
-            session.Tick(1000);
+            session.Tick(1000, PrimeTime);
             Assert.That(session.State, Is.EqualTo(StreamState.Offline));
             Assert.That(donations.TotalCents, Is.EqualTo(before));
         }
@@ -251,31 +264,34 @@ namespace GoLive.Tests
             var session = Connected(out _, out _);
             session.Start(_desktop, true, 5);
             foreach (float delta in new[] { -1f, float.NaN, float.PositiveInfinity, float.NegativeInfinity })
-                Assert.Throws<ArgumentOutOfRangeException>(() => session.Tick(delta));
+                Assert.Throws<ArgumentOutOfRangeException>(() => session.Tick(delta, PrimeTime));
             Assert.That(session.State, Is.EqualTo(StreamState.Starting));
-            session.Tick(0.75f);
+            session.Tick(0.75f, PrimeTime);
             Assert.That(session.DurationSeconds, Is.Zero);
         }
 
         [Test]
         public void ExtremeFiniteDeltaKeepsFiniteDurationAndBoundedActivity()
         {
-            var session = Connected(out _, out var donations);
+            var session = Connected(out _, out var donations, BusyAudience());
             int chatEvents = 0;
             int receiptEvents = 0;
             session.ChatAdded += _ => chatEvents++;
             donations.Changed += () => receiptEvents++;
             session.Start(_desktop, true, 5);
-            session.Tick(float.MaxValue);
+            session.Tick(float.MaxValue, PrimeTime);
             Assert.That(session.State, Is.EqualTo(StreamState.Live), "long elapsed time must not impose a stream cutoff");
             Assert.That(double.IsNaN(session.DurationSeconds) || double.IsInfinity(session.DurationSeconds), Is.False);
             Assert.That(session.DurationSeconds, Is.GreaterThan(1e30));
             Assert.That(chatEvents, Is.LessThanOrEqualTo(StreamSession.MaximumChatMessages));
             Assert.That(receiptEvents, Is.LessThanOrEqualTo(DonationAccount.MaximumReceivedIds));
             Assert.That(session.Chat.Select(m => m.Id).Distinct().Count(), Is.EqualTo(session.Chat.Count));
-            Assert.That(session.Followers, Is.GreaterThanOrEqualTo(0));
-            Assert.That(session.Viewers, Is.GreaterThanOrEqualTo(0));
+            Assert.That(chatEvents, Is.GreaterThan(0));
+            Assert.That(session.Audience.Follows, Is.GreaterThanOrEqualTo(0));
+            Assert.That(session.Audience.CurrentViewers, Is.GreaterThanOrEqualTo(0));
+            Assert.That(double.IsNaN(session.Audience.AverageViewers) || double.IsInfinity(session.Audience.AverageViewers), Is.False);
             Assert.That(session.DonationCents, Is.GreaterThanOrEqualTo(0));
+            Assert.That(session.DonationCents, Is.EqualTo(donations.TotalCents));
         }
 
         [Test]
@@ -291,7 +307,7 @@ namespace GoLive.Tests
             for (int i = 0; i < 2; i++)
             {
                 Assert.That(session.Start(_desktop, true, 5), Is.Null);
-                session.Tick(30.75f);
+                session.Tick(30.75f, PrimeTime);
                 session.Abort();
                 session.Abort();
             }
@@ -304,12 +320,12 @@ namespace GoLive.Tests
         [Test]
         public void ResetDiscardsLiveSessionAndAllTransientPresentationWithoutCompleting()
         {
-            var session = Connected(out var channel, out var donations);
+            var session = Connected(out var channel, out var donations, BusyAudience());
             int completions = 0;
             session.Completed += _ => completions++;
             session.SetQuality(StreamQuality.High);
             session.Start(_gaming, true, 6);
-            session.Tick(60.75f);
+            session.Tick(60.75f, PrimeTime);
             long committedReceipts = donations.TotalCents;
             Assert.That(session.Chat.Count, Is.GreaterThan(0));
             session.Reset();
@@ -317,8 +333,9 @@ namespace GoLive.Tests
             Assert.That(session.IsConnected, Is.False);
             Assert.That(session.Quality, Is.EqualTo(StreamQuality.Low));
             Assert.That(session.DurationSeconds, Is.Zero);
-            Assert.That(session.Viewers, Is.Zero);
-            Assert.That(session.Followers, Is.Zero);
+            Assert.That(session.Audience.CurrentViewers, Is.Zero);
+            Assert.That(session.Audience.PeakViewers, Is.Zero);
+            Assert.That(session.Audience.Follows, Is.Zero);
             Assert.That(session.DonationCents, Is.Zero);
             Assert.That(session.Chat, Is.Empty);
             Assert.That(completions, Is.Zero);
@@ -326,13 +343,20 @@ namespace GoLive.Tests
             Assert.That(donations.TotalCents, Is.EqualTo(committedReceipts), "donation account owns saved receipts");
         }
 
-        private static StreamSession Connected(out TrichChannel channel, out DonationAccount donations)
+        // A lively audience so outcome assertions are certain for the fixed seed.
+        internal static AudienceTuning BusyAudience() => new()
+        {
+            DiscoveryViewers = 30, RampSeconds = 5, MeanWatchSeconds = 20,
+            FollowRate = .02f, SubscriptionRate = .01f, DonationRate = .02f, ChatRate = .2f
+        };
+
+        private static StreamSession Connected(out TrichChannel channel, out DonationAccount donations, AudienceTuning tuning = null)
         {
             channel = DesktopAccountTests.RegisteredChannel();
             donations = new DonationAccount();
             var peripherals = new PcPeripherals();
             Assert.That(peripherals.TryConnect(PcPeripheralKind.Microphone, "connected-test-mic"), Is.True);
-            var session = new StreamSession(channel, donations, peripherals);
+            var session = new StreamSession(channel, donations, peripherals, tuning, new AudienceRandom(20260925));
             Assert.That(session.Connect(channel.ChannelCode), Is.Null);
             return session;
         }

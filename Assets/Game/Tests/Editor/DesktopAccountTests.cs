@@ -127,10 +127,10 @@ namespace GoLive.Tests
         {
             var channel = RegisteredChannel();
             Assert.That(channel.EditProfile("Live Player", "Daily games", 3), Is.Null);
-            var first = new StreamSummary("stream-1", 1, 35, 20, 4, 125, false);
+            var first = new StreamSummary("stream-1", 1, 35, 20, 7.5, 4, 2, 125, false);
             Assert.That(channel.CompleteStream(first), Is.Null);
             Assert.That(channel.CompleteStream(first), Is.Null);
-            var second = new StreamSummary("stream-2", 2, 10, 5, 1, 50, true);
+            var second = new StreamSummary("stream-2", 2, 10, 5, 2.25, 1, 1, 50, true);
             Assert.That(channel.CompleteStream(second), Is.Null);
             Assert.That(channel.CompleteStream(first), Is.Null);
             var restored = new TrichChannel();
@@ -138,6 +138,7 @@ namespace GoLive.Tests
             Assert.That(restored.CompletedStreams, Is.EqualTo(2));
             Assert.That(restored.TotalDurationSeconds, Is.EqualTo(45));
             Assert.That(restored.TotalFollowers, Is.EqualTo(5));
+            Assert.That(restored.TotalSubscriptions, Is.EqualTo(3), "paid subscriptions apply once per summary");
             Assert.That(restored.TotalDonationCents, Is.EqualTo(175));
             Assert.That(restored.PeakViewers, Is.EqualTo(20));
             Assert.That(restored.Name, Is.EqualTo("Live Player"));
@@ -165,6 +166,7 @@ namespace GoLive.Tests
         {
             Assert.That(TrichChannel.Validate(new TrichSnapshot()), Is.True);
             Assert.That(TrichChannel.Validate(new TrichSnapshot { TotalFollowers = 1 }), Is.False);
+            Assert.That(TrichChannel.Validate(new TrichSnapshot { TotalSubscriptions = 1 }), Is.False);
             Assert.That(TrichChannel.Validate(new TrichSnapshot { ChannelCode = new string('a', 32) }), Is.False);
         }
 

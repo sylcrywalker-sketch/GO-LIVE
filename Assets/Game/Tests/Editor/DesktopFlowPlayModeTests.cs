@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using GoLive.Delivery;
 using GoLive.Desktop;
+using GoLive.Economy;
 using GoLive.GameTime;
 using GoLive.Inventory;
 using GoLive.Items;
@@ -274,7 +275,13 @@ namespace GoLive.Tests
             yield return StopBroadcast(streamly);
             Assert.That(_runtime.State.Trich.CompletedStreams, Is.EqualTo(1));
             Assert.That(_runtime.State.Outline.Messages.Count, Is.EqualTo(1));
-            Assert.That(_runtime.State.Donation.History.Count, Is.GreaterThan(0));
+            // Completion commits the real simulation result through the existing Trich/Outline pipeline.
+            AudienceSimulation firstAudience = _runtime.State.Stream.Audience;
+            Assert.That(firstAudience.IsFinished, Is.True);
+            Assert.That(_runtime.State.Trich.PeakViewers, Is.EqualTo(firstAudience.PeakViewers).And.GreaterThan(0));
+            Assert.That(_runtime.State.Trich.TotalFollowers, Is.EqualTo(firstAudience.Follows));
+            Assert.That(_runtime.State.Trich.TotalSubscriptions, Is.EqualTo(firstAudience.Subscriptions));
+            Assert.That(_runtime.State.Donation.TotalCents, Is.EqualTo(_runtime.State.Stream.DonationCents));
             yield return OpenApp(DesktopAppId.Outline);
             object firstMessage = Field<Array>(outline, "rows").GetValue(0);
             yield return OpenApp(DesktopAppId.Hub);
@@ -319,7 +326,7 @@ namespace GoLive.Tests
             }
             yield return OpenApp(DesktopAppId.Streamly);
             yield return StartBroadcast(streamly);
-            _runtime.State.Stream.Tick(16);
+            _runtime.State.Stream.Tick(16, StreamSessionTests.PrimeTime);
             yield return PlayModeWait.Frames(3);
             TMP_Text visibleChat = Field<TMP_Text>(_overlay, "chat");
             visibleChat.ForceMeshUpdate();
@@ -586,13 +593,25 @@ namespace GoLive.Tests
 
         private IEnumerator StartBroadcast(StreamlyView view)
         {
+            bool firstStream = _runtime.State.Trich.CompletedStreams == 0;
+            Wallet wallet = One<WalletBehaviour>().Wallet;
+            long walletBefore = wallet.BalanceCents;
             Click(Field<Button>(view, "startStop"));
             yield return PlayModeWait.Until(() => _runtime.State.Stream.State == StreamState.Live, "the actual Start button to complete startup");
-            _runtime.State.Stream.Tick(31);
+            AudienceSimulation audience = _runtime.State.Stream.Audience;
+            Assert.That(audience.FirstStreamBoost, Is.EqualTo(firstStream), "onboarding discovery only before the first completed stream");
+            if (firstStream) Assert.That(audience.PeakViewers, Is.InRange(1, 3), "a first stream is discovered by one to three viewers");
+            // Fifteen minutes of real simulated activity at the actual game-clock time.
+            _runtime.State.Stream.Tick(900, One<GameClockBehaviour>().Clock.Current.MinuteOfDay);
             yield return PlayModeWait.Frames(3);
-            Assert.That(_runtime.State.Stream.Viewers, Is.GreaterThan(0));
-            Assert.That(_runtime.State.Stream.Chat.Count, Is.GreaterThan(0));
-            Assert.That(_runtime.State.Stream.DonationCents, Is.GreaterThan(0));
+            Assert.That(audience.SimulatedSeconds, Is.EqualTo(900));
+            Assert.That(audience.CurrentViewers, Is.GreaterThanOrEqualTo(0));
+            Assert.That(audience.PeakViewers, Is.GreaterThanOrEqualTo(audience.CurrentViewers));
+            Assert.That(Field<TMP_Text>(_overlay, "statistics").text, Is.EqualTo(_localization.Format("desktop.overlay.count", audience.CurrentViewers)),
+                "the LIVE HUD shows the authoritative simulation value");
+            Assert.That(_runtime.State.Stream.Chat.Count, Is.EqualTo(Math.Min(StreamSession.MaximumChatMessages, audience.ChatMessages)));
+            Assert.That(_runtime.State.Stream.Chat.Count, Is.GreaterThan(0), "fifteen minutes with an audience produce chat");
+            Assert.That(wallet.BalanceCents - walletBefore, Is.EqualTo(_runtime.State.Stream.DonationCents), "accepted support is paid into the wallet once");
             Assert.That(Field<GameObject>(_overlay, "panel").activeInHierarchy, Is.True);
         }
 

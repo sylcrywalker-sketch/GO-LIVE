@@ -86,9 +86,10 @@ namespace GoLive.Desktop
         private void RefreshStatistics()
         {
             StreamSession stream = runtime.State.Stream;
+            AudienceSimulation audience = stream.Audience;
             long previous = runtime.State.Trich.TotalFollowers;
-            long followers = previous > long.MaxValue - stream.Followers ? long.MaxValue : previous + stream.Followers;
-            statistics.text = localization.Format("desktop.overlay.count", stream.Viewers);
+            long followers = previous > long.MaxValue - audience.Follows ? long.MaxValue : previous + audience.Follows;
+            statistics.text = localization.Format("desktop.overlay.count", audience.CurrentViewers);
             subscribers.text = localization.Format("desktop.overlay.count", followers);
             duration.text = localization.Format("desktop.overlay.duration", Math.Floor(stream.DurationSeconds / 3600d),
                 (int)(stream.DurationSeconds / 60d % 60), (int)(stream.DurationSeconds % 60d));

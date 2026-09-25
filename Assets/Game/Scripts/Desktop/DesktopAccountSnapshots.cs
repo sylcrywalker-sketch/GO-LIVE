@@ -33,6 +33,8 @@ namespace GoLive.Desktop
         public long CompletedStreams;
         public double TotalDurationSeconds;
         public long TotalFollowers;
+        // Added after save version 7 shipped; saves without it load zero paid subscriptions.
+        public long TotalSubscriptions;
         public long TotalDonationCents;
         public int PeakViewers;
     }

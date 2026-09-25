@@ -29,12 +29,13 @@ namespace GoLive.Desktop
         public int RestoreGeneration { get; private set; }
         private readonly IReadOnlyList<DesktopAppDefinition> _apps;
         private bool _restoring;
-        public DesktopState(IReadOnlyList<DesktopAppDefinition> apps, PcPeripherals peripherals = null)
+        public DesktopState(IReadOnlyList<DesktopAppDefinition> apps, PcPeripherals peripherals = null,
+            AudienceTuning audienceTuning = null, AudienceRandom audienceSeeds = null)
         {
             _apps = new List<DesktopAppDefinition>(apps).AsReadOnly();
             Storage = new DesktopStorage(apps);
             Peripherals = peripherals ?? new PcPeripherals();
-            Stream = new StreamSession(Trich, Donation, Peripherals);
+            Stream = new StreamSession(Trich, Donation, Peripherals, audienceTuning, audienceSeeds);
             Stream.Completed += CompleteStream;
         }
         public string EnsureSystemApps()
@@ -99,10 +100,20 @@ namespace GoLive.Desktop
         {
             if (_restoring || summary.Sequence <= Trich.CompletedStreams) return;
             if (Trich.CompleteStream(summary) != null) return;
-            Outline.Receive("stream." + summary.Id, "desktop.mail.stream.subject", "desktop.mail.stream.body",
-                Trich.Name, summary.DurationSeconds.ToString("0", CultureInfo.InvariantCulture),
+            Outline.Receive("stream." + summary.Id, "desktop.mail.stream.subject", "desktop.mail.stream.body_v2",
+                Trich.Name, FormatDuration(summary.DurationSeconds),
+                summary.AverageViewers.ToString("0.0", CultureInfo.InvariantCulture),
                 summary.PeakViewers.ToString(CultureInfo.InvariantCulture), summary.Followers.ToString(CultureInfo.InvariantCulture),
+                summary.Subscriptions.ToString(CultureInfo.InvariantCulture),
                 (summary.DonationCents / 100d).ToString("0.00", CultureInfo.InvariantCulture));
+        }
+        internal static string FormatDuration(double seconds)
+        {
+            double whole = Math.Floor(Math.Min(seconds, 359999));
+            int minutes = (int)(whole / 60);
+            return minutes >= 60
+                ? $"{minutes / 60}:{minutes % 60:00}:{(int)(whole % 60):00}"
+                : $"{minutes}:{(int)(whole % 60):00}";
         }
         public void Dispose() => Stream.Completed -= CompleteStream;
     }

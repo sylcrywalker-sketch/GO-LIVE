@@ -89,7 +89,7 @@ namespace GoLive.Tests
             Assert.That(result.CanStart, Is.True);
             Assert.That(stream.CheckStart(_desktop, true, 5), Is.EqualTo(result.ErrorKey));
             Assert.That(stream.Start(_desktop, true, 5), Is.EqualTo(result.ErrorKey));
-            stream.Tick(1);
+            stream.Tick(1, StreamSessionTests.PrimeTime);
             Assert.That(stream.State, Is.EqualTo(StreamState.Live));
             Assert.That(changes, Is.GreaterThan(0));
         }
@@ -105,7 +105,7 @@ namespace GoLive.Tests
             Assert.That(result.WebcamReady, Is.False);
             Assert.That(result.CanStart, Is.True);
             Assert.That(stream.Start(_desktop, true, 5), Is.Null);
-            stream.Tick(.75f);
+            stream.Tick(.75f, StreamSessionTests.PrimeTime);
             Assert.That(stream.State, Is.EqualTo(StreamState.Live));
             Assert.That(stream.EvaluateReadiness(_desktop, true, 5).WebcamReady, Is.False);
         }
@@ -186,13 +186,13 @@ namespace GoLive.Tests
                 observed = stream.EvaluateReadiness(_desktop, true, 5);
             };
             Assert.That(stream.Start(_desktop, true, 5), Is.Null);
-            stream.Tick(10.75f);
+            stream.Tick(10.75f, StreamSessionTests.PrimeTime);
             Assert.That(stream.State, Is.EqualTo(StreamState.Live));
 
             Assert.That(devices.TryDisconnect(PcPeripheralKind.Microphone), Is.True);
             stream.RefreshEnvironment(_desktop, true, 5);
             stream.RefreshEnvironment(_desktop, true, 5);
-            stream.Tick(10);
+            stream.Tick(10, StreamSessionTests.PrimeTime);
 
             Assert.That(stream.State, Is.EqualTo(StreamState.Live));
             Assert.That(summaries, Is.Empty);
@@ -217,11 +217,11 @@ namespace GoLive.Tests
             int completions = 0;
             stream.Completed += _ => completions++;
             Assert.That(stream.Start(_desktop, true, 5), Is.Null);
-            stream.Tick(.5f);
+            stream.Tick(.5f, StreamSessionTests.PrimeTime);
 
             Assert.That(devices.TryDisconnect(PcPeripheralKind.Microphone), Is.True);
             stream.RefreshEnvironment(_desktop, true, 5);
-            stream.Tick(1);
+            stream.Tick(1, StreamSessionTests.PrimeTime);
 
             Assert.That(stream.State, Is.EqualTo(StreamState.Live));
             Assert.That(stream.DurationSeconds, Is.EqualTo(.75));
@@ -236,7 +236,7 @@ namespace GoLive.Tests
             int completions = 0;
             stream.Completed += _ => completions++;
             Assert.That(stream.Start(_desktop, true, 5), Is.Null);
-            stream.Tick(10.75f);
+            stream.Tick(10.75f, StreamSessionTests.PrimeTime);
             int changes = 0;
             stream.Changed += () => changes++;
 
@@ -246,7 +246,7 @@ namespace GoLive.Tests
             Assert.That(changes, Is.EqualTo(1));
             Assert.That(stream.State, Is.EqualTo(StreamState.Live));
             Assert.That(stream.EvaluateReadiness(_desktop, true, 5).WebcamReady, Is.False);
-            stream.Tick(2);
+            stream.Tick(2, StreamSessionTests.PrimeTime);
             Assert.That(stream.DurationSeconds, Is.EqualTo(12));
             Assert.That(completions, Is.Zero);
         }
@@ -263,11 +263,11 @@ namespace GoLive.Tests
                 stream.RefreshEnvironment(_desktop, true, 0);
             };
             Assert.That(stream.Start(_desktop, true, 5), Is.Null);
-            stream.Tick(10.75f);
+            stream.Tick(10.75f, StreamSessionTests.PrimeTime);
 
             stream.RefreshEnvironment(_desktop, true, 0);
             stream.RefreshEnvironment(_desktop, true, 0);
-            stream.Tick(10);
+            stream.Tick(10, StreamSessionTests.PrimeTime);
 
             Assert.That(stream.State, Is.EqualTo(StreamState.Offline));
             Assert.That(summaries.Count, Is.EqualTo(1));

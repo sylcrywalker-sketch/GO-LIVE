@@ -100,7 +100,7 @@ namespace GoLive.Tests
             var state = _world.Desktop.State;
             Assert.That(state.Stream.Connect(state.Trich.ChannelCode), Is.Null);
             Assert.That(state.Stream.Start(_world.Pc.Capabilities, true, 5f), Is.Null);
-            state.Stream.Tick(0.75f);
+            state.Stream.Tick(0.75f, StreamSessionTests.PrimeTime);
             state.Windows.Open(DesktopAppId.Streamly);
             _world.Desktop.Session.Sit();
             int completions = 0;

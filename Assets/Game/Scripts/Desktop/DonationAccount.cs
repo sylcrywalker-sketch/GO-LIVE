@@ -21,6 +21,8 @@ namespace GoLive.Desktop
         public IReadOnlyList<DonationReceipt> History { get; private set; }
         public int RemainingReceiptCapacity => MaximumReceivedIds - _receivedIds.Count;
         public event Action Changed;
+        // Raised exactly once per newly accepted receipt (never for a repeated id or restored history).
+        public event Action<DonationReceipt> Received;
         private List<DonationReceipt> _history = new();
         private List<string> _receivedIds = new();
         private HashSet<string> _received = new(StringComparer.Ordinal);
@@ -47,9 +49,11 @@ namespace GoLive.Desktop
             if (_receivedIds.Count == MaximumReceivedIds) return "desktop.donation.history_full";
             _received.Add(id);
             _receivedIds.Add(id);
+            var receipt = new DonationReceipt(id, senderName, amountCents);
             if (_history.Count == MaximumHistory) _history.RemoveAt(0);
-            _history.Add(new DonationReceipt(id, senderName, amountCents));
+            _history.Add(receipt);
             TotalCents += amountCents;
+            Received?.Invoke(receipt);
             Changed?.Invoke();
             return null;
         }

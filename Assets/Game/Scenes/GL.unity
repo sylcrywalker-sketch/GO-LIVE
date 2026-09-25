@@ -87076,6 +87076,8 @@ MonoBehaviour:
   session: {fileID: 2019358070}
   peripherals: {fileID: 763335822}
   catalog: {fileID: 11400000, guid: f414acfd493f43d498a0fe17d964bf64, type: 2}
+  clock: {fileID: 656476893}
+  wallet: {fileID: 656476887}
   uploadMbps: 5
 --- !u!114 &2019358070
 MonoBehaviour:
