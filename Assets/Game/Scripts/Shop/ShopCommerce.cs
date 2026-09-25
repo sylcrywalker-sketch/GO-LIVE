@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GoLive.Economy;
 using GoLive.GameTime;
 
 namespace GoLive.Shop
@@ -41,7 +40,9 @@ namespace GoLive.Shop
         Unavailable = 3,
         PurchaseLimitReached = 4,
         InsufficientFunds = 5,
-        Busy = 6
+        Busy = 6,
+        EmptyRequest = 7,
+        InvalidRequest = 8
     }
 
     public readonly struct ShopPurchaseOffer
@@ -85,35 +86,6 @@ namespace GoLive.Shop
 
             return new GameTimeSnapshot(
                 checked(placedAt.TotalSeconds + delaySeconds));
-        }
-    }
-
-    public readonly struct ShopPurchaseResult
-    {
-        public ShopPurchaseResultCode Code { get; }
-        public ShopOrder Order { get; }
-        public bool Succeeded => Code == ShopPurchaseResultCode.Success;
-
-        private ShopPurchaseResult(ShopPurchaseResultCode code, ShopOrder order)
-        {
-            Code = code;
-            Order = order;
-        }
-
-        public static ShopPurchaseResult Success(ShopOrder order)
-        {
-            if (order == null)
-                throw new ArgumentNullException(nameof(order));
-
-            return new ShopPurchaseResult(ShopPurchaseResultCode.Success, order);
-        }
-
-        public static ShopPurchaseResult Failure(ShopPurchaseResultCode code)
-        {
-            if (code == ShopPurchaseResultCode.Success)
-                throw new ArgumentOutOfRangeException(nameof(code));
-
-            return new ShopPurchaseResult(code, null);
         }
     }
 
@@ -227,14 +199,6 @@ namespace GoLive.Shop
             }
 
             return count;
-        }
-
-        public bool HasReachedPurchaseLimit(string productId, int maxPurchases)
-        {
-            if (maxPurchases <= 0)
-                return false;
-
-            return CountForProduct(productId) >= maxPurchases;
         }
 
         public int CountActive()
@@ -352,24 +316,35 @@ namespace GoLive.Shop
             Changed?.Invoke();
         }
 
-        internal bool TryReserve(ShopOrder order)
+        // All or nothing, without notifying: ShopCheckout publishes once the wallet has been charged.
+        internal bool TryReserveAll(IReadOnlyList<ShopOrder> orders)
         {
-            if (order == null || _ordersById.ContainsKey(order.OrderId))
-                return false;
+            HashSet<string> batch = new(StringComparer.Ordinal);
 
-            _orders.Add(order);
-            _ordersById.Add(order.OrderId, order);
+            for (int i = 0; i < orders.Count; i++)
+            {
+                ShopOrder order = orders[i];
+
+                if (order == null || _ordersById.ContainsKey(order.OrderId) || !batch.Add(order.OrderId))
+                    return false;
+            }
+
+            for (int i = 0; i < orders.Count; i++)
+            {
+                _orders.Add(orders[i]);
+                _ordersById.Add(orders[i].OrderId, orders[i]);
+            }
+
             return true;
         }
 
-        internal bool TryCancelReservation(string orderId)
+        internal void CancelReservations(IReadOnlyList<ShopOrder> orders)
         {
-            if (!_ordersById.TryGetValue(orderId, out ShopOrder order))
-                return false;
-
-            _ordersById.Remove(orderId);
-            _orders.Remove(order);
-            return true;
+            for (int i = 0; i < orders.Count; i++)
+            {
+                if (_ordersById.Remove(orders[i].OrderId))
+                    _orders.Remove(orders[i]);
+            }
         }
 
         internal void PublishChanged()
@@ -392,78 +367,6 @@ namespace GoLive.Shop
                 new GameTimeSnapshot(savedOrder.PlacedAtGameTimeSeconds),
                 new GameTimeSnapshot(savedOrder.DeliveryDueGameTimeSeconds),
                 savedOrder.Status);
-        }
-    }
-
-    public sealed class ShopPurchase
-    {
-        private readonly Wallet _wallet;
-        private readonly ShopOrderBook _orders;
-        private readonly GameClock _clock;
-
-        private bool _busy;
-
-        public ShopPurchase(Wallet wallet, ShopOrderBook orders, GameClock clock)
-        {
-            _wallet = wallet ?? throw new ArgumentNullException(nameof(wallet));
-            _orders = orders ?? throw new ArgumentNullException(nameof(orders));
-            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
-        }
-
-        public ShopPurchaseResultCode Evaluate(in ShopPurchaseOffer offer)
-        {
-            if (!offer.IsAvailable)
-                return ShopPurchaseResultCode.Unavailable;
-
-            if (_orders.HasReachedPurchaseLimit(offer.ProductId, offer.MaxPurchases))
-                return ShopPurchaseResultCode.PurchaseLimitReached;
-
-            if (_wallet.BalanceCents < offer.PriceCents)
-                return ShopPurchaseResultCode.InsufficientFunds;
-
-            return ShopPurchaseResultCode.Success;
-        }
-
-        public ShopPurchaseResult TryPurchase(in ShopPurchaseOffer offer)
-        {
-            if (_busy)
-                return ShopPurchaseResult.Failure(ShopPurchaseResultCode.Busy);
-
-            ShopPurchaseResultCode evaluation = Evaluate(in offer);
-
-            if (evaluation != ShopPurchaseResultCode.Success)
-                return ShopPurchaseResult.Failure(evaluation);
-
-            _busy = true;
-
-            try
-            {
-                GameTimeSnapshot placedAt = _clock.Current;
-                GameTimeSnapshot deliveryDueAt = offer.GetDeliveryDueAt(placedAt);
-
-                ShopOrder order = ShopOrder.CreateNew(
-                    offer.ProductId,
-                    offer.PriceCents,
-                    placedAt,
-                    deliveryDueAt);
-
-                if (!_orders.TryReserve(order))
-                    throw new InvalidOperationException("Failed to reserve a unique Shop order.");
-
-                if (!_wallet.TrySpend(offer.PriceCents))
-                {
-                    _orders.TryCancelReservation(order.OrderId);
-                    return ShopPurchaseResult.Failure(ShopPurchaseResultCode.InsufficientFunds);
-                }
-
-                _orders.PublishChanged();
-
-                return ShopPurchaseResult.Success(order);
-            }
-            finally
-            {
-                _busy = false;
-            }
         }
     }
 

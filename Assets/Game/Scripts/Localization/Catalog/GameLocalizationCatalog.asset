@@ -43,14 +43,14 @@ MonoBehaviour:
   - _key: inventory.all
     _russian: "\u0412\u0441\u0435"
     _english: All
-  - _key: inventory.food
+  - _key: category.food
     _russian: "\u0415\u0434\u0430"
     _english: Food
-  - _key: inventory.electronics
+  - _key: category.electronics
     _russian: "\u042D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u0438\u043A\u0430"
     _english: Electronics
-  - _key: inventory.household
-    _russian: "\u0411\u044B\u0442\u043E\u0432\u044B\u0435 \u0432\u0435\u0449\u0438"
+  - _key: category.household
+    _russian: "\u0411\u044B\u0442"
     _english: Household
   - _key: inventory.empty
     _russian: "\u041F\u0443\u0441\u0442\u043E"
@@ -165,9 +165,6 @@ MonoBehaviour:
     _english: 'For your first desktop computer.
 
       Purchasing is not available yet.'
-  - _key: phone.buy
-    _russian: "\u041A\u0443\u043F\u0438\u0442\u044C"
-    _english: Buy
   - _key: phone.unavailable
     _russian: "\u041D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E"
     _english: Unavailable
@@ -208,12 +205,6 @@ MonoBehaviour:
   - _key: phone.landlord.rent_reminder_1
     _russian: "\u041D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u044E: $50 \u0434\u043E \u043A\u043E\u043D\u0446\u0430 \u0442\u0440\u0435\u0442\u044C\u0435\u0433\u043E \u0434\u043D\u044F. \u041D\u0430 \u044D\u0442\u043E\u0442 \u0440\u0430\u0437 \u0431\u0435\u0437 \u0437\u0430\u0434\u0435\u0440\u0436\u0435\u043A."
     _english: 'Reminder: $50 by the end of Day 3. No delays this time.'
-  - _key: shop.category.pc_parts
-    _russian: "\u041A\u043E\u043C\u043F\u043B\u0435\u043A\u0442\u0443\u044E\u0449\u0438\u0435"
-    _english: PC Parts
-  - _key: shop.category.peripherals
-    _russian: "\u041F\u0435\u0440\u0438\u0444\u0435\u0440\u0438\u044F"
-    _english: Peripherals
   - _key: phone.ordered
     _russian: "\u0417\u0430\u043A\u0430\u0437\u0430\u043D\u043E"
     _english: Ordered
@@ -241,15 +232,6 @@ MonoBehaviour:
   - _key: shop.tab.featured
     _russian: "\u0414\u043B\u044F \u0442\u0435\u0431\u044F"
     _english: For You
-  - _key: shop.tab.food
-    _russian: "\u0415\u0434\u0430"
-    _english: Food
-  - _key: shop.tab.household
-    _russian: "\u0411\u044B\u0442"
-    _english: Household
-  - _key: shop.tab.electronics
-    _russian: "\u042D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u0438\u043A\u0430"
-    _english: Electronics
   - _key: phone.catalog_empty
     _russian: "\u0417\u0434\u0435\u0441\u044C \u043F\u043E\u043A\u0430 \u043F\u0443\u0441\u0442\u043E"
     _english: Nothing here yet
@@ -259,30 +241,33 @@ MonoBehaviour:
   - _key: phone.ordered_with_eta
     _russian: "\u0417\u0430\u043A\u0430\u0437\u0430\u043D\u043E \xB7 {0}"
     _english: "Ordered \xB7 {0}"
-  - _key: shop.category.streaming
-    _russian: "\u0414\u043B\u044F \u0441\u0442\u0440\u0438\u043C\u0430"
-    _english: Streaming Gear
-  - _key: shop.category.network_power
-    _russian: "\u0421\u0435\u0442\u044C \u0438 \u043F\u0438\u0442\u0430\u043D\u0438\u0435"
-    _english: Network & Power
-  - _key: shop.category.groceries
-    _russian: "\u041F\u0440\u043E\u0434\u0443\u043A\u0442\u044B"
-    _english: Groceries
-  - _key: shop.category.ready_meals
-    _russian: "\u0413\u043E\u0442\u043E\u0432\u0430\u044F \u0435\u0434\u0430"
-    _english: Ready Meals
-  - _key: shop.category.drinks
-    _russian: "\u041D\u0430\u043F\u0438\u0442\u043A\u0438"
-    _english: Drinks
-  - _key: shop.category.cleaning
-    _russian: "\u0423\u0431\u043E\u0440\u043A\u0430"
-    _english: Cleaning
-  - _key: shop.category.hygiene
-    _russian: "\u0413\u0438\u0433\u0438\u0435\u043D\u0430"
-    _english: Hygiene
-  - _key: shop.category.kitchen
-    _russian: "\u041A\u0443\u0445\u043D\u044F"
-    _english: Kitchen
+  - _key: phone.cart
+    _russian: "\u041A\u043E\u0440\u0437\u0438\u043D\u0430"
+    _english: Cart
+  - _key: phone.cart_empty
+    _russian: "\u041A\u043E\u0440\u0437\u0438\u043D\u0430 \u043F\u0443\u0441\u0442\u0430"
+    _english: Your cart is empty
+  - _key: phone.add_to_cart
+    _russian: "\u0412 \u043A\u043E\u0440\u0437\u0438\u043D\u0443"
+    _english: Add to cart
+  - _key: phone.in_cart
+    _russian: "\u0412 \u043A\u043E\u0440\u0437\u0438\u043D\u0435"
+    _english: In cart
+  - _key: phone.checkout
+    _russian: "\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C"
+    _english: Place order
+  - _key: phone.cart_total
+    _russian: "\u0418\u0442\u043E\u0433\u043E: {0}"
+    _english: 'Total: {0}'
+  - _key: phone.checkout_unavailable
+    _russian: "\u0422\u043E\u0432\u0430\u0440 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u0435\u043D"
+    _english: An item is unavailable
+  - _key: phone.checkout_limit
+    _russian: "\u041F\u0440\u0435\u0432\u044B\u0448\u0435\u043D \u043B\u0438\u043C\u0438\u0442 \u043F\u043E\u043A\u0443\u043F\u043A\u0438"
+    _english: Purchase limit reached
+  - _key: phone.checkout_failed
+    _russian: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0444\u043E\u0440\u043C\u0438\u0442\u044C \u0437\u0430\u043A\u0430\u0437"
+    _english: Could not place the order
   - _key: shop.product.used_microphone.name
     _russian: "\u0411/\u0423 \u043C\u0438\u043A\u0440\u043E\u0444\u043E\u043D"
     _english: Used Microphone

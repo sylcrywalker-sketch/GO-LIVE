@@ -16,7 +16,6 @@ MonoBehaviour:
   - productId: budget-gpu
     nameLocalizationKey: shop.product.budget_gpu.name
     descriptionLocalizationKey: shop.product.budget_gpu.description
-    categoryLocalizationKey: shop.category.pc_parts
     category: 1
     showInFeatured: 1
     priceCents: 1500
@@ -28,7 +27,6 @@ MonoBehaviour:
   - productId: used-microphone
     nameLocalizationKey: shop.product.used_microphone.name
     descriptionLocalizationKey: shop.product.used_microphone.description
-    categoryLocalizationKey: shop.category.streaming
     category: 1
     showInFeatured: 1
     priceCents: 900
@@ -40,7 +38,6 @@ MonoBehaviour:
   - productId: used-keyboard
     nameLocalizationKey: shop.product.used_keyboard.name
     descriptionLocalizationKey: shop.product.used_keyboard.description
-    categoryLocalizationKey: shop.category.peripherals
     category: 1
     showInFeatured: 1
     priceCents: 500
@@ -52,7 +49,6 @@ MonoBehaviour:
   - productId: used-motherboard
     nameLocalizationKey: shop.product.used_motherboard.name
     descriptionLocalizationKey: shop.product.used_motherboard.description
-    categoryLocalizationKey: shop.category.pc_parts
     category: 1
     showInFeatured: 0
     priceCents: 1400
@@ -64,7 +60,6 @@ MonoBehaviour:
   - productId: used-psu
     nameLocalizationKey: shop.product.used_psu.name
     descriptionLocalizationKey: shop.product.used_psu.description
-    categoryLocalizationKey: shop.category.pc_parts
     category: 1
     showInFeatured: 0
     priceCents: 800
@@ -76,7 +71,6 @@ MonoBehaviour:
   - productId: router
     nameLocalizationKey: shop.product.router.name
     descriptionLocalizationKey: shop.product.router.description
-    categoryLocalizationKey: shop.category.network_power
     category: 1
     showInFeatured: 0
     priceCents: 1100
@@ -88,7 +82,6 @@ MonoBehaviour:
   - productId: cable-kit
     nameLocalizationKey: shop.product.cable_kit.name
     descriptionLocalizationKey: shop.product.cable_kit.description
-    categoryLocalizationKey: shop.category.network_power
     category: 1
     showInFeatured: 0
     priceCents: 250
@@ -100,7 +93,6 @@ MonoBehaviour:
   - productId: used-cpu
     nameLocalizationKey: shop.product.used_cpu.name
     descriptionLocalizationKey: shop.product.used_cpu.description
-    categoryLocalizationKey: shop.category.pc_parts
     category: 1
     showInFeatured: 0
     priceCents: 1200
@@ -112,7 +104,6 @@ MonoBehaviour:
   - productId: used-ram
     nameLocalizationKey: shop.product.used_ram.name
     descriptionLocalizationKey: shop.product.used_ram.description
-    categoryLocalizationKey: shop.category.pc_parts
     category: 1
     showInFeatured: 0
     priceCents: 600
@@ -124,7 +115,6 @@ MonoBehaviour:
   - productId: used-cpu-cooler
     nameLocalizationKey: shop.product.used_cpu_cooler.name
     descriptionLocalizationKey: shop.product.used_cpu_cooler.description
-    categoryLocalizationKey: shop.category.pc_parts
     category: 1
     showInFeatured: 0
     priceCents: 400
@@ -136,7 +126,6 @@ MonoBehaviour:
   - productId: used-hdd
     nameLocalizationKey: shop.product.used_hdd.name
     descriptionLocalizationKey: shop.product.used_hdd.description
-    categoryLocalizationKey: shop.category.pc_parts
     category: 1
     showInFeatured: 0
     priceCents: 700
@@ -148,7 +137,6 @@ MonoBehaviour:
   - productId: used-mouse
     nameLocalizationKey: shop.product.used_mouse.name
     descriptionLocalizationKey: shop.product.used_mouse.description
-    categoryLocalizationKey: shop.category.peripherals
     category: 1
     showInFeatured: 0
     priceCents: 300
@@ -160,7 +148,6 @@ MonoBehaviour:
   - productId: used-mouse-pad
     nameLocalizationKey: shop.product.used_mouse_pad.name
     descriptionLocalizationKey: shop.product.used_mouse_pad.description
-    categoryLocalizationKey: shop.category.peripherals
     category: 1
     showInFeatured: 0
     priceCents: 100
@@ -172,7 +159,6 @@ MonoBehaviour:
   - productId: used-webcam
     nameLocalizationKey: shop.product.used_webcam.name
     descriptionLocalizationKey: shop.product.used_webcam.description
-    categoryLocalizationKey: shop.category.streaming
     category: 1
     showInFeatured: 0
     priceCents: 700
@@ -184,7 +170,6 @@ MonoBehaviour:
   - productId: extension-cord
     nameLocalizationKey: shop.product.extension_cord.name
     descriptionLocalizationKey: shop.product.extension_cord.description
-    categoryLocalizationKey: shop.category.network_power
     category: 1
     showInFeatured: 0
     priceCents: 350
@@ -196,7 +181,6 @@ MonoBehaviour:
   - productId: banana
     nameLocalizationKey: shop.product.banana.name
     descriptionLocalizationKey: shop.product.banana.description
-    categoryLocalizationKey: shop.category.groceries
     category: 0
     showInFeatured: 1
     priceCents: 60
@@ -208,7 +192,6 @@ MonoBehaviour:
   - productId: energy-bar
     nameLocalizationKey: shop.product.energy_bar.name
     descriptionLocalizationKey: shop.product.energy_bar.description
-    categoryLocalizationKey: shop.category.groceries
     category: 0
     showInFeatured: 0
     priceCents: 90
@@ -220,7 +203,6 @@ MonoBehaviour:
   - productId: bread
     nameLocalizationKey: shop.product.bread.name
     descriptionLocalizationKey: shop.product.bread.description
-    categoryLocalizationKey: shop.category.groceries
     category: 0
     showInFeatured: 0
     priceCents: 120
@@ -232,7 +214,6 @@ MonoBehaviour:
   - productId: instant-noodles
     nameLocalizationKey: shop.product.instant_noodles.name
     descriptionLocalizationKey: shop.product.instant_noodles.description
-    categoryLocalizationKey: shop.category.ready_meals
     category: 0
     showInFeatured: 0
     priceCents: 250
@@ -244,7 +225,6 @@ MonoBehaviour:
   - productId: energy-drink
     nameLocalizationKey: shop.product.energy_drink.name
     descriptionLocalizationKey: shop.product.energy_drink.description
-    categoryLocalizationKey: shop.category.drinks
     category: 0
     showInFeatured: 0
     priceCents: 180
@@ -256,7 +236,6 @@ MonoBehaviour:
   - productId: yogurt
     nameLocalizationKey: shop.product.yogurt.name
     descriptionLocalizationKey: shop.product.yogurt.description
-    categoryLocalizationKey: shop.category.groceries
     category: 0
     showInFeatured: 0
     priceCents: 110
@@ -268,7 +247,6 @@ MonoBehaviour:
   - productId: boxed-lunch
     nameLocalizationKey: shop.product.boxed_lunch.name
     descriptionLocalizationKey: shop.product.boxed_lunch.description
-    categoryLocalizationKey: shop.category.ready_meals
     category: 0
     showInFeatured: 0
     priceCents: 380
@@ -280,7 +258,6 @@ MonoBehaviour:
   - productId: mug
     nameLocalizationKey: shop.product.mug.name
     descriptionLocalizationKey: shop.product.mug.description
-    categoryLocalizationKey: shop.category.kitchen
     category: 2
     showInFeatured: 1
     priceCents: 200
@@ -292,7 +269,6 @@ MonoBehaviour:
   - productId: all-purpose-cleaner
     nameLocalizationKey: shop.product.all_purpose_cleaner.name
     descriptionLocalizationKey: shop.product.all_purpose_cleaner.description
-    categoryLocalizationKey: shop.category.cleaning
     category: 2
     showInFeatured: 0
     priceCents: 320
@@ -304,7 +280,6 @@ MonoBehaviour:
   - productId: bar-soap
     nameLocalizationKey: shop.product.bar_soap.name
     descriptionLocalizationKey: shop.product.bar_soap.description
-    categoryLocalizationKey: shop.category.hygiene
     category: 2
     showInFeatured: 0
     priceCents: 80
@@ -316,7 +291,6 @@ MonoBehaviour:
   - productId: dish-sponges
     nameLocalizationKey: shop.product.dish_sponges.name
     descriptionLocalizationKey: shop.product.dish_sponges.description
-    categoryLocalizationKey: shop.category.cleaning
     category: 2
     showInFeatured: 0
     priceCents: 70
@@ -328,7 +302,6 @@ MonoBehaviour:
   - productId: trash-bags
     nameLocalizationKey: shop.product.trash_bags.name
     descriptionLocalizationKey: shop.product.trash_bags.description
-    categoryLocalizationKey: shop.category.cleaning
     category: 2
     showInFeatured: 0
     priceCents: 150
@@ -340,7 +313,6 @@ MonoBehaviour:
   - productId: toilet-paper
     nameLocalizationKey: shop.product.toilet_paper.name
     descriptionLocalizationKey: shop.product.toilet_paper.description
-    categoryLocalizationKey: shop.category.hygiene
     category: 2
     showInFeatured: 0
     priceCents: 130

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using GoLive.Delivery;
 using GoLive.Economy;
 using GoLive.GameTime;
@@ -18,13 +20,14 @@ namespace GoLive.Tests
         private const string CatalogPath = "Assets/Game/Scripts/Shop/DefaultShopCatalog.asset";
         private const string LocalizationPath = "Assets/Game/Scripts/Localization/Catalog/GameLocalizationCatalog.asset";
 
-        // Keys the Phone Shop screens resolve at runtime (tabs are configured on PhoneShopView in the scene).
+        // Keys the Phone Shop screens resolve at runtime; category tabs and category lines use ItemCategoryLocalization.
         private static readonly string[] ShopUiKeys =
         {
-            "phone.shop", "phone.product_details", "phone.orders", "phone.orders_empty", "phone.catalog_empty",
-            "phone.back", "phone.buy", "phone.ordered", "phone.purchased", "phone.not_enough_money", "phone.unavailable",
-            "phone.order_placed", "phone.order_delivered", "phone.order_eta", "phone.order_eta_day", "phone.ordered_with_eta",
-            "shop.tab.featured", "shop.tab.food", "shop.tab.household", "shop.tab.electronics"
+            "phone.shop", "phone.product_details", "phone.cart", "phone.orders", "phone.orders_empty", "phone.catalog_empty",
+            "phone.cart_empty", "phone.back", "phone.add_to_cart", "phone.in_cart", "phone.checkout", "phone.cart_total",
+            "phone.ordered", "phone.purchased", "phone.not_enough_money", "phone.unavailable", "phone.checkout_unavailable",
+            "phone.checkout_limit", "phone.checkout_failed", "phone.order_placed", "phone.order_delivered", "phone.order_eta",
+            "phone.order_eta_day", "phone.ordered_with_eta", "shop.tab.featured"
         };
 
         private readonly List<Object> _created = new();
@@ -157,10 +160,12 @@ namespace GoLive.Tests
             ShopTestData.Set(shop, "wallet", wallet);
             ShopTestData.Set(shop, "gameClock", clock);
             ShopTestData.Set(shop, "catalog", catalog);
-            ShopTestData.Set(shop, "_purchase", new ShopPurchase(wallet.Wallet, shop.Orders, clock.Clock));
+            ShopTestData.Set(shop, "_checkout", new ShopCheckout(wallet.Wallet, shop.Orders, clock.Clock));
 
-            Assert.That(shop.EvaluatePurchase("test-item"), Is.Not.EqualTo(ShopPurchaseResultCode.Success));
-            Assert.That(shop.TryPurchase("test-item").Succeeded, Is.False);
+            Assert.That(shop.EvaluateAddToCart("test-item"), Is.Not.EqualTo(ShopPurchaseResultCode.Success));
+            Assert.That(shop.TryAddToCart("test-item"), Is.Not.EqualTo(ShopPurchaseResultCode.Success));
+            Assert.That(shop.CartLines, Is.Empty);
+            Assert.That(shop.TryCheckout().Succeeded, Is.False);
             Assert.That(wallet.Wallet.BalanceCents, Is.EqualTo(2500));
             Assert.That(shop.Orders.Orders, Is.Empty);
         }
@@ -174,8 +179,68 @@ namespace GoLive.Tests
             {
                 AssertTranslated(texts, product.NameLocalizationKey);
                 AssertTranslated(texts, product.DescriptionLocalizationKey);
-                AssertTranslated(texts, product.CategoryLocalizationKey);
+                AssertTranslated(texts, ItemCategoryLocalization.GetKey(product.Category));
             }
+        }
+
+        [Test]
+        public void ProductsHaveNoCategoryOfTheirOwn()
+        {
+            Assert.That(typeof(ShopProductDefinition).GetField("categoryLocalizationKey", BindingFlags.Instance | BindingFlags.NonPublic), Is.Null);
+            Assert.That(File.ReadAllText(CatalogPath), Does.Not.Contain("categoryLocalizationKey"));
+            Assert.That(LoadTexts().Keys.Where(key => key.StartsWith("shop.category.")), Is.Empty, "no product-specific storefront categories");
+        }
+
+        [Test]
+        public void EveryProductIsListedUnderTheCategoryOfWhatItDelivers()
+        {
+            foreach (ShopProductDefinition product in Catalog.Products.Where(product => product.FulfillmentItem != null))
+                Assert.That(product.Category, Is.EqualTo(product.FulfillmentItem.Category), product.ProductId);
+        }
+
+        [TestCase(ItemCategory.Food, "Еда", "Food")]
+        [TestCase(ItemCategory.Electronics, "Электроника", "Electronics")]
+        [TestCase(ItemCategory.Household, "Быт", "Household")]
+        public void CategoryNamesAreTheThreeBroadCategories(ItemCategory category, string russian, string english)
+        {
+            Assert.That(LoadTexts().TryGetValue(ItemCategoryLocalization.GetKey(category), out (string Russian, string English) text), Is.True);
+            Assert.That(text.Russian, Is.EqualTo(russian));
+            Assert.That(text.English, Is.EqualTo(english));
+        }
+
+        [Test]
+        public void EveryItemCategoryHasOneCategoryKey()
+        {
+            string[] keys = Enum.GetValues(typeof(ItemCategory)).Cast<ItemCategory>().Select(ItemCategoryLocalization.GetKey).ToArray();
+
+            Assert.That(keys, Is.Unique);
+            Assert.That(keys.All(key => key.StartsWith("category.", StringComparison.Ordinal)), Is.True, string.Join(", ", keys));
+            Assert.That(() => ItemCategoryLocalization.GetKey((ItemCategory)99), Throws.InstanceOf<ArgumentOutOfRangeException>());
+        }
+
+        [Test]
+        public void ProductImageFallsBackToTheIconOfTheDeliveredItem()
+        {
+            Sprite own = Track(Sprite.Create(Track(new Texture2D(4, 4)), new Rect(0, 0, 4, 4), Vector2.zero));
+            Sprite icon = Track(Sprite.Create(Track(new Texture2D(4, 4)), new Rect(0, 0, 4, 4), Vector2.zero));
+            ItemDefinition item = Track(ShopTestData.CreateItem("test-item", ItemCategory.Household));
+            ShopTestData.Set(item, "iconOverride", icon);
+
+            ShopProductDefinition withImage = ShopTestData.CreateProduct("with-image", 100, ItemCategory.Household, item);
+            ShopTestData.Set(withImage, "image", own);
+            ShopProductDefinition withoutImage = ShopTestData.CreateProduct("without-image", 100, ItemCategory.Household, item);
+            ShopProductDefinition nothing = ShopTestData.CreateProduct("nothing", 100, ItemCategory.Household, null, available: false);
+
+            Assert.That(withImage.DisplayImage, Is.SameAs(own));
+            Assert.That(withoutImage.DisplayImage, Is.SameAs(icon));
+            Assert.That(nothing.DisplayImage, Is.Null);
+        }
+
+        [Test]
+        public void EveryAvailableProductHasSomethingToShow()
+        {
+            foreach (ShopProductDefinition product in Catalog.Products.Where(product => product.IsAvailable))
+                Assert.That(product.DisplayImage, Is.Not.Null, $"{product.ProductId}: an image or a delivered-item icon");
         }
 
         [Test]

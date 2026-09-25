@@ -18,7 +18,7 @@ namespace GoLive.Tests
         private const string CatalogPath = "Assets/Game/Scripts/Localization/Catalog/GameLocalizationCatalog.asset";
         private const string FontFolder = "Assets/Game/UI/Fonts/Manrope";
         private static readonly string[] Weights = { "Manrope-Medium", "Manrope-SemiBold", "Manrope-Bold" };
-        private static readonly string[] HudKeyPrefixes = { "hud.", "rent.", "inventory.", "item.", "interaction." };
+        private static readonly string[] HudKeyPrefixes = { "hud.", "rent.", "inventory.", "category.", "item.", "interaction." };
 
         [Test]
         public void GameplayHudAndInventoryTextUseManrope()
@@ -45,7 +45,7 @@ namespace GoLive.Tests
                 .GetField("_entries", BindingFlags.Instance | BindingFlags.NonPublic)
                 .GetValue(catalog);
             List<LocalizationEntry> hudEntries = entries.Where(entry => HudKeyPrefixes.Any(prefix => entry.Key.StartsWith(prefix))).ToList();
-            Assert.That(hudEntries.Count, Is.GreaterThan(30), "HUD, rent, inventory, item and prompt strings found");
+            Assert.That(hudEntries.Count, Is.GreaterThan(30), "HUD, rent, inventory, category, item and prompt strings found");
 
             foreach (string weight in Weights)
             {

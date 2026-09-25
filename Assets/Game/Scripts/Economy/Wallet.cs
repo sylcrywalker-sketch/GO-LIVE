@@ -16,6 +16,8 @@ namespace GoLive.Economy
             BalanceCents = startingBalanceCents;
         }
 
+        // Refuses without side effects, or changes the balance and only then notifies: an exception thrown by a
+        // BalanceChanged subscriber reaches the caller after the charge (ShopCheckout's commit relies on this).
         public bool TrySpend(long amountCents)
         {
             ValidatePositiveAmount(amountCents, nameof(amountCents));

@@ -452,8 +452,7 @@ namespace GoLive.Tests
 
         private DeliveryPackageBehaviour DeliverSnack()
         {
-            ShopPurchaseResult result = _world.Shop.TryPurchase(SaveTestWorld.SnackId);
-            Assert.That(result.Succeeded, Is.True, result.Code.ToString());
+            ShopTestData.BuyOne(_world.Shop, SaveTestWorld.SnackId);
             _world.Clock.Clock.AdvanceMinutes(90);
             return Object.FindObjectsByType<DeliveryPackageBehaviour>(FindObjectsInactive.Include).Single();
         }

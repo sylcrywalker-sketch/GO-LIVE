@@ -15,7 +15,7 @@ namespace GoLive.Tests
 
         private GameClock _clock;
         private ShopOrderBook _orders;
-        private ShopPurchase _purchase;
+        private ShopCheckout _checkout;
         private DeliveryState _state;
 
         [SetUp]
@@ -23,14 +23,14 @@ namespace GoLive.Tests
         {
             _clock = new GameClock(1, 7, 3);
             _orders = new ShopOrderBook();
-            _purchase = new ShopPurchase(new Wallet(2500), _orders, _clock);
+            _checkout = new ShopCheckout(new Wallet(2500), _orders, _clock);
             _state = new DeliveryState();
         }
 
         [Test]
         public void OrderThatIsNotDueNeedsNoArrivalAndCannotBeRecorded()
         {
-            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+            ShopOrder order = Place(BudgetGpu);
             _clock.AdvanceMinutes(149);
 
             Assert.That(_state.NeedsArrival(order, _clock.Current), Is.False);
@@ -42,7 +42,7 @@ namespace GoLive.Tests
         [Test]
         public void DueOrderRecordsExactlyOnePackageAndBecomesDelivered()
         {
-            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+            ShopOrder order = Place(BudgetGpu);
             _clock.AdvanceMinutes(150);
 
             Assert.That(_state.NeedsArrival(order, _clock.Current), Is.True);
@@ -62,7 +62,7 @@ namespace GoLive.Tests
         [Test]
         public void RepeatedEvaluationNeverRecordsASecondPackage()
         {
-            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+            ShopOrder order = Place(BudgetGpu);
             _clock.AdvanceMinutes(151);
             _state.TryRecordArrival(_orders, order.OrderId, "package-1", _clock.Current);
 
@@ -80,7 +80,7 @@ namespace GoLive.Tests
         [Test]
         public void EightHourTimeJumpAcrossTheDueTimeDeliversOnce()
         {
-            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+            ShopOrder order = Place(BudgetGpu);
             int advances = 0;
             _clock.Advanced += _ => advances++;
 
@@ -97,9 +97,9 @@ namespace GoLive.Tests
         [Test]
         public void MultipleDueOrdersGetOnePackageEach()
         {
-            ShopOrder gpu = _purchase.TryPurchase(BudgetGpu).Order;
-            ShopOrder firstBanana = _purchase.TryPurchase(Banana).Order;
-            ShopOrder secondBanana = _purchase.TryPurchase(Banana).Order;
+            ShopOrder gpu = Place(BudgetGpu);
+            ShopOrder firstBanana = Place(Banana);
+            ShopOrder secondBanana = Place(Banana);
             _clock.AdvanceMinutes(600);
 
             Assert.That(_state.TryRecordArrival(_orders, gpu.OrderId, "package-gpu", _clock.Current), Is.True);
@@ -113,8 +113,8 @@ namespace GoLive.Tests
         [Test]
         public void OnePackageInstanceCannotServeTwoOrders()
         {
-            ShopOrder first = _purchase.TryPurchase(Banana).Order;
-            ShopOrder second = _purchase.TryPurchase(Banana).Order;
+            ShopOrder first = Place(Banana);
+            ShopOrder second = Place(Banana);
             _clock.AdvanceMinutes(90);
 
             Assert.That(_state.TryRecordArrival(_orders, first.OrderId, "package-1", _clock.Current), Is.True);
@@ -135,7 +135,7 @@ namespace GoLive.Tests
         [Test]
         public void OpeningRecordsExactlyOneFulfillmentItemAndRepeatedOpenIsRejected()
         {
-            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+            ShopOrder order = Place(BudgetGpu);
             _clock.AdvanceMinutes(150);
             _state.TryRecordArrival(_orders, order.OrderId, "package-1", _clock.Current);
 
@@ -151,7 +151,7 @@ namespace GoLive.Tests
         [Test]
         public void FulfillmentItemMustBeANewInstance()
         {
-            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+            ShopOrder order = Place(BudgetGpu);
             _clock.AdvanceMinutes(150);
             _state.TryRecordArrival(_orders, order.OrderId, "package-1", _clock.Current);
 
@@ -164,8 +164,8 @@ namespace GoLive.Tests
         [Test]
         public void SnapshotRoundTripKeepsEveryRecord()
         {
-            ShopOrder gpu = _purchase.TryPurchase(BudgetGpu).Order;
-            ShopOrder banana = _purchase.TryPurchase(Banana).Order;
+            ShopOrder gpu = Place(BudgetGpu);
+            ShopOrder banana = Place(Banana);
             _clock.AdvanceMinutes(150);
             _state.TryRecordArrival(_orders, gpu.OrderId, "package-gpu", _clock.Current);
             _state.TryRecordArrival(_orders, banana.OrderId, "package-banana", _clock.Current);
@@ -201,7 +201,7 @@ namespace GoLive.Tests
         [TestCase("unknown stage")]
         public void InvalidSnapshotIsRejectedWithoutChangingState(string corruption)
         {
-            ShopOrder order = _purchase.TryPurchase(BudgetGpu).Order;
+            ShopOrder order = Place(BudgetGpu);
             _clock.AdvanceMinutes(150);
             _state.TryRecordArrival(_orders, order.OrderId, "live-package", _clock.Current);
             string before = JsonUtility.ToJson(_state.CaptureSnapshot());
@@ -241,8 +241,8 @@ namespace GoLive.Tests
         [Test]
         public void DeliveryRecordsMustMatchDeliveredOrders()
         {
-            ShopOrder gpu = _purchase.TryPurchase(BudgetGpu).Order;
-            ShopOrder banana = _purchase.TryPurchase(Banana).Order;
+            ShopOrder gpu = Place(BudgetGpu);
+            ShopOrder banana = Place(Banana);
             _clock.AdvanceMinutes(150);
 
             Assert.That(_state.MatchesOrders(_orders), Is.True, "no packages yet, both orders Placed");
@@ -274,6 +274,13 @@ namespace GoLive.Tests
                 }
             });
             Assert.That(packageForUnknownOrder.MatchesOrders(_orders), Is.False, "package for an unknown order");
+        }
+
+        private ShopOrder Place(ShopPurchaseOffer offer)
+        {
+            ShopCheckoutResult result = _checkout.TryCheckout(new[] { new ShopCheckoutLine(offer, 1) });
+            Assert.That(result.Succeeded, Is.True, result.Code.ToString());
+            return result.Orders[0];
         }
 
         private static DeliveryRecordSnapshot Record(string orderId, string packageId, DeliveryStage stage, string fulfillmentId)
