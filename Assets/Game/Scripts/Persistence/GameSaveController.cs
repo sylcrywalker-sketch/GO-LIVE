@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using GoLive.Delivery;
+using GoLive.Desktop;
 using GoLive.Economy;
 using GoLive.GameTime;
 using GoLive.Inventory;
@@ -21,10 +22,10 @@ namespace GoLive.Persistence
     [DisallowMultipleComponent]
     public sealed class GameSaveController : MonoBehaviour
     {
-        // v6: the Student PC starts with its motherboard, processor, memory, power supply and drive as persistent scene
-        // items. An older save has none of them, and loading it would silently take them out of the PC, so v1-v5 are
-        // rejected instead of migrated (pre-release).
-        private const int CurrentVersion = 6;
+        // v7 adds durable Desktop state. v6 already has persistent starter hardware and can receive a fresh Desktop.
+        // v1-v5 lack that hardware and remain unsupported instead of silently removing it from the Student PC.
+        private const int CurrentVersion = 7;
+        private const int PreviousVersion = 6;
         private const string AutosaveFileName = "autosave.json";
 
         [Header("Game State")]
@@ -40,6 +41,7 @@ namespace GoLive.Persistence
         [SerializeField] private ShopBehaviour _shop;
         [SerializeField] private DeliveryBehaviour _delivery;
         [SerializeField] private PcAssemblyBehaviour _pc;
+        [SerializeField] private DesktopRuntimeBehaviour _desktop;
 
         private bool _bound;
 
@@ -288,7 +290,26 @@ namespace GoLive.Persistence
                             {
                                 Version = 0,
                                 InstalledSlots = null
+                            },
+
+                        // JsonUtility preserves initialized values for missing fields. Invalid sentinels make
+                        // omissions distinguishable from a legitimately empty account or installation table.
+                        Desktop = new DesktopSnapshot
+                        {
+                            Version = 0,
+                            Storage = new DesktopStorageSnapshot { Version = 0, InstalledContent = null },
+                            Outline = new OutlineSnapshot { Version = 0, Address = null, Messages = null, ReceivedIds = null },
+                            Trich = new TrichSnapshot
+                            {
+                                Version = 0, Email = null, Name = null, Description = null, ChannelCode = null,
+                                AvatarId = -1, CompletedStreams = -1, TotalDurationSeconds = -1,
+                                TotalFollowers = -1, TotalDonationCents = -1, PeakViewers = -1
+                            },
+                            Donation = new DonationSnapshot
+                            {
+                                Version = 0, Name = null, TotalCents = -1, History = null, ReceivedIds = null
                             }
+                        }
                     };
 
                 JsonUtility.FromJsonOverwrite(
@@ -326,7 +347,7 @@ namespace GoLive.Persistence
         private GameSaveData Capture()
         {
             PlayerPoseSnapshot playerPose =
-                _player.CapturePose();
+                _desktop.CaptureWorldPose();
 
             PlayerNeedsSnapshot needs =
                 _needs.Needs.Current;
@@ -476,11 +497,34 @@ namespace GoLive.Persistence
                     _delivery.CaptureSnapshot(),
 
                 PcAssembly =
-                    _pc.CaptureSnapshot()
+                    _pc.CaptureSnapshot(),
+
+                Desktop =
+                    _desktop.State.Capture()
             };
         }
 
         private void Apply(
+            GameSaveData data,
+            Dictionary<string, WorldItem> sceneItems,
+            Dictionary<string, ItemDefinition> runtimeItems)
+        {
+            // ValidateSaveData has checked the entire graph. Suppress hardware bootstrap and stream completion
+            // throughout apply, so temporary item states cannot seed installs or add a final-session message.
+            IReadOnlyList<DesktopDrive> knownDrives = BuildKnownDrives(data, sceneItems, runtimeItems);
+            _desktop.BeginRestore();
+            try
+            {
+                ApplyWorld(data, sceneItems, runtimeItems);
+                _desktop.State.Restore(data.Desktop, knownDrives);
+            }
+            finally
+            {
+                _desktop.EndRestore(bootstrapSystemApps: false);
+            }
+        }
+
+        private void ApplyWorld(
             GameSaveData data,
             Dictionary<string, WorldItem> sceneItems,
             Dictionary<string, ItemDefinition> runtimeItems)
@@ -678,14 +722,15 @@ namespace GoLive.Persistence
                 null;
 
             if (data == null ||
-                data.Version != CurrentVersion ||
+                (data.Version != CurrentVersion && data.Version != PreviousVersion) ||
                 data.Player == null ||
                 data.Rent == null ||
                 data.Items == null ||
                 data.Messages == null ||
                 data.Orders == null ||
                 data.Delivery == null ||
-                data.PcAssembly == null)
+                data.PcAssembly == null ||
+                (data.Version == CurrentVersion && data.Desktop == null))
             {
                 return false;
             }
@@ -843,9 +888,54 @@ namespace GoLive.Persistence
                     return false;
             }
 
-            return _pc.ValidateSnapshot(
-                data.PcAssembly,
-                installedItems);
+            if (!_pc.ValidateSnapshot(data.PcAssembly, installedItems))
+                return false;
+
+            IReadOnlyList<DesktopDrive> knownDrives = BuildKnownDrives(data, sceneItems, runtimeItems);
+            if (data.Version == PreviousVersion)
+            {
+                // Migration prepares a complete, validated graph before touching the live game. Capacity and
+                // physical identities come from the saved items and authored hardware, not the currently built PC.
+                using var freshDesktop = new DesktopState(_desktop.Catalog.Apps);
+                var connectedDrives = new List<DesktopDrive>();
+                bool canInstallSystemApps = false;
+                foreach (PcComponentSlot slot in _pc.Slots)
+                {
+                    foreach (PcInstalledSlotSnapshot installed in data.PcAssembly.InstalledSlots)
+                    {
+                        if (installed.SlotId != slot.SlotId)
+                            continue;
+                        PcComponentSpec spec = installedItems[installed.ItemInstanceId];
+                        if (spec.ComponentType != PcComponentType.Storage)
+                            continue;
+                        connectedDrives.Add(new DesktopDrive(installed.ItemInstanceId, installed.SlotId, spec.StorageCapacityMiB));
+                        canInstallSystemApps |= spec.StorageCapacityMiB > 0;
+                    }
+                }
+                freshDesktop.Storage.SetDrives(connectedDrives);
+                if (canInstallSystemApps && freshDesktop.EnsureSystemApps() != null)
+                    return false;
+                data.Desktop = freshDesktop.Capture();
+            }
+
+            return _desktop.State.Validate(data.Desktop, knownDrives) == null;
+        }
+
+        private static IReadOnlyList<DesktopDrive> BuildKnownDrives(
+            GameSaveData data,
+            Dictionary<string, WorldItem> sceneItems,
+            Dictionary<string, ItemDefinition> runtimeItems)
+        {
+            var drives = new List<DesktopDrive>();
+            foreach (ItemSaveData item in data.Items)
+            {
+                if (!TryGetExpectedDefinition(item.InstanceId, sceneItems, runtimeItems, out ItemDefinition definition))
+                    throw new ArgumentException("Saved item definition could not be resolved.", nameof(data));
+                PcComponentSpec spec = definition.PcComponent;
+                if (spec != null && spec.ComponentType == PcComponentType.Storage)
+                    drives.Add(new DesktopDrive(item.InstanceId, null, spec.StorageCapacityMiB));
+            }
+            return drives;
         }
 
         private static bool TryGetExpectedDefinition(
@@ -989,6 +1079,8 @@ namespace GoLive.Persistence
                 _wallet.Wallet != null &&
                 _shop.IsReady &&
                 _pc.IsReady &&
+                _desktop.IsReady &&
+                _desktop.State != null &&
                 _rent.TryGetSnapshot(out _))
             {
                 return true;
@@ -1014,7 +1106,8 @@ namespace GoLive.Persistence
                 _phoneMessages != null &&
                 _shop != null &&
                 _delivery != null &&
-                _pc != null)
+                _pc != null &&
+                _desktop != null)
             {
                 return true;
             }

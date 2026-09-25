@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using GoLive.Delivery;
+using GoLive.Desktop;
 using GoLive.Economy;
 using GoLive.GameTime;
 using GoLive.Inventory;
@@ -18,12 +19,13 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace GoLive.Tests
 {
-    // Explicit EditMode composition of the current (v6) save runtime, not a substitute for Awake/Start or Play Mode verification.
+    // Explicit EditMode composition of the current save runtime, not a substitute for Awake/Start or Play Mode verification.
     // Hands, Delivery and the PC stay inactive unless a Play Mode test calls StartPlayModeRuntime().
     internal sealed class SaveTestWorld : IDisposable
     {
@@ -44,6 +46,9 @@ namespace GoLive.Tests
         public DeliveryBehaviour Delivery { get; }
         public Transform DropPoint { get; }
         public PcAssemblyBehaviour Pc { get; }
+        public DesktopRuntimeBehaviour Desktop { get; }
+        public PcSessionBehaviour PcSession { get; }
+        public PlayerController Player { get; }
 
         // The persistent scene IDs of the parts the Student PC comes with (never runtime items).
         public string[] StarterItemIds { get; }
@@ -54,6 +59,13 @@ namespace GoLive.Tests
         private readonly GameObject _deliveryRoot;
         private readonly GameObject _pcRoot;
         private readonly GameObject _floor;
+        private readonly WorldItem[] _starterItems;
+        private readonly DesktopAppCatalog _desktopCatalog;
+        private readonly InputActionAsset _desktopInputs;
+        private readonly InputAction _monitorInput;
+        private readonly InputAction _focusInput;
+        private readonly InputActionReference _monitorReference;
+        private readonly InputActionReference _focusReference;
 
         private SaveTestWorld(long walletCents, ShopCatalogConfig catalog)
         {
@@ -69,6 +81,7 @@ namespace GoLive.Tests
             pivot.localPosition = new Vector3(0f, 1.6f, 0f);
 
             PlayerController player = Root.AddComponent<PlayerController>();
+            Player = player;
             CharacterController body = Root.GetComponent<CharacterController>();
             body.height = 1.9f;
             body.radius = 0.3f;
@@ -144,7 +157,8 @@ namespace GoLive.Tests
             pc.transform.position = new Vector3(3f, 0.8f, 0f);
             Pc = pc.GetComponent<PcAssemblyBehaviour>();
             typeof(PcAssemblyBehaviour).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Pc, null);
-            StarterItemIds = pc.GetComponentsInChildren<WorldItem>(true).Select(item => item.AuthoredInstanceId).OrderBy(id => id, StringComparer.Ordinal).ToArray();
+            _starterItems = pc.GetComponentsInChildren<WorldItem>(true);
+            StarterItemIds = _starterItems.Select(item => item.AuthoredInstanceId).OrderBy(id => id, StringComparer.Ordinal).ToArray();
 
             // EditMode runs no Awake/Start, so compose the PC's new game the way Play Mode does: its scene items first,
             // then the PC installs them. Play Mode gets the real lifecycle from StartPlayModeRuntime instead.
@@ -156,6 +170,40 @@ namespace GoLive.Tests
                 typeof(PcAssemblyBehaviour).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(Pc, null);
                 Assert.That(Pc.IsReady, Is.True, "the Student PC's new-game hardware is installed");
             }
+
+            _desktopCatalog = ScriptableObject.CreateInstance<DesktopAppCatalog>();
+            SetField(_desktopCatalog, "apps", DesktopStorageTests.Definitions());
+            PcSession = Root.AddComponent<PcSessionBehaviour>();
+            var cameraObject = new GameObject("Desktop test camera");
+            cameraObject.transform.SetParent(pivot, false);
+            var camera = cameraObject.AddComponent<Camera>();
+            var seat = new GameObject("Desktop test seat").transform;
+            seat.SetParent(Root.transform, false);
+            var monitorCollider = cameraObject.AddComponent<BoxCollider>();
+            _desktopInputs = ScriptableObject.CreateInstance<InputActionAsset>();
+            var desktopMap = new InputActionMap("Desktop test");
+            _desktopInputs.AddActionMap(desktopMap);
+            _monitorInput = desktopMap.AddAction("Monitor", InputActionType.Button);
+            _focusInput = desktopMap.AddAction("Focus", InputActionType.Button);
+            _monitorReference = InputActionReference.Create(_monitorInput);
+            _focusReference = InputActionReference.Create(_focusInput);
+            SetField(PcSession, "pc", Pc);
+            SetField(PcSession, "playerController", player);
+            SetField(PcSession, "playerCarry", Carry);
+            SetField(PcSession, "playerCamera", camera);
+            SetField(PcSession, "seatViewAnchor", seat);
+            SetField(PcSession, "monitorCollider", monitorCollider);
+            SetField(PcSession, "monitorAction", _monitorReference);
+            SetField(PcSession, "focusAction", _focusReference);
+            InvokeLifecycle(PcSession, "Awake");
+            InvokeLifecycle(PcSession, "OnEnable");
+
+            Desktop = Root.AddComponent<DesktopRuntimeBehaviour>();
+            SetField(Desktop, "pc", Pc);
+            SetField(Desktop, "session", PcSession);
+            SetField(Desktop, "catalog", _desktopCatalog);
+            InvokeLifecycle(Desktop, "Awake");
+            BindDesktopWhenPcReady();
 
             Save = Root.AddComponent<GameSaveController>();
             SetField(Save, "_player", player);
@@ -170,6 +218,7 @@ namespace GoLive.Tests
             SetField(Save, "_shop", Shop);
             SetField(Save, "_delivery", Delivery);
             SetField(Save, "_pc", Pc);
+            SetField(Save, "_desktop", Desktop);
         }
 
         public static SaveTestWorld Create(long walletCents)
@@ -230,11 +279,23 @@ namespace GoLive.Tests
 
         public void Dispose()
         {
+            if (Desktop != null) InvokeLifecycle(Desktop, "OnDisable");
+            if (PcSession != null)
+            {
+                InvokeLifecycle(PcSession, "OnDisable");
+                InvokeLifecycle(PcSession, "OnDestroy");
+            }
             foreach (WorldItem item in Object.FindObjectsByType<WorldItem>(FindObjectsInactive.Include))
             {
                 if (item.IsRuntime)
                     Object.DestroyImmediate(item.gameObject);
             }
+
+            // RestoreAsWorld can detach a starter part from the PC root. The fixture still owns that exact
+            // scene item and must remove it before another fixture creates the same persistent identity.
+            foreach (WorldItem item in _starterItems)
+                if (item != null)
+                    Object.DestroyImmediate(item.gameObject);
 
             DestroyIfAlive(Root);
             DestroyIfAlive(Hands);
@@ -247,6 +308,13 @@ namespace GoLive.Tests
 
             if (_catalog != null)
                 Object.DestroyImmediate(_catalog);
+            if (_desktopCatalog != null)
+                Object.DestroyImmediate(_desktopCatalog);
+            Object.DestroyImmediate(_monitorReference);
+            Object.DestroyImmediate(_focusReference);
+            _monitorInput.Dispose();
+            _focusInput.Dispose();
+            Object.DestroyImmediate(_desktopInputs);
 
             if (System.IO.Directory.Exists(Directory))
                 System.IO.Directory.Delete(Directory, true);
@@ -267,10 +335,20 @@ namespace GoLive.Tests
 
         private bool InvokeSaveMethod(string method)
         {
+            BindDesktopWhenPcReady();
             return (bool)typeof(GameSaveController)
                 .GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic)
                 .Invoke(Save, new object[] { SavePath });
         }
+
+        private void BindDesktopWhenPcReady()
+        {
+            if (Pc.IsReady && !Desktop.IsReady)
+                InvokeLifecycle(Desktop, "Bind");
+        }
+
+        private static void InvokeLifecycle(object target, string method)
+            => target.GetType().GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic).Invoke(target, null);
 
         public static void SetField(object target, string name, object value)
         {

@@ -172,6 +172,40 @@ namespace GoLive.Tests
                 Assert.That(_pc.Assembly.TryRecordRemoval(slotId, out _), Is.True, slotId);
         }
 
+        [Test]
+        public void PowerBudgetUsesCurrentHardwareAndLocalizedUnits()
+        {
+            Assert.That(_text.PowerBudget(), Is.EqualTo("Питание: 99 / 300 Вт"));
+            Remove("storage-0");
+            Assert.That(_text.PowerBudget(), Is.EqualTo("Питание: 93 / 300 Вт"));
+            _localization.SetLanguage(GameLanguage.English);
+            Assert.That(_text.PowerBudget(), Is.EqualTo("Power: 93 / 300 W"));
+            Remove("psu-0");
+            Assert.That(_text.PowerBudget(), Is.EqualTo("Power: 93 / 0 W"), "never invent a power supply capacity");
+        }
+
+        [Test]
+        public void CompatibleEmptySlotExplicitlyNamesItsCompatibility()
+        {
+            Assert.That(_pc.TryGetSlot("gpu-0", out PcComponentSlot slot), Is.True);
+            PcWorkbenchText.Card card = _text.SlotCard(slot, PcSlotCheck.Allowed, "E", "F");
+            Assert.That(card.Detail, Does.Contain("Совместимо"));
+            Assert.That(card.Action, Does.Contain("["));
+            Assert.That(card.Tone, Is.EqualTo(PcWorkbenchHudView.Tone.Action));
+        }
+
+        [Test]
+        public void IncompatibleSlotNamesTheRequiredTypeAndPreservesActualRefusal()
+        {
+            Assert.That(_pc.TryGetSlot("gpu-0", out PcComponentSlot slot), Is.True);
+            _localization.SetLanguage(GameLanguage.English);
+            PcWorkbenchText.Card card = _text.SlotCard(slot, PcSlotCheck.WrongComponentType, "E", "F");
+            Assert.That(card.Detail, Does.Contain("Not compatible"));
+            Assert.That(card.Detail, Does.Contain("Required: " + Text("pc.component.gpu")));
+            Assert.That(card.Action, Is.EqualTo(Text(PcSlotCheck.WrongComponentType.MessageKey())));
+            Assert.That(card.Tone, Is.EqualTo(PcWorkbenchHudView.Tone.Rejected));
+        }
+
         // The status without markup, one entry per line.
         private string[] Lines()
         {

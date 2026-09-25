@@ -1,18 +1,18 @@
 using System;
+using GoLive.Desktop;
 using UnityEngine;
 
 namespace GoLive.PcBuilding
 {
-    // The PC's monitor. The screen glows (the idle desktop image in the monitor material's emission map, plus the light it
-    // throws on the desk) while the installed hardware can reach a desktop, and goes dark when it can not. Presentation
-    // only: a running PC is not a game state yet (see PcPowerOnResult), so the screen follows what the hardware allows
-    // until the Desktop owns an on/off state.
+    // Physical monitor emission and desk glow follow the session's two power switches.
+    // The screen surface supplies boot/desktop content; this view never owns runtime power.
     [DisallowMultipleComponent]
     public sealed class PcScreenView : MonoBehaviour
     {
         private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
         [SerializeField] private PcAssemblyBehaviour pc;
+        [SerializeField] private PcSessionBehaviour session;
 
         [Tooltip("The monitor renderer. Its material's emission map is the screen image, black outside the screen.")]
         [SerializeField] private Renderer screen;
@@ -24,36 +24,54 @@ namespace GoLive.PcBuilding
         [SerializeField] private Light[] glow = Array.Empty<Light>();
 
         private MaterialPropertyBlock _block;
-        private PcAssembly _assembly;
+        private bool _started;
+        private bool _subscribed;
 
         public bool IsOn { get; private set; }
 
-        // Start, not Awake: PcAssemblyBehaviour builds its record in Awake. Its own Start installs the new-game parts
-        // afterwards or before; either way Assembly.Changed brings the screen up to date.
+        private void OnEnable()
+        {
+            if (_started)
+                Subscribe();
+            else
+                Apply(false);
+        }
+
+        // Start allows the authored PC and session to initialize their Awake methods in either order.
         private void Start()
         {
-            if (pc == null || screen == null || Array.IndexOf(glow, null) >= 0 || pc.Assembly == null)
+            if (pc == null || session == null || screen == null || glow == null || Array.IndexOf(glow, null) >= 0 || pc.Assembly == null)
             {
-                Debug.LogError($"{nameof(PcScreenView)} on {name} requires a PC with an assembly, a screen renderer and no missing glow lights.", this);
+                Debug.LogError($"{nameof(PcScreenView)} on {name} requires a PC with an assembly, a session, a screen renderer and no missing glow lights.", this);
                 Apply(false);
                 enabled = false;
                 return;
             }
 
-            _assembly = pc.Assembly;
-            _assembly.Changed += Refresh;
+            _started = true;
+            Subscribe();
+        }
+
+        private void Subscribe()
+        {
+            if (_subscribed || session == null)
+                return;
+            _subscribed = true;
+            session.Session.Changed += Refresh;
             Refresh();
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
-            if (_assembly != null)
-                _assembly.Changed -= Refresh;
+            if (_subscribed && session != null)
+                session.Session.Changed -= Refresh;
+            _subscribed = false;
+            Apply(false);
         }
 
         private void Refresh()
         {
-            Apply(pc.Capabilities.CanUseDesktop);
+            Apply(session.Session.MonitorOn && session.Session.Power != PcPowerState.Off);
         }
 
         private void Apply(bool on)
@@ -68,7 +86,7 @@ namespace GoLive.PcBuilding
                 screen.SetPropertyBlock(_block);
             }
 
-            for (int i = 0; i < glow.Length; i++)
+            for (int i = 0; glow != null && i < glow.Length; i++)
             {
                 if (glow[i] != null)
                     glow[i].enabled = on;

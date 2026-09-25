@@ -21,15 +21,16 @@ namespace GoLive.PcBuilding
         private const string ChooseTitleKey = "pc.workbench.choose.title";
         private const string ChooseDetailKey = "pc.workbench.choose.detail";
         private const string PointHintKey = "pc.workbench.hint.point";
-        private const string EmptySlotKey = "pc.workbench.slot_empty";
-        private const string ControlsKey = "pc.workbench.controls";
-        private const string ClickKey = "pc.workbench.click";
         private const string InstallableKey = "pc.part.installable";
         private const string SlotTakenKey = "pc.part.slot_taken";
         private const string NoPlaceKey = "pc.part.no_place";
         private const string NotPartKey = "pc.part.not_part";
         private const string NotPartFeedbackKey = "pc.feedback.not_part";
         private const string AndKey = "pc.list.and";
+        private const string PowerBudgetKey = "pc.status.power_budget";
+        private const string CompatibleKey = "pc.slot.compatible";
+        private const string IncompatibleKey = "pc.slot.incompatible";
+        private const string RequiredKey = "pc.slot.required";
 
         private const string Good = "8FE3A8";
         private const string Warning = "F2C46B";
@@ -98,6 +99,33 @@ namespace GoLive.PcBuilding
         }
 
         public string StatusTitle => Text(StatusTitleKey);
+        public string ComponentName(PcComponentType type) => Text(type.NameKey());
+
+        // The polished checklist gives the verdict its own line underneath the six component rows.
+        public string StatusHeading(PcCapabilities pc)
+        {
+            return Text(!pc.CanPowerOn ? "pc.polish.wont_start" : !pc.CanUseDesktop ? "pc.polish.wont_boot" :
+                pc.HasDedicatedGpu ? "pc.polish.ready" : "pc.polish.starts");
+        }
+
+        public string StatusExplanation(PcCapabilities pc)
+        {
+            if (pc.Diagnostics.Count == 0)
+                return Text("pc.polish.all_installed");
+
+            PcDiagnostic first = pc.Diagnostics[0];
+            if (first.Code == PcDiagnosticCode.NoDedicatedGpu)
+                return Text("pc.polish.no_gpu");
+            return first.Affects == PcFunction.PowerOn && !_pc.Assembly.HasComponent(first.Component)
+                ? Text(InstallMarkedKey)
+                : _localization.Format(first.DetailKey, first.RequiredWatts, first.AvailableWatts);
+        }
+
+        public string PowerBudget()
+        {
+            PcCapabilities pc = _pc.Capabilities;
+            return _localization.Format(PowerBudgetKey, pc.TotalPowerDrawWatts, pc.PowerSupplyCapacityWatts);
+        }
 
         // The verdict (what the PC can do), the most important finding in one line, then one row per part: a filled mark
         // when it is in and fine, a hollow one when it is missing, a triangle when it is in but falls short; red where it
@@ -142,14 +170,20 @@ namespace GoLive.PcBuilding
         public Card SlotCard(PcComponentSlot slot, PcSlotCheck check, string installKey, string removeKey)
         {
             bool filled = _pc.TryGetInstalledItem(slot, out WorldItem installed);
-            string detail = $"{(filled ? ItemName(installed.Definition) : Text(EmptySlotKey))}<color=#{Quiet}>  ·  {slot.TechnicalLabel}</color>";
+            string detail = filled ? $"{ItemName(installed.Definition)}\n<color=#{Quiet}>{slot.TechnicalLabel}</color>"
+                : $"<color=#{Quiet}>{slot.TechnicalLabel}</color>";
+
+            if (!filled && check == PcSlotCheck.Allowed)
+                detail += $"\n<color=#{Good}>{Text(CompatibleKey)}</color>";
+            else if (!filled && check is PcSlotCheck.WrongComponentType or PcSlotCheck.WrongConnector)
+                detail += $"\n<color=#{Bad}>{Text(IncompatibleKey)}</color>\n{_localization.Format(RequiredKey, Text(slot.ComponentType.NameKey()))}";
 
             if (check != PcSlotCheck.Allowed)
                 return new Card(Text(slot.ComponentType.NameKey()), detail, Reason(check, slot.SlotId), check == PcSlotCheck.NothingInHands ? PcWorkbenchHudView.Tone.Hint : PcWorkbenchHudView.Tone.Rejected);
 
             string action = filled
                 ? $"[{removeKey}] {Text(slot.ComponentType.RemovePromptKey())}"
-                : $"[{Text(ClickKey)} / {installKey}] {Text(slot.ComponentType.InstallPromptKey())}";
+                : $"[{installKey}] {Text(slot.ComponentType.InstallPromptKey())}";
 
             return new Card(Text(slot.ComponentType.NameKey()), detail, action, PcWorkbenchHudView.Tone.Action);
         }
@@ -169,7 +203,7 @@ namespace GoLive.PcBuilding
 
         public string Controls(string installKey, string removeKey, string exitKey)
         {
-            return _localization.Format(ControlsKey, installKey, removeKey, exitKey);
+            return _localization.Format("pc.polish.controls", installKey, removeKey, exitKey);
         }
 
         // What an Inventory item means for this PC right now, for the parts panel.

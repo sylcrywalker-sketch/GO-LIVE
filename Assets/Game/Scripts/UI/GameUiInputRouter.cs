@@ -1,4 +1,5 @@
 using GoLive.Inventory;
+using GoLive.Desktop;
 using GoLive.PcBuilding;
 using GoLive.Phone;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace GoLive.UI
         [SerializeField] private GamePauseController pause;
         [SerializeField] private PhoneBehaviour phone;
         [SerializeField] private PcWorkbenchBehaviour workbench;
+        [SerializeField] private PcSessionBehaviour pcSession;
 
         [Header("Input")]
         [SerializeField] private InputActionReference inventoryAction;
@@ -60,6 +62,9 @@ namespace GoLive.UI
         // The PC Workbench shows the Inventory panel as part of itself, so Back leaves the whole Workbench first.
         private void HandleBack()
         {
+            if (pcSession != null && pcSession.HandleBack())
+                return;
+
             if (workbench.IsOpen)
             {
                 workbench.Close();
@@ -89,7 +94,7 @@ namespace GoLive.UI
 
         private void HandlePhone()
         {
-            if (pause.IsPaused || inventory.IsOpen || workbench.IsOpen)
+            if (pause.IsPaused || inventory.IsOpen || workbench.IsOpen || (pcSession != null && pcSession.IsSeated))
                 return;
 
             if (phone.IsOpen)
@@ -100,7 +105,7 @@ namespace GoLive.UI
 
         private void HandleInventory()
         {
-            if (pause.IsPaused || phone.IsOpen || workbench.IsOpen)
+            if (pause.IsPaused || phone.IsOpen || workbench.IsOpen || (pcSession != null && pcSession.IsSeated))
                 return;
 
             if (inventory.IsOpen)

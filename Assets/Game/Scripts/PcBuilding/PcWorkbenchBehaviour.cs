@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GoLive.Interaction;
+using GoLive.Desktop;
 using GoLive.Inventory;
 using GoLive.Items;
 using GoLive.Localization;
@@ -38,6 +39,7 @@ namespace GoLive.PcBuilding
 
         [Header("PC")]
         [SerializeField] private Material ghostMaterial;
+        [SerializeField] private PcSessionBehaviour session;
 
         [Header("Player")]
         [SerializeField] private PlayerController playerController;
@@ -196,6 +198,9 @@ namespace GoLive.PcBuilding
         {
             if (IsOpen || !isActiveAndEnabled || !_pc.IsReady || !parts.Bind(playerInventory, playerCarry, localization, AnnotatePart, RankPart))
                 return false;
+
+            if (session != null)
+                session.PrepareForBuild();
 
             _sequence.Begin();
             _presentation.PlanApproach(playerCamera.transform);
@@ -390,6 +395,8 @@ namespace GoLive.PcBuilding
             bool preview = interactive && TargetSlot != null && _pc.CheckInstall(TargetSlot, playerCarry) == PcSlotCheck.Allowed;
             ShowGhost(preview ? held : null);
             hud.RenderStatus(_text.StatusTitle, _text.Status());
+            hud.RenderHardwareStatus(_pc.Capabilities, _text);
+            hud.RenderPowerBudget(_text.PowerBudget());
             RenderCard(held);
         }
 

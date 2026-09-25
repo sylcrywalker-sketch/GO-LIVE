@@ -282,18 +282,19 @@ namespace GoLive.Tests
         [UnityTest]
         public IEnumerator CartAndOrderRowsAreReadableInRussian()
         {
+            yield return new EnterPlayMode(false);
             yield return RowsAreReadable(GameLanguage.Russian);
         }
 
         [UnityTest]
         public IEnumerator CartAndOrderRowsAreReadableInEnglish()
         {
+            yield return new EnterPlayMode(false);
             yield return RowsAreReadable(GameLanguage.English);
         }
 
         private IEnumerator RowsAreReadable(GameLanguage language)
         {
-            yield return new EnterPlayMode(false);
             yield return Boot();
             _localization.SetLanguage(language);
             yield return OpenShop();
