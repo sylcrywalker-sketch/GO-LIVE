@@ -20,14 +20,10 @@ namespace GoLive.Economy
         // BalanceChanged subscriber reaches the caller after the charge (ShopCheckout's commit relies on this).
         public bool TrySpend(long amountCents)
         {
-            ValidatePositiveAmount(amountCents, nameof(amountCents));
-
-            if (BalanceCents < amountCents)
+            if (!TrySpendSilently(amountCents))
                 return false;
 
-            BalanceCents -= amountCents;
-            BalanceChanged?.Invoke(BalanceCents);
-
+            PublishChanged();
             return true;
         }
 
@@ -36,7 +32,7 @@ namespace GoLive.Economy
             ValidatePositiveAmount(amountCents, nameof(amountCents));
 
             BalanceCents = checked(BalanceCents + amountCents);
-            BalanceChanged?.Invoke(BalanceCents);
+            PublishChanged();
         }
 
         public void Restore(long balanceCents)
@@ -48,10 +44,28 @@ namespace GoLive.Economy
                 return;
 
             BalanceCents = balanceCents;
+            PublishChanged();
+        }
+
+        internal bool TrySpendSilently(long amountCents)
+        {
+            ValidatePositiveAmount(amountCents, nameof(amountCents));
+
+            if (BalanceCents < amountCents)
+                return false;
+
+            BalanceCents -= amountCents;
+            return true;
+        }
+
+        internal void PublishChanged()
+        {
             BalanceChanged?.Invoke(BalanceCents);
         }
 
-        private static void ValidatePositiveAmount(long amountCents, string parameterName)
+        private static void ValidatePositiveAmount(
+            long amountCents,
+            string parameterName)
         {
             if (amountCents <= 0)
                 throw new ArgumentOutOfRangeException(parameterName);
