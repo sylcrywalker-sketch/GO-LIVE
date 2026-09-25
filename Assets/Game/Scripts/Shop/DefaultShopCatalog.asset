@@ -162,10 +162,10 @@ MonoBehaviour:
     category: 1
     showInFeatured: 0
     priceCents: 700
-    availability: 1
+    availability: 0
     maxPurchases: 1
     image: {fileID: 0}
-    fulfillmentItem: {fileID: 0}
+    fulfillmentItem: {fileID: 11400000, guid: 6fa1a5f1497feb44594ca113021703d4, type: 2}
     deliveryDelayMinutes: 150
   - productId: extension-cord
     nameLocalizationKey: shop.product.extension_cord.name

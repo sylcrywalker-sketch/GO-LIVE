@@ -30,6 +30,16 @@ namespace GoLive.Tests
         }
 
         [Test]
+        public void AChannelAndWorkingPcWithoutConnectedMicrophoneCannotStart()
+        {
+            var channel = DesktopAccountTests.RegisteredChannel();
+            var session = new StreamSession(channel, new DonationAccount());
+            Assert.That(session.Connect(channel.ChannelCode), Is.Null);
+            Assert.That(session.Start(_desktop, true, 5), Is.EqualTo("desktop.stream.microphone_missing"));
+            Assert.That(session.State, Is.EqualTo(StreamState.Offline));
+        }
+
+        [Test]
         public void StreamRequiresRegisteredChannelAndMatchingCode()
         {
             var channel = new TrichChannel();
@@ -133,8 +143,8 @@ namespace GoLive.Tests
             var session = Connected(out _, out _);
             Assert.That(session.CheckStart(_desktop, false, 5), Is.EqualTo("desktop.stream.pc_off"));
             Assert.That(session.CheckStart(default, true, 5), Is.EqualTo("desktop.stream.desktop_required"));
-            Assert.That(session.CheckStart(_desktop, true, float.NaN), Is.EqualTo("desktop.stream.upload_low"));
-            Assert.That(session.CheckStart(_desktop, true, float.PositiveInfinity), Is.EqualTo("desktop.stream.upload_low"));
+            Assert.That(session.CheckStart(_desktop, true, float.NaN), Is.EqualTo("desktop.stream.internet_missing"));
+            Assert.That(session.CheckStart(_desktop, true, float.PositiveInfinity), Is.EqualTo("desktop.stream.internet_missing"));
         }
 
         [Test]
@@ -319,7 +329,9 @@ namespace GoLive.Tests
         {
             channel = DesktopAccountTests.RegisteredChannel();
             donations = new DonationAccount();
-            var session = new StreamSession(channel, donations);
+            var peripherals = new PcPeripherals();
+            Assert.That(peripherals.TryConnect(PcPeripheralKind.Microphone, "connected-test-mic"), Is.True);
+            var session = new StreamSession(channel, donations, peripherals);
             Assert.That(session.Connect(channel.ChannelCode), Is.Null);
             return session;
         }

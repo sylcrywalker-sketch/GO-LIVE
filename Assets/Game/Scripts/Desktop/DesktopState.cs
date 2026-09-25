@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using GoLive.PcBuilding;
 
 namespace GoLive.Desktop
 {
@@ -24,14 +25,16 @@ namespace GoLive.Desktop
         public TrichChannel Trich { get; } = new();
         public DonationAccount Donation { get; } = new();
         public StreamSession Stream { get; }
+        public PcPeripherals Peripherals { get; }
         public int RestoreGeneration { get; private set; }
         private readonly IReadOnlyList<DesktopAppDefinition> _apps;
         private bool _restoring;
-        public DesktopState(IReadOnlyList<DesktopAppDefinition> apps)
+        public DesktopState(IReadOnlyList<DesktopAppDefinition> apps, PcPeripherals peripherals = null)
         {
             _apps = new List<DesktopAppDefinition>(apps).AsReadOnly();
             Storage = new DesktopStorage(apps);
-            Stream = new StreamSession(Trich, Donation);
+            Peripherals = peripherals ?? new PcPeripherals();
+            Stream = new StreamSession(Trich, Donation, Peripherals);
             Stream.Completed += CompleteStream;
         }
         public string EnsureSystemApps()

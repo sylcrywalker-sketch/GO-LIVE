@@ -33,6 +33,9 @@ namespace GoLive.Items
         [Tooltip("Only for PC hardware: what kind of component this is and what it plugs into. Empty for everything else.")]
         [SerializeField] private PcComponentSpec pcComponent;
 
+        [Tooltip("External PC device type. Connection state belongs to the physical PC, not this definition.")]
+        [SerializeField] private PcPeripheralKind peripheralKind;
+
         public string ItemId => itemId;
         public string NameLocalizationKey => nameLocalizationKey;
         public ItemCategory Category => category;
@@ -43,6 +46,7 @@ namespace GoLive.Items
         public Vector3 CarryLocalPosition => carryLocalPosition;
         public Vector3 CarryLocalEulerAngles => carryLocalEulerAngles;
         public PcComponentSpec PcComponent => pcComponent;
+        public PcPeripheralKind PeripheralKind => peripheralKind;
 
         public bool TryGetRuntimePrefab(out WorldItem prefab)
         {

@@ -25,6 +25,7 @@ namespace GoLive.Persistence
         public ShopOrdersSnapshot Orders;
         public DeliverySnapshot Delivery;
         public PcAssemblySnapshot PcAssembly;
+        public PcPeripheralsSnapshot Peripherals = new();
         public DesktopSnapshot Desktop;
         public ItemSaveData[] Items = Array.Empty<ItemSaveData>();
     }

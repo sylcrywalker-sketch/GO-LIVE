@@ -499,6 +499,8 @@ namespace GoLive.Persistence
                 PcAssembly =
                     _pc.CaptureSnapshot(),
 
+                Peripherals = _desktop.PeripheralRig.State.Capture(),
+
                 Desktop =
                     _desktop.State.Capture()
             };
@@ -583,10 +585,7 @@ namespace GoLive.Persistence
                                 instance),
 
                         ItemLocation.Installed =>
-                            _pc.TryGetInstallAnchor(
-                                data.PcAssembly,
-                                savedItem.InstanceId,
-                                out Transform installAnchor) &&
+                            TryGetInstalledAnchor(data, savedItem.InstanceId, out Transform installAnchor) &&
                             worldItem.RestoreAsInstalled(
                                 instance,
                                 installAnchor),
@@ -696,6 +695,7 @@ namespace GoLive.Persistence
             _pc.Restore(
                 data.PcAssembly,
                 sceneItems);
+            _desktop.PeripheralRig.Restore(data.Peripherals, sceneItems);
 
             _rent.Restore(
                 new RentSnapshot(
@@ -729,7 +729,7 @@ namespace GoLive.Persistence
                 data.Messages == null ||
                 data.Orders == null ||
                 data.Delivery == null ||
-                data.PcAssembly == null ||
+                data.PcAssembly == null || data.Peripherals == null ||
                 (data.Version == CurrentVersion && data.Desktop == null))
             {
                 return false;
@@ -806,6 +806,7 @@ namespace GoLive.Persistence
             // these in exactly one compatible slot.
             Dictionary<string, PcComponentSpec> installedItems =
                 new(StringComparer.Ordinal);
+            Dictionary<string, PcPeripheralKind> installedPeripherals = new(StringComparer.Ordinal);
 
             for (int i = 0; i < data.Items.Length; i++)
             {
@@ -863,9 +864,12 @@ namespace GoLive.Persistence
                 if (item.Location ==
                     ItemLocation.Installed)
                 {
-                    installedItems.Add(
-                        item.InstanceId,
-                        definition.PcComponent);
+                    if (definition.PeripheralKind != PcPeripheralKind.None)
+                    {
+                        if (definition.PcComponent != null) return false;
+                        installedPeripherals.Add(item.InstanceId, definition.PeripheralKind);
+                    }
+                    else installedItems.Add(item.InstanceId, definition.PcComponent);
                 }
             }
 
@@ -889,6 +893,8 @@ namespace GoLive.Persistence
             }
 
             if (!_pc.ValidateSnapshot(data.PcAssembly, installedItems))
+                return false;
+            if (_desktop.PeripheralRig.State.Validate(data.Peripherals, installedPeripherals) != null)
                 return false;
 
             IReadOnlyList<DesktopDrive> knownDrives = BuildKnownDrives(data, sceneItems, runtimeItems);
@@ -920,6 +926,10 @@ namespace GoLive.Persistence
 
             return _desktop.State.Validate(data.Desktop, knownDrives) == null;
         }
+
+        private bool TryGetInstalledAnchor(GameSaveData data, string instanceId, out Transform anchor) =>
+            _pc.TryGetInstallAnchor(data.PcAssembly, instanceId, out anchor) ||
+            _desktop.PeripheralRig.TryGetRestoreAnchor(data.Peripherals, instanceId, out anchor);
 
         private static IReadOnlyList<DesktopDrive> BuildKnownDrives(
             GameSaveData data,

@@ -47,6 +47,7 @@ namespace GoLive.Desktop
         public event Action<StreamSummary> Completed;
         private readonly TrichChannel _channel;
         private readonly DonationAccount _donation;
+        private readonly PcPeripherals _peripherals;
         private readonly List<StreamChatMessage> _chat = new();
         private string _connectedCode = "";
         private string _streamId = "";
@@ -61,10 +62,11 @@ namespace GoLive.Desktop
 
         // All commands and synchronous observers run on the owning game thread. Only this instance owns
         // the current broadcast. The root commits Completed to Trich and Outline; it must do so before Start.
-        public StreamSession(TrichChannel channel, DonationAccount donation)
+        public StreamSession(TrichChannel channel, DonationAccount donation, PcPeripherals peripherals = null)
         {
             _channel = channel ?? throw new ArgumentNullException(nameof(channel));
             _donation = donation ?? throw new ArgumentNullException(nameof(donation));
+            _peripherals = peripherals ?? new PcPeripherals();
             Chat = _chat.AsReadOnly();
         }
 
@@ -100,12 +102,20 @@ namespace GoLive.Desktop
         }
 
         public string CheckStart(PcCapabilities capabilities, bool powered, float uploadMbps)
+            => EvaluateReadiness(capabilities, powered, uploadMbps).ErrorKey;
+
+        public StreamReadiness EvaluateReadiness(PcCapabilities capabilities, bool powered, float uploadMbps)
         {
-            if (State != StreamState.Offline) return "desktop.stream.busy";
-            if (!IsConnected) return "desktop.stream.not_connected";
-            if (_channel.CompletedStreams == long.MaxValue) return "desktop.stream.total_limit";
-            return EnvironmentError(capabilities, powered, uploadMbps);
+            string error = State != StreamState.Offline ? "desktop.stream.busy" :
+                !IsConnected ? "desktop.stream.not_connected" :
+                _channel.CompletedStreams == long.MaxValue ? "desktop.stream.total_limit" :
+                EnvironmentError(capabilities, powered, uploadMbps);
+            return new StreamReadiness(IsConnected, DesktopAccountValidation.FiniteNonnegative(uploadMbps) && uploadMbps >= MinimumUpload,
+                _peripherals.HasMicrophone, _peripherals.HasWebcam,
+                capabilities.CanUseDesktop && (Quality != StreamQuality.High || capabilities.GamingGraphicsAvailable), error);
         }
+
+        private float MinimumUpload => Quality == StreamQuality.Low ? 1 : Quality == StreamQuality.Medium ? 3 : 6;
 
         public string Start(PcCapabilities capabilities, bool powered, float uploadMbps)
         {
@@ -171,6 +181,7 @@ namespace GoLive.Desktop
         public void RefreshEnvironment(PcCapabilities capabilities, bool powered, float uploadMbps)
         {
             if (State != StreamState.Offline && (!IsConnected || EnvironmentError(capabilities, powered, uploadMbps) != null)) Abort();
+            else Changed?.Invoke();
         }
 
         public void Tick(float deltaSeconds)
@@ -246,9 +257,10 @@ namespace GoLive.Desktop
         {
             if (!powered) return "desktop.stream.pc_off";
             if (!capabilities.CanUseDesktop) return "desktop.stream.desktop_required";
+            if (!DesktopAccountValidation.FiniteNonnegative(uploadMbps) || uploadMbps == 0) return "desktop.stream.internet_missing";
+            if (!_peripherals.HasMicrophone) return "desktop.stream.microphone_missing";
             if (Quality == StreamQuality.High && !capabilities.GamingGraphicsAvailable) return "desktop.stream.gpu_required";
-            float minimumUpload = Quality == StreamQuality.Low ? 1 : Quality == StreamQuality.Medium ? 3 : 6;
-            return !DesktopAccountValidation.FiniteNonnegative(uploadMbps) || uploadMbps < minimumUpload ? "desktop.stream.upload_low" : null;
+            return uploadMbps < MinimumUpload ? "desktop.stream.upload_low" : null;
         }
 
         private void Finish(bool aborted)

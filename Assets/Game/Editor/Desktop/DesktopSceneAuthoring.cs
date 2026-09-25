@@ -60,6 +60,7 @@ namespace GoLive.Editor.Desktop
             DesktopBroadcastAuthoring.Overlay(ui,runtime,root.transform);
             BuildMonitor(ui,root.transform,screen,session,runtime,catalog);
             BuildPreviewCamera(root.transform,screen,camera);
+            PeripheralSceneAuthoring.Apply(runtime,player,carry);
             PcWorkbenchUxAuthoring.Apply();
             EditorSceneManager.MarkSceneDirty(root.scene);
             EditorSceneManager.SaveScene(root.scene,ScenePath);

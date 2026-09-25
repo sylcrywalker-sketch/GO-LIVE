@@ -27,29 +27,29 @@ namespace GoLive.Editor.Desktop
             ui.Panel("Settings", body, 18, 70, 382, 578, new Color(.092f, .104f, .137f));
             ui.Panel("Preview and output", body, 416, 70, 746, 578, new Color(.083f, .098f, .127f));
             ui.Label("desktop.stream.code", body, 34, 91, 350, 29, 18, ui.Ink, true);
-            var code = ui.Input("Channel code", body, 34, 132, 246, 42, "desktop.stream.code_hint", 32);
+            var code = ui.Input("Channel code", body, 34, 128, 246, 40, "desktop.stream.code_hint", 32);
             code.textComponent.fontSize = 17;
             Set(view, "channelCode", code);
-            var paste = ui.Button("desktop.paste", body, 290, 132, 94, 42);
+            var paste = ui.Button("desktop.paste", body, 290, 128, 94, 40);
             paste.GetComponentInChildren<TMP_Text>().fontSize = 15;
             Set(view, "paste", paste);
-            ui.Label("desktop.stream.channel", body, 34, 199, 232, 27, 17, ui.Muted);
-            ui.Text("Channel service", body, 314, 199, 70, 27, "Trich", 17, new Color(.71f, .60f, .85f)).alignment = TextAlignmentOptions.Right;
-            Set(view, "channelIdentity", ui.Text("Channel identity from Trich", body, 34, 234, 350, 39, "", 25, ui.Ink, true));
-            ui.Label("desktop.stream.identity_source", body, 34, 277, 350, 25, 15, ui.Muted);
-            Set(view, "connectionIndicator", ui.Panel("Connection indicator", body, 34, 324, 7, 7, ui.Muted));
-            Set(view, "status", ui.Text("Connection status", body, 49, 314, 210, 36, "", 16, ui.Muted));
-            var connect = ui.Button("desktop.stream.connect", body, 264, 311, 120, 38);
+            ui.Label("desktop.stream.channel", body, 34, 183, 232, 27, 17, ui.Muted);
+            ui.Text("Channel service", body, 314, 183, 70, 27, "Trich", 17, new Color(.71f, .60f, .85f)).alignment = TextAlignmentOptions.Right;
+            Set(view, "channelIdentity", ui.Text("Channel identity from Trich", body, 34, 211, 350, 35, "", 25, ui.Ink, true));
+            ui.Label("desktop.stream.identity_source", body, 34, 249, 350, 25, 15, ui.Muted);
+            Set(view, "connectionIndicator", ui.Panel("Connection indicator", body, 34, 293, 7, 7, ui.Muted));
+            Set(view, "status", ui.Text("Connection status", body, 49, 283, 210, 33, "", 16, ui.Muted));
+            var connect = ui.Button("desktop.stream.connect", body, 264, 280, 120, 36);
             connect.GetComponentInChildren<TMP_Text>().fontSize = 16;
             Set(view, "connect", connect);
             Set(view, "connectText", DynamicCaption(connect));
-            ui.Panel("Settings divider", body, 34, 369, 350, 1, ui.Line);
-            ui.Label("desktop.stream.quality", body, 34, 389, 350, 29, 18, ui.Ink, true);
+            ui.Panel("Settings divider", body, 34, 332, 350, 1, ui.Line);
+            ui.Label("desktop.stream.quality", body, 34, 346, 350, 29, 18, ui.Ink, true);
             var qualities = new Object[3];
             string[] keys = { "low", "medium", "high" };
             for (int i = 0; i < qualities.Length; i++)
             {
-                var quality = ui.Button("desktop.stream.quality." + keys[i], body, 34 + i * 120, 433, 110, 39);
+                var quality = ui.Button("desktop.stream.quality." + keys[i], body, 34 + i * 120, 386, 110, 38);
                 quality.GetComponentInChildren<TMP_Text>().fontSize = 16;
                 var colors = quality.colors;
                 colors.disabledColor = new Color(.93f, .93f, 1f);
@@ -57,12 +57,27 @@ namespace GoLive.Editor.Desktop
                 qualities[i] = quality;
             }
             References(view, "quality", qualities);
-            ui.Label("desktop.stream.quality_requirement", body, 34, 489, 350, 59, 16, ui.Muted);
-            ui.Panel("Environment divider", body, 34, 552, 350, 1, ui.Line);
-            ui.Glyph("Internet", body, 34, 570, 21, GlyphKind.Network, ui.Muted);
-            Set(view, "upload", ui.Text("Upload speed", body, 67, 565, 317, 31, "", 17, ui.Ink));
-            ui.Glyph("Graphics", body, 34, 610, 21, GlyphKind.Monitor, ui.Muted);
-            Set(view, "hardware", ui.Text("Graphics availability", body, 67, 606, 317, 31, "", 16, ui.Muted));
+            ui.Panel("Environment divider", body, 34, 442, 350, 1, ui.Line);
+            var readinessTexts = new Object[5];
+            var readinessMarks = new Object[5];
+            var readinessWarnings = new Object[5];
+            string[] rowNames = { "Channel", "Internet", "Microphone", "Webcam", "Quality" };
+            for (int i = 0; i < rowNames.Length; i++)
+            {
+                float y = 455 + i * 35;
+                var text = ui.Text(rowNames[i] + " readiness", body, 67, y, 317, 30, "", 17, ui.Muted);
+                text.textWrappingMode = TextWrappingModes.NoWrap;
+                readinessTexts[i] = text;
+                readinessMarks[i] = ui.Glyph(rowNames[i] + " ready", body, 34, y + 6, 21, GlyphKind.Check, ui.Muted);
+                var warning = ui.Glyph(rowNames[i] + " unavailable", body, 34, y + 6, 21, GlyphKind.Warning, ui.Muted);
+                warning.enabled = false;
+                readinessWarnings[i] = warning;
+            }
+            References(view, "readinessTexts", readinessTexts);
+            References(view, "readinessMarks", readinessMarks);
+            References(view, "readinessWarnings", readinessWarnings);
+            Set(view, "upload", readinessTexts[1]);
+            Set(view, "hardware", readinessTexts[4]);
 
             ui.Label("desktop.stream.preview", body, 434, 91, 708, 29, 18, ui.Ink, true);
             ui.Panel("Preview frame", body, 432, 128, 712, 403, ui.Line);

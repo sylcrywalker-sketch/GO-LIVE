@@ -218,7 +218,7 @@ namespace GoLive.PcBuilding
 
             foreach (KeyValuePair<string, WorldItem> pair in items)
             {
-                if (!pair.Value.IsInstalled)
+                if (!pair.Value.IsInstalled || pair.Value.Definition.PeripheralKind != PcPeripheralKind.None)
                     continue;
 
                 installed.Add(pair.Key, pair.Value);

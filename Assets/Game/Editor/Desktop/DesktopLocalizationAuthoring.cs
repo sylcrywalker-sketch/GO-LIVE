@@ -15,7 +15,7 @@ namespace GoLive.Editor.Desktop
             var known=new Dictionary<string,int>();
             for(int i=0;i<entries.arraySize;i++) known.Add(entries.GetArrayElementAtIndex(i).FindPropertyRelative("_key").stringValue,i);
             foreach(var line in Lines.Concat(ShellPolishLocalization.Lines).Concat(CommunityPolishLocalization.Lines)
-                .Concat(BroadcastPolishLocalization.Lines).Concat(PcPolishLocalization.Lines))
+                .Concat(BroadcastPolishLocalization.Lines).Concat(PcPolishLocalization.Lines).Concat(PeripheralReadinessLocalization.Lines))
             {
                 string[] fields=line.Split('|');
                 if(fields.Length!=3) throw new System.InvalidOperationException("Invalid desktop localization line: "+line);

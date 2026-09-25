@@ -31,7 +31,7 @@ namespace GoLive.Tests
     // One sequential real-scene journey owns every capture. Apps are operated through the authored controls;
     // domain Tick only accelerates deterministic live time. Save round-trip uses the actual save validator/apply.
     [Category("DesktopVisualFlow")]
-    public sealed class DesktopFlowPlayModeTests
+    public sealed partial class DesktopFlowPlayModeTests
     {
         private SceneSetup[] _previousScenes;
         private VirtualInput _input;

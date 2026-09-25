@@ -95,6 +95,7 @@ namespace GoLive.Tests
         public void LoadClearsTransientSessionWithoutCommittingTheInterruptedStream()
         {
             PrepareDesktop();
+            _world.ConnectMicrophone();
             Assert.That(_world.TrySave(), Is.True);
             var state = _world.Desktop.State;
             Assert.That(state.Stream.Connect(state.Trich.ChannelCode), Is.Null);

@@ -145,6 +145,7 @@ namespace GoLive.Tests.Desktop
                 new DesktopAppDefinition(DesktopAppId.Donation, "donation", "donation.desc", null, 50, false)
             };
             var state = new DesktopState(apps);
+            Assert.That(state.Peripherals.TryConnect(PcPeripheralKind.Microphone, "connected-test-mic"), Is.True);
             Assert.That(state.Outline.CreateAddress("player"), Is.Null);
             Assert.That(state.Trich.Register(state.Outline, state.Outline.Address), Is.Null);
             return state;
