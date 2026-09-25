@@ -57,7 +57,10 @@
     <Compile Include="Assets\Game\Tests\Editor\PcWorkbenchPlayModeTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\InputBindingsTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\VirtualInput.cs" />
+<<<<<<< Updated upstream
     <Compile Include="Assets\Game\Editor\PhoneShopProductCardBuilder.cs" />
+=======
+>>>>>>> Stashed changes
     <Compile Include="Assets\Game\Tests\Editor\SaveTestWorld.cs" />
     <Compile Include="Assets\Game\Editor\Items\WorldItemIdentityAuthoring.cs" />
     <Compile Include="Assets\Game\Editor\Tools\ScriptCombiner.cs" />
@@ -79,7 +82,10 @@
     <Compile Include="Assets\Game\Tests\Editor\InventoryPlayModeTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\ApartmentLightingPlayModeTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\PracticalLightTests.cs" />
+<<<<<<< Updated upstream
     <Compile Include="Assets\Game\Editor\PhoneShopVisualBuilder.cs" />
+=======
+>>>>>>> Stashed changes
     <Compile Include="Assets\Game\Tests\Editor\RentHudPresentationTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\InventoryTests.cs" />
     <Compile Include="Assets\Game\Tests\Editor\ShopSaveIntegrationTests.cs" />

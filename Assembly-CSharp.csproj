@@ -81,7 +81,10 @@
     <Compile Include="Assets\Game\Scripts\PcBuilding\PcWorkbenchBehaviour.cs" />
     <Compile Include="Assets\Game\Scripts\PcBuilding\PcComponentSlot.cs" />
     <Compile Include="Assets\Game\Scripts\Economy\RentHudPresentation.cs" />
+<<<<<<< Updated upstream
     <Compile Include="Assets\Game\Scripts\Shop\ShopCart.cs" />
+=======
+>>>>>>> Stashed changes
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Game\Scripts\Needs\PlayerNeedsConfig.cs" />
     <Compile Include="Assets\Game\Scripts\WASD\PlayerControlState.cs" />
@@ -144,6 +147,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
     <Compile Include="Assets\Game\Scripts\Time\WindowSunBounce.cs" />
     <Compile Include="Assets\Game\Scripts\Shop\ShopBehaviour.cs" />
+    <Compile Include="Assets\Game\Scripts\Time\WindowSunBounce.cs" />
     <Compile Include="Assets\Game\Scripts\Economy\EconomyConfig.cs" />
     <Compile Include="Assets\Game\Scripts\Inventory\Inventory.cs" />
     <Compile Include="Assets\Game\Scripts\HUD\HudBackdropGraphic.cs" />
