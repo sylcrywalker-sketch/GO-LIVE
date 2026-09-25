@@ -1,5 +1,6 @@
 using System;
 using GoLive.Delivery;
+using GoLive.Desktop;
 using GoLive.Economy;
 using GoLive.Items;
 using GoLive.PcBuilding;
@@ -24,6 +25,7 @@ namespace GoLive.Persistence
         public ShopOrdersSnapshot Orders;
         public DeliverySnapshot Delivery;
         public PcAssemblySnapshot PcAssembly;
+        public DesktopSnapshot Desktop;
         public ItemSaveData[] Items = Array.Empty<ItemSaveData>();
     }
 

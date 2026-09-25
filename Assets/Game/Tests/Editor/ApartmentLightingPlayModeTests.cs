@@ -15,7 +15,7 @@ using Object = UnityEngine.Object;
 namespace GoLive.Tests
 {
     // The apartment's light across the day in the real GL scene: which lamps are on when, the night look, the sunlight
-    // bouncing off the floor, the monitor that follows the PC's hardware and the Workbench light. Nothing here saves.
+    // bouncing off the floor, the monitor's explicit power and hardware states and the Workbench light. Nothing here saves.
     public sealed class ApartmentLightingPlayModeTests
     {
         private const string GameScene = "Assets/Game/Scenes/GL.unity";
@@ -75,7 +75,7 @@ namespace GoLive.Tests
             Assert.That(bounce.transform.position.x, Is.InRange(7.7f, 12.55f - 0.6f), "the bounce hangs inside the room, off the window wall");
             Assert.That(bounce.transform.position.z, Is.InRange(-21f, -12.8f));
 
-            Assert.That(_screen.IsOn, Is.True, "the starter PC reaches a desktop, so its monitor is on");
+            Assert.That(_screen.IsOn, Is.False, "a new game's PC and monitor wait for their explicit power switches");
         }
 
         [UnityTest]
@@ -111,7 +111,12 @@ namespace GoLive.Tests
             Assert.That(_nightGrade.weight, Is.EqualTo(1f), "the night grade is in");
             Assert.That(_deskLamp.GetComponentsInChildren<Light>(true).All(light => light.enabled), Is.True, "the desk lamp's lights are on");
             Assert.That(_roomLight.GetComponentsInChildren<Light>(true).Any(light => light.enabled), Is.False, "the ceiling light is off");
-            Assert.That(_screen.IsOn, Is.True);
+            Assert.That(_screen.IsOn, Is.False, "a new game's monitor and PC begin off");
+            GoLive.Desktop.PcSessionBehaviour session = Object.FindAnyObjectByType<GoLive.Desktop.PcSessionBehaviour>();
+            session.ToggleMonitor();
+            Assert.That(session.TryTogglePower(), Is.True);
+            session.Session.Tick(1.5f);
+            Assert.That(_screen.IsOn, Is.True, "the powered screen contributes its glow at night");
 
             yield return AdvanceTo(2, 30);
             AssertLevels(desk: 1f, room: 0f, hallway: 0.5f, "at 02:30");
@@ -152,15 +157,27 @@ namespace GoLive.Tests
             Renderer monitor = Field<Renderer>(_screen, "screen");
             Light glow = Field<Light[]>(_screen, "glow").Single();
             PcComponentSlot memory = pc.Slots.First(slot => pc.TryGetInstalledItem(slot, out WorldItem item) && item.Definition.PcComponent.ComponentType == PcComponentType.Ram);
+            GoLive.Desktop.PcSessionBehaviour session = Object.FindAnyObjectByType<GoLive.Desktop.PcSessionBehaviour>();
 
-            AssertScreen(monitor, glow, on: true, "with the starter parts");
+            AssertScreen(monitor, glow, on: false, "with starter parts but both switches off");
+            session.ToggleMonitor();
+            AssertScreen(monitor, glow, on: false, "monitor alone does not power the PC");
+            Assert.That(session.TryTogglePower(), Is.True);
+            session.Session.Tick(1.5f);
+            AssertScreen(monitor, glow, on: true, "after booting with the starter parts");
 
             Assert.That(pc.TryRemoveToCarry(memory, carry), Is.True);
             Assert.That(pc.Capabilities.CanUseDesktop, Is.False);
             AssertScreen(monitor, glow, on: false, "without memory");
 
             Assert.That(pc.TryInstallCarried(memory, carry), Is.True);
-            AssertScreen(monitor, glow, on: true, "with the memory back");
+            AssertScreen(monitor, glow, on: false, "putting the memory back does not auto-start the PC");
+            Assert.That(session.TryTogglePower(), Is.True);
+            session.Session.Tick(1.5f);
+            AssertScreen(monitor, glow, on: true, "after explicitly restarting with the memory back");
+            session.ToggleMonitor();
+            AssertScreen(monitor, glow, on: false, "independent monitor power off");
+            Assert.That(session.Session.Power, Is.EqualTo(GoLive.Desktop.PcPowerState.Running));
             yield return PlayModeWait.Frames(1);
         }
 

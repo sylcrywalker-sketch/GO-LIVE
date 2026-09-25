@@ -26,6 +26,7 @@ namespace GoLive.PcBuilding
         [Header("PC status")]
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text statusText;
+        [SerializeField] private TMP_Text powerBudgetText;
 
         [Header("Slot card")]
         [SerializeField] private TMP_Text cardTitleText;
@@ -90,6 +91,12 @@ namespace GoLive.PcBuilding
         {
             titleText.text = title;
             statusText.text = status;
+        }
+
+        public void RenderPowerBudget(string value)
+        {
+            if (powerBudgetText != null)
+                SetLine(powerBudgetText, value);
         }
 
         public void RenderCard(string title, string detail, string action, Tone tone, string controls)

@@ -68,7 +68,7 @@ namespace GoLive.Tests
             Assert.That(data.Messages.Conversations[0].ContactId, Is.EqualTo("landlord"));
             Assert.That(data.Messages.Conversations[0].Messages[0].MessageId, Is.EqualTo("first"));
             Assert.That(data.Messages.Conversations[0].Messages[0].IsRead, Is.False);
-            Assert.That(data.Version, Is.EqualTo(6));
+            Assert.That(data.Version, Is.EqualTo(7));
             Assert.That(data.Orders, Is.Not.Null);
             Assert.That(data.Orders.Version, Is.EqualTo(ShopOrdersSnapshot.CurrentVersion));
             Assert.That(data.Orders.Orders, Is.Empty);

@@ -16,3 +16,4 @@ MonoBehaviour:
   connector: 6
   powerDrawWatts: 6
   powerCapacityWatts: 0
+  storageCapacityMiB: 327680

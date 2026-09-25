@@ -30,6 +30,10 @@ namespace GoLive.PcBuilding
         private const string NotPartKey = "pc.part.not_part";
         private const string NotPartFeedbackKey = "pc.feedback.not_part";
         private const string AndKey = "pc.list.and";
+        private const string PowerBudgetKey = "pc.status.power_budget";
+        private const string CompatibleKey = "pc.slot.compatible";
+        private const string IncompatibleKey = "pc.slot.incompatible";
+        private const string RequiredKey = "pc.slot.required";
 
         private const string Good = "8FE3A8";
         private const string Warning = "F2C46B";
@@ -98,6 +102,11 @@ namespace GoLive.PcBuilding
         }
 
         public string StatusTitle => Text(StatusTitleKey);
+        public string PowerBudget()
+        {
+            PcCapabilities pc = _pc.Capabilities;
+            return _localization.Format(PowerBudgetKey, pc.TotalPowerDrawWatts, pc.PowerSupplyCapacityWatts);
+        }
 
         // The verdict (what the PC can do), the most important finding in one line, then one row per part: a filled mark
         // when it is in and fine, a hollow one when it is missing, a triangle when it is in but falls short; red where it
@@ -143,6 +152,11 @@ namespace GoLive.PcBuilding
         {
             bool filled = _pc.TryGetInstalledItem(slot, out WorldItem installed);
             string detail = $"{(filled ? ItemName(installed.Definition) : Text(EmptySlotKey))}<color=#{Quiet}>  ·  {slot.TechnicalLabel}</color>";
+
+            if (!filled && check == PcSlotCheck.Allowed)
+                detail += $"\n<color=#{Good}>{Text(CompatibleKey)}</color>";
+            else if (!filled && check is PcSlotCheck.WrongComponentType or PcSlotCheck.WrongConnector)
+                detail += $"\n<color=#{Bad}>{Text(IncompatibleKey)}</color>\n{_localization.Format(RequiredKey, Text(slot.ComponentType.NameKey()))}";
 
             if (check != PcSlotCheck.Allowed)
                 return new Card(Text(slot.ComponentType.NameKey()), detail, Reason(check, slot.SlotId), check == PcSlotCheck.NothingInHands ? PcWorkbenchHudView.Tone.Hint : PcWorkbenchHudView.Tone.Rejected);

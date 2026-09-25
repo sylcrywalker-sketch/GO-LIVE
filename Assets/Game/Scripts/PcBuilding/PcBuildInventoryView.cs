@@ -14,7 +14,7 @@ namespace GoLive.PcBuilding
     [DisallowMultipleComponent]
     public sealed class PcBuildInventoryView : MonoBehaviour
     {
-        private const string TitleKey = "inventory.title";
+        private const string TitleKey = "pc.parts.title";
         private const string HandsKey = "inventory.hands";
         private const string HandsEmptyKey = "inventory.hands_empty";
         private const string HintKey = "pc.parts.hint";

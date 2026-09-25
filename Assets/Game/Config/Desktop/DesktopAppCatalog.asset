@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60fc14696e7bd464a8c6b2acc960f6e2, type: 3}
+  m_Name: DesktopAppCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Desktop.DesktopAppCatalog
+  apps:
+  - id: 0
+    nameKey: desktop.app.mycomputer
+    descriptionKey: desktop.app.mycomputer.description
+    icon: {fileID: 21300000, guid: 1bfa74b09607c4d4db42331ccd9c83bf, type: 3}
+    sizeMiB: 48
+    preinstalled: 1
+  - id: 1
+    nameKey: desktop.app.streamly
+    descriptionKey: desktop.app.streamly.description
+    icon: {fileID: 21300000, guid: 27d8591672d6cc247a9b5b4c086f60df, type: 3}
+    sizeMiB: 240
+    preinstalled: 0
+  - id: 2
+    nameKey: desktop.app.trich
+    descriptionKey: desktop.app.trich.description
+    icon: {fileID: 21300000, guid: 8b7f81b6db5b58a4f927f7366b16f23e, type: 3}
+    sizeMiB: 96
+    preinstalled: 0
+  - id: 3
+    nameKey: desktop.app.outline
+    descriptionKey: desktop.app.outline.description
+    icon: {fileID: 21300000, guid: af30eb6d41046ca45917b3fd714a4e65, type: 3}
+    sizeMiB: 64
+    preinstalled: 0
+  - id: 4
+    nameKey: desktop.app.donation
+    descriptionKey: desktop.app.donation.description
+    icon: {fileID: 21300000, guid: e1093f0c46ac6c0478b1c734b345a2a4, type: 3}
+    sizeMiB: 48
+    preinstalled: 0
+  - id: 5
+    nameKey: desktop.app.hub
+    descriptionKey: desktop.app.hub.description
+    icon: {fileID: 21300000, guid: 4e1c32f1bf31a9149b192dbca243635b, type: 3}
+    sizeMiB: 80
+    preinstalled: 1
+  - id: 6
+    nameKey: desktop.app.web
+    descriptionKey: desktop.app.web.description
+    icon: {fileID: 21300000, guid: 74a98b512ccfefe499d67dbdfd0a1313, type: 3}
+    sizeMiB: 120
+    preinstalled: 1

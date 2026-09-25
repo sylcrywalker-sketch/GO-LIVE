@@ -14,14 +14,23 @@ namespace GoLive.Player
         public string HeldUseKey { get; }
         public string DropKey { get; }
         public string SpecialKey { get; }
+        public string ObjectNameKey { get; }
+        public string PrimaryKey { get; }
 
         public InteractionPromptState(string takeKey, string worldUseKey, string heldUseKey, string dropKey, string specialKey)
+            : this(takeKey, worldUseKey, heldUseKey, dropKey, specialKey, null, null)
+        {
+        }
+
+        public InteractionPromptState(string takeKey, string worldUseKey, string heldUseKey, string dropKey, string specialKey, string objectNameKey, string primaryKey)
         {
             TakeKey = takeKey;
             WorldUseKey = worldUseKey;
             HeldUseKey = heldUseKey;
             DropKey = dropKey;
             SpecialKey = specialKey;
+            ObjectNameKey = objectNameKey;
+            PrimaryKey = primaryKey;
         }
 
         public bool Equals(InteractionPromptState other)
@@ -30,7 +39,9 @@ namespace GoLive.Player
                    WorldUseKey == other.WorldUseKey &&
                    HeldUseKey == other.HeldUseKey &&
                    DropKey == other.DropKey &&
-                   SpecialKey == other.SpecialKey;
+                   SpecialKey == other.SpecialKey &&
+                   ObjectNameKey == other.ObjectNameKey &&
+                   PrimaryKey == other.PrimaryKey;
         }
 
         public override bool Equals(object obj)
@@ -40,7 +51,7 @@ namespace GoLive.Player
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(TakeKey, WorldUseKey, HeldUseKey, DropKey, SpecialKey);
+            return HashCode.Combine(TakeKey, WorldUseKey, HeldUseKey, DropKey, SpecialKey, ObjectNameKey, PrimaryKey);
         }
     }
 
@@ -117,7 +128,8 @@ namespace GoLive.Player
 
             if (takeAction.action.WasPressedThisFrame())
             {
-                TryTakeTarget(hasTarget, in hit);
+                if (!TryTakeTarget(hasTarget, in hit))
+                    TryInteract(InteractionAction.Primary, hasTarget, in hit);
                 return;
             }
 
@@ -171,7 +183,10 @@ namespace GoLive.Player
             string heldUseKey = null;
             string dropKey = null;
             string specialKey = null;
+            string objectNameKey = null;
+            string primaryKey = null;
 
+            InteractionContext primaryContext = new(gameObject, playerCamera.transform, InteractionAction.Primary);
             InteractionContext useContext = new(gameObject, playerCamera.transform, InteractionAction.Use);
             InteractionContext specialContext = new(gameObject, playerCamera.transform, InteractionAction.Special);
 
@@ -190,13 +205,19 @@ namespace GoLive.Player
 
                 FillInteractionCandidates(hit.collider);
 
+                if (takeKey == null)
+                    InteractionResolver.TryGetPromptKey(_interactionCandidates, in primaryContext, out primaryKey);
+
+                if (!InteractionResolver.TryGetObjectNameKey(_interactionCandidates, in primaryContext, out objectNameKey) && worldItem != null && worldItem.Definition != null)
+                    objectNameKey = worldItem.Definition.NameLocalizationKey;
+
                 if (heldUseKey == null)
                     InteractionResolver.TryGetPromptKey(_interactionCandidates, in useContext, out worldUseKey);
 
                 InteractionResolver.TryGetPromptKey(_interactionCandidates, in specialContext, out specialKey);
             }
 
-            SetPrompts(new InteractionPromptState(takeKey, worldUseKey, heldUseKey, dropKey, specialKey));
+            SetPrompts(new InteractionPromptState(takeKey, worldUseKey, heldUseKey, dropKey, specialKey, objectNameKey, primaryKey));
         }
 
         private void FillInteractionCandidates(Collider collider)

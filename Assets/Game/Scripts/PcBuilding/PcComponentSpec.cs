@@ -70,15 +70,19 @@ namespace GoLive.PcBuilding
         [Tooltip("Only a power supply: the load it can carry. 0 for every other part.")]
         [SerializeField, Min(0)] private int powerCapacityWatts;
 
+        [Tooltip("Only a storage drive: physical capacity in MiB. Legacy 0-capacity drives remain valid hardware but cannot receive installations.")]
+        [SerializeField, Min(0)] private int storageCapacityMiB;
+
         public PcComponentType ComponentType => componentType;
         public PcConnector Connector => connector;
         public int PowerDrawWatts => powerDrawWatts;
         public int PowerCapacityWatts => powerCapacityWatts;
+        public int StorageCapacityMiB => storageCapacityMiB;
 
         public bool IsValid => ValidationError == null;
 
         // Why this authored data is impossible, for content tests and logs; null when it is valid.
-        public string ValidationError => Validate(componentType, connector, powerDrawWatts, powerCapacityWatts);
+        public string ValidationError => Validate(componentType, connector, powerDrawWatts, powerCapacityWatts, storageCapacityMiB);
 
         public static string Validate(PcComponentType type, PcConnector connector, int powerDrawWatts, int powerCapacityWatts)
         {
@@ -98,6 +102,18 @@ namespace GoLive.PcBuilding
                 return "is a power supply without a power capacity";
 
             return powerDrawWatts == 0 ? null : "is a power supply that declares its own power draw";
+        }
+
+        public static string Validate(PcComponentType type, PcConnector connector, int powerDrawWatts, int powerCapacityWatts, int storageCapacityMiB)
+        {
+            string hardwareError = Validate(type, connector, powerDrawWatts, powerCapacityWatts);
+            if (hardwareError != null)
+                return hardwareError;
+            if (storageCapacityMiB < 0)
+                return "has negative storage capacity";
+            return type == PcComponentType.Storage || storageCapacityMiB == 0
+                ? null
+                : "is not storage but declares a storage capacity";
         }
     }
 }

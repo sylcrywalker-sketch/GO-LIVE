@@ -14,6 +14,8 @@ namespace GoLive.HUD
         [SerializeField] private TMP_Text interactionText;
         [SerializeField] private TMP_Text carryText;
         [SerializeField] private TMP_Text heldUseText;
+        [SerializeField] private TMP_Text objectNameText;
+        [SerializeField] private CanvasGroup worldPromptGroup;
 
         private readonly StringBuilder _builder = new(96);
 
@@ -67,7 +69,18 @@ namespace GoLive.HUD
         {
             _builder.Clear();
 
-            AppendPrompt(playerInteractor.GetTakeBinding(), prompts.TakeKey);
+            bool hasName = !string.IsNullOrWhiteSpace(prompts.ObjectNameKey);
+            if (objectNameText != null)
+            {
+                objectNameText.text = hasName ? localization.Text(prompts.ObjectNameKey) : string.Empty;
+                objectNameText.gameObject.SetActive(hasName);
+            }
+            else if (hasName)
+            {
+                _builder.Append(localization.Text(prompts.ObjectNameKey));
+            }
+
+            AppendPrompt(playerInteractor.GetTakeBinding(), prompts.TakeKey ?? prompts.PrimaryKey);
             AppendPrompt(playerInteractor.GetUseBinding(), prompts.WorldUseKey);
             AppendPrompt(playerInteractor.GetSpecialBinding(), prompts.SpecialKey);
 
@@ -75,6 +88,8 @@ namespace GoLive.HUD
 
             interactionText.text = value;
             interactionText.gameObject.SetActive(value.Length > 0);
+            if (worldPromptGroup != null)
+                worldPromptGroup.alpha = hasName || value.Length > 0 ? 1f : 0f;
         }
 
         private void AppendPrompt(string binding, string localizationKey)

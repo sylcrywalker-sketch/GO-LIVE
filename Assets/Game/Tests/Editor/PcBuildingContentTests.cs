@@ -7,6 +7,7 @@ using GoLive.Editor.Items;
 using GoLive.Items;
 using GoLive.Localization;
 using GoLive.PcBuilding;
+using GoLive.UI;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -405,6 +406,9 @@ namespace GoLive.Tests
             string pcGuid = AssetDatabase.AssetPathToGUID(StudentPc);
             string workbenchGuid = AssetDatabase.FindAssets($"{nameof(PcWorkbenchBehaviour)} t:MonoScript")
                 .Single(guid => AssetDatabase.LoadAssetAtPath<MonoScript>(AssetDatabase.GUIDToAssetPath(guid)).GetClass() == typeof(PcWorkbenchBehaviour));
+            string routerGuid = AssetDatabase.FindAssets($"{nameof(GameUiInputRouter)} t:MonoScript")
+                .Single(guid => AssetDatabase.LoadAssetAtPath<MonoScript>(AssetDatabase.GUIDToAssetPath(guid)).GetClass() == typeof(GameUiInputRouter));
+            string[] documents = Regex.Split(scene.Replace("\r\n", "\n"), @"\n(?=--- !u!)");
 
             Assert.That(scene, Does.Contain($"m_SourcePrefab: {{fileID: 100100000, guid: {pcGuid}, type: 3}}"));
             Assert.That(scene, Does.Contain($"m_Script: {{fileID: 11500000, guid: {workbenchGuid}, type: 3}}"));
@@ -413,12 +417,17 @@ namespace GoLive.Tests
             Assert.That(scene, Does.Not.Contain("m_Name: PC Workbench Stand"), "the build view is the PC's own anchor, not a scene stand point");
 
             // Installed parts inherit the PC's scale: only a uniform scale keeps them the same shape as in the hands.
-            string instance = Regex.Split(scene.Replace("\r\n", "\n"), @"\n(?=--- !u!)").Single(document => document.StartsWith("--- !u!1001") && document.Contains($"m_SourcePrefab: {{fileID: 100100000, guid: {pcGuid}, type: 3}}"));
+            string instance = documents.Single(document => document.StartsWith("--- !u!1001") && document.Contains($"m_SourcePrefab: {{fileID: 100100000, guid: {pcGuid}, type: 3}}"));
             float[] scale = new[] { "x", "y", "z" }.Select(axis => ScaleOverride(instance, axis)).ToArray();
             Assert.That(scale[0], Is.EqualTo(scale[1]).Within(1e-5f));
             Assert.That(scale[1], Is.EqualTo(scale[2]).Within(1e-5f));
             Assert.That(scene.Split('\n').Count(line => line.Trim().StartsWith("_pc: {fileID:") && !line.Contains("fileID: 0}")), Is.EqualTo(1), "the save controller owns the PC record");
-            Assert.That(scene.Split('\n').Count(line => line.Trim().StartsWith("workbench: {fileID:") && !line.Contains("fileID: 0}")), Is.EqualTo(1), "the input router knows the Workbench");
+            string workbench = documents.Single(document => document.Contains($"m_Script: {{fileID: 11500000, guid: {workbenchGuid}, type: 3}}"));
+            string router = documents.Single(document => document.Contains($"m_Script: {{fileID: 11500000, guid: {routerGuid}, type: 3}}"));
+            Match workbenchId = Regex.Match(workbench, @"^--- !u!114 &(-?\d+)\n");
+            Assert.That(workbenchId.Success, Is.True, "the authored Workbench has a serialized scene identity");
+            Assert.That(router, Does.Contain($"\n  workbench: {{fileID: {workbenchId.Groups[1].Value}}}\n"),
+                "the input router references the actual authored Workbench, independently of other consumers");
         }
 
         // The Student PC's slots as the plain record, with its authored new-game parts recorded the way its Start does.

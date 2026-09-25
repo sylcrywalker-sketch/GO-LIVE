@@ -53,7 +53,7 @@ namespace GoLive.Tests
             Assert.That(_world.TrySave(), Is.True);
 
             GameSaveData data = _world.ReadSave();
-            Assert.That(data.Version, Is.EqualTo(6));
+            Assert.That(data.Version, Is.EqualTo(7));
             Assert.That(data.PcAssembly, Is.Not.Null);
             Assert.That(data.PcAssembly.Version, Is.EqualTo(PcAssembly.SnapshotVersion));
             Assert.That(data.PcAssembly.InstalledSlots.Select(record => record.SlotId), Is.EquivalentTo(new[] { "motherboard-0", "cpu-0", "ram-0", "psu-0", "storage-0" }), "the Student PC's new-game parts");
@@ -318,7 +318,7 @@ namespace GoLive.Tests
 
             string json = File.ReadAllText(_world.SavePath);
             GameSaveData data = _world.ReadSave();
-            Assert.That(data.Version, Is.EqualTo(6), "the save schema is unchanged");
+            Assert.That(data.Version, Is.EqualTo(7), "Desktop extends the save schema without adding transient carts");
             Assert.That(json, Does.Not.Contain(SaveTestWorld.SnackId), "a product only in the cart is nowhere in the save");
             Assert.That(json, Does.Not.Contain("Cart"));
             Assert.That(data.Orders.Orders.Select(order => order.ProductId), Is.EqualTo(new[] { GpuId }));
