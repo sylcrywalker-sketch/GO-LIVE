@@ -43,6 +43,75 @@ namespace GoLive.Tests
             Assert.That(session.IsConnected, Is.True);
         }
 
+        [Test]
+        public void DisconnectClearsChannelLinkWithoutChangingQualityAndCanReconnect()
+        {
+            var session = Connected(out var channel, out _);
+            session.SetQuality(StreamQuality.Medium);
+            int changes = 0;
+            session.Changed += () => changes++;
+            Assert.That(session.Disconnect(), Is.Null);
+            Assert.That(session.IsConnected, Is.False);
+            Assert.That(session.Quality, Is.EqualTo(StreamQuality.Medium));
+            Assert.That(session.CheckStart(_desktop, true, 5), Is.EqualTo("desktop.stream.not_connected"));
+            Assert.That(changes, Is.EqualTo(1));
+            Assert.That(session.Connect(channel.ChannelCode), Is.Null);
+            Assert.That(session.IsConnected, Is.True);
+        }
+
+        [Test]
+        public void DisconnectAlreadyUnlinkedChannelIsIdempotent()
+        {
+            var session = new StreamSession(new TrichChannel(), new DonationAccount());
+            int changes = 0;
+            session.Changed += () => changes++;
+            Assert.That(session.Disconnect(), Is.Null);
+            Assert.That(session.Disconnect(), Is.Null);
+            Assert.That(changes, Is.Zero);
+        }
+
+        [TestCase(StreamState.Starting)]
+        [TestCase(StreamState.Live)]
+        [TestCase(StreamState.Stopping)]
+        public void DisconnectCannotInterruptAnActiveBroadcast(StreamState state)
+        {
+            var session = Connected(out _, out _);
+            session.Start(_desktop, true, 5);
+            if (state != StreamState.Starting) session.Tick(10.75f);
+            if (state == StreamState.Stopping) session.Stop();
+            double elapsed = session.DurationSeconds;
+            int changes = 0;
+            int completions = 0;
+            session.Changed += () => changes++;
+            session.Completed += _ => completions++;
+            Assert.That(session.Disconnect(), Is.EqualTo("desktop.stream.busy"));
+            Assert.That(session.IsConnected, Is.True);
+            Assert.That(session.State, Is.EqualTo(state));
+            Assert.That(session.DurationSeconds, Is.EqualTo(elapsed));
+            Assert.That(changes, Is.Zero);
+            Assert.That(completions, Is.Zero);
+        }
+
+        [Test]
+        public void DisconnectPreservesFinishedBroadcastAndSavedSupport()
+        {
+            var session = Connected(out _, out var donations);
+            int completions = 0;
+            session.Completed += _ => completions++;
+            session.Start(_desktop, true, 5);
+            session.Tick(60.75f);
+            session.Stop();
+            session.Tick(0.25f);
+            int chatCount = session.Chat.Count;
+            Assert.That(session.Disconnect(), Is.Null);
+            Assert.That(session.DurationSeconds, Is.EqualTo(60));
+            Assert.That(session.Chat.Count, Is.EqualTo(chatCount));
+            Assert.That(session.Followers, Is.EqualTo(4));
+            Assert.That(session.DonationCents, Is.EqualTo(200));
+            Assert.That(donations.TotalCents, Is.EqualTo(200));
+            Assert.That(completions, Is.EqualTo(1));
+        }
+
         [TestCase(StreamQuality.Low, 0.99f, false, "desktop.stream.upload_low")]
         [TestCase(StreamQuality.Low, 1f, false, null)]
         [TestCase(StreamQuality.Medium, 2.99f, false, "desktop.stream.upload_low")]

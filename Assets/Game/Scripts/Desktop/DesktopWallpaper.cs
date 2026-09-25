@@ -11,30 +11,42 @@ namespace GoLive.Desktop
         {
             mesh.Clear();
             Rect rect = rectTransform.rect;
-            Quad(mesh, rect.xMin, rect.yMin, rect.xMax, rect.yMax,
-                new Color(.13f,.29f,.39f), new Color(.40f,.63f,.70f));
-            Ribbon(mesh, rect, .10f, .44f, .18f, new Color(.65f,.82f,.80f,.16f));
-            Ribbon(mesh, rect, .06f, .30f, .10f, new Color(.91f,.88f,.62f,.16f));
-            Ribbon(mesh, rect, .24f, .64f, .035f, new Color(.75f,.94f,.98f,.18f));
-        }
-        private static void Quad(VertexHelper mesh, float x0, float y0, float x1, float y1, Color bottom, Color top)
-        {
-            int offset = mesh.currentVertCount;
-            mesh.AddVert(new Vector3(x0,y0),bottom,Vector2.zero); mesh.AddVert(new Vector3(x0,y1),top,Vector2.zero);
-            mesh.AddVert(new Vector3(x1,y1),top,Vector2.zero); mesh.AddVert(new Vector3(x1,y0),bottom,Vector2.zero);
-            mesh.AddTriangle(offset,offset+1,offset+2); mesh.AddTriangle(offset,offset+2,offset+3);
-        }
-        private static void Ribbon(VertexHelper mesh, Rect rect, float start, float end, float width, Color color)
-        {
-            for (int i = 0; i <= 64; i++)
+            // Vertex lighting gives a calm blue glow in the upper third, with no decorative wallpaper text.
+            const int columns=64, rows=36;
+            for(int y=0;y<=rows;y++) for(int x=0;x<=columns;x++)
             {
-                float t = i/64f;
-                float y = Mathf.Lerp(start,end,t*t) + Mathf.Sin(t*Mathf.PI)*.12f;
-                mesh.AddVert(new Vector3(rect.xMin+t*rect.width, rect.yMin+y*rect.height),color,Vector2.zero);
-                mesh.AddVert(new Vector3(rect.xMin+t*rect.width, rect.yMin+(y+width)*rect.height),color,Vector2.zero);
-                if (i == 0) continue;
-                int v = mesh.currentVertCount-4;
-                mesh.AddTriangle(v,v+1,v+3); mesh.AddTriangle(v,v+3,v+2);
+                float u=x/(float)columns,v=y/(float)rows;
+                float light=Mathf.Exp(-((u-.57f)*(u-.57f)*4.5f+(v-.99f)*(v-.99f)*3.8f));
+                Color shade=Color.Lerp(new Color(.015f,.19f,.42f),new Color(.08f,.60f,.94f),light);
+                mesh.AddVert(new Vector3(rect.xMin+u*rect.width,rect.yMin+v*rect.height),shade,Vector2.zero);
+                if(x==0||y==0) continue;
+                int b=y*(columns+1)+x;
+                mesh.AddTriangle(b,b-1,b-columns-2);mesh.AddTriangle(b,b-columns-2,b-columns-1);
+            }
+            Ribbon(mesh,rect,.055f,.10f,.36f,.41f,.18f,.028f,new Color(.26f,.65f,1,.18f));
+            Ribbon(mesh,rect,.22f,.22f,.39f,.65f,.03f,.063f,new Color(.40f,.81f,1,.25f));
+            Ribbon(mesh,rect,.59f,.55f,.28f,.20f,.17f,.015f,new Color(.07f,.38f,.80f,.15f));
+        }
+        private static void Ribbon(VertexHelper mesh,Rect rect,float p0,float p1,float p2,float p3,float w0,float w1,Color color)
+        {
+            const int steps=160, bands=4;
+            int first=mesh.currentVertCount;
+            for (int i = 0; i <= steps; i++)
+            {
+                float t=i/(float)steps,s=1-t;
+                float y=s*s*s*p0+3*s*s*t*p1+3*s*t*t*p2+t*t*t*p3;
+                float width=Mathf.Lerp(w0,w1,t);
+                for(int b=0;b<=bands;b++)
+                {
+                    float edge=Mathf.Min(.1f,1.5f/(width*rect.height));
+                    float fraction=b switch { 0=>0,1=>edge,2=>.55f,3=>1-edge,_=>1 };
+                    Color shade=color;
+                    shade.a*=(b==0||b==bands?0:Mathf.Lerp(.5f,1,fraction))*Mathf.Lerp(.3f,1,t);
+                    mesh.AddVert(new Vector3(rect.xMin+t*rect.width,rect.yMin+(y+width*fraction)*rect.height),shade,Vector2.zero);
+                    if(i==0||b==0)continue;
+                    int v=first+i*(bands+1)+b;
+                    mesh.AddTriangle(v,v-1,v-bands-2);mesh.AddTriangle(v,v-bands-2,v-bands-1);
+                }
             }
         }
     }

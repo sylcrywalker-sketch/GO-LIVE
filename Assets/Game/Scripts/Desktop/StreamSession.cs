@@ -80,6 +80,15 @@ namespace GoLive.Desktop
             return null;
         }
 
+        public string Disconnect()
+        {
+            if (State != StreamState.Offline) return "desktop.stream.busy";
+            if (_connectedCode.Length == 0) return null;
+            _connectedCode = "";
+            Changed?.Invoke();
+            return null;
+        }
+
         public string SetQuality(StreamQuality quality)
         {
             if (State != StreamState.Offline) return "desktop.stream.busy";

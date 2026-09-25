@@ -12,10 +12,14 @@ namespace GoLive.Desktop
             public DesktopAppId appId;
             public Button install;
             public TMP_Text state;
+            public GameObject root;
         }
         [SerializeField] private AppCard[] cards;
+        [SerializeField] private TMP_InputField search;
+        [SerializeField] private GameObject noResults;
         private void Awake()
         {
+            search.onValueChanged.AddListener(_ => Refresh());
             foreach (AppCard card in cards)
             {
                 AppCard captured = card;
@@ -29,8 +33,17 @@ namespace GoLive.Desktop
         }
         protected override void Refresh()
         {
+            int visible = 0;
             foreach (AppCard card in cards)
+            {
                 card.state.text = T(State.Storage.IsInstalled(card.appId) ? "desktop.open" : "desktop.install");
+                string name = "";
+                foreach (var app in runtime.Catalog.Apps) if (app.Id == card.appId) { name = T(app.NameKey); break; }
+                bool matches = name.IndexOf(search.text.Trim(), StringComparison.OrdinalIgnoreCase) >= 0;
+                card.root.SetActive(matches);
+                if (matches) visible++;
+            }
+            noResults.SetActive(visible == 0);
         }
     }
 }

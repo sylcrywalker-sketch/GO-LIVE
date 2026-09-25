@@ -395,6 +395,7 @@ namespace GoLive.PcBuilding
             bool preview = interactive && TargetSlot != null && _pc.CheckInstall(TargetSlot, playerCarry) == PcSlotCheck.Allowed;
             ShowGhost(preview ? held : null);
             hud.RenderStatus(_text.StatusTitle, _text.Status());
+            hud.RenderHardwareStatus(_pc.Capabilities, _text);
             hud.RenderPowerBudget(_text.PowerBudget());
             RenderCard(held);
         }

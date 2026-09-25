@@ -57,10 +57,24 @@ namespace GoLive.PcBuilding
             Vector3 max = placementRoot.InverseTransformPoint(_corners[2]);
             float width = card.rect.width;
             float height = card.rect.height;
-            const float gap = 24f;
-            Vector2 position = new(target.x + gap, target.y - height * 0.5f);
+            const float gap = 22f;
+            Bounds bounds = slot.TargetBounds;
+            float slotLeft = target.x;
+            float slotRight = target.x;
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 corner = bounds.center + Vector3.Scale(bounds.extents,
+                    new Vector3((i & 1) == 0 ? -1f : 1f, (i & 2) == 0 ? -1f : 1f, (i & 4) == 0 ? -1f : 1f));
+                Vector2 projected = RectTransformUtility.WorldToScreenPoint(projection, slot.transform.TransformPoint(corner));
+                if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(placementRoot, projected, uiCamera, out Vector2 edge)) continue;
+                slotLeft = Mathf.Min(slotLeft, edge.x);
+                slotRight = Mathf.Max(slotRight, edge.x);
+            }
+
+            // Clear the whole physical slot, not only its centre; wide graphics cards keep their ghost visible.
+            Vector2 position = new(slotRight + gap, target.y - height * 0.5f);
             if (position.x + width > max.x)
-                position.x = target.x - width - gap;
+                position.x = slotLeft - width - gap;
             position.x = Mathf.Clamp(position.x, min.x, Mathf.Max(min.x, max.x - width));
             position.y = Mathf.Clamp(position.y, min.y, Mathf.Max(min.y, max.y - height));
             card.localPosition = new Vector3(position.x, position.y, card.localPosition.z);

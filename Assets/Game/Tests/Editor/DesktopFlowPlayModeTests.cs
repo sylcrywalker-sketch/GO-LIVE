@@ -93,6 +93,8 @@ namespace GoLive.Tests
             Assert.That(_session.Session.MonitorOn, Is.False);
             yield return FaceMonitor();
             yield return _capture.Capture("ru-02-monitor-off-prompt");
+            // Screenshot encoding advances the scene; reacquire the monitor after capsule settling.
+            yield return FaceMonitor();
             Assert.That(_interactor.Prompts.ObjectNameKey, Is.EqualTo("pc.object.monitor"));
             Assert.That(_interactor.Prompts.PrimaryKey, Is.EqualTo("pc.session.sit"));
             Assert.That(_interactor.Prompts.WorldUseKey, Is.EqualTo("pc.monitor.on"));
@@ -109,6 +111,22 @@ namespace GoLive.Tests
             long usedBefore = UsedStorage();
             var hub = One<HubView>();
             var cards = Field<Array>(hub, "cards").Cast<object>().ToArray();
+            Assert.That(cards.Select(card => Field<DesktopAppId>(card, "appId")), Is.EquivalentTo(new[]
+            {
+                DesktopAppId.Streamly, DesktopAppId.Trich, DesktopAppId.Outline, DesktopAppId.Donation, DesktopAppId.Web
+            }), "Hub lists the five supported apps, including the installed browser");
+            TMP_InputField appSearch = Field<TMP_InputField>(hub, "search");
+            Type(appSearch, "  tRiCh  ");
+            Assert.That(cards.Where(card => Field<GameObject>(card, "root").activeInHierarchy)
+                .Select(card => Field<DesktopAppId>(card, "appId")), Is.EqualTo(new[] { DesktopAppId.Trich }),
+                "search matches an application name regardless of casing and outer spaces");
+            Assert.That(Field<GameObject>(hub, "noResults").activeInHierarchy, Is.False);
+            Type(appSearch, "unavailable.application");
+            Assert.That(cards.Any(card => Field<GameObject>(card, "root").activeInHierarchy), Is.False);
+            Assert.That(Field<GameObject>(hub, "noResults").activeInHierarchy, Is.True);
+            Assert.That(UsedStorage(), Is.EqualTo(usedBefore), "filtering the catalog does not install anything");
+            Type(appSearch, "");
+            Assert.That(cards.All(card => Field<GameObject>(card, "root").activeInHierarchy), Is.True);
             var optional = new[] { DesktopAppId.Outline, DesktopAppId.Trich, DesktopAppId.Streamly, DesktopAppId.Donation };
             int expectedInstallSize = optional.Sum(id => _runtime.Catalog.Apps.Single(app => app.Id == id).SizeMiB);
             foreach (DesktopAppId id in optional)
@@ -143,10 +161,46 @@ namespace GoLive.Tests
             Click(Field<Button>(trich, "register"));
             Assert.That(_runtime.State.Trich.IsRegistered, Is.True);
             yield return PlayModeWait.Frames(2);
+            Assert.That(Field<GameObject>(trich, "overviewPanel").activeInHierarchy, Is.True);
+            Assert.That(Field<GameObject>(trich, "editPanel").activeInHierarchy, Is.False);
+            Assert.That(_runtime.State.Trich.AvatarId, Is.Zero);
+            Assert.That(Field<int>(Field<ChannelAvatarGraphic>(trich, "profileAvatar"), "portrait"), Is.Zero);
+            Assert.That(Field<TMP_Text>(trich, "profileName").text, Is.EqualTo(_runtime.State.Trich.Name));
+            Assert.That(Field<TMP_Text>(trich, "profileDescription").text,
+                Is.EqualTo(_localization.Text("desktop.trich.description_empty")));
+            Assert.That(Field<TMP_Text>(trich, "code").text, Is.EqualTo(_runtime.State.Trich.ChannelCode));
+            yield return CaptureApp("ru-08a-trich-default", DesktopAppId.Trich);
+            _localization.SetLanguage(GameLanguage.English);
+            Assert.That(Field<TMP_Text>(trich, "profileDescription").text,
+                Is.EqualTo(_localization.Text("desktop.trich.description_empty")));
+            yield return CaptureApp("en-trich-default", DesktopAppId.Trich);
+            _localization.SetLanguage(GameLanguage.Russian);
+            Click(Field<Button>(trich, "editProfile"));
+            yield return PlayModeWait.Frames(2);
+            Assert.That(Field<GameObject>(trich, "editPanel").activeInHierarchy, Is.True);
+            Type(Field<TMP_InputField>(trich, "channelName"), new string('W',32));
+            Type(Field<TMP_InputField>(trich, "description"), new string('W',240));
+            Click(Field<Button>(trich, "save"));
+            yield return PlayModeWait.Frames(3);
+            TMP_Text longName=Field<TMP_Text>(trich,"profileName");
+            longName.ForceMeshUpdate();
+            Assert.That(longName.preferredHeight,Is.LessThanOrEqualTo(longName.rectTransform.rect.height+.5f),"a maximum-length valid channel name stays inside its layout");
+            var descriptionScroll=Field<TMP_Text>(trich,"profileDescription").GetComponentInParent<ScrollRect>();
+            Assert.That(descriptionScroll.content.rect.height,Is.GreaterThan(descriptionScroll.viewport.rect.height),"the full long description remains scrollable at body size");
+            Assert.That(descriptionScroll.verticalScrollbar.gameObject.activeInHierarchy,Is.True);
+            yield return CaptureApp("ru-trich-long-profile",DesktopAppId.Trich);
+            Click(Field<Button>(trich,"editProfile"));
+            yield return PlayModeWait.Frames(2);
             Type(Field<TMP_InputField>(trich, "channelName"), "GO LIVE Player");
             Type(Field<TMP_InputField>(trich, "description"), "Games and good company");
             Click(Field<Button[]>(trich, "avatars")[2]);
             Click(Field<Button>(trich, "save"));
+            yield return PlayModeWait.Frames(2);
+            Assert.That(Field<GameObject>(trich, "overviewPanel").activeInHierarchy, Is.True);
+            Assert.That(Field<GameObject>(trich, "editPanel").activeInHierarchy, Is.False);
+            Assert.That(Field<TMP_Text>(trich, "profileName").text, Is.EqualTo("GO LIVE Player"));
+            Assert.That(Field<TMP_Text>(trich, "profileDescription").text, Is.EqualTo("Games and good company"));
+            Assert.That(Field<int>(Field<ChannelAvatarGraphic>(trich, "profileAvatar"), "portrait"), Is.EqualTo(2));
             Click(Field<Button>(trich, "copy"));
             string stableCode = _runtime.State.Trich.ChannelCode;
             Assert.That(GUIUtility.systemCopyBuffer, Is.EqualTo(stableCode));
@@ -172,7 +226,20 @@ namespace GoLive.Tests
             Click(Field<Button>(web, "go"));
             Assert.That(Field<TMP_Text>(web, "page").text, Is.EqualTo(_localization.Text("desktop.web.unavailable")));
             yield return CaptureApp("ru-10-web-local-result", DesktopAppId.Web);
+            Assert.That(Field<Button>(web, "back").interactable, Is.True);
+            Assert.That(Field<Button>(web, "forward").interactable, Is.False);
+            Click(Field<Button>(web, "back"));
+            Assert.That(Field<TMP_InputField>(web, "address").text, Is.EqualTo("home.go"));
+            Assert.That(Field<TMP_Text>(web, "page").text, Is.EqualTo(_localization.Text("desktop.web.home_body")));
+            Assert.That(Field<Button>(web, "back").interactable, Is.False);
+            Assert.That(Field<Button>(web, "forward").interactable, Is.True);
+            Click(Field<Button>(web, "forward"));
+            Assert.That(Field<TMP_InputField>(web, "address").text, Is.EqualTo("unknown.example"));
+            Assert.That(Field<TMP_Text>(web, "page").text, Is.EqualTo(_localization.Text("desktop.web.unavailable")));
+            Assert.That(Field<Button>(web, "forward").interactable, Is.False);
             Click(Field<Button>(web, "home"));
+            Assert.That(Field<TMP_InputField>(web, "address").text, Is.EqualTo("home.go"));
+            Assert.That(Field<TMP_Text>(web, "page").text, Is.EqualTo(_localization.Text("desktop.web.home_body")));
             yield return CloseAllApps();
 
             yield return OpenApp(DesktopAppId.Streamly);
@@ -186,6 +253,7 @@ namespace GoLive.Tests
             yield return CaptureApp("ru-11-streamly-quality-limit", DesktopAppId.Streamly);
             Click(Field<Button[]>(streamly, "quality")[1]);
             Assert.That(_runtime.State.Stream.Quality, Is.EqualTo(StreamQuality.Medium));
+            yield return CaptureApp("ru-11b-streamly-idle", DesktopAppId.Streamly);
             yield return StartBroadcast(streamly);
             yield return CaptureApp("ru-12-streamly-live", DesktopAppId.Streamly);
             Click(Field<Button>(Presentation(DesktopAppId.Streamly), "minimize"));
@@ -211,10 +279,25 @@ namespace GoLive.Tests
             object firstMessage = Field<Array>(outline, "rows").GetValue(0);
             yield return OpenApp(DesktopAppId.Hub);
             Assert.That(_runtime.State.Windows.ActiveApp, Is.EqualTo(DesktopAppId.Hub));
-            // Hub is offset 44 pixels right of Outline. The first row's exposed left edge remains
-            // reachable, so the real child's PointerDown must bring Outline forward before reading.
-            Click(Field<Button>(firstMessage, "button"), new Vector2(.01f, .5f));
-            Assert.That(_runtime.State.Windows.ActiveApp, Is.EqualTo(DesktopAppId.Outline), "clicking an exposed background child focuses its window");
+            Assert.That(_runtime.State.Outline.Messages[0].IsRead, Is.False);
+            // The authored Outline titlebar is above Hub's top edge. Focus that visible chrome
+            // through real mouse input before reading the mail row, which starts after the sidebar.
+            RectTransform outlineTitlebar = Field<Image>(Presentation(DesktopAppId.Outline), "titlebar").rectTransform;
+            Canvas.ForceUpdateCanvases();
+            Canvas outlineCanvas = outlineTitlebar.GetComponentInParent<Canvas>();
+            Camera outlineCamera = outlineCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : outlineCanvas.worldCamera;
+            Vector2 titlebarLocal = outlineTitlebar.rect.min + Vector2.Scale(outlineTitlebar.rect.size, new Vector2(.25f, .75f));
+            Vector2 titlebarPoint = RectTransformUtility.WorldToScreenPoint(outlineCamera, outlineTitlebar.TransformPoint(titlebarLocal));
+            var titlebarPointer = new PointerEventData(EventSystem.current) { position = titlebarPoint };
+            var titlebarHits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(titlebarPointer, titlebarHits);
+            Assert.That(titlebarHits.Count, Is.GreaterThan(0));
+            Assert.That(titlebarHits[0].gameObject.transform.IsChildOf(outlineTitlebar), Is.True,
+                "Outline chrome must be visibly exposed before it can receive input");
+            yield return ClickPointer(titlebarPoint);
+            Assert.That(_runtime.State.Windows.ActiveApp, Is.EqualTo(DesktopAppId.Outline), "clicking exposed chrome focuses the background window");
+            Assert.That(_runtime.State.Outline.Messages[0].IsRead, Is.False, "focusing the mail window does not read a message");
+            Click(Field<Button>(firstMessage, "button"));
             Assert.That(_runtime.State.Outline.Messages[0].IsRead, Is.True);
             yield return CaptureApp("ru-15-outline-stream-summary", DesktopAppId.Outline);
 
@@ -264,6 +347,8 @@ namespace GoLive.Tests
             string savedDonationName = _runtime.State.Donation.Name;
             bool savedAlerts = _runtime.State.Donation.AlertsEnabled;
             yield return OpenApp(DesktopAppId.Trich);
+            Click(Field<Button>(trich, "editProfile"));
+            yield return PlayModeWait.Frames(2);
             Type(Field<TMP_InputField>(trich, "channelName"), "Unsaved channel draft");
             Type(Field<TMP_InputField>(trich, "description"), "Unsaved description draft");
             Click(Field<Button[]>(trich, "avatars")[0]);
@@ -317,6 +402,9 @@ namespace GoLive.Tests
             Assert.That(Field<TMP_InputField>(trich, "channelName").text, Is.EqualTo(savedChannelName));
             Assert.That(Field<TMP_InputField>(trich, "description").text, Is.EqualTo(savedDescription));
             Assert.That(Field<int>(trich, "_avatar"), Is.EqualTo(2));
+            Assert.That(Field<GameObject>(trich, "overviewPanel").activeInHierarchy, Is.True,
+                "restoring reopens the saved profile overview rather than a stale draft");
+            Assert.That(Field<TMP_Text>(trich, "profileName").text, Is.EqualTo(savedChannelName));
             Assert.That(Field<TMP_Text>(trich, "feedback").text, Is.Empty, "restoring clears feedback from the previous interaction");
             yield return OpenApp(DesktopAppId.Donation);
             Assert.That(One<DonationView>(), Is.SameAs(donation));
@@ -339,6 +427,7 @@ namespace GoLive.Tests
                 InputSystem.QueueStateEvent(_input.Mouse, new MouseState { position = pointer });
                 yield return PlayModeWait.Frames(5);
             }
+            AssertHardwareMarks(false);
             yield return _capture.Capture("en-08-pc-build");
             _localization.SetLanguage(GameLanguage.Russian);
             yield return PlayModeWait.Frames(3);
@@ -364,10 +453,30 @@ namespace GoLive.Tests
             Assert.That(gpu.Instance.Location, Is.EqualTo(ItemLocation.Installed));
             Assert.That(gpu.transform.parent, Is.SameAs(gpuSlot.InstallAnchor));
             Assert.That(workbench.IsGhostVisible, Is.False);
+            AssertHardwareMarks(true);
             yield return _capture.Capture("en-10-pc-build-gpu-installed");
             yield return Press(Key.Escape);
             yield return PlayModeWait.Until(() => !workbench.IsOpen, "PC Build to restore the world view");
             LogAssert.NoUnexpectedReceived();
+        }
+
+        private void AssertHardwareMarks(bool gpuInstalled)
+        {
+            var status=One<PcHardwareStatusView>();
+            PcHardwareGlyph[] glyphs=status.GetComponentsInChildren<PcHardwareGlyph>(false);
+            Assert.That(glyphs.Length,Is.EqualTo(12));
+            foreach(PcHardwareGlyph glyph in glyphs)
+            {
+                Assert.That(glyph.GetComponent<CanvasRenderer>(),Is.Not.Null,glyph.name+" must render into the real Canvas");
+                Assert.That(glyph.rectTransform.rect.width,Is.GreaterThanOrEqualTo(24));
+                Assert.That(glyph.rectTransform.rect.height,Is.GreaterThanOrEqualTo(24));
+            }
+            foreach(object row in Field<Array>(status,"rows"))
+            {
+                bool missingGpu=Field<PcComponentType>(row,"component")==PcComponentType.Gpu&&!gpuInstalled;
+                Assert.That(Field<PcHardwareGlyph.Shape>(Field<PcHardwareGlyph>(row,"marker"),"shape"),
+                    Is.EqualTo(missingGpu?PcHardwareGlyph.Shape.Warning:PcHardwareGlyph.Shape.Check));
+            }
         }
 
         private IEnumerator Boot()
@@ -438,6 +547,8 @@ namespace GoLive.Tests
             flat.y = 0;
             _player.RestorePose(new PlayerPoseSnapshot(position, Quaternion.LookRotation(flat), 0));
             yield return PlayModeWait.Frames(6);
+            float settleTime = Time.time + .4f;
+            yield return PlayModeWait.Until(() => Time.time >= settleTime, "the standing capsule and eye-height transition to settle");
             // The character capsule may settle away from a chair/desk. Aim from the real resulting eye,
             // and retain that physically valid body position instead of repeatedly teleporting into it.
             for (int i = 0; i < 3; i++)
@@ -455,6 +566,10 @@ namespace GoLive.Tests
         {
             if (_session.Session.Usage == PcUsageState.Standing)
             {
+                // Reacquire the physical monitor after screenshot I/O; the standing capsule may
+                // finish settling against the chair while the previous capture is written.
+                yield return FaceMonitor();
+                Assert.That(_interactor.Prompts.PrimaryKey, Is.EqualTo("pc.session.sit"));
                 yield return Press(Key.E);
                 Assert.That(_session.Session.Usage, Is.EqualTo(PcUsageState.Seated));
             }
@@ -517,16 +632,26 @@ namespace GoLive.Tests
 
         private IEnumerator CaptureApp(string name, DesktopAppId id)
         {
+            foreach (DesktopWindow other in _runtime.State.Windows.Windows.ToArray())
+            {
+                if(other.AppId==id||!_runtime.State.Windows.IsVisible(other.AppId))continue;
+                Click(Field<Button>(Presentation(other.AppId), "task"));
+                yield return PlayModeWait.Frames(2);
+                Click(Field<Button>(Presentation(other.AppId), "minimize"));
+                yield return PlayModeWait.Frames(1);
+            }
+            Click(Field<Button>(Presentation(id), "task"));
+            yield return PlayModeWait.Frames(2);
             GameObject window = Field<GameObject>(Presentation(id), "window");
             Canvas.ForceUpdateCanvases();
+            yield return _capture.Capture(name);
             foreach (TMP_Text text in window.GetComponentsInChildren<TMP_Text>(false))
             {
                 if (text.GetComponentInParent<TMP_InputField>() != null || string.IsNullOrWhiteSpace(text.text)) continue;
                 text.ForceMeshUpdate();
-                Assert.That(text.isTextTruncated, Is.False, name + ": " + text.name);
+                Assert.That(text.isTextTruncated, Is.False, name + ": " + text.name + " rect=" + text.rectTransform.rect.size + " font=" + text.fontSize + " text=" + text.text);
                 Assert.That(text.text.Contains("[desktop.") || text.text.Contains("[pc."), Is.False, name + ": untranslated " + text.text);
             }
-            yield return _capture.Capture(name);
         }
 
         private IEnumerator CaptureStartMenu(string name, int expectedEntries, DesktopAppId open)

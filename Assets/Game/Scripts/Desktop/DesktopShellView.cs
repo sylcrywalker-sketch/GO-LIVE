@@ -19,6 +19,7 @@ namespace GoLive.Desktop
             public Button close;
             public Button task;
             public Image titlebar;
+            public Color activeTitleColor;
         }
         [SerializeField] private DesktopRuntimeBehaviour runtime;
         [SerializeField] private LocalizationContext localization;
@@ -26,6 +27,7 @@ namespace GoLive.Desktop
         [SerializeField] private GameObject startMenu;
         [SerializeField] private Button startButton;
         [SerializeField] private Button leave;
+        [SerializeField] private Button shutdown;
         [SerializeField] private AppPresentation[] apps;
         [SerializeField] private TMP_Text toast;
         private bool _bound;
@@ -41,6 +43,7 @@ namespace GoLive.Desktop
                 if (startMenu.activeSelf) startMenu.transform.SetAsLastSibling();
             });
             leave.onClick.AddListener(() => runtime.Session.Back());
+            shutdown.onClick.AddListener(() => { runtime.State.Windows.CloseAll(); runtime.Session.PowerOff(); });
             foreach (AppPresentation app in apps)
             {
                 AppPresentation captured = app;
@@ -95,8 +98,9 @@ namespace GoLive.Desktop
                 app.startShortcut.gameObject.SetActive(runtime.State.Storage.IsInstalled(app.appId));
                 app.window.SetActive(runtime.State.Windows.IsVisible(app.appId));
                 app.task.gameObject.SetActive(runtime.State.Windows.IsOpen(app.appId));
-                app.titlebar.color = runtime.State.Windows.ActiveApp == app.appId
-                    ? new Color(.18f,.34f,.45f,.98f) : new Color(.40f,.48f,.52f,.97f);
+                bool active=runtime.State.Windows.ActiveApp==app.appId;
+                app.titlebar.color=active?app.activeTitleColor:Color.Lerp(app.activeTitleColor,new Color(.28f,.31f,.36f),.55f);
+                app.task.targetGraphic.color=active?new Color(.12f,.37f,.62f):new Color(.07f,.22f,.38f);
             }
             foreach (DesktopAppId id in runtime.State.Windows.ActivationOrder)
                 foreach (AppPresentation app in apps)

@@ -770,26 +770,26 @@ MonoBehaviour:
     _russian: Streamly
     _english: Streamly
   - _key: desktop.app.streamly.description
-    _russian: "\u0412\u0441\u0451 \u0434\u043B\u044F \u0432\u0430\u0448\u0435\u0433\u043E \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u044D\u0444\u0438\u0440\u0430."
-    _english: Everything for your first stream.
+    _russian: "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430 \u0438 \u0437\u0430\u043F\u0443\u0441\u043A \u0442\u0440\u0430\u043D\u0441\u043B\u044F\u0446\u0438\u0439"
+    _english: Set up and start streams
   - _key: desktop.app.trich
     _russian: Trich
     _english: Trich
   - _key: desktop.app.trich.description
-    _russian: "\u0412\u0430\u0448 \u043A\u0430\u043D\u0430\u043B, \u0437\u0440\u0438\u0442\u0435\u043B\u0438 \u0438 \u043D\u043E\u0432\u044B\u0435 \u0438\u0441\u0442\u043E\u0440\u0438\u0438."
-    _english: Your channel, viewers and new stories.
+    _russian: "\u0422\u0432\u043E\u0439 \u043A\u0430\u043D\u0430\u043B \u0438 \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430"
+    _english: Your channel and statistics
   - _key: desktop.app.outline
     _russian: Outline
     _english: Outline
   - _key: desktop.app.outline.description
-    _russian: "\u041F\u043E\u0447\u0442\u0430, \u0441 \u043A\u043E\u0442\u043E\u0440\u043E\u0439 \u0432\u0441\u0451 \u043D\u0430\u0447\u0438\u043D\u0430\u0435\u0442\u0441\u044F."
-    _english: The inbox where it all begins.
+    _russian: "\u041F\u043E\u0447\u0442\u0430 \u0438 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F"
+    _english: Mail and notifications
   - _key: desktop.app.donation
     _russian: Donation
     _english: Donation
   - _key: desktop.app.donation.description
-    _russian: "\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430 \u043E\u0442 \u0432\u0430\u0448\u0435\u0439 \u0430\u0443\u0434\u0438\u0442\u043E\u0440\u0438\u0438."
-    _english: A little support from your audience.
+    _russian: "\u0414\u043E\u043D\u0430\u0442\u044B \u0438 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
+    _english: Donations and support
   - _key: desktop.app.hub
     _russian: Hub
     _english: Hub
@@ -800,8 +800,8 @@ MonoBehaviour:
     _russian: Web
     _english: Web
   - _key: desktop.app.web.description
-    _russian: "\u0412\u0430\u0448\u0435 \u043E\u043A\u043D\u043E \u0432 \u0441\u0435\u0442\u044C GO!"
-    _english: Your window to the GO! network
+    _russian: "\u0418\u043D\u0442\u0435\u0440\u043D\u0435\u0442-\u0431\u0440\u0430\u0443\u0437\u0435\u0440"
+    _english: Internet browser
   - _key: desktop.start
     _russian: "GO! \u041F\u0443\u0441\u043A"
     _english: GO! Start
@@ -1003,8 +1003,8 @@ MonoBehaviour:
     _russian: "\u0412\u0430\u0448 \u044D\u0444\u0438\u0440 \u043D\u0430\u0447\u0438\u043D\u0430\u0435\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C"
     _english: Your stream starts here
   - _key: desktop.stream.code
-    _russian: "\u041A\u043E\u0434 \u0438\u0437 \u043F\u0440\u043E\u0444\u0438\u043B\u044F Trich"
-    _english: Code from your Trich profile
+    _russian: "\u041A\u043E\u0434 \u043A\u0430\u043D\u0430\u043B\u0430"
+    _english: Channel code
   - _key: desktop.stream.code_hint
     _russian: "\u0412\u0441\u0442\u0430\u0432\u044C\u0442\u0435 \u043A\u043E\u0434 \u043A\u0430\u043D\u0430\u043B\u0430"
     _english: Paste your channel code
@@ -1012,8 +1012,8 @@ MonoBehaviour:
     _russian: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u044C"
     _english: Connect
   - _key: desktop.stream.connected
-    _russian: "\u25CF \u041A\u0430\u043D\u0430\u043B \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D"
-    _english: "\u25CF Channel connected"
+    _russian: "\u041A\u0430\u043D\u0430\u043B \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D"
+    _english: Channel connected
   - _key: desktop.stream.not_connected
     _russian: "\u041A\u0430\u043D\u0430\u043B \u043D\u0435 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D"
     _english: No channel connected
@@ -1033,11 +1033,11 @@ MonoBehaviour:
     _russian: "\u0418\u043D\u0442\u0435\u0440\u043D\u0435\u0442: {0:0.#} \u041C\u0431\u0438\u0442/\u0441 \u043D\u0430 \u043E\u0442\u0434\u0430\u0447\u0443\n\u041D\u0438\u0437\u043A\u043E\u0435 \u2014 1 \xB7 \u0421\u0440\u0435\u0434\u043D\u0435\u0435 \u2014 3 \xB7 \u0412\u044B\u0441\u043E\u043A\u043E\u0435 \u2014 6"
     _english: "Upload: {0:0.#} Mbps\nLow \u2014 1 \xB7 Medium \u2014 3 \xB7 High \u2014 6"
   - _key: desktop.stream.preview
-    _russian: "\u041F\u0420\u0415\u0414\u041F\u0420\u041E\u0421\u041C\u041E\u0422\u0420"
-    _english: PREVIEW
+    _russian: "\u041F\u0440\u0435\u0434\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u0442\u0440\u0430\u043D\u0441\u043B\u044F\u0446\u0438\u0438"
+    _english: Stream preview
   - _key: desktop.stream.ready
-    _russian: "\u041C\u043E\u0436\u043D\u043E \u043D\u0430\u0447\u0438\u043D\u0430\u0442\u044C \u044D\u0444\u0438\u0440."
-    _english: Ready to go live.
+    _russian: "\u0412\u0441\u0451 \u0433\u043E\u0442\u043E\u0432\u043E \u043A \u0442\u0440\u0430\u043D\u0441\u043B\u044F\u0446\u0438\u0438."
+    _english: Ready to start streaming.
   - _key: desktop.stream.start
     _russian: "\u041D\u0430\u0447\u0430\u0442\u044C \u044D\u0444\u0438\u0440"
     _english: Go live
@@ -1051,8 +1051,8 @@ MonoBehaviour:
     _russian: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0430\u0435\u043C\u0441\u044F\u2026"
     _english: "Connecting\u2026"
   - _key: desktop.stream.state.live
-    _russian: "\u25CF \u0412 \u042D\u0424\u0418\u0420\u0415"
-    _english: "\u25CF LIVE"
+    _russian: "\u0422\u0440\u0430\u043D\u0441\u043B\u044F\u0446\u0438\u044F \u0430\u043A\u0442\u0438\u0432\u043D\u0430"
+    _english: Stream active
   - _key: desktop.stream.state.stopping
     _russian: "\u0417\u0430\u0432\u0435\u0440\u0448\u0430\u0435\u043C \u044D\u0444\u0438\u0440\u2026"
     _english: "Ending stream\u2026"
@@ -1099,8 +1099,8 @@ MonoBehaviour:
     _russian: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439, \u043C\u044B \u0441\u043C\u043E\u0442\u0440\u0438\u043C :)"
     _english: Keep going, we're watching :)
   - _key: desktop.overlay.chat
-    _russian: "\u0427\u0410\u0422 \u042D\u0424\u0418\u0420\u0410"
-    _english: STREAM CHAT
+    _russian: "\u0427\u0430\u0442 \u0442\u0440\u0430\u043D\u0441\u043B\u044F\u0446\u0438\u0438"
+    _english: Stream chat
   - _key: desktop.overlay.stats
     _russian: "\u0417\u0440\u0438\u0442\u0435\u043B\u0435\u0439  {0}\n\u0412\u0440\u0435\u043C\u044F  {1:00}:{2:00}\n\u041F\u043E\u0434\u043F\u0438\u0441\u043A\u0438  +{3}\n\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430  ${4:0.00}"
     _english: 'Viewers  {0}
@@ -1111,8 +1111,8 @@ MonoBehaviour:
 
       Support  ${4:0.00}'
   - _key: desktop.donation.title
-    _russian: "\u041C\u0430\u043B\u0435\u043D\u044C\u043A\u043E\u0435 \u0441\u043F\u0430\u0441\u0438\u0431\u043E. \u0411\u043E\u043B\u044C\u0448\u0430\u044F \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430."
-    _english: A small thank you. A big difference.
+    _russian: "\u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430 \u0437\u0440\u0438\u0442\u0435\u043B\u0435\u0439"
+    _english: Viewer support
   - _key: desktop.donation.subtitle
     _russian: "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u0442\u0435 \u0438\u043C\u044F \u0438 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F. \u041F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430 \u0437\u0440\u0438\u0442\u0435\u043B\u0435\u0439 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u0432 \u0438\u0441\u0442\u043E\u0440\u0438\u0438."
     _english: Set your name and alerts. Viewer support will appear in your history.
@@ -1123,20 +1123,20 @@ MonoBehaviour:
     _russian: "\u0412\u0430\u0448\u0435 \u0438\u043C\u044F \u0438\u043B\u0438 \u043D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u043A\u0430\u043D\u0430\u043B\u0430"
     _english: Your name or channel name
   - _key: desktop.donation.alerts
-    _russian: "\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u0432\u043E \u0432\u0440\u0435\u043C\u044F \u044D\u0444\u0438\u0440\u0430"
-    _english: Show alerts during your stream
+    _russian: "\u041F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u0442\u044C \u0434\u043E\u043D\u0430\u0442\u044B \u0432\u043E \u0432\u0440\u0435\u043C\u044F \u044D\u0444\u0438\u0440\u0430"
+    _english: Show donation alerts during streams
   - _key: desktop.donation.total
     _russian: "\u0412\u0441\u0435\u0433\u043E: ${0:0.00}"
     _english: 'Total: ${0:0.00}'
   - _key: desktop.donation.history
-    _russian: "\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u044F\u044F \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0430"
-    _english: Recent support
+    _russian: "\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 \u0434\u043E\u043D\u0430\u0442\u044B"
+    _english: Recent donations
   - _key: desktop.donation.receipt
     _russian: "{0}  \xB7  ${1:0.00}"
     _english: "{0}  \xB7  ${1:0.00}"
   - _key: desktop.donation.empty
-    _russian: "\u041F\u043E\u043A\u0430 \u043F\u0443\u0441\u0442\u043E. \u041F\u0435\u0440\u0432\u044B\u0439 \u0437\u0440\u0438\u0442\u0435\u043B\u044C \u0435\u0449\u0451 \u043F\u0440\u0438\u0434\u0451\u0442."
-    _english: Nothing yet. Your first supporter is out there.
+    _russian: "\u0414\u043E\u043D\u0430\u0442\u043E\u0432 \u043F\u043E\u043A\u0430 \u043D\u0435\u0442."
+    _english: No donations yet.
   - _key: desktop.donation.invalid_name
     _russian: "\u0418\u043C\u044F \u0434\u043E\u043B\u0436\u043D\u043E \u0441\u043E\u0434\u0435\u0440\u0436\u0430\u0442\u044C \u043E\u0442 1 \u0434\u043E 32 \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432."
     _english: Use a name between 1 and 32 characters.
@@ -1199,3 +1199,186 @@ MonoBehaviour:
   - _key: desktop.installed
     _russian: "\u041F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u043E"
     _english: App installed
+  - _key: desktop.tray.day
+    _russian: "\u0414\u0435\u043D\u044C {0}"
+    _english: Day {0}
+  - _key: polish.start.apps
+    _russian: "\u041F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F"
+    _english: Applications
+  - _key: polish.start.user
+    _russian: "\u0421\u0442\u0440\u0438\u043C\u0435\u0440"
+    _english: Streamer
+  - _key: polish.start.shutdown
+    _russian: "\u0412\u044B\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435"
+    _english: Shut down
+  - _key: polish.computer.title
+    _russian: "\u0423\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u0430 \u0438 \u0434\u0438\u0441\u043A\u0438"
+    _english: Devices and drives
+  - _key: polish.hub.subtitle
+    _russian: "\u041F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u0441\u0442\u0440\u0438\u043C\u0435\u0440\u0430. \u0412\u0441\u0451 \u0432 \u043E\u0434\u043D\u043E\u043C \u043C\u0435\u0441\u0442\u0435."
+    _english: Apps for streamers. All in one place.
+  - _key: polish.hub.search
+    _russian: "\u041F\u043E\u0438\u0441\u043A \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0439"
+    _english: Search applications
+  - _key: polish.hub.no_results
+    _russian: "\u041F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u044F \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u044B."
+    _english: No applications found.
+  - _key: polish.web.back
+    _russian: "\u041D\u0430\u0437\u0430\u0434"
+    _english: Back
+  - _key: polish.web.forward
+    _russian: "\u0412\u043F\u0435\u0440\u0451\u0434"
+    _english: Forward
+  - _key: polish.web.welcome
+    _russian: "\u0414\u043E\u0431\u0440\u043E \u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C \u0432 Web"
+    _english: Welcome to Web
+  - _key: polish.web.shortcuts
+    _russian: "\u0411\u044B\u0441\u0442\u0440\u044B\u0439 \u0434\u043E\u0441\u0442\u0443\u043F"
+    _english: Quick links
+  - _key: desktop.trich.my_channel
+    _russian: "\u041C\u043E\u0439 \u043A\u0430\u043D\u0430\u043B"
+    _english: My channel
+  - _key: desktop.trich.setup_title
+    _russian: "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u043A\u0430\u043D\u0430\u043B Trich"
+    _english: Create your Trich channel
+  - _key: desktop.trich.setup_subtitle
+    _russian: "\u0412\u0430\u0448 \u043A\u0430\u043D\u0430\u043B, \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0430 \u0438 \u043A\u043E\u0434 \u0434\u043B\u044F Streamly. \u0414\u043B\u044F \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0430\u0434\u0440\u0435\u0441 Outline."
+    _english: Your channel, statistics and Streamly code. Register with your Outline address.
+  - _key: desktop.trich.description_empty
+    _russian: "\u0421\u0435\u0439\u0447\u0430\u0441 \u0442\u0443\u0442 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442"
+    _english: Nothing here yet
+  - _key: desktop.trich.edit_profile
+    _russian: "\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043A\u0430\u043D\u0430\u043B"
+    _english: Edit channel
+  - _key: desktop.trich.back_to_profile
+    _russian: "\u0412\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F \u043A \u043A\u0430\u043D\u0430\u043B\u0443"
+    _english: Back to channel
+  - _key: desktop.trich.subscribers
+    _russian: "\u041F\u043E\u0434\u043F\u0438\u0441\u0447\u0438\u043A\u0438"
+    _english: Subscribers
+  - _key: desktop.trich.peak_viewers
+    _russian: "\u041F\u0438\u043A\u043E\u0432\u044B\u0435 \u0437\u0440\u0438\u0442\u0435\u043B\u0438"
+    _english: Peak viewers
+  - _key: desktop.trich.hours_streamed
+    _russian: "\u0427\u0430\u0441\u044B \u0432 \u044D\u0444\u0438\u0440\u0435"
+    _english: Hours streamed
+  - _key: desktop.trich.hours_value
+    _russian: '{0:0.#}'
+    _english: '{0:0.#}'
+  - _key: desktop.trich.copy_code
+    _russian: "\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043A\u043E\u0434"
+    _english: Copy channel code
+  - _key: desktop.trich.code_help
+    _russian: "\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u044D\u0442\u043E\u0442 \u043A\u043E\u0434 \u0432 Streamly."
+    _english: Use this code in Streamly.
+  - _key: desktop.trich.avatar_label
+    _russian: "\u0410\u0432\u0430\u0442\u0430\u0440 \u043A\u0430\u043D\u0430\u043B\u0430"
+    _english: Channel avatar
+  - _key: desktop.outline.setup_title
+    _russian: "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u043F\u043E\u0447\u0442\u0443 Outline"
+    _english: Create your Outline address
+  - _key: desktop.outline.setup_subtitle
+    _russian: "\u041E\u0434\u0438\u043D \u0430\u0434\u0440\u0435\u0441 \u0434\u043B\u044F \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438 \u043A\u0430\u043D\u0430\u043B\u0430 \u0438 \u0432\u0430\u0436\u043D\u044B\u0445 \u043F\u0438\u0441\u0435\u043C. \u041F\u0430\u0440\u043E\u043B\u044C \u043D\u0435 \u043D\u0443\u0436\u0435\u043D."
+    _english: One address for your channel and important messages. No password needed.
+  - _key: desktop.outline.address_rules
+    _russian: "\u041E\u0442 3 \u0434\u043E 24 \u043B\u0430\u0442\u0438\u043D\u0441\u043A\u0438\u0445 \u0431\u0443\u043A\u0432, \u0446\u0438\u0444\u0440, \u0442\u043E\u0447\u0435\u043A, \u0434\u0435\u0444\u0438\u0441\u043E\u0432 \u0438\u043B\u0438 \u043F\u043E\u0434\u0447\u0451\u0440\u043A\u0438\u0432\u0430\u043D\u0438\u0439."
+    _english: "Use 3\u201324 Latin letters, numbers, dots, dashes or underscores."
+  - _key: desktop.outline.system_sender
+    _russian: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430"
+    _english: System
+  - _key: desktop.stream.broadcast
+    _russian: "\u0422\u0440\u0430\u043D\u0441\u043B\u044F\u0446\u0438\u044F"
+    _english: Broadcast
+  - _key: desktop.stream.channel
+    _russian: "\u041A\u0430\u043D\u0430\u043B"
+    _english: Channel
+  - _key: desktop.stream.channel_empty
+    _russian: "\u041A\u0430\u043D\u0430\u043B \u043D\u0435 \u0441\u043E\u0437\u0434\u0430\u043D"
+    _english: No channel created
+  - _key: desktop.stream.identity_source
+    _russian: "\u0418\u043C\u044F \u0438 \u043F\u0440\u043E\u0444\u0438\u043B\u044C \u043D\u0430\u0441\u0442\u0440\u0430\u0438\u0432\u0430\u044E\u0442\u0441\u044F \u0432 Trich."
+    _english: Manage your name and profile in Trich.
+  - _key: desktop.stream.disconnect
+    _russian: "\u041E\u0442\u043A\u043B\u044E\u0447\u0438\u0442\u044C"
+    _english: Disconnect
+  - _key: desktop.stream.quality_requirement
+    _russian: "\u041E\u0442\u0434\u0430\u0447\u0430: 1 / 3 / 6 \u041C\u0431\u0438\u0442/\u0441\n\u0412\u044B\u0441\u043E\u043A\u043E\u0435 \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0443."
+    _english: 'Upload: 1 / 3 / 6 Mbps
+
+      High quality needs a graphics card.'
+  - _key: desktop.stream.upload
+    _russian: "\u041E\u0442\u0434\u0430\u0447\u0430: {0:0.#} \u041C\u0431\u0438\u0442/\u0441"
+    _english: 'Upload: {0:0.#} Mbps'
+  - _key: desktop.stream.graphics_available
+    _russian: "\u0412\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0430 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430"
+    _english: Dedicated graphics available
+  - _key: desktop.stream.graphics_integrated
+    _russian: "\u0411\u0435\u0437 \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0439 \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u044B"
+    _english: No dedicated graphics card
+  - _key: desktop.stream.preview_scene
+    _russian: "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A: \u043A\u0430\u043C\u0435\u0440\u0430 \u043A\u043E\u043C\u043D\u0430\u0442\u044B"
+    _english: 'Source: room camera'
+  - _key: desktop.stream.preview_unavailable
+    _russian: "\u041F\u0440\u0435\u0434\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u0435\u043D"
+    _english: Preview unavailable
+  - _key: desktop.stream.output_active
+    _russian: "\u0421\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u0435 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u043E. \u042D\u0444\u0438\u0440 \u0438\u0434\u0451\u0442."
+    _english: Connected. Stream is running.
+  - _key: desktop.overlay.count
+    _russian: '{0:N0}'
+    _english: '{0:N0}'
+  - _key: desktop.overlay.duration
+    _russian: '{0:00}:{1:00}:{2:00}'
+    _english: '{0:00}:{1:00}:{2:00}'
+  - _key: desktop.donation.settings
+    _russian: "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0439"
+    _english: Alert settings
+  - _key: desktop.donation.status_setup
+    _russian: "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u0438\u043C\u044F \u043F\u043E\u043B\u0443\u0447\u0430\u0442\u0435\u043B\u044F \u0434\u043B\u044F \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0439."
+    _english: Set the recipient name for your alerts.
+  - _key: desktop.donation.status_ready
+    _russian: "\u0421\u0435\u0440\u0432\u0438\u0441 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u043A\u0438 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D."
+    _english: Support service configured.
+  - _key: desktop.donation.alerts_on
+    _russian: "\u0423\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u0432\u043A\u043B\u044E\u0447\u0435\u043D\u044B"
+    _english: Alerts enabled
+  - _key: desktop.donation.alerts_off
+    _russian: "\u0423\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F \u0432\u044B\u043A\u043B\u044E\u0447\u0435\u043D\u044B"
+    _english: Alerts disabled
+  - _key: desktop.donation.total_support
+    _russian: "\u0412\u0441\u0435\u0433\u043E \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u043E"
+    _english: Total received
+  - _key: desktop.donation.amount
+    _russian: ${0:0.00}
+    _english: ${0:0.00}
+  - _key: desktop.donation.sender
+    _russian: "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u0435\u043B\u044C"
+    _english: Sender
+  - _key: desktop.donation.sum
+    _russian: "\u0421\u0443\u043C\u043C\u0430"
+    _english: Amount
+  - _key: pc.polish.ready
+    _russian: "\u041F\u041A \u0433\u043E\u0442\u043E\u0432 \u043A \u0440\u0430\u0431\u043E\u0442\u0435"
+    _english: PC is ready
+  - _key: pc.polish.starts
+    _russian: "\u041F\u041A \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0441\u044F"
+    _english: PC can boot
+  - _key: pc.polish.wont_start
+    _russian: "\u041F\u041A \u043D\u0435 \u0437\u0430\u043F\u0443\u0441\u043A\u0430\u0435\u0442\u0441\u044F"
+    _english: PC cannot start
+  - _key: pc.polish.wont_boot
+    _russian: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430 \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0441\u044F"
+    _english: System cannot boot
+  - _key: pc.polish.all_installed
+    _russian: "\u0412\u0441\u0435 \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u044B \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u044B."
+    _english: All components are installed.
+  - _key: pc.polish.no_gpu
+    _russian: "\u0412\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0430 \u043D\u0435 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0430. \u041F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u043E\u0433\u0440\u0430\u043D\u0438\u0447\u0435\u043D\u0430."
+    _english: No dedicated graphics card. Performance is limited.
+  - _key: pc.polish.controls
+    _russian: "<b>[{0}]</b>  \u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\n<b>[{1}]</b>  \u0421\u043D\u044F\u0442\u044C \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\n<b>[Esc]</b>  \u041D\u0430\u0437\u0430\u0434"
+    _english: '<b>[{0}]</b>  Install component
+
+      <b>[{1}]</b>  Remove component
+
+      <b>[Esc]</b>  Back'

@@ -27,6 +27,7 @@ namespace GoLive.PcBuilding
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text statusText;
         [SerializeField] private TMP_Text powerBudgetText;
+        [SerializeField] private PcHardwareStatusView hardwareStatus;
 
         [Header("Slot card")]
         [SerializeField] private TMP_Text cardTitleText;
@@ -97,6 +98,12 @@ namespace GoLive.PcBuilding
         {
             if (powerBudgetText != null)
                 SetLine(powerBudgetText, value);
+        }
+
+        public void RenderHardwareStatus(PcCapabilities pc, PcWorkbenchText text)
+        {
+            if (hardwareStatus != null)
+                hardwareStatus.Render(pc, text);
         }
 
         public void RenderCard(string title, string detail, string action, Tone tone, string controls)

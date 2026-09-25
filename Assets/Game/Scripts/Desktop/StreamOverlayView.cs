@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using GoLive.Localization;
 using TMPro;
@@ -11,19 +12,24 @@ namespace GoLive.Desktop
         [SerializeField] private LocalizationContext localization;
         [SerializeField] private GameObject panel;
         [SerializeField] private TMP_Text statistics;
+        [SerializeField] private TMP_Text subscribers;
+        [SerializeField] private TMP_Text duration;
+        [SerializeField] private TMP_Text chatViewers;
         [SerializeField] private TMP_Text chat;
         [SerializeField] private TMP_Text donation;
+        [SerializeField] private GameObject donationPanel;
         private bool _bound;
-        private long _shownSecond = -1;
         private string _lastReceiptId;
         private DonationReceipt _alert;
         private float _alertRemaining;
+
         private void OnEnable()
         {
             runtime.Ready += Bind;
             panel.SetActive(false);
             if (runtime.IsReady) Bind();
         }
+
         private void Bind()
         {
             if (_bound) return;
@@ -37,63 +43,114 @@ namespace GoLive.Desktop
             Refresh();
             RefreshChat();
         }
+
         private void OnDisable()
         {
             runtime.Ready -= Bind;
-            if (!_bound) return;
-            runtime.State.Stream.Changed -= Refresh;
-            runtime.State.Stream.ChatAdded -= ChatAdded;
-            runtime.State.Donation.Changed -= DonationChanged;
-            localization.LanguageChanged -= LanguageChanged;
-            _bound = false;
+            if (_bound)
+            {
+                runtime.State.Stream.Changed -= Refresh;
+                runtime.State.Stream.ChatAdded -= ChatAdded;
+                runtime.State.Donation.Changed -= DonationChanged;
+                localization.LanguageChanged -= LanguageChanged;
+                _bound = false;
+            }
             panel.SetActive(false);
+            ClearAlert();
         }
+
         private void LanguageChanged(GameLanguage _) { Refresh(); RefreshChat(); ShowAlert(); }
         private void ChatAdded(StreamChatMessage _) => RefreshChat();
+
+        // Only the six-second visual alert needs a frame timer; counters refresh from Stream.Changed.
         private void Update()
         {
-            if (!_bound || !panel.activeSelf) return;
-            if (_alertRemaining > 0)
-            {
-                _alertRemaining -= Time.unscaledDeltaTime;
-                if (_alertRemaining <= 0) { _alert = null; donation.text = ""; }
-            }
-            double seconds = runtime.State.Stream.DurationSeconds;
-            long second = seconds >= long.MaxValue ? long.MaxValue : (long)seconds;
-            if (second != _shownSecond) { _shownSecond = second; RefreshStatistics(); }
+            if (!_bound || _alert == null) return;
+            _alertRemaining -= Time.unscaledDeltaTime;
+            if (_alertRemaining <= 0) ClearAlert();
         }
+
         private void Refresh()
         {
-            panel.SetActive(runtime.State.Stream.State == StreamState.Live);
+            bool live = runtime.State.Stream.State == StreamState.Live;
+            panel.SetActive(live);
+            if (!live)
+            {
+                chat.text = "";
+                ClearAlert();
+                return;
+            }
             RefreshStatistics();
-            if (!panel.activeSelf) { chat.text = ""; donation.text = ""; _shownSecond = -1; _alert = null; _alertRemaining = 0; }
         }
+
         private void RefreshStatistics()
         {
             StreamSession stream = runtime.State.Stream;
-            double minutes = System.Math.Floor(stream.DurationSeconds / 60d);
-            statistics.text = localization.Format("desktop.overlay.stats", stream.Viewers, minutes, (int)(stream.DurationSeconds % 60), stream.Followers, stream.DonationCents / 100d);
+            long previous = runtime.State.Trich.TotalFollowers;
+            long followers = previous > long.MaxValue - stream.Followers ? long.MaxValue : previous + stream.Followers;
+            statistics.text = localization.Format("desktop.overlay.count", stream.Viewers);
+            subscribers.text = localization.Format("desktop.overlay.count", followers);
+            duration.text = localization.Format("desktop.overlay.duration", Math.Floor(stream.DurationSeconds / 3600d),
+                (int)(stream.DurationSeconds / 60d % 60), (int)(stream.DurationSeconds % 60d));
+            chatViewers.text = statistics.text;
         }
+
         private void RefreshChat()
         {
             var messages = runtime.State.Stream.Chat;
             var builder = new StringBuilder();
-            for (int i = Mathf.Max(0, messages.Count - 6); i < messages.Count; i++)
-                builder.Append(messages[i].SenderName).Append("\n").Append(localization.Text(messages[i].BodyKey)).Append("\n\n");
+            for (int i = Mathf.Max(0, messages.Count - 8); i < messages.Count; i++)
+            {
+                string name = messages[i].SenderName.Replace("<", "").Replace(">", "");
+                builder.Append("<color=#").Append(NameColor(name)).Append("><b>")
+                    .Append(name).Append("</b></color>  ")
+                    .Append(localization.Text(messages[i].BodyKey)).Append('\n');
+            }
             chat.text = builder.ToString();
         }
+
+        private static string NameColor(string name)
+        {
+            uint hash = 0;
+            for (int i = 0; i < name.Length; i++) hash = unchecked(hash * 31 + name[i]);
+            return (hash % 4) switch
+            {
+                0 => "A995DC", 1 => "71C9CF", 2 => "E2B869", _ => "CE8FBB"
+            };
+        }
+
         private void DonationChanged()
         {
-            var account = runtime.State.Donation;
+            DonationAccount account = runtime.State.Donation;
             DonationReceipt latest = account.History.Count == 0 ? null : account.History[account.History.Count - 1];
             if (latest != null && latest.Id != _lastReceiptId)
             {
                 _lastReceiptId = latest.Id;
-                if (runtime.State.Stream.State == StreamState.Live && account.AlertsEnabled) { _alert = latest; _alertRemaining = 6; }
+                if (runtime.State.Stream.State == StreamState.Live && account.AlertsEnabled)
+                {
+                    _alert = latest;
+                    _alertRemaining = 6;
+                }
             }
             ShowAlert();
         }
-        private void ShowAlert() => donation.text = _alert != null && runtime.State.Donation.AlertsEnabled
-            ? localization.Format("desktop.donation.receipt", _alert.SenderName, _alert.AmountCents / 100d) : "";
+
+        private void ClearAlert()
+        {
+            _alert = null;
+            _alertRemaining = 0;
+            donation.text = "";
+            donationPanel.SetActive(false);
+        }
+
+        private void ShowAlert()
+        {
+            bool show = _alert != null && runtime.State.Donation.AlertsEnabled
+                && runtime.State.Stream.State == StreamState.Live;
+            donationPanel.SetActive(show);
+            donation.text = show
+                ? localization.Format("desktop.donation.receipt", _alert.SenderName, _alert.AmountCents / 100d)
+                : "";
+        }
     }
 }
