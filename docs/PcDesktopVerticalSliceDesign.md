@@ -12,7 +12,9 @@
 - Unity: 6000.6.0f1; URP 17.6.0; Input System 1.20.0; Test Framework 1.8.0; uGUI/TMP.
 - До изменения игрового кода выполнен фильтр `GoLive.Tests.Pc`, платформа EditMode: **139 passed, 0 failed, 0 skipped**. Внутри есть реальные переходы EnterPlayMode/ExitPlayMode.
 - Области: PcAssembly 25; Content 15; BuildingPlayMode 37; Sequence 5; Capabilities 29; PreinstalledParts 10; WorkbenchPlayMode 11; WorkbenchText 7.
-- Полный набор тестов и визуальная приёмка нового функционала ещё не выполнены. Это документ проектирования, не отчёт о готовой функции.
+- Полный базовый EditMode: **513 total, 511 passed, 2 failed, 0 skipped**, 86.28 сек. Упали `PhoneShopPlayModeTests.CartAndOrderRowsAreReadableInEnglish` и `CartAndOrderRowsAreReadableInRussian` на ожидании первых 10 кадров в `PlayModeWait.cs:26`, до проверок читаемости. Отдельный повтор обоих тестов воспроизвёл таймаут: 0 passed, 2 failed. Первопричина остановки player loop пока не установлена; дефект вёрстки из этих результатов не следует.
+- Отдельный базовый PlayMode runner: **0 обнаруженных тестов**. Тесты этого проекта лежат в Editor и при необходимости сами вызывают EnterPlayMode/ExitPlayMode.
+- Визуальная приёмка нового функционала ещё не выполнена. Это документ проектирования, не отчёт о готовой функции. Исходный full suite не зелёный; существующие таймауты должны быть отдельно разобраны при финальной проверке без удаления assertions и изменения Shop semantics.
 
 ### Реальная сцена и точки интеграции
 
