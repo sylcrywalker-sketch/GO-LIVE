@@ -18,25 +18,25 @@ MonoBehaviour:
     _english: Day {0}
   - _key: hud.weekday.monday
     _russian: "\u041F\u043D"
-    _english: "Mon"
+    _english: Mon
   - _key: hud.weekday.tuesday
     _russian: "\u0412\u0442"
-    _english: "Tue"
+    _english: Tue
   - _key: hud.weekday.wednesday
     _russian: "\u0421\u0440"
-    _english: "Wed"
+    _english: Wed
   - _key: hud.weekday.thursday
     _russian: "\u0427\u0442"
-    _english: "Thu"
+    _english: Thu
   - _key: hud.weekday.friday
     _russian: "\u041F\u0442"
-    _english: "Fri"
+    _english: Fri
   - _key: hud.weekday.saturday
     _russian: "\u0421\u0431"
-    _english: "Sat"
+    _english: Sat
   - _key: hud.weekday.sunday
     _russian: "\u0412\u0441"
-    _english: "Sun"
+    _english: Sun
   - _key: inventory.title
     _russian: "\u0418\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u044C"
     _english: Inventory
@@ -63,7 +63,7 @@ MonoBehaviour:
     _english: Drop
   - _key: hud.hunger
     _russian: "\u0413\u043E\u043B\u043E\u0434"
-    _english: "Hunger"
+    _english: Hunger
   - _key: hud.concentration
     _russian: "\u041A\u043E\u043D\u0446\u0435\u043D\u0442\u0440\u0430\u0446\u0438\u044F"
     _english: Concentration
@@ -81,37 +81,37 @@ MonoBehaviour:
     _english: Balance
   - _key: rent.hud.amount
     _russian: "\u0410\u0440\u0435\u043D\u0434\u0430: {0}"
-    _english: "Rent: {0}"
+    _english: 'Rent: {0}'
   - _key: rent.hud.days_left.one
     _russian: "\u043E\u0441\u0442\u0430\u043B\u0441\u044F {0} \u0434\u0435\u043D\u044C"
-    _english: "{0} day left"
+    _english: '{0} day left'
   - _key: rent.hud.days_left.few
     _russian: "\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C {0} \u0434\u043D\u044F"
-    _english: "{0} days left"
+    _english: '{0} days left'
   - _key: rent.hud.days_left.many
     _russian: "\u043E\u0441\u0442\u0430\u043B\u043E\u0441\u044C {0} \u0434\u043D\u0435\u0439"
-    _english: "{0} days left"
+    _english: '{0} days left'
   - _key: rent.hud.due_today
     _russian: "\u0441\u0435\u0433\u043E\u0434\u043D\u044F \u0434\u0435\u043D\u044C \u043E\u043F\u043B\u0430\u0442\u044B"
-    _english: "due today"
+    _english: due today
   - _key: rent.hud.overdue
     _russian: "\u043E\u043F\u043B\u0430\u0442\u0430 \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D\u0430"
-    _english: "overdue"
+    _english: overdue
   - _key: rent.hud.paid
     _russian: "\u0410\u0440\u0435\u043D\u0434\u0430 \u043E\u043F\u043B\u0430\u0447\u0435\u043D\u0430"
-    _english: "Rent paid"
+    _english: Rent paid
   - _key: rent.hud.next_due.one
     _russian: "\u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u0447\u0435\u0440\u0435\u0437 {0} \u0434\u0435\u043D\u044C"
-    _english: "next due in {0} day"
+    _english: next due in {0} day
   - _key: rent.hud.next_due.few
     _russian: "\u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u0447\u0435\u0440\u0435\u0437 {0} \u0434\u043D\u044F"
-    _english: "next due in {0} days"
+    _english: next due in {0} days
   - _key: rent.hud.next_due.many
     _russian: "\u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u0447\u0435\u0440\u0435\u0437 {0} \u0434\u043D\u0435\u0439"
-    _english: "next due in {0} days"
+    _english: next due in {0} days
   - _key: rent.hud.unpaid
     _russian: "\u0410\u0440\u0435\u043D\u0434\u0430 \u043D\u0435 \u043E\u043F\u043B\u0430\u0447\u0435\u043D\u0430"
-    _english: "Rent unpaid"
+    _english: Rent unpaid
   - _key: phone.brand
     _russian: goline
     _english: goline
@@ -447,7 +447,7 @@ MonoBehaviour:
     _english: A pack of four rolls. No frills.
   - _key: inventory.hint.closed
     _russian: "\u0418\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u044C"
-    _english: "Inventory"
+    _english: Inventory
   - _key: inventory.hint.open
     _russian: "\u041F\u0435\u0440\u0435\u0442\u0430\u0441\u043A\u0438\u0432\u0430\u0439\u0442\u0435 \u043F\u0440\u0435\u0434\u043C\u0435\u0442\u044B \u043C\u0435\u0436\u0434\u0443 \u0440\u0443\u043A\u0430\u043C\u0438 \u0438 \u0438\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u0451\u043C."
     _english: Drag items between your hands and the inventory.
@@ -483,7 +483,7 @@ MonoBehaviour:
     _english: Free your hands first
   - _key: inventory.reject.failed
     _russian: "\u041D\u0435 \u043F\u043E\u043B\u0443\u0447\u0438\u043B\u043E\u0441\u044C, \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u0435\u0449\u0451 \u0440\u0430\u0437"
-    _english: "That did not work, try again"
+    _english: That did not work, try again
   - _key: inventory.empty_title
     _russian: "\u041F\u043E\u043A\u0430 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442"
     _english: No items yet
@@ -498,220 +498,235 @@ MonoBehaviour:
     _english: Cardboard box
   - _key: pc.workbench.enter
     _russian: "\u0420\u0430\u0431\u043E\u0442\u0430\u0442\u044C \u0441 \u041F\u041A"
-    _english: "Work on PC"
+    _english: Work on PC
   - _key: pc.workbench.hint.point
     _russian: "\u041D\u0430\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u0430 \u043F\u043E\u0434\u0441\u0432\u0435\u0447\u0435\u043D\u043D\u043E\u0435 \u043C\u0435\u0441\u0442\u043E \u0432 \u043A\u043E\u0440\u043F\u0443\u0441\u0435"
-    _english: "Point at the highlighted place in the case"
+    _english: Point at the highlighted place in the case
   - _key: pc.workbench.slot_empty
     _russian: "\u0421\u0432\u043E\u0431\u043E\u0434\u043D\u043E"
-    _english: "Empty"
+    _english: Empty
   - _key: pc.install.gpu
     _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0443"
-    _english: "Install GPU"
+    _english: Install GPU
   - _key: pc.remove.gpu
     _russian: "\u0421\u043D\u044F\u0442\u044C \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0443"
-    _english: "Remove GPU"
+    _english: Remove GPU
   - _key: pc.reject.not_hardware
     _russian: "\u042D\u0442\u043E \u043D\u0435 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F \u0432 \u043A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440"
-    _english: "This doesn't go in a computer"
+    _english: This doesn't go in a computer
   - _key: pc.reject.wrong_type
     _russian: "\u042D\u0442\u0430 \u0434\u0435\u0442\u0430\u043B\u044C \u0441\u044E\u0434\u0430 \u043D\u0435 \u043F\u043E\u0434\u0445\u043E\u0434\u0438\u0442"
-    _english: "This part doesn't go in this slot"
+    _english: This part doesn't go in this slot
   - _key: pc.reject.wrong_connector
     _russian: "\u041D\u0435 \u0442\u043E\u0442 \u0440\u0430\u0437\u044A\u0451\u043C \u0434\u043B\u044F \u044D\u0442\u043E\u0433\u043E \u0441\u043B\u043E\u0442\u0430"
-    _english: "Wrong connector for this slot"
+    _english: Wrong connector for this slot
   - _key: pc.reject.slot_occupied
     _russian: "\u0421\u043B\u043E\u0442 \u0443\u0436\u0435 \u0437\u0430\u043D\u044F\u0442"
-    _english: "This slot is already taken"
+    _english: This slot is already taken
   - _key: pc.reject.slot_empty
     _russian: "\u0417\u0434\u0435\u0441\u044C \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u043E"
-    _english: "Nothing is installed here"
+    _english: Nothing is installed here
   - _key: pc.reject.nothing_in_hands
     _russian: "\u0412\u043E\u0437\u044C\u043C\u0438\u0442\u0435 \u043F\u043E\u0434\u0445\u043E\u0434\u044F\u0449\u0443\u044E \u0434\u0435\u0442\u0430\u043B\u044C \u0438\u0437 \u0438\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u044F \u0441\u043F\u0440\u0430\u0432\u0430"
-    _english: "Take a matching part from the inventory on the right"
+    _english: Take a matching part from the inventory on the right
   - _key: pc.reject.hands_busy
     _russian: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0441\u0432\u043E\u0431\u043E\u0434\u0438\u0442\u0435 \u0440\u0443\u043A\u0438"
-    _english: "Free your hands first"
+    _english: Free your hands first
   - _key: pc.reject.unavailable
     _russian: "\u0421\u0435\u0439\u0447\u0430\u0441 \u044D\u0442\u043E \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u043D\u0435\u043B\u044C\u0437\u044F"
-    _english: "Can't do that right now"
+    _english: Can't do that right now
   - _key: pc.diagnostic.no_gpu.title
     _russian: "\u041D\u0435\u0442 \u0434\u0438\u0441\u043A\u0440\u0435\u0442\u043D\u043E\u0439 \u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u044B"
-    _english: "No dedicated graphics card"
+    _english: No dedicated graphics card
   - _key: pc.diagnostic.no_gpu.detail
     _russian: "\u0418\u0433\u0440\u044B \u0438 \u0441\u0442\u0440\u0438\u043C\u044B \u0431\u0443\u0434\u0443\u0442 \u0438\u0434\u0442\u0438 \u043F\u043B\u043E\u0445\u043E."
-    _english: "Games and streams will run poorly."
+    _english: Games and streams will run poorly.
   - _key: pc.workbench.choose.title
     _russian: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0435\u0442\u0430\u043B\u044C"
-    _english: "Choose a part"
+    _english: Choose a part
   - _key: pc.workbench.choose.detail
     _russian: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0442\u0443\u044E\u0449\u0443\u044E \u0432 \u0438\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u0435 \u0441\u043F\u0440\u0430\u0432\u0430."
-    _english: "Click a PC part in the inventory on the right."
+    _english: Click a PC part in the inventory on the right.
   - _key: pc.workbench.controls
-    _russian: "[\u041B\u041A\u041C] \u0438\u043B\u0438 [{0}] \u2014 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C   \u00B7   [{1}] \u2014 \u0441\u043D\u044F\u0442\u044C   \u00B7   [{2}] \u0438\u043B\u0438 [Esc] \u2014 \u0432\u044B\u0439\u0442\u0438"
-    _english: "[LMB] or [{0}] install   \u00B7   [{1}] remove   \u00B7   [{2}] or [Esc] exit"
+    _russian: "[\u041B\u041A\u041C] \u0438\u043B\u0438 [{0}] \u2014 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C   \xB7   [{1}] \u2014 \u0441\u043D\u044F\u0442\u044C   \xB7   [{2}] \u0438\u043B\u0438 [Esc] \u2014 \u0432\u044B\u0439\u0442\u0438"
+    _english: "[LMB] or [{0}] install   \xB7   [{1}] remove   \xB7   [{2}] or [Esc] exit"
   - _key: pc.workbench.click
     _russian: "\u041B\u041A\u041C"
-    _english: "LMB"
+    _english: LMB
   - _key: pc.part.installable
-    _russian: "{0} \u00B7 \u043C\u043E\u0436\u043D\u043E \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"
-    _english: "{0} \u00B7 can be installed"
+    _russian: "{0} \xB7 \u043C\u043E\u0436\u043D\u043E \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"
+    _english: "{0} \xB7 can be installed"
   - _key: pc.part.slot_taken
-    _russian: "{0} \u00B7 \u043C\u0435\u0441\u0442\u043E \u0443\u0436\u0435 \u0437\u0430\u043D\u044F\u0442\u043E"
-    _english: "{0} \u00B7 its place is taken"
+    _russian: "{0} \xB7 \u043C\u0435\u0441\u0442\u043E \u0443\u0436\u0435 \u0437\u0430\u043D\u044F\u0442\u043E"
+    _english: "{0} \xB7 its place is taken"
   - _key: pc.part.no_place
-    _russian: "{0} \u00B7 \u043D\u0435\u043A\u0443\u0434\u0430 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"
-    _english: "{0} \u00B7 no place in this PC"
+    _russian: "{0} \xB7 \u043D\u0435\u043A\u0443\u0434\u0430 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"
+    _english: "{0} \xB7 no place in this PC"
   - _key: pc.part.not_part
     _russian: "\u041D\u0435 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F \u0432 \u043A\u043E\u0440\u043F\u0443\u0441"
-    _english: "Doesn't go in the case"
+    _english: Doesn't go in the case
   - _key: pc.feedback.not_part
-    _russian: "\u00AB{0}\u00BB \u043D\u0435 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F \u0432 \u043A\u043E\u0440\u043F\u0443\u0441"
-    _english: "{0} doesn't go in the case"
+    _russian: "\xAB{0}\xBB \u043D\u0435 \u0441\u0442\u0430\u0432\u0438\u0442\u0441\u044F \u0432 \u043A\u043E\u0440\u043F\u0443\u0441"
+    _english: '{0} doesn''t go in the case'
   - _key: pc.parts.hint
     _russian: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043D\u0430 \u0434\u0435\u0442\u0430\u043B\u044C, \u0447\u0442\u043E\u0431\u044B \u0432\u0437\u044F\u0442\u044C \u0435\u0451 \u0432 \u0440\u0443\u043A\u0438."
-    _english: "Click a part to take it in hand."
+    _english: Click a part to take it in hand.
   - _key: pc.component.gpu
     _russian: "\u0412\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0430"
-    _english: "Graphics card"
+    _english: Graphics card
   - _key: pc.reject.no_matching_slot
     _russian: "\u0412 \u044D\u0442\u043E\u043C \u041F\u041A \u043D\u0435\u0442 \u043C\u0435\u0441\u0442\u0430 \u0434\u043B\u044F \u0442\u0430\u043A\u043E\u0439 \u0434\u0435\u0442\u0430\u043B\u0438"
-    _english: "This PC has no place for this part"
+    _english: This PC has no place for this part
   - _key: pc.component.motherboard
     _russian: "\u041C\u0430\u0442\u0435\u0440\u0438\u043D\u0441\u043A\u0430\u044F \u043F\u043B\u0430\u0442\u0430"
-    _english: "Motherboard"
+    _english: Motherboard
   - _key: pc.component.psu
     _russian: "\u0411\u043B\u043E\u043A \u043F\u0438\u0442\u0430\u043D\u0438\u044F"
-    _english: "Power supply"
+    _english: Power supply
   - _key: pc.component.cpu
     _russian: "\u041F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0440"
-    _english: "Processor"
+    _english: Processor
   - _key: pc.component.ram
     _russian: "\u041E\u043F\u0435\u0440\u0430\u0442\u0438\u0432\u043D\u0430\u044F \u043F\u0430\u043C\u044F\u0442\u044C"
-    _english: "Memory"
+    _english: Memory
   - _key: pc.component.storage
     _russian: "\u041D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C"
-    _english: "Storage"
+    _english: Storage
   - _key: pc.install.motherboard
     _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043C\u0430\u0442\u0435\u0440\u0438\u043D\u0441\u043A\u0443\u044E \u043F\u043B\u0430\u0442\u0443"
-    _english: "Install motherboard"
+    _english: Install motherboard
   - _key: pc.install.cpu
     _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0440"
-    _english: "Install processor"
+    _english: Install processor
   - _key: pc.install.ram
     _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043F\u0430\u043C\u044F\u0442\u044C"
-    _english: "Install memory"
+    _english: Install memory
   - _key: pc.install.psu
     _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u0431\u043B\u043E\u043A \u043F\u0438\u0442\u0430\u043D\u0438\u044F"
-    _english: "Install power supply"
+    _english: Install power supply
   - _key: pc.install.storage
     _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C \u043D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C"
-    _english: "Install drive"
+    _english: Install drive
   - _key: pc.remove.motherboard
     _russian: "\u0421\u043D\u044F\u0442\u044C \u043C\u0430\u0442\u0435\u0440\u0438\u043D\u0441\u043A\u0443\u044E \u043F\u043B\u0430\u0442\u0443"
-    _english: "Remove motherboard"
+    _english: Remove motherboard
   - _key: pc.remove.cpu
     _russian: "\u0421\u043D\u044F\u0442\u044C \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0440"
-    _english: "Remove processor"
+    _english: Remove processor
   - _key: pc.remove.ram
     _russian: "\u0421\u043D\u044F\u0442\u044C \u043F\u0430\u043C\u044F\u0442\u044C"
-    _english: "Remove memory"
+    _english: Remove memory
   - _key: pc.remove.psu
     _russian: "\u0421\u043D\u044F\u0442\u044C \u0431\u043B\u043E\u043A \u043F\u0438\u0442\u0430\u043D\u0438\u044F"
-    _english: "Remove power supply"
+    _english: Remove power supply
   - _key: pc.remove.storage
     _russian: "\u0421\u043D\u044F\u0442\u044C \u043D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C"
-    _english: "Remove drive"
+    _english: Remove drive
   - _key: pc.diagnostic.no_motherboard.title
     _russian: "\u041D\u0435\u0442 \u043C\u0430\u0442\u0435\u0440\u0438\u043D\u0441\u043A\u043E\u0439 \u043F\u043B\u0430\u0442\u044B"
-    _english: "Motherboard missing"
+    _english: Motherboard missing
   - _key: pc.diagnostic.no_motherboard.detail
     _russian: "\u041A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440 \u043D\u0435 \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0441\u044F."
-    _english: "The PC cannot start."
+    _english: The PC cannot start.
   - _key: pc.diagnostic.no_cpu.title
     _russian: "\u041D\u0435\u0442 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0440\u0430"
-    _english: "Processor missing"
+    _english: Processor missing
   - _key: pc.diagnostic.no_cpu.detail
     _russian: "\u041A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440 \u043D\u0435 \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0441\u044F."
-    _english: "The PC cannot start."
+    _english: The PC cannot start.
   - _key: pc.diagnostic.no_memory.title
     _russian: "\u041D\u0435\u0442 \u043E\u043F\u0435\u0440\u0430\u0442\u0438\u0432\u043D\u043E\u0439 \u043F\u0430\u043C\u044F\u0442\u0438"
-    _english: "Memory missing"
+    _english: Memory missing
   - _key: pc.diagnostic.no_memory.detail
     _russian: "\u041A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440 \u043D\u0435 \u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0441\u044F."
-    _english: "The PC cannot start."
+    _english: The PC cannot start.
   - _key: pc.diagnostic.no_psu.title
     _russian: "\u041D\u0435\u0442 \u0431\u043B\u043E\u043A\u0430 \u043F\u0438\u0442\u0430\u043D\u0438\u044F"
-    _english: "Power supply missing"
+    _english: Power supply missing
   - _key: pc.diagnostic.no_psu.detail
     _russian: "\u041A\u043E\u043C\u043F\u044C\u044E\u0442\u0435\u0440 \u043D\u0435 \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0441\u044F."
-    _english: "The PC cannot power on."
+    _english: The PC cannot power on.
   - _key: pc.diagnostic.weak_psu.title
     _russian: "\u0411\u043B\u043E\u043A\u0443 \u043F\u0438\u0442\u0430\u043D\u0438\u044F \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u043C\u043E\u0449\u043D\u043E\u0441\u0442\u0438"
-    _english: "Power supply is too weak"
+    _english: Power supply is too weak
   - _key: pc.diagnostic.weak_psu.detail
     _russian: "\u0411\u043B\u043E\u043A\u0443 \u043F\u0438\u0442\u0430\u043D\u0438\u044F \u043D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u043C\u043E\u0449\u043D\u043E\u0441\u0442\u0438: \u043D\u0443\u0436\u043D\u043E {0} \u0412\u0442, \u0435\u0441\u0442\u044C {1} \u0412\u0442."
-    _english: "The power supply is too weak: {0} W needed, {1} W available."
+    _english: 'The power supply is too weak: {0} W needed, {1} W available.'
   - _key: pc.diagnostic.no_storage.title
     _russian: "\u041D\u0435\u0442 \u043D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044F"
-    _english: "Storage missing"
+    _english: Storage missing
   - _key: pc.diagnostic.no_storage.detail
     _russian: "\u0421\u0438\u0441\u0442\u0435\u043C\u0435 \u043D\u0435 \u0441 \u0447\u0435\u0433\u043E \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C\u0441\u044F."
-    _english: "There is nothing to start the system from."
+    _english: There is nothing to start the system from.
   - _key: pc.status.title
     _russian: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435 \u041F\u041A"
-    _english: "PC status"
+    _english: PC status
   - _key: pc.status.wont_start
     _russian: "\u041D\u0435 \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0441\u044F"
-    _english: "Won't start"
+    _english: Won't start
   - _key: pc.status.wont_boot
     _russian: "\u041D\u0435 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0441\u044F"
-    _english: "Won't boot"
+    _english: Won't boot
   - _key: pc.status.ready
     _russian: "\u0413\u043E\u0442\u043E\u0432 \u043A \u0440\u0430\u0431\u043E\u0442\u0435"
-    _english: "Ready"
+    _english: Ready
   - _key: pc.status.ready_for_games
     _russian: "\u0413\u043E\u0442\u043E\u0432 \u043A \u0438\u0433\u0440\u0430\u043C \u0438 \u0441\u0442\u0440\u0438\u043C\u0430\u043C"
-    _english: "Ready for games and streams"
+    _english: Ready for games and streams
   - _key: pc.status.install_marked
     _russian: "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0435 \u043E\u0442\u043C\u0435\u0447\u0435\u043D\u043D\u044B\u0435 \u0434\u0435\u0442\u0430\u043B\u0438."
-    _english: "Install the marked parts."
+    _english: Install the marked parts.
   - _key: pc.reject.install_first
     _russian: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0443\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0435 {0}"
-    _english: "Install {0} first"
+    _english: Install {0} first
   - _key: pc.reject.remove_first
     _russian: "\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0441\u043D\u0438\u043C\u0438\u0442\u0435 {0}"
-    _english: "Remove {0} first"
+    _english: Remove {0} first
   - _key: pc.list.and
     _russian: "{0} \u0438 {1}"
-    _english: "{0} and {1}"
+    _english: '{0} and {1}'
   - _key: pc.component.motherboard.object
     _russian: "\u043C\u0430\u0442\u0435\u0440\u0438\u043D\u0441\u043A\u0443\u044E \u043F\u043B\u0430\u0442\u0443"
-    _english: "the motherboard"
+    _english: the motherboard
   - _key: pc.component.cpu.object
     _russian: "\u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0440"
-    _english: "the processor"
+    _english: the processor
   - _key: pc.component.ram.object
     _russian: "\u043E\u043F\u0435\u0440\u0430\u0442\u0438\u0432\u043D\u0443\u044E \u043F\u0430\u043C\u044F\u0442\u044C"
-    _english: "the memory"
+    _english: the memory
   - _key: pc.component.psu.object
     _russian: "\u0431\u043B\u043E\u043A \u043F\u0438\u0442\u0430\u043D\u0438\u044F"
-    _english: "the power supply"
+    _english: the power supply
   - _key: pc.component.storage.object
     _russian: "\u043D\u0430\u043A\u043E\u043F\u0438\u0442\u0435\u043B\u044C"
-    _english: "the drive"
+    _english: the drive
   - _key: pc.component.gpu.object
     _russian: "\u0432\u0438\u0434\u0435\u043E\u043A\u0430\u0440\u0442\u0443"
-    _english: "the graphics card"
+    _english: the graphics card
   - _key: item.starter_motherboard.name
     _russian: "\u0421\u0442\u0430\u0440\u0430\u044F \u043C\u0430\u0442\u0435\u0440\u0438\u043D\u0441\u043A\u0430\u044F \u043F\u043B\u0430\u0442\u0430"
-    _english: "Old Motherboard"
+    _english: Old Motherboard
   - _key: item.starter_cpu.name
     _russian: "\u0421\u0442\u0430\u0440\u044B\u0439 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0440"
-    _english: "Old Processor"
+    _english: Old Processor
   - _key: item.starter_ram.name
     _russian: "\u0421\u0442\u0430\u0440\u044B\u0439 \u043C\u043E\u0434\u0443\u043B\u044C \u043F\u0430\u043C\u044F\u0442\u0438"
-    _english: "Old Memory Module"
+    _english: Old Memory Module
   - _key: item.starter_hdd.name
     _russian: "\u0421\u0442\u0430\u0440\u044B\u0439 \u0436\u0451\u0441\u0442\u043A\u0438\u0439 \u0434\u0438\u0441\u043A"
-    _english: "Old Hard Drive"
+    _english: Old Hard Drive
+  - _key: phone.cart
+    _russian: "\u041A\u043E\u0440\u0437\u0438\u043D\u0430"
+    _english: Cart
+  - _key: phone.cart_empty
+    _russian: "\u041A\u043E\u0440\u0437\u0438\u043D\u0430 \u043F\u0443\u0441\u0442\u0430."
+    _english: Your cart is empty.
+  - _key: phone.cart_total
+    _russian: "\u0418\u0442\u043E\u0433\u043E: {0}"
+    _english: 'Total: {0}'
+  - _key: phone.add_to_cart
+    _russian: "\u0412 \u043A\u043E\u0440\u0437\u0438\u043D\u0443"
+    _english: Add to cart
+  - _key: phone.checkout
+    _russian: "\u0417\u0430\u043A\u0430\u0437\u0430\u0442\u044C"
+    _english: Place order
