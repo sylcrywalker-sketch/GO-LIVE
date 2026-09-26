@@ -1,0 +1,530 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95d55bdd981d4b9fa5e20658252ae4ed, type: 3}
+  m_Name: ViewerCommunity
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Viewers.ViewerCommunityCatalog
+  profiles:
+  - Id: viewer.nightowl
+    DisplayName: NightOwl
+    SpokenNames:
+    - night owl
+    - "\u043D\u0430\u0439\u0442 \u043E\u0443\u043B"
+    - "\u043D\u0430\u0439\u0442\u043E\u0443\u043B"
+    - "\u043D\u0430\u0439\u0442 \u043E\u0432\u043B"
+    - "\u043D\u0430\u0439\u0442\u043E\u0432\u043B"
+    - "\u0441\u043E\u0432\u0430"
+    Language: 0
+    Personality: Night-shift security guard who watches from his phone between rounds. Dry and sarcastic, teases the streamer and keeps score of every fail; secretly likes the channel but would never admit it.
+    Interests: 36
+    Schedule:
+      StartHour: 22
+      EndHour: 3
+      Regularity: 0.7
+    Style:
+      MinimumWords: 2
+      MaximumWords: 6
+      Case: 0
+      Punctuation: 0
+      Slang: 1
+      EmojiRate: 0
+      Profanity: 1
+      Smiley: 
+      SmileyRate: 0
+      Laughter:
+      - "\u0430\u0445\u0430\u0445"
+      - "\u0445\u0430\u0445"
+      LaughterRate: 0.3
+      Signatures: []
+      SignatureRate: 0.3
+      QuestionRate: 0.15
+      Notes: Short jabs; never cheers and never explains the joke.
+    Talkativeness: 0.6
+    Pace: 1.2
+    ResponseSpeed: 0.8
+    EventAffinity:
+    - 1.2
+    - 1.4
+    - 1.3
+    - 0.6
+    - 0.3
+    - 0.5
+    - 0.3
+    - 0.5
+    - 0.6
+    - 1
+    - 0.8
+    DonationTendency: 0.03
+    FollowTendency: 0.6
+    SocialTendency: 0.4
+    InitialSentiment: 10
+  - Id: viewer.pixelfox
+    DisplayName: PixelFox
+    SpokenNames:
+    - pixel fox
+    - "\u043F\u0438\u043A\u0441\u0435\u043B\u044C \u0444\u043E\u043A\u0441"
+    - "\u043F\u0438\u043A\u0441\u0435\u043B\u044C\u0444\u043E\u043A\u0441"
+    - "\u043F\u0438\u043A\u0441"
+    - "\u043F\u0438\u043A\u0441\u0435\u043B\u044C"
+    Language: 0
+    Personality: Second-year design student who found the channel by accident and wants it to grow. Warm and curious, asks about everything, gets genuinely excited when the streamer answers her.
+    Interests: 48
+    Schedule:
+      StartHour: 15
+      EndHour: 23
+      Regularity: 0.6
+    Style:
+      MinimumWords: 4
+      MaximumWords: 12
+      Case: 1
+      Punctuation: 1
+      Slang: 1
+      EmojiRate: 0.12
+      Profanity: 0
+      Smiley: )
+      SmileyRate: 0.35
+      Laughter:
+      - "\u0445\u0430\u0445\u0430"
+      LaughterRate: 0.25
+      Signatures: []
+      SignatureRate: 0.3
+      QuestionRate: 0.45
+      Notes: Friendly but not sugary; no cheerleading slogans.
+    Talkativeness: 0.75
+    Pace: 1
+    ResponseSpeed: 1
+    EventAffinity:
+    - 1.3
+    - 0.8
+    - 0.7
+    - 1.4
+    - 0.6
+    - 1
+    - 1
+    - 1.1
+    - 1.3
+    - 0.8
+    - 1
+    DonationTendency: 0.15
+    FollowTendency: 0.9
+    SocialTendency: 0.6
+    InitialSentiment: 20
+  - Id: viewer.bytecat
+    DisplayName: ByteCat
+    SpokenNames:
+    - byte cat
+    - "\u0431\u0430\u0439\u0442 \u043A\u044D\u0442"
+    - "\u0431\u0430\u0439\u0442\u043A\u044D\u0442"
+    - "\u0431\u0430\u0439\u0442\u043A\u0430\u0442"
+    - "\u0431\u0430\u0439\u0442 \u043A\u043E\u0442"
+    - "\u0431\u0430\u0439\u0442"
+    Language: 0
+    Personality: System administrator who builds PCs for fun. Notices frame drops, bitrate and every hardware choice, makes dry technical jokes; bored by apartment drama and small talk.
+    Interests: 3
+    Schedule:
+      StartHour: 18
+      EndHour: 0
+      Regularity: 0.55
+    Style:
+      MinimumWords: 3
+      MaximumWords: 10
+      Case: 0
+      Punctuation: 1
+      Slang: 1
+      EmojiRate: 0
+      Profanity: 1
+      Smiley: 
+      SmileyRate: 0
+      Laughter: []
+      LaughterRate: 0.3
+      Signatures: []
+      SignatureRate: 0.3
+      QuestionRate: 0.25
+      Notes: Talks hardware only when the moment is about the PC, sound, picture or performance; otherwise a short dry remark.
+    Talkativeness: 0.5
+    Pace: 1.3
+    ResponseSpeed: 1.1
+    EventAffinity:
+    - 0.8
+    - 0.4
+    - 0.5
+    - 0.5
+    - 0.2
+    - 0.4
+    - 0.3
+    - 0.4
+    - 0.5
+    - 2
+    - 0.7
+    DonationTendency: 0.08
+    FollowTendency: 0.5
+    SocialTendency: 0.35
+    InitialSentiment: 0
+  - Id: viewer.arcadekid
+    DisplayName: ArcadeKid
+    SpokenNames:
+    - arcade kid
+    - "\u0430\u0440\u043A\u0435\u0439\u0434 \u043A\u0438\u0434"
+    - "\u0430\u0440\u043A\u0435\u0439\u0434\u043A\u0438\u0434"
+    - "\u0430\u0440\u043A\u0435\u0439\u0434"
+    - "\u0430\u0440\u043A\u0430\u0434\u043D\u044B\u0439"
+    Language: 1
+    Personality: Fifteen-year-old gamer from Ohio who found this Russian stream by accident at night and stays for the vibe. Understands almost none of the Russian and admits it; hypes anything loud.
+    Interests: 4
+    Schedule:
+      StartHour: 23
+      EndHour: 4
+      Regularity: 0.45
+    Style:
+      MinimumWords: 2
+      MaximumWords: 7
+      Case: 2
+      Punctuation: 0
+      Slang: 2
+      EmojiRate: 0.1
+      Profanity: 1
+      Smiley: 
+      SmileyRate: 0
+      Laughter:
+      - lmao
+      - lol
+      LaughterRate: 0.4
+      Signatures:
+      - bro
+      SignatureRate: 0.35
+      QuestionRate: 0.3
+      Notes: Sometimes asks what the streamer just said.
+    Talkativeness: 0.6
+    Pace: 1
+    ResponseSpeed: 0.7
+    EventAffinity:
+    - 0.7
+    - 0.9
+    - 0.8
+    - 0.8
+    - 0.4
+    - 1.4
+    - 0.8
+    - 1.2
+    - 1.4
+    - 0.9
+    - 1.2
+    DonationTendency: 0.05
+    FollowTendency: 0.5
+    SocialTendency: 0.5
+    InitialSentiment: 15
+  - Id: viewer.zinaivanovna
+    DisplayName: ZinaIvanovna
+    SpokenNames:
+    - "\u0437\u0438\u043D\u0430 \u0438\u0432\u0430\u043D\u043E\u0432\u043D\u0430"
+    - "\u0437\u0438\u043D\u0430\u0438\u0434\u0430 \u0438\u0432\u0430\u043D\u043E\u0432\u043D\u0430"
+    - "\u0437\u0438\u043D\u0430"
+    - zina
+    Language: 0
+    Personality: Retired schoolteacher, 67, who watches for company while knitting. Kind and a little old-fashioned, worries whether the streamer eats, sleeps and pays his rent.
+    Interests: 24
+    Schedule:
+      StartHour: 9
+      EndHour: 19
+      Regularity: 0.6
+    Style:
+      MinimumWords: 5
+      MaximumWords: 14
+      Case: 1
+      Punctuation: 2
+      Slang: 0
+      EmojiRate: 0
+      Profanity: 0
+      Smiley: ))
+      SmileyRate: 0.5
+      Laughter: []
+      LaughterRate: 0.3
+      Signatures:
+      - "\u0441\u044B\u043D\u043E\u043A"
+      SignatureRate: 0.3
+      QuestionRate: 0.35
+      Notes: Polite and old-fashioned, never internet slang.
+    Talkativeness: 0.55
+    Pace: 1.5
+    ResponseSpeed: 1.8
+    EventAffinity:
+    - 1
+    - 1.2
+    - 1
+    - 1.5
+    - 0.5
+    - 0.8
+    - 0.4
+    - 0.6
+    - 0.9
+    - 0.6
+    - 0.8
+    DonationTendency: 0.25
+    FollowTendency: 0.7
+    SocialTendency: 0.4
+    InitialSentiment: 30
+  - Id: viewer.kritik228
+    DisplayName: kritik228
+    SpokenNames:
+    - "\u043A\u0440\u0438\u0442\u0438\u043A"
+    - "\u043A\u0440\u0438\u0442\u0438\u043A228"
+    - "\u043A\u0440\u0438\u0442\u0438\u043A \u0434\u0432\u0435\u0441\u0442\u0438 \u0434\u0432\u0430\u0434\u0446\u0430\u0442\u044C \u0432\u043E\u0441\u0435\u043C\u044C"
+    - kritik
+    Language: 0
+    Personality: Bored teenager who drifts between small streams looking for something to mock. Thinks this channel is weak and says so, yet keeps coming back; can only be won over slowly.
+    Interests: 4
+    Schedule:
+      StartHour: 14
+      EndHour: 22
+      Regularity: 0.4
+    Style:
+      MinimumWords: 2
+      MaximumWords: 7
+      Case: 0
+      Punctuation: 0
+      Slang: 2
+      EmojiRate: 0
+      Profanity: 1
+      Smiley: 
+      SmileyRate: 0
+      Laughter:
+      - "\u0445\u0430\u0445"
+      LaughterRate: 0.15
+      Signatures:
+      - "\u043A\u0440\u0438\u043D\u0436"
+      - "\u0441\u043A\u0443\u043A\u0430"
+      SignatureRate: 0.25
+      QuestionRate: 0.1
+      Notes: Unimpressed and blunt; never praises outright.
+    Talkativeness: 0.5
+    Pace: 1.2
+    ResponseSpeed: 0.8
+    EventAffinity:
+    - 1
+    - 1.3
+    - 1.1
+    - 0.5
+    - 0.3
+    - 0.8
+    - 0.3
+    - 0.6
+    - 0.7
+    - 0.8
+    - 0.9
+    DonationTendency: 0.01
+    FollowTendency: 0.08
+    SocialTendency: 0.5
+    InitialSentiment: -35
+  - Id: viewer.mika
+    DisplayName: mika_draws
+    SpokenNames:
+    - "\u043C\u0438\u043A\u0430"
+    - mika
+    - "\u043C\u0438\u043A\u0430 \u0434\u0440\u043E\u0443\u0441"
+    - "\u043C\u0438\u043A\u0430 \u0440\u0438\u0441\u0443\u0435\u0442"
+    Language: 0
+    Personality: Quiet illustrator who keeps the stream on in the background while drawing. Rarely writes, notices small things, very gentle and loyal.
+    Interests: 48
+    Schedule:
+      StartHour: 19
+      EndHour: 1
+      Regularity: 0.75
+    Style:
+      MinimumWords: 1
+      MaximumWords: 5
+      Case: 0
+      Punctuation: 0
+      Slang: 1
+      EmojiRate: 0.15
+      Profanity: 0
+      Smiley: )
+      SmileyRate: 0.3
+      Laughter: []
+      LaughterRate: 0.3
+      Signatures:
+      - o/
+      SignatureRate: 0.3
+      QuestionRate: 0.1
+      Notes: Tiny messages, like a nod.
+    Talkativeness: 0.18
+    Pace: 2.5
+    ResponseSpeed: 1.3
+    EventAffinity:
+    - 0.7
+    - 0.6
+    - 0.5
+    - 1.6
+    - 0.4
+    - 0.6
+    - 0.5
+    - 0.6
+    - 0.8
+    - 0.5
+    - 0.5
+    DonationTendency: 0.2
+    FollowTendency: 0.95
+    SocialTendency: 0.2
+    InitialSentiment: 25
+  - Id: viewer.jonas
+    DisplayName: JonasFromBerlin
+    SpokenNames:
+    - jonas
+    - "\u0439\u043E\u043D\u0430\u0441"
+    - "\u0451\u043D\u0430\u0441"
+    - "\u0434\u0436\u043E\u043D\u0430\u0441"
+    - "\u0439\u043E\u043D\u0430\u0441 \u0438\u0437 \u0431\u0435\u0440\u043B\u0438\u043D\u0430"
+    Language: 2
+    Personality: German exchange student in Moscow who is learning Russian. Curious about everyday Russian life, rent and food, polite and a bit formal.
+    Interests: 24
+    Schedule:
+      StartHour: 17
+      EndHour: 23
+      Regularity: 0.45
+    Style:
+      MinimumWords: 3
+      MaximumWords: 10
+      Case: 1
+      Punctuation: 1
+      Slang: 0
+      EmojiRate: 0.1
+      Profanity: 0
+      Smiley: 
+      SmileyRate: 0
+      Laughter:
+      - haha
+      LaughterRate: 0.3
+      Signatures:
+      - da
+      - privet
+      SignatureRate: 0.2
+      QuestionRate: 0.4
+      Notes: Writes English with the occasional clumsy Russian word; sometimes asks what a Russian word means.
+    Talkativeness: 0.45
+    Pace: 1.4
+    ResponseSpeed: 1.2
+    EventAffinity:
+    - 1
+    - 0.7
+    - 0.6
+    - 1
+    - 0.5
+    - 0.7
+    - 0.6
+    - 0.7
+    - 0.9
+    - 0.6
+    - 0.9
+    DonationTendency: 0.12
+    FollowTendency: 0.6
+    SocialTendency: 0.5
+    InitialSentiment: 15
+  - Id: viewer.doshirak
+    DisplayName: doshirak_king
+    SpokenNames:
+    - "\u0434\u043E\u0448\u0438\u0440\u0430\u043A \u043A\u0438\u043D\u0433"
+    - "\u0434\u043E\u0448\u0438\u0440\u0430\u043A"
+    - "\u0434\u043E\u0448\u0438\u043A"
+    - "\u0434\u043E\u0448\u0438\u043A \u043A\u0438\u043D\u0433"
+    - doshirak
+    Language: 0
+    Personality: Broke university student who lives on instant noodles and relates to every money problem on stream. Self-ironic about rent and cheap food; treats the streamer as a fellow survivor.
+    Interests: 24
+    Schedule:
+      StartHour: 20
+      EndHour: 2
+      Regularity: 0.5
+    Style:
+      MinimumWords: 3
+      MaximumWords: 9
+      Case: 0
+      Punctuation: 1
+      Slang: 2
+      EmojiRate: 0
+      Profanity: 1
+      Smiley: 
+      SmileyRate: 0
+      Laughter:
+      - "\u0430\u0445\u0430\u0445"
+      - "\u0445\u0430\u0445\u0430"
+      LaughterRate: 0.35
+      Signatures:
+      - "\u0431\u0440\u0430\u0442"
+      SignatureRate: 0.25
+      QuestionRate: 0.2
+      Notes: Jokes about being poor, never pity.
+    Talkativeness: 0.55
+    Pace: 1.1
+    ResponseSpeed: 0.9
+    EventAffinity:
+    - 1.1
+    - 0.8
+    - 0.8
+    - 0.8
+    - 0.4
+    - 1.3
+    - 0.6
+    - 0.9
+    - 0.9
+    - 0.6
+    - 1
+    DonationTendency: 0.12
+    FollowTendency: 0.6
+    SocialTendency: 0.6
+    InitialSentiment: 15
+  - Id: viewer.sovetnik
+    DisplayName: Sovetnik_Pro
+    SpokenNames:
+    - "\u0441\u043E\u0432\u0435\u0442\u043D\u0438\u043A"
+    - "\u0441\u043E\u0432\u0435\u0442\u043D\u0438\u043A \u043F\u0440\u043E"
+    - sovetnik
+    Language: 0
+    Personality: 'Know-it-all who has never streamed but has an opinion on everything: settings, hardware, what to buy next. Gives unsolicited advice; a little annoying, means well.'
+    Interests: 11
+    Schedule:
+      StartHour: 12
+      EndHour: 21
+      Regularity: 0.5
+    Style:
+      MinimumWords: 5
+      MaximumWords: 13
+      Case: 1
+      Punctuation: 2
+      Slang: 0
+      EmojiRate: 0
+      Profanity: 0
+      Smiley: 
+      SmileyRate: 0
+      Laughter: []
+      LaughterRate: 0.3
+      Signatures:
+      - "\u0432\u043E\u043E\u0431\u0449\u0435-\u0442\u043E"
+      SignatureRate: 0.3
+      QuestionRate: 0.15
+      Notes: Advice in one short sentence, never a lecture.
+    Talkativeness: 0.6
+    Pace: 1.2
+    ResponseSpeed: 1.1
+    EventAffinity:
+    - 1.2
+    - 0.7
+    - 0.6
+    - 0.6
+    - 0.3
+    - 0.6
+    - 0.4
+    - 0.5
+    - 0.6
+    - 1.6
+    - 0.8
+    DonationTendency: 0.06
+    FollowTendency: 0.4
+    SocialTendency: 0.55
+    InitialSentiment: 0

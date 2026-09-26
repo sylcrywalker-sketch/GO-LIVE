@@ -8,11 +8,14 @@ namespace GoLive.Viewers
     {
         [SerializeField] private ReactionTuning reactions = new();
         [SerializeField] private ChatModelSettings model = new();
+        [SerializeField] private ViewerCommunityCatalog community;
 
         public ReactionTuning Reactions => reactions;
         public ChatModelSettings Model => model;
+        public ViewerCommunityCatalog Community => community;
         public string ValidationError => reactions == null ? "Reaction tuning values are missing."
             : model == null ? "Chat model settings are missing."
-            : reactions.Validate() ?? model.Validate();
+            : community == null ? "The viewer community catalog is missing."
+            : reactions.Validate() ?? model.Validate() ?? community.ValidationError;
     }
 }

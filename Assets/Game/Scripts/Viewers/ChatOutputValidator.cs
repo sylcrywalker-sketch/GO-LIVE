@@ -46,6 +46,11 @@ namespace GoLive.Viewers
         private static readonly Regex Support = new(@"(донат|задонат|закинул|подписал|подписк|сабнул|фоллов|фолловнул|donat|subscrib|\bsubbed\b|\bfollowed\b|gifted)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex Markup = new(@"(```|\*\*|__|^#+\s|^\s*[-*•]\s|<\/?data>|[{}\[\]])", RegexOptions.Multiline | RegexOptions.CultureInvariant);
+        // Word-start matches only ("рубля" and "корабля" are not "бля").
+        private static readonly Regex StrongProfanity = new(@"\b(бля|сук[аи]|хуй|хуе|хуё|хуя|пизд|ебат|ебан|ебал|ёб|еби|ебу|нахуй|похуй|fuck|shit|bitch|cunt|dick)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex MildProfanity = new(@"\b(блин\w*|капец|жесть|хрен\w*|фиг|фига|фигня|нафиг|черт|чёрт|черти|damn|hell|crap)\b",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex RoleLabel = new(@"^\s*(viewer|chat|message|user|assistant|зритель|сообщение|ответ)\s*[:\-–]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         public static ChatValidation Validate(string raw, ReactionIntent intent, IReadOnlyList<StreamChatMessage> recentChat)
@@ -68,6 +73,9 @@ namespace GoLive.Viewers
             if (SpeechRelevance.Tokens(text).Count > Math.Max(persona.MaximumWords + 4, (int)Math.Ceiling(persona.MaximumWords * 1.5)))
                 return ChatValidation.Reject("too long for this viewer");
             if (Emoji(text) > MaximumEmoji) return ChatValidation.Reject("emoji spam");
+            Profanity allowed = intent.Viewer.Persona.Profanity;
+            if (allowed != Profanity.Strong && StrongProfanity.IsMatch(text)) return ChatValidation.Reject("profanity above this viewer");
+            if (allowed == Profanity.None && MildProfanity.IsMatch(text)) return ChatValidation.Reject("profanity above this viewer");
             if (text[0] == '/' || text[0] == '!') return ChatValidation.Reject("command");
             if (Money.IsMatch(text)) return ChatValidation.Reject("money claim");
             bool ownSupport = intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId &&

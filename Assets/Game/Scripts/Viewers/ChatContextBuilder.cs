@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using GoLive.Desktop;
 using GoLive.PcBuilding;
 
 namespace GoLive.Viewers
@@ -64,7 +65,7 @@ namespace GoLive.Viewers
             var user = new StringBuilder(900);
             user.Append("VIEWER: ").Append(Clean(viewer.DisplayName, 32)).Append('\n');
             user.Append("WHO: ").Append(persona.Personality).Append('\n');
-            user.Append("STYLE: ").Append(persona.Style).Append(' ').Append(Length(persona)).Append('\n');
+            user.Append("STYLE: ").Append(persona.Style).Append(' ').Append(Length(persona)).Append(Habits(intent)).Append('\n');
             user.Append("LANGUAGE: ").Append(LanguageRule(persona.Language, situation.ChannelLanguage)).Append("\n\n");
 
             user.Append("STREAM: channel «").Append(Clean(situation.ChannelName, 32)).Append("», live for ")
@@ -72,6 +73,13 @@ namespace GoLive.Viewers
             user.Append("MOMENT: ").Append(Moment(intent, situation)).Append('\n');
             if (intent.Order > 0) user.Append("Other viewers are already reacting to this; say something different or react to them.\n");
 
+            List<string> own = OwnRecent(viewer.ViewerId, situation.RecentChat);
+            if (own.Count > 0)
+            {
+                user.Append("YOUR LAST MESSAGES (do not repeat them or start the same way): ");
+                for (int i = 0; i < own.Count; i++) user.Append(i == 0 ? "«" : ", «").Append(Clean(own[i], QuoteLimit)).Append('»');
+                user.Append('\n');
+            }
             if (situation.RecentChat.Count > 0)
             {
                 user.Append("\nRECENT CHAT (oldest first):\n");
@@ -135,6 +143,47 @@ namespace GoLive.Viewers
                 default:
                     return "Something happened on stream.";
             }
+        }
+
+        // Personal habits decided by C# per message (deterministic from the reaction id): a signature word, smiley,
+        // laugh or question appears only in its authored share of messages, so it stays a habit and never a tic.
+        private static string Habits(ReactionIntent intent)
+        {
+            ViewerProfile profile = intent.Viewer.Persona.Profile;
+            if (profile == null) return "";
+            ChatStyle style = profile.Style;
+            ulong seed = AudienceRandom.Hash((ulong)intent.Id, StableHash(profile.Id));
+            double Roll(ulong salt) => (AudienceRandom.Hash(seed, salt) >> 11) * (1.0 / 9007199254740992.0);
+            var habits = new StringBuilder();
+            if (style.Signatures != null && style.Signatures.Length > 0 && Roll(1) < style.SignatureRate)
+                habits.Append(" You may use your usual word «").Append(style.Signatures[(int)(Roll(2) * style.Signatures.Length)]).Append("».");
+            if (!string.IsNullOrEmpty(style.Smiley) && Roll(3) < style.SmileyRate) habits.Append(" End with «").Append(style.Smiley).Append("».");
+            if (style.Laughter != null && style.Laughter.Length > 0)
+                habits.Append(Roll(4) < style.LaughterRate
+                    ? " If it is funny, laugh like «" + style.Laughter[(int)(Roll(5) * style.Laughter.Length)] + "»."
+                    : " No laughter in this message.");
+            if (style.EmojiRate > 0 && Roll(6) < style.EmojiRate) habits.Append(" One emoji is fine this time.");
+            if (Roll(7) < style.QuestionRate) habits.Append(" This time, ask the streamer something.");
+            return habits.ToString();
+        }
+
+        private static List<string> OwnRecent(string viewerId, IReadOnlyList<StreamChatMessage> chat)
+        {
+            var own = new List<string>();
+            for (int i = chat.Count - 1; i >= 0 && own.Count < 3; i--)
+                if (chat[i].ViewerId == viewerId) own.Insert(0, chat[i].Text);
+            return own;
+        }
+
+        internal static ulong StableHash(string text)
+        {
+            ulong hash = 1469598103934665603UL;
+            foreach (char c in text)
+            {
+                hash ^= c;
+                hash *= 1099511628211UL;
+            }
+            return hash;
         }
 
         private static string LanguageRule(ViewerLanguage viewer, ViewerLanguage channel) => viewer switch
