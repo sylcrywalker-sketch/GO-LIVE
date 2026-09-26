@@ -85,10 +85,11 @@ namespace GoLive.Editor.Desktop
             var image = ui.Rect("Scene preview", body, 434, 130, 708, 399).gameObject.AddComponent<RawImage>();
             image.raycastTarget = false;
             Set(view, "previewImage", image);
-            Set(view, "preview", ui.Text("Preview source", body, 434, 542, 300, 26, "", 15, ui.Muted));
-            // Real OS microphone recognition shares the caption row: status (On/Off) and language chips.
-            VoiceChip(ui, view, body, "Voice status", 742, 318, "voiceStatus", "voiceToggle");
-            VoiceChip(ui, view, body, "Voice language", 1068, 74, "voiceLanguage", "voiceLanguageToggle");
+            Set(view, "preview", ui.Text("Preview source", body, 434, 542, 284, 26, "", 15, ui.Muted));
+            // Real OS microphone recognition shares the caption row: status (On/Off) and language chips. The language
+            // chip is wide enough for "Авто RU/EN" / "Auto RU/EN" at this size; the row still ends at the preview edge.
+            VoiceChip(ui, view, body, "Voice status", 726, 318, "voiceStatus", "voiceToggle");
+            VoiceChip(ui, view, body, "Voice language", 1052, 90, "voiceLanguage", "voiceLanguageToggle");
             ui.Panel("Output divider", body, 434, 579, 708, 1, ui.Line);
             Set(view, "requirements", ui.Text("Output requirements", body, 434, 595, 410, 52, "", 17, ui.Muted));
             var start = ui.Button("desktop.stream.start", body, 868, 594, 274, 42, true);
