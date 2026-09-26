@@ -144,6 +144,7 @@ namespace GoLive.Tests
             Assert.That(capture.Frame, Is.SameAs(liveFrame));
             Assert.That(capture.IsAvailable, Is.True, "the live source keeps its last desktop frame");
             Assert.That(SignatureDistance(FrameSignature(capture), lastDesktopFrame), Is.Zero, "no room/player camera frame enters the broadcast");
+            yield return AssertFrameDiffersFromScreen(capture, "room displayed after leaving the desk");
             yield return SitAndFocus();
             yield return OpenApp(DesktopAppId.Streamly);
             yield return StopBroadcast(view);
@@ -169,23 +170,42 @@ namespace GoLive.Tests
                 Assert.That(camera.targetTexture, Is.Not.SameAs(frame), camera.name + " must not render into the broadcast source");
         }
 
-        // Compares the captured frame (through its published UV rect) against an independent end-of-frame
-        // screenshot. The preview shows at most one frame of latency, so content must match the screen
-        // far better than the same screen flipped vertically.
+        // Compares the captured frame (through its published UV rect) against an independent screenshot of the
+        // displayed game frame, taken at the real end of a game frame. The preview shows at most one frame of
+        // latency, so content must match the screen far better than the same screen flipped vertically.
         private static IEnumerator AssertFrameMirrorsScreen(DesktopCaptureSource capture, string state)
         {
-            yield return new WaitForEndOfFrame();
-            Texture2D screen = ScreenCapture.CaptureScreenshotAsTexture();
+            double same = 0, flipped = 0;
+            yield return CompareWithDisplayedFrame(capture, (s, f) =>
+            {
+                same = s;
+                flipped = f;
+            });
+            TestContext.WriteLine($"CAPTURE_MIRROR {state} same={same:0.00} flipped={flipped:0.00}");
+            Assert.That(same, Is.LessThan(18), state + ": the broadcast frame shows the displayed desktop");
+            Assert.That(same, Is.LessThan(flipped * .6), state + ": the broadcast frame is upright");
+        }
+
+        // The same independent screenshot while the room is displayed: the broadcast frame must not show it.
+        private static IEnumerator AssertFrameDiffersFromScreen(DesktopCaptureSource capture, string state)
+        {
+            double same = 0;
+            yield return CompareWithDisplayedFrame(capture, (s, _) => same = s);
+            TestContext.WriteLine($"CAPTURE_NOT_SCREEN {state} same={same:0.00}");
+            Assert.That(same, Is.GreaterThan(18), state + ": the broadcast frame is not the displayed room");
+        }
+
+        private static IEnumerator CompareWithDisplayedFrame(DesktopCaptureSource capture, System.Action<double, double> result)
+        {
+            Texture2D screen = null;
+            yield return DisplayedFrameReader.Read(read => screen = read);
+            Assert.That(screen, Is.Not.Null, "the displayed game frame was read at the end of a frame");
             Texture2D frame = ReadFrame(capture, screen.width, screen.height);
             try
             {
                 Color32[] a = frame.GetPixels32();
                 Color32[] b = screen.GetPixels32();
-                double same = BlockDifference(a, b, screen.width, screen.height, false);
-                double flipped = BlockDifference(a, b, screen.width, screen.height, true);
-                TestContext.WriteLine($"CAPTURE_MIRROR {state} same={same:0.00} flipped={flipped:0.00}");
-                Assert.That(same, Is.LessThan(18), state + ": the broadcast frame shows the displayed desktop");
-                Assert.That(same, Is.LessThan(flipped * .6), state + ": the broadcast frame is upright");
+                result(BlockDifference(a, b, screen.width, screen.height, false), BlockDifference(a, b, screen.width, screen.height, true));
             }
             finally
             {

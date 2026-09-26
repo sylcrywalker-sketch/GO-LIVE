@@ -76,13 +76,20 @@ namespace GoLive.Tests
             string destination = Path.Combine(OutputDirectory, name + ".png");
             try
             {
+                // Ordinary game frames only: a forced Game view repaint or QueuePlayerLoopUpdate runs an extra frame at
+                // the Editor window's DPI (3840 x 2160 at 200% display scaling), which the game then sees as a screen
+                // resize.
                 Canvas.ForceUpdateCanvases();
-                _view.Repaint();
-                EditorApplication.QueuePlayerLoopUpdate();
                 yield return PlayModeWait.Frames(3);
-                ScreenCapture.CaptureScreenshot(temporary);
-                yield return PlayModeWait.Until(() => FinishedPng(temporary), "ScreenCapture to finish " + name);
-                byte[] png = File.ReadAllBytes(temporary);
+                // The game's own frame at its render resolution; the file-based ScreenCapture.CaptureScreenshot of an
+                // Editor Game view scales with the Editor window's DPI (3840 px wide at 200% display scaling).
+                Texture2D frame = null;
+                yield return DisplayedFrameReader.Read(read => frame = read);
+                Assert.That(frame, Is.Not.Null, name + " was read at the end of a game frame");
+                byte[] png;
+                try { png = frame.EncodeToPNG(); }
+                finally { Object.Destroy(frame); }
+                File.WriteAllBytes(temporary, png);
                 var decoded = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                 try
                 {
@@ -127,19 +134,6 @@ namespace GoLive.Tests
                 _view.Repaint();
                 if (_createdWindow) _view.Close();
             }
-        }
-
-        private static bool FinishedPng(string path)
-        {
-            if (!File.Exists(path)) return false;
-            try
-            {
-                byte[] bytes = File.ReadAllBytes(path);
-                int length = bytes.Length;
-                return length > 32 && bytes[0] == 137 && bytes[1] == 80 && bytes[2] == 78 && bytes[3] == 71 &&
-                    bytes[length - 8] == 73 && bytes[length - 7] == 69 && bytes[length - 6] == 78 && bytes[length - 5] == 68;
-            }
-            catch (IOException) { return false; }
         }
 
         private static PropertyInfo Property(Type type, string name)
