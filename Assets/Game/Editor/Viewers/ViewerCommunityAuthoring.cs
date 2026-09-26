@@ -180,7 +180,7 @@ namespace GoLive.Editor.Viewers
                     MinimumWords = 3, MaximumWords = 10, Case = LetterCase.Normal, Punctuation = Punctuation.Light, Slang = 0,
                     EmojiRate = .1f, Profanity = Profanity.None, Laughter = new[] { "haha" }, LaughterRate = .3f,
                     Signatures = new[] { "da", "privet" }, SignatureRate = .2f, QuestionRate = .4f,
-                    Notes = "Writes English with the occasional clumsy Russian word; sometimes asks what a Russian word means."
+                    Notes = "Uses simple phrasing while learning Russian; sometimes asks what a Russian word means."
                 },
                 Talkativeness = .45f, Pace = 1.4f, ResponseSpeed = 1.2f,
                 EventAffinity = new[] { 1f, .7f, .6f, 1f, .5f, .7f, .6f, .7f, .9f, .6f, .9f },

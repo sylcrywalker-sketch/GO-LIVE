@@ -406,7 +406,7 @@ MonoBehaviour:
       - privet
       SignatureRate: 0.2
       QuestionRate: 0.4
-      Notes: Writes English with the occasional clumsy Russian word; sometimes asks what a Russian word means.
+      Notes: Uses simple phrasing while learning Russian; sometimes asks what a Russian word means.
     Talkativeness: 0.45
     Pace: 1.4
     ResponseSpeed: 1.2

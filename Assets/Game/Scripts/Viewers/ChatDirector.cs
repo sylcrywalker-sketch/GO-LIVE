@@ -233,6 +233,23 @@ namespace GoLive.Viewers
                     Remove(i--, job, ReactionOutcome.Dropped, "viewer left");
                     continue;
                 }
+                // Other jobs may have published since generation finished. Recheck at the last possible moment.
+                ChatValidation current = ChatOutputValidator.Validate(job.Text, intent, _chat.Messages);
+                if (!current.Accepted)
+                {
+                    if (job.Source == ReactionSource.LanguageModel)
+                    {
+                        Stats.Rejected++;
+                        Stats.AddRejected(current.Reason + ": " + job.Text);
+                    }
+                    Fallback(job, "publication rejected (" + current.Reason + ")");
+                    if (job.Text == null || !ChatOutputValidator.Validate(job.Text, intent, _chat.Messages).Accepted)
+                    {
+                        Stats.Discarded++;
+                        Remove(i--, job, ReactionOutcome.Discarded, job.Reason);
+                        continue;
+                    }
+                }
                 long donation = intent.Event.Kind == StreamEventKind.Donation && intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId
                     ? intent.Event.AmountCents : 0;
                 StreamChatMessage message = _chat.Add(broadcastId, intent.Viewer.ViewerId, intent.Viewer.DisplayName, job.Text, now, intent.Id, job.Source, donation);

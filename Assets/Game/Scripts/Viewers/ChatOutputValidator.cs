@@ -80,9 +80,9 @@ namespace GoLive.Viewers
             if (Money.IsMatch(text)) return ChatValidation.Reject("money claim");
             bool ownSupport = intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId &&
                 (intent.Event.Kind == StreamEventKind.Donation || intent.Event.Kind == StreamEventKind.Follow || intent.Event.Kind == StreamEventKind.Subscription);
+            StreamTopic topics = intent.Event.Speech?.Topics ?? StreamTopic.None;
             bool aboutSupport = intent.Event.Kind == StreamEventKind.Donation || intent.Event.Kind == StreamEventKind.Follow ||
-                intent.Event.Kind == StreamEventKind.Subscription || (intent.Event.Speech?.Topics & StreamTopic.Money) != 0 ||
-                (intent.Event.Speech?.Topics & StreamTopic.Community) != 0;
+                intent.Event.Kind == StreamEventKind.Subscription || (topics & (StreamTopic.Money | StreamTopic.Community)) != 0;
             if (!ownSupport && !aboutSupport && Support.IsMatch(text)) return ChatValidation.Reject("support claim");
             string languageError = Language(text, intent.Viewer.Persona.Language);
             if (languageError != null) return ChatValidation.Reject(languageError);

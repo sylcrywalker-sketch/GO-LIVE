@@ -117,6 +117,61 @@ namespace GoLive.Tests
         }
 
         [Test]
+        public void ProfilePromptKeepsBiographyFromBecomingTheCurrentTopic()
+        {
+            ChatParticipant viewer = Profile("viewer.bytecat").Participant();
+            ReactionIntent intent = ChatDirectorTests.Intent(viewer, "Блин, я продал не тот предмет и опять умер в игре!");
+            ViewerChatRequest request = ChatContextBuilder.Build(intent, Situation(), 64);
+
+            Assert.That(request.User, Does.Contain(viewer.Persona.Personality), "retain the authored person");
+            Assert.That(request.System, Does.Contain("WHO shapes your tone, not the topic"));
+            Assert.That(request.System, Does.Contain("Do not add unseen details or causes"));
+            Assert.That(request.System.Length + request.User.Length, Is.LessThan(4000));
+        }
+
+        [Test]
+        public void ProfilePromptPreservesGentleViewersWithoutCannedCheerleading()
+        {
+            ChatParticipant viewer = Profile("viewer.mika").Participant();
+            ReactionIntent intent = ChatDirectorTests.Intent(viewer, "Блин, я опять умер в игре!");
+            ViewerChatRequest request = ChatContextBuilder.Build(intent, Situation(), 64);
+
+            Assert.That(request.User, Does.Contain("very gentle and loyal"));
+            Assert.That(request.System, Does.Contain("Warmth and surprise are fine when they fit WHO"));
+            Assert.That(request.System, Does.Contain("Tease only if WHO describes a teasing person"));
+            Assert.That(request.System, Does.Not.Contain("Teasing and disagreeing are fine"));
+        }
+
+        [Test]
+        public void QuestionHabitDoesNotOverrideTheCurrentConversation()
+        {
+            ViewerProfile profile = Profile("viewer.pixelfox");
+            // Isolate the habit from selection and its authored probability without changing the catalog.
+            var alwaysAsks = new ViewerProfile { Id = profile.Id, Style = new ChatStyle { QuestionRate = 1 } };
+            var persona = new ViewerPersona(profile.Language, profile.Personality, profile.Persona().Style,
+                profile.Style.MinimumWords, profile.Style.MaximumWords, profile.Style.Profanity, alwaysAsks);
+            var viewer = new ChatParticipant(profile.Id, profile.DisplayName, true, profile.Traits(), profile.SpokenNames, persona);
+            ReactionIntent intent = ChatDirectorTests.Intent(viewer, "Чат, какую игру запустить дальше?");
+            string prompt = ChatContextBuilder.Build(intent, Situation(), 64).User;
+
+            Assert.That(prompt, Does.Contain("ask the streamer something about this moment, only if a question fits"));
+            Assert.That(prompt, Does.Not.Contain("This time, ask the streamer something."));
+        }
+
+        [Test]
+        public void JonasStyleDoesNotContradictTheChannelsMixedLanguageRule()
+        {
+            ChatParticipant viewer = Profile("viewer.jonas").Participant();
+            ReactionIntent intent = ChatDirectorTests.Intent(viewer, "Йонас, какую игру запустить дальше?");
+            string prompt = ChatContextBuilder.Build(intent, Situation(), 64).User;
+
+            Assert.That(viewer.Persona.Language, Is.EqualTo(ViewerLanguage.Mixed));
+            Assert.That(prompt, Does.Contain("Write mostly in Russian (Cyrillic)"));
+            Assert.That(prompt, Does.Not.Contain("Writes English with the occasional clumsy Russian word"));
+            Assert.That(prompt, Does.Contain("sometimes asks what a Russian word means"));
+        }
+
+        [Test]
         public void TheViewersOwnRecentLinesKeepThemFromRepeatingThemselves()
         {
             ChatParticipant viewer = Profile("viewer.nightowl").Participant();

@@ -150,6 +150,35 @@ namespace GoLive.Tests
         }
 
         [Test]
+        public void NonSpeechMomentsCannotInventSupportTransactions()
+        {
+            ChatParticipant viewer = Viewer("viewer.a", "Alpha");
+            ReactionIntent intent = ViewerChatQualityAudit.IntentFor(viewer,
+                StreamEvent.PeripheralChanged(1, "mic", 900, GoLive.PcBuilding.PcPeripheralKind.Microphone, false));
+            Assert.That(intent, Is.Not.Null);
+            Assert.That(ChatOutputValidator.Validate("задонатил тебе", intent, null).Accepted, Is.False);
+        }
+
+        [Test]
+        public void ResolvedMessagesAreCheckedAgainstChatAtPublicationTime()
+        {
+            var model = new FakeModel(_ => Ok("ну бывает"));
+            (ChatDirector director, StreamChat chat, _) = Director(model);
+            ReactionIntent first = Intent(Viewer("viewer.a", "Alpha"), "Alpha ты тут?");
+            ReactionIntent second = Intent(Viewer("viewer.b", "Bravo"), "Bravo ты тут?", 2);
+            AudienceRoster roster = Roster(first, second);
+            director.Submit(first);
+            director.Submit(second);
+            director.Update(0, roster, Situation, "b");
+            director.Update(.1, roster, Situation, "b");
+            director.Update(.2, roster, Situation, "b");
+            Assert.That(chat.Messages, Is.Empty);
+            director.Update(Math.Max(first.DueSeconds, second.DueSeconds) + .1, roster, Situation, "b");
+            Assert.That(chat.Messages.Count(m => m.Text == "ну бывает"), Is.EqualTo(1));
+            Assert.That(model.Requests.Count, Is.EqualTo(2), "never regenerate to repair a collision");
+        }
+
+        [Test]
         public void ContextStaysBounded()
         {
             var chat = new StreamChat();

@@ -52,7 +52,10 @@ namespace GoLive.Viewers
             "around the message, no name prefix.\n" +
             "React to the MOMENT (or to RECENT CHAT); do not bring up other topics such as the microphone, camera or hardware unless " +
             "the moment is about them. Keep it coherent: a real person's single thought.\n" +
-            "Teasing and disagreeing are fine; no slurs and no attacks on other viewers.\n" +
+            "WHO shapes your tone, not the topic: do not force your job, country or hobbies into an unrelated moment. " +
+            "Do not add unseen details or causes; a simple reaction to what was actually said or happened is enough.\n" +
+            "Warmth and surprise are fine when they fit WHO; avoid canned praise. Tease only if WHO describes a teasing person; " +
+            "gentle viewers stay gentle, even after a mistake. No slurs and no attacks on other viewers.\n" +
             "Do not repeat what is already in RECENT CHAT and do not just repeat the streamer's words back.\n" +
             "Answer only with JSON: {\"text\": \"<the message>\"}";
 
@@ -163,7 +166,8 @@ namespace GoLive.Viewers
                     ? " If it is funny, laugh like «" + style.Laughter[(int)(Roll(5) * style.Laughter.Length)] + "»."
                     : " No laughter in this message.");
             if (style.EmojiRate > 0 && Roll(6) < style.EmojiRate) habits.Append(" One emoji is fine this time.");
-            if (Roll(7) < style.QuestionRate) habits.Append(" This time, ask the streamer something.");
+            if (Roll(7) < style.QuestionRate)
+                habits.Append(" You may ask the streamer something about this moment, only if a question fits; otherwise react or answer them.");
             return habits.ToString();
         }
 
