@@ -35,6 +35,9 @@ MonoBehaviour:
     ProcessorEncodingStability: 0.9
     MissingMicrophoneRetention: 0.75
     WebcamEngagement: 1.08
+    QuietRetention: 0.97
+    VeryQuietRetention: 0.92
+    AwayRetention: 0.88
     FirstStreamInitialViewersMin: 1
     FirstStreamInitialViewersMax: 3
     FirstStreamBoostViewers: 2

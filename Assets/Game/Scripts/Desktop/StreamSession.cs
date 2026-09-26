@@ -6,6 +6,9 @@ namespace GoLive.Desktop
 {
     public enum StreamState { Offline, Starting, Live, Stopping }
     public enum StreamQuality { Low, Medium, High }
+    // What the streamer is doing, as the audience perceives it: long silence or leaving the desk costs retention.
+    // The audience simulation owns that effect; the chat only represents it socially.
+    public enum StreamerActivity { Active, Quiet, VeryQuiet, Away }
 
     public sealed class StreamSummary
     {
@@ -41,10 +44,14 @@ namespace GoLive.Desktop
         public StreamQuality Quality { get; private set; }
         public bool IsConnected => _channel.IsRegistered && _connectedCode.Length > 0 && string.Equals(_connectedCode, _channel.ChannelCode, StringComparison.Ordinal);
         public double DurationSeconds { get; private set; }
+        // Identity of the current (or last) broadcast; the prefix of its receipt ids. Empty before the first Start.
+        public string BroadcastId => _streamId;
         // The current (or last finished) broadcast's audience: the only source of viewer counts.
         public AudienceSimulation Audience { get; private set; }
         // Support actually accepted by the donation account during this broadcast.
         public long DonationCents { get; private set; }
+        // Set every frame by the viewer layer from silence/away tracking; Active whenever offline.
+        public StreamerActivity StreamerActivity { get; private set; }
         public IReadOnlyList<StreamChatMessage> Chat { get; }
         public event Action Changed;
         public event Action<StreamChatMessage> ChatAdded;
@@ -147,11 +154,18 @@ namespace GoLive.Desktop
             Audience = new AudienceSimulation(_tuning, _seeds.NextUInt64(), _channel.TotalFollowers, _channel.CompletedStreams == 0);
             DurationSeconds = 0;
             DonationCents = 0;
+            StreamerActivity = StreamerActivity.Active;
             _chat.Clear();
             State = StreamState.Starting;
             _transitionRemaining = 0.75;
             Changed?.Invoke();
             return null;
+        }
+
+        public void SetStreamerActivity(StreamerActivity activity)
+        {
+            if (activity < StreamerActivity.Active || activity > StreamerActivity.Away) throw new ArgumentOutOfRangeException(nameof(activity));
+            StreamerActivity = State == StreamState.Offline ? StreamerActivity.Active : activity;
         }
 
         public string Stop()
@@ -183,6 +197,7 @@ namespace GoLive.Desktop
             DurationSeconds = 0;
             Audience = IdleAudience();
             DonationCents = 0;
+            StreamerActivity = StreamerActivity.Active;
             _chat.Clear();
             Changed?.Invoke();
         }
@@ -233,7 +248,7 @@ namespace GoLive.Desktop
             // outcomes it owns: support receipts (idempotent ids) and the bounded visible chat.
             _newDonations.Clear();
             AudienceAdvance advance = Audience.Advance(elapsed, new AudienceConditions(minuteOfDay, Quality, _uploadMbps,
-                _dedicatedGraphics, _peripherals.HasMicrophone, _peripherals.HasWebcam), _newDonations);
+                _dedicatedGraphics, _peripherals.HasMicrophone, _peripherals.HasWebcam, StreamerActivity), _newDonations);
             for (int i = 0; i < _newDonations.Count && _donation.RemainingReceiptCapacity > 0; i++)
             {
                 string id = _streamId + ".donation." + ++_receiptSerial;
@@ -286,6 +301,7 @@ namespace GoLive.Desktop
             // reissue the summary and the root can safely begin another broadcast from Completed.
             _hasBeenLive = false;
             _transitionRemaining = 0;
+            StreamerActivity = StreamerActivity.Active;
             State = StreamState.Offline;
             if (summary != null) Completed?.Invoke(summary);
             Changed?.Invoke();

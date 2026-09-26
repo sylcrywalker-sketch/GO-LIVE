@@ -25,6 +25,7 @@ namespace GoLive.Editor.Desktop
         private const string CatalogPath="Assets/Game/Config/Desktop/DesktopAppCatalog.asset";
         private const string AudienceTuningPath="Assets/Game/Config/Desktop/AudienceTuning.asset";
         private const string VoiceActivityPath="Assets/Game/Config/Voice/VoiceActivity.asset";
+        private const string ViewerCorePath="Assets/Game/Config/Viewers/ViewerCore.asset";
 
         [MenuItem("GO! LIVE/Desktop/Author vertical slice in GL")]
         public static void Apply()
@@ -51,6 +52,7 @@ namespace GoLive.Editor.Desktop
             Set(runtime,"pc",pc);Set(runtime,"session",session);Set(runtime,"catalog",catalog);
             Set(runtime,"clock",One<GoLive.GameTime.GameClockBehaviour>());Set(runtime,"wallet",One<GoLive.Economy.WalletBehaviour>());
             Set(runtime,"audienceTuning",Config<AudienceTuningConfig>(AudienceTuningPath));
+            Set(runtime,"viewerCore",Config<GoLive.Viewers.ViewerCoreConfig>(ViewerCorePath));
             Set(screen,"session",session);Set(workbench,"session",session);Set(One<GameUiInputRouter>(),"pcSession",session);
             Set(One<GameSaveController>(),"_desktop",runtime);
             var caseInteractable=pc.GetComponent<PcCaseInteractable>();

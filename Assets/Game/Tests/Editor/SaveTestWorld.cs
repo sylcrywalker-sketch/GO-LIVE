@@ -229,6 +229,7 @@ namespace GoLive.Tests
             SetField(Desktop, "clock", Clock);
             SetField(Desktop, "wallet", Wallet);
             SetField(Desktop, "audienceTuning", AssetDatabase.LoadAssetAtPath<AudienceTuningConfig>(StreamRuntimeConfigTests.AudienceTuningPath));
+            SetField(Desktop, "viewerCore", AssetDatabase.LoadAssetAtPath<GoLive.Viewers.ViewerCoreConfig>(StreamRuntimeConfigTests.ViewerCorePath));
             InvokeLifecycle(Desktop, "Awake");
             BindDesktopWhenPcReady();
 

@@ -87087,6 +87087,7 @@ MonoBehaviour:
   wallet: {fileID: 656476887}
   uploadMbps: 5
   audienceTuning: {fileID: 11400000, guid: e5cfa2f61d8bbd7458e3ba0833cff219, type: 2}
+  viewerCore: {fileID: 11400000, guid: 85f08c1bf4e028f4ba999061bdccd22a, type: 2}
   voice: {fileID: 2019358075}
 --- !u!114 &2019358070
 MonoBehaviour:

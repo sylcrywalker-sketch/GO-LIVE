@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b597b583b0734346bf6fce344d38719f, type: 3}
+  m_Name: ViewerCore
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Viewers.ViewerCoreConfig
+  reactions:
+    SpeechThreshold: 0.35
+    LongSilenceSeconds: 75
+    VeryLongSilenceSeconds: 180
+    SilenceRepeatSeconds: 240
+    AwaySeconds: 25
+    RateScale: 0.5
+    RateExponent: 0.8
+    MaximumPerMinute: 36
+    BurstBase: 1
+    BurstScale: 0.6
+    ViewerGapSeconds: 25
+    DirectGapSeconds: 4
+    AnonymousTalkativeness: 0.22
+    MinimumDelaySeconds: 1.6
+    MaximumDelaySeconds: 9
+    StaleSeconds: 14

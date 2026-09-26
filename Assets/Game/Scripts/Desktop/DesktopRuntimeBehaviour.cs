@@ -4,6 +4,7 @@ using GoLive.Economy;
 using GoLive.GameTime;
 using GoLive.PcBuilding;
 using GoLive.Player;
+using GoLive.Viewers;
 using GoLive.Voice;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ namespace GoLive.Desktop
         [SerializeField] private WalletBehaviour wallet;
         [SerializeField, Min(0)] private float uploadMbps = 5f;
         [SerializeField] private AudienceTuningConfig audienceTuning;
+        [SerializeField] private ViewerCoreConfig viewerCore;
         // Optional real-microphone bridge. Without it (or when it fails) broadcasts simply have no speech events.
         [SerializeField] private VoiceInputBehaviour voice;
         public DesktopState State { get; private set; }
@@ -52,13 +54,22 @@ namespace GoLive.Desktop
                 enabled = false;
                 return;
             }
-            State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning.Tuning);
+            string viewerError = viewerCore == null ? "Viewer core config is missing." : viewerCore.ValidationError;
+            if (viewerError != null)
+            {
+                Debug.LogError(viewerError, this);
+                enabled = false;
+                return;
+            }
+            State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning.Tuning, reactionTuning: viewerCore.Reactions);
         }
 
         private void Update()
         {
             if (!_bound && pc.IsReady && peripherals.IsReady && clock.Clock != null && wallet.Wallet != null) Bind();
-            if (IsReady) State.Stream.Tick(Time.deltaTime, clock.Clock.Current.MinuteOfDay);
+            if (!IsReady) return;
+            State.Stream.Tick(Time.deltaTime, clock.Clock.Current.MinuteOfDay);
+            State.Viewers.Tick(new StreamerContext(Session.Usage == PcUsageState.Focused, VoiceListening));
         }
 
         private void Bind()
@@ -122,6 +133,8 @@ namespace GoLive.Desktop
         }
 
         private void OfferSpeech(RecognizedSpeech speech) => State.SpeechFeed.Offer(speech);
+
+        private bool VoiceListening => voice != null && voice.Recognition != null && voice.Recognition.Status == VoiceStatus.Listening;
 
         private void PowerChanged()
         {

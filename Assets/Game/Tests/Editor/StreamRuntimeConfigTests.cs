@@ -22,6 +22,7 @@ namespace GoLive.Tests
     {
         internal const string AudienceTuningPath = "Assets/Game/Config/Desktop/AudienceTuning.asset";
         internal const string VoiceActivityPath = "Assets/Game/Config/Voice/VoiceActivity.asset";
+        internal const string ViewerCorePath = "Assets/Game/Config/Viewers/ViewerCore.asset";
         private SceneSetup[] _previousScenes;
 
         [OneTimeSetUp]
@@ -50,6 +51,7 @@ namespace GoLive.Tests
             Assert.That(audience.Tuning, Is.Not.Null);
             Assert.That(audience.ValidationError, Is.Null);
 
+            Assert.That(OnlyAsset<GoLive.Viewers.ViewerCoreConfig>(ViewerCorePath).ValidationError, Is.Null);
             VoiceActivityConfig voice = OnlyAsset<VoiceActivityConfig>(VoiceActivityPath);
             Assert.That(voice.Settings, Is.Not.Null);
             Assert.That(voice.ValidationError, Is.Null);
@@ -86,6 +88,7 @@ namespace GoLive.Tests
 
             Assert.That(Reference(runtime, "audienceTuning"), Is.SameAs(Load<AudienceTuningConfig>(AudienceTuningPath)));
             Assert.That(Reference(voice, "activity"), Is.SameAs(Load<VoiceActivityConfig>(VoiceActivityPath)));
+            Assert.That(Reference(runtime, "viewerCore"), Is.SameAs(Load<GoLive.Viewers.ViewerCoreConfig>(ViewerCorePath)));
             Assert.That(Reference(runtime, "voice"), Is.SameAs(voice), "the desktop runtime drives the one voice bridge");
             Assert.That(Reference(One<StreamlyView>(), "voice"), Is.SameAs(voice));
             AssertEveryReferenceAssigned(runtime);

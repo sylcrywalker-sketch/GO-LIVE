@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using GoLive.PcBuilding;
+using GoLive.Viewers;
 
 namespace GoLive.Desktop
 {
@@ -28,11 +29,13 @@ namespace GoLive.Desktop
         // The player's recognized speech admitted into the live broadcast (transient, never saved).
         public StreamSpeechFeed SpeechFeed { get; }
         public PcPeripherals Peripherals { get; }
+        // The current broadcast's living chat: normalized events, reaction decisions (transient, never saved).
+        public ViewerCore Viewers { get; }
         public int RestoreGeneration { get; private set; }
         private readonly IReadOnlyList<DesktopAppDefinition> _apps;
         private bool _restoring;
         public DesktopState(IReadOnlyList<DesktopAppDefinition> apps, PcPeripherals peripherals = null,
-            AudienceTuning audienceTuning = null, AudienceRandom audienceSeeds = null)
+            AudienceTuning audienceTuning = null, AudienceRandom audienceSeeds = null, ReactionTuning reactionTuning = null)
         {
             _apps = new List<DesktopAppDefinition>(apps).AsReadOnly();
             Storage = new DesktopStorage(apps);
@@ -40,6 +43,7 @@ namespace GoLive.Desktop
             Stream = new StreamSession(Trich, Donation, Peripherals, audienceTuning, audienceSeeds);
             Stream.Completed += CompleteStream;
             SpeechFeed = new StreamSpeechFeed(Stream);
+            Viewers = new ViewerCore(Stream, SpeechFeed, Donation, Peripherals, Trich, reactionTuning ?? new ReactionTuning());
         }
         public string EnsureSystemApps()
         {
@@ -121,6 +125,7 @@ namespace GoLive.Desktop
         public void Dispose()
         {
             Stream.Completed -= CompleteStream;
+            Viewers.Dispose();
             SpeechFeed.Dispose();
         }
     }

@@ -33,6 +33,10 @@ namespace GoLive.Desktop
         // Perceived audio without the in-game microphone.
         public float MissingMicrophoneRetention = .75f;
         public float WebcamEngagement = 1.08f;
+        // Retention while the streamer is silent for long (voice listened to), very long, or away from the desk.
+        public float QuietRetention = .97f;
+        public float VeryQuietRetention = .92f;
+        public float AwayRetention = .88f;
 
         // Onboarding discovery for a channel that has never completed a broadcast.
         public int FirstStreamInitialViewersMin = 1;
@@ -56,7 +60,8 @@ namespace GoLive.Desktop
             if (!Positive(LowQualityAttraction) || !Positive(MediumQualityAttraction) || !Positive(HighQualityAttraction))
                 return "Quality attraction multipliers must be positive.";
             if (!Fraction(StabilityAtMinimumUpload) || !(FullStabilityUploadRatio > 1) || !Fraction(ProcessorEncodingStability) ||
-                !Fraction(MissingMicrophoneRetention) || !Positive(WebcamEngagement))
+                !Fraction(MissingMicrophoneRetention) || !Positive(WebcamEngagement) ||
+                !Fraction(QuietRetention) || !Fraction(VeryQuietRetention) || !Fraction(AwayRetention))
                 return "Stability and retention values must be in (0, 1]; full stability needs an upload ratio above 1.";
             if (FirstStreamInitialViewersMin < 0 || FirstStreamInitialViewersMax < FirstStreamInitialViewersMin ||
                 !Positive(FirstStreamBoostViewers, true) || !Positive(FirstStreamBoostSeconds))

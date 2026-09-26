@@ -15,9 +15,11 @@ namespace GoLive.Desktop
         public bool DedicatedGraphics { get; }
         public bool HasMicrophone { get; }
         public bool HasWebcam { get; }
+        // Long silence or leaving the desk makes people drift away (only measurable while the voice is listened to).
+        public StreamerActivity Activity { get; }
 
         public AudienceConditions(int minuteOfDay, StreamQuality quality, float uploadMbps, bool dedicatedGraphics,
-            bool hasMicrophone, bool hasWebcam)
+            bool hasMicrophone, bool hasWebcam, StreamerActivity activity = StreamerActivity.Active)
         {
             MinuteOfDay = minuteOfDay;
             Quality = quality;
@@ -25,10 +27,11 @@ namespace GoLive.Desktop
             DedicatedGraphics = dedicatedGraphics;
             HasMicrophone = hasMicrophone;
             HasWebcam = hasWebcam;
+            Activity = activity;
         }
     }
 
-    // Multipliers derived from conditions. Retention = stability x encoding x audio, in (0, 1].
+    // Multipliers derived from conditions. Retention = stability x encoding x audio x presence, in (0, 1].
     public readonly struct AudienceFactors
     {
         public double TimeOfDay { get; }
@@ -37,9 +40,11 @@ namespace GoLive.Desktop
         public double Encoding { get; }
         public double Audio { get; }
         public double Engagement { get; }
-        public double Retention => Stability * Encoding * Audio;
+        public double Presence { get; }
+        public double Retention => Stability * Encoding * Audio * Presence;
 
-        private AudienceFactors(double timeOfDay, double quality, double stability, double encoding, double audio, double engagement)
+        private AudienceFactors(double timeOfDay, double quality, double stability, double encoding, double audio, double engagement,
+            double presence)
         {
             TimeOfDay = timeOfDay;
             QualityAttraction = quality;
@@ -47,6 +52,7 @@ namespace GoLive.Desktop
             Encoding = encoding;
             Audio = audio;
             Engagement = engagement;
+            Presence = presence;
         }
 
         public static AudienceFactors Evaluate(in AudienceConditions conditions, AudienceTuning tuning)
@@ -65,7 +71,14 @@ namespace GoLive.Desktop
             double encoding = conditions.DedicatedGraphics || conditions.Quality == StreamQuality.Low ? 1 : tuning.ProcessorEncodingStability;
             double audio = conditions.HasMicrophone ? 1 : tuning.MissingMicrophoneRetention;
             double engagement = conditions.HasWebcam ? tuning.WebcamEngagement : 1;
-            return new AudienceFactors(DailyMultiplier(conditions.MinuteOfDay, tuning), quality, stability, encoding, audio, engagement);
+            double presence = conditions.Activity switch
+            {
+                StreamerActivity.Quiet => tuning.QuietRetention,
+                StreamerActivity.VeryQuiet => tuning.VeryQuietRetention,
+                StreamerActivity.Away => tuning.AwayRetention,
+                _ => 1
+            };
+            return new AudienceFactors(DailyMultiplier(conditions.MinuteOfDay, tuning), quality, stability, encoding, audio, engagement, presence);
         }
 
         public static double DailyMultiplier(int minuteOfDay, AudienceTuning tuning)
