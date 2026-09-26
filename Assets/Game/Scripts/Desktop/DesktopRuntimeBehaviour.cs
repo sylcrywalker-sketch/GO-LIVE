@@ -20,7 +20,7 @@ namespace GoLive.Desktop
         [SerializeField] private GameClockBehaviour clock;
         [SerializeField] private WalletBehaviour wallet;
         [SerializeField, Min(0)] private float uploadMbps = 5f;
-        [SerializeField] private AudienceTuning audienceTuning = new();
+        [SerializeField] private AudienceTuningConfig audienceTuning;
         // Optional real-microphone bridge. Without it (or when it fails) broadcasts simply have no speech events.
         [SerializeField] private VoiceInputBehaviour voice;
         public DesktopState State { get; private set; }
@@ -45,14 +45,14 @@ namespace GoLive.Desktop
                 enabled = false;
                 return;
             }
-            string tuningError = audienceTuning?.Validate() ?? "Audience tuning is missing.";
+            string tuningError = audienceTuning == null ? "Audience tuning is missing." : audienceTuning.ValidationError;
             if (tuningError != null)
             {
                 Debug.LogError(tuningError, this);
                 enabled = false;
                 return;
             }
-            State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning);
+            State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning.Tuning);
         }
 
         private void Update()

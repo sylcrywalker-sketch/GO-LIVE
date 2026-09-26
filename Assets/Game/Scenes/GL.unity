@@ -87086,6 +87086,7 @@ MonoBehaviour:
   clock: {fileID: 656476893}
   wallet: {fileID: 656476887}
   uploadMbps: 5
+  audienceTuning: {fileID: 11400000, guid: e5cfa2f61d8bbd7458e3ba0833cff219, type: 2}
   voice: {fileID: 2019358075}
 --- !u!114 &2019358070
 MonoBehaviour:
@@ -87186,6 +87187,13 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Voice.VoiceInputBehaviour
   localization: {fileID: 656476889}
+  modelFiles:
+  - Whisper/ggml-base.bin
+  - Whisper/ggml-tiny.bin
+  useGpu: 0
+  maximumThreads: 4
+  preferredSampleRate: 16000
+  activity: {fileID: 11400000, guid: f0a6f4e196e038a4b8ec0cf0d9e86833, type: 2}
 --- !u!1 &2019873011
 GameObject:
   m_ObjectHideFlags: 0

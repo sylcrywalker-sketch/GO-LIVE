@@ -25,7 +25,7 @@ namespace GoLive.Voice
         [SerializeField] private bool useGpu;
         [SerializeField, Min(1)] private int maximumThreads = 4;
         [SerializeField] private int preferredSampleRate = 16000;
-        [SerializeField] private VoiceActivitySettings activity = new();
+        [SerializeField] private VoiceActivityConfig activity;
 
         private AudioClip _clip;
         private float[] _block;
@@ -40,7 +40,7 @@ namespace GoLive.Voice
 
         private void Awake()
         {
-            string activityError = activity?.Validate() ?? "Voice activity settings are missing.";
+            string activityError = activity == null ? "Voice activity settings are missing." : activity.ValidationError;
             if (activityError != null || modelFiles == null || modelFiles.Length == 0)
             {
                 Debug.LogError(activityError ?? "Voice input needs at least one speech model file.", this);
@@ -53,7 +53,7 @@ namespace GoLive.Voice
             for (int i = 0; i < paths.Length; i++) paths[i] = Path.Combine(Application.streamingAssetsPath, modelFiles[i]);
             int threads = Mathf.Clamp(SystemInfo.processorCount / 2, 1, maximumThreads);
             bool gpu = useGpu;
-            Recognition = new VoiceRecognition(activity, () => new WhisperSpeechRecognizer(paths, threads, gpu));
+            Recognition = new VoiceRecognition(activity.Settings, () => new WhisperSpeechRecognizer(paths, threads, gpu));
             Recognition.SetEnabled(PlayerPrefs.GetInt(EnabledKey, 1) == 1);
             int language = PlayerPrefs.GetInt(LanguageKey, (int)SpeechLanguage.Auto);
             Recognition.Language = language >= (int)SpeechLanguage.Auto && language <= (int)SpeechLanguage.English

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace GoLive.Desktop
 {
-    // Configuration for AudienceSimulation, serialized inline on the desktop runtime. Never runtime state.
+    // Configuration for AudienceSimulation, authored in the AudienceTuningConfig asset. Never runtime state.
     // Rates are per viewer per simulated second; multipliers are dimensionless.
     [Serializable]
     public sealed class AudienceTuning

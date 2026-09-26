@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98dcd445f9e54052a48528bb79b25fa6, type: 3}
+  m_Name: AudienceTuning
+  m_EditorClassIdentifier: Assembly-CSharp::GoLive.Desktop.AudienceTuningConfig
+  tuning:
+    DiscoveryViewers: 3
+    FollowerTurnout: 0.05
+    RampSeconds: 75
+    MeanWatchSeconds: 150
+    DailyCurve:
+    - 0.45
+    - 0.25
+    - 0.3
+    - 0.5
+    - 0.65
+    - 0.95
+    - 1
+    - 0.9
+    - 0.45
+    LowQualityAttraction: 0.85
+    MediumQualityAttraction: 1
+    HighQualityAttraction: 1.12
+    StabilityAtMinimumUpload: 0.78
+    FullStabilityUploadRatio: 2
+    ProcessorEncodingStability: 0.9
+    MissingMicrophoneRetention: 0.75
+    WebcamEngagement: 1.08
+    FirstStreamInitialViewersMin: 1
+    FirstStreamInitialViewersMax: 3
+    FirstStreamBoostViewers: 2
+    FirstStreamBoostSeconds: 240
+    FollowRate: 0.0006
+    SubscriptionRate: 0.00004
+    DonationRate: 0.0002
+    ChatRate: 0.025
+    DonationCents: 64000000c80000002c010000f4010000e8030000d0070000i
+    DonationWeights:
+    - 30
+    - 25
+    - 15
+    - 15
+    - 10
+    - 5

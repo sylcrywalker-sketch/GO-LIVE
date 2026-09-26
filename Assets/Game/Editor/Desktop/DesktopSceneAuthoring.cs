@@ -23,6 +23,8 @@ namespace GoLive.Editor.Desktop
     {
         private const string ScenePath="Assets/Game/Scenes/GL.unity";
         private const string CatalogPath="Assets/Game/Config/Desktop/DesktopAppCatalog.asset";
+        private const string AudienceTuningPath="Assets/Game/Config/Desktop/AudienceTuning.asset";
+        private const string VoiceActivityPath="Assets/Game/Config/Voice/VoiceActivity.asset";
 
         [MenuItem("GO! LIVE/Desktop/Author vertical slice in GL")]
         public static void Apply()
@@ -48,6 +50,7 @@ namespace GoLive.Editor.Desktop
             Set(session,"monitorAction",InputReference("Use"));Set(session,"focusAction",InputReference("PhoneSubmit"));
             Set(runtime,"pc",pc);Set(runtime,"session",session);Set(runtime,"catalog",catalog);
             Set(runtime,"clock",One<GoLive.GameTime.GameClockBehaviour>());Set(runtime,"wallet",One<GoLive.Economy.WalletBehaviour>());
+            Set(runtime,"audienceTuning",Config<AudienceTuningConfig>(AudienceTuningPath));
             Set(screen,"session",session);Set(workbench,"session",session);Set(One<GameUiInputRouter>(),"pcSession",session);
             Set(One<GameSaveController>(),"_desktop",runtime);
             var caseInteractable=pc.GetComponent<PcCaseInteractable>();
@@ -74,6 +77,13 @@ namespace GoLive.Editor.Desktop
             T[] found=Object.FindObjectsByType<T>(FindObjectsInactive.Include,FindObjectsSortMode.None);
             if(found.Length!=1) throw new InvalidOperationException($"Expected one {typeof(T).Name}, found {found.Length}.");
             return found[0];
+        }
+        // Production configs are authored assets: authoring assigns them and never creates a substitute.
+        private static T Config<T>(string path) where T:ScriptableObject
+        {
+            var config=AssetDatabase.LoadAssetAtPath<T>(path);
+            if(config==null) throw new InvalidOperationException($"Missing production config {path}.");
+            return config;
         }
         internal static RectTransform CanvasRoot(DesktopUiAuthoring ui,Transform parent,string name,int order)
         {
@@ -173,6 +183,7 @@ namespace GoLive.Editor.Desktop
             var voiceObject=new GameObject("Player voice input (OS microphone)");voiceObject.transform.SetParent(root.transform,false);
             var voice=voiceObject.AddComponent<GoLive.Voice.VoiceInputBehaviour>();
             Set(voice,"localization",One<LocalizationContext>());
+            Set(voice,"activity",Config<GoLive.Voice.VoiceActivityConfig>(VoiceActivityPath));
             Set(runtime,"voice",voice);Set(One<StreamlyView>(),"voice",voice);
         }
     }
