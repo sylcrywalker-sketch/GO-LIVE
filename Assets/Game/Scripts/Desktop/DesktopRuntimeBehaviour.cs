@@ -6,6 +6,7 @@ using GoLive.PcBuilding;
 using GoLive.Player;
 using GoLive.Viewers;
 using GoLive.Voice;
+using GoLive.Shop;
 using UnityEngine;
 
 namespace GoLive.Desktop
@@ -20,6 +21,7 @@ namespace GoLive.Desktop
         // The audience follows the game clock; accepted donations are paid into the wallet.
         [SerializeField] private GameClockBehaviour clock;
         [SerializeField] private WalletBehaviour wallet;
+        [SerializeField] private ShopBehaviour shop;
         [SerializeField, Min(0)] private float uploadMbps = 5f;
         [SerializeField] private AudienceTuningConfig audienceTuning;
         [SerializeField] private ViewerCoreConfig viewerCore;
@@ -37,6 +39,7 @@ namespace GoLive.Desktop
         private bool _bound;
         private bool _restoring;
         private DonationPayout _payout;
+        private ViewerPromiseGameplayAdapter _promiseGameplay;
 
         private void Awake()
         {
@@ -82,6 +85,8 @@ namespace GoLive.Desktop
             Session.Changed += PowerChanged;
             peripherals.State.Changed += PowerChanged;
             _payout = new DonationPayout(State.Donation, wallet.Wallet);
+            if (shop != null) _promiseGameplay = new ViewerPromiseGameplayAdapter(State.Viewers, shop.Orders, shop.Products,
+                pc.Assembly, peripherals.State, State.Stream, () => clock.Clock.Current.TotalSeconds / 60d);
             State.Stream.Changed += RequestVoice;
             if (voice != null && voice.Recognition != null) voice.Recognition.Recognized += OfferSpeech;
             _bound = true;
@@ -101,6 +106,7 @@ namespace GoLive.Desktop
             session.Reset();
             _payout.Dispose();
             _payout = null;
+            _promiseGameplay?.Dispose(); _promiseGameplay = null;
             State.Stream.Changed -= RequestVoice;
             if (voice != null && voice.Recognition != null) voice.Recognition.Recognized -= OfferSpeech;
             if (voice != null) voice.SetListening(false);
@@ -176,6 +182,7 @@ namespace GoLive.Desktop
         public void BeginRestore()
         {
             _restoring = true;
+            _promiseGameplay?.BeginRestore();
             State.BeginRestore();
             session.Reset();
         }
@@ -183,7 +190,7 @@ namespace GoLive.Desktop
         public void EndRestore(bool bootstrapSystemApps = false)
         {
             try { ProjectHardware(bootstrapSystemApps); }
-            finally { State.EndRestore(); _restoring = false; PowerChanged(); }
+            finally { _promiseGameplay?.EndRestore(); State.EndRestore(); _restoring = false; PowerChanged(); }
         }
     }
 }

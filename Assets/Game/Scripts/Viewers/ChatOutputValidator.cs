@@ -60,10 +60,13 @@ namespace GoLive.Viewers
         {
             if (intent == null) throw new ArgumentNullException(nameof(intent));
             if (raw == null) return ChatValidation.Reject("empty");
+            if (ViewerPromiseVocabulary.MentionsPromise(raw) && !ViewerPromiseVocabulary.References(raw, situation?.Promise))
+                return ChatValidation.Reject("unsupported promise claim");
             // Conservative phrase guard, not a semantic truth guarantee. Model text never enters the bank.
             if (ViewerMemoryBank.Historical(raw))
             {
                 bool supported = false;
+                if (ViewerPromiseVocabulary.References(raw, situation?.Promise)) supported = true;
                 if (situation != null) foreach (var memory in situation.Memories)
                     if (ViewerMemoryBank.References(raw, memory)) supported = true;
                 if (!supported) return ChatValidation.Reject("unsupported historical claim");

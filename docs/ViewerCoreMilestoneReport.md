@@ -10,11 +10,11 @@ Status: **in progress**, continuing `claude/sharp-wozniak-iakuny`. A–C commits
 
 `AudienceSimulation` is authoritative for total viewers and aggregate outcomes. `StreamSession` accepts donation receipts; `DonationPayout` credits the wallet. `DesktopState` applies completion to Trich/Outline. None of the text-generation pipeline creates money, followers or subscriptions.
 
-Stage C supplies ten authored permanent profiles, structured style, interests, schedules, affinities and initial sentiment. The community asset is configured but runtime attendance is not yet connected; this is the intended D seam. `AudienceRoster` currently exposes join/leave, but shrink reconciliation must be added before runtime named viewers are enabled.
+Stage C supplies ten authored permanent profiles, structured style, interests, schedules, affinities and initial sentiment. At the audited A–C handoff, the community asset was configured but runtime attendance was not connected; Stage D below closes that seam. The original `AudienceRoster` exposed join/leave but needed shrink reconciliation before enabling runtime named viewers.
 
-The current backend is `OpenAiCompatibleChatModel`, with a local-only endpoint, request timeout, cancellation, bounded output and JSON text contract. `ChatDirector` polls task results on the game thread, backs off after transport failures and uses fallback or silence. Broadcast end/load cancels and removes pending publication paths. A generation must also retain its viewer's presence epoch once D allows leave/return.
+The current backend is `OpenAiCompatibleChatModel`, with a local-only endpoint, request timeout, cancellation, bounded output and JSON text contract. `ChatDirector` polls task results on the game thread, backs off after transport failures and uses fallback or silence. Broadcast end/load cancels and removes pending publication paths. Stage D adds the required visit epoch to pending generation once viewers can leave and return.
 
-Two concrete pre-existing issues were reproduced with failing regressions: nullable speech-topic checks allowed unsupported support claims on non-speech moments, and two generated lines could both pass duplicate validation before their delayed publication. Both receive narrow fixes; A–C are not rewritten.
+Two concrete pre-existing issues were reproduced with failing regressions: nullable speech-topic checks allowed unsupported support claims on non-speech moments, and two generated lines could both pass duplicate validation before their delayed publication. Both were narrowly fixed in `86145b5`; A–C were not rewritten.
 
 ## Baseline verification after C
 
@@ -93,3 +93,32 @@ Initial three regressions failed as intended. The first expanded run passed 180/
 Final E expanded regression: **260/260 passed**, zero failed, 1.1148458 seconds ([Unity result](<E:/GO-Live-ViewerCore-audit-20260926/stage-e-complete.xml>)). Independent review found one concrete accounting defect: a callback about losing a final consumed both loss and victory memories for that subject. Two failing regressions reproduced it; publication now consumes at most one compatible fact and rejects explicitly opposite known outcomes. A separate failing English case prevents `wonderful` from being parsed as `won`. The final run includes all D fixture groups, memory, stream session and desktop state/save integration.
 
 Final independent Stage E re-review: specification PASS, code quality PASS; no outstanding actionable findings.
+
+## Stage F — promises, social replies and promotion
+
+`ViewerPromiseLedger` is a plain C# state machine with at most 16 structured commitments. The separate RU/EN vocabulary accepts explicit purchase/install commitments for tomorrow or by tomorrow, and starting the next stream earlier. Questions, quotation, negation, speculation and unsupported clauses are rejected. Subject vocabulary stays outside objective comparisons. No transcript is saved and model text cannot add or resolve a promise.
+
+The ledger separates objective status from each original witness's knowledge. A purchase witnessed by one original listener does not tell an absent listener that the promise was fulfilled. Their known state remains Open, meaning outcome unknown. Fulfillment comes from actual paid shop orders, installed item identities and broadcast starts through an explicitly composed adapter. Loading suppresses this adapter and rebaselines it afterward. A cart, spoken claim or restored installation is not a new completed fact.
+
+Tomorrow uses the next calendar-day window; by tomorrow includes the remaining current day. Earlier compares the next actual start's minute-of-day against the original start. No next broadcast within seven game days expires the condition as unverifiable. Terminal records age out after seven game days; Open records are never evicted, and an admission watermark prevents replay after eviction. One relevant known promise may enter a prompt, at least 120 game minutes between recognized callbacks and at most three lifetime references. Only witnesses to a known fulfilled/broken transition receive +2/-2 sentiment once. Deadline processing continues offline. Actual start-time witnesses are uncommon because authored viewers arrive after going Live; later arrivals deliberately receive no automatic outcome catch-up.
+
+Rare social replies originate only from an actual published line. Both permanent viewers must still have the captured visit epochs; maximum depth is one, chance is 0.03 per eligible trigger, and there is at least a 180-second global gap plus the ordinary chat budget. No reply chains or separate AI conversation loop exist. Model outage leaves these optional social replies silent.
+
+Promotion considers only an already named ephemeral chatter after three published lines and eight minutes. Each identity receives one seeded 0.02 eligibility roll, with at most one promotion per broadcast and eight additional permanent profiles overall. A compact generated descriptor and stable identity survive save/load; anonymous audience remains aggregated. All durable names, including absent promoted viewers, are reserved against future ephemeral generation.
+
+Independent review reproduced a same-frame ordering defect: recognized commitment speech was queued while a checkout was observed immediately, so the purchase could be lost before the next viewer tick. The core now processes earlier normalized events before observing the completed gameplay fact. Generation still begins during its ordinary tick. The regression also checks purchase-before-speech exclusion and absence of repeated acknowledgement or scheduling. Final F expanded regression: **291/291 passed**, zero failures, 1.244557 seconds ([Unity result](<E:/GO-Live-ViewerCore-audit-20260926/stage-f-complete.xml>)). Independent re-review: specification PASS, code PASS, no remaining actionable findings.
+
+## Commit sequence
+
+| Work | Commit |
+|---|---|
+| Preserved A — deterministic reactions | `4a4eb06` |
+| Preserved B — local chat director | `5af07d1` |
+| Preserved C — permanent profiles | `39710e5` |
+| Handoff validation and narrow guards | `86145b5` |
+| D — presence and relationships | `d85158a` |
+| E — witnessed memory | `b688a16` |
+| F — promises and social callbacks | pending |
+| G — living community integration | pending |
+
+The branch remains `claude/sharp-wozniak-iakuny`; no squash or merge to main.

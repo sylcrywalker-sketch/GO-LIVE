@@ -56,6 +56,7 @@ namespace GoLive.Viewers
             Community.Joined += Events.NotifyJoined;
             Director = new ChatDirector(languageModel, modelSettings ?? new ChatModelSettings { Enabled = false }, Chat, Log);
             Director.Finished += FinishMemoryReference;
+            Director.Shown += ObservePublished;
             Chat.Added += ObserveChat;
             Chat.Cleared += ClearChatWitnesses;
             _speech.SpeechAdded += RememberSpeech;
@@ -66,6 +67,7 @@ namespace GoLive.Viewers
         {
             _gameMinutes = context.GameMinutes;
             Events.UpdateClock(context.GameMinutes);
+            Community.UpdateContext(context.GameMinutes, context.Content);
             if (_stream.State != StreamState.Live)
             {
                 Events.Tick(context);
@@ -83,6 +85,25 @@ namespace GoLive.Viewers
             Events.Tick(context);
             _stream.SetStreamerActivity(Events.Activity);
 
+            ProcessPendingEvents(now);
+            Director.Update(now, Roster, GenerationSituationFor, _broadcast);
+        }
+
+        // Paid orders/installs can arrive between frames after speech was normalized. Drain those earlier
+        // events first so a later completed gameplay fact sees its promise. Generation still starts on Tick.
+        public void ObserveGameplay(PromiseGameplayFact fact)
+        {
+            if (fact == null) throw new ArgumentNullException(nameof(fact));
+            if (_stream.State == StreamState.Live)
+            {
+                if (_broadcast != _stream.BroadcastId) BeginBroadcast(new StreamerContext(false, false, fact.GameMinutes));
+                ProcessPendingEvents(Events.Now);
+            }
+            Community.ObserveGameplay(fact);
+        }
+
+        private void ProcessPendingEvents(double now)
+        {
             Events.Drain(_events);
             foreach (StreamEvent streamEvent in _events)
             {
@@ -101,7 +122,6 @@ namespace GoLive.Viewers
                 }
             }
             _events.Clear();
-            Director.Update(now, Roster, GenerationSituationFor, _broadcast);
         }
 
         // What the chat can see right now: bounded, current-broadcast only.
@@ -134,8 +154,11 @@ namespace GoLive.Viewers
             ViewerMemoryBank bank = currentVisit && !eventOnly ? Community.State(id)?.Memories : null;
             IReadOnlyList<ViewerMemory> memories = bank == null ? Array.Empty<ViewerMemory>() : reserve
                 ? bank.Reserve(intent.Event, _gameMinutes, intent.Id) : bank.Retrieve(intent.Event, _gameMinutes);
+            string subject = ViewerPromiseVocabulary.Subject(intent.Event) ?? ViewerPromiseVocabulary.Subject(speech);
+            ViewerPromiseContext promise = bank == null || subject == null ? null : reserve
+                ? Community.Promises.Reserve(id, subject, _gameMinutes, intent.Id) : Community.Promises.Retrieve(id, subject, _gameMinutes);
             return new ChatSituation(current.ChannelName, current.StreamSeconds, current.Viewers, current.ChannelLanguage,
-                chat.AsReadOnly(), speech, Community.RelationshipContext(id), memories);
+                chat.AsReadOnly(), speech, Community.RelationshipContext(id), memories, promise);
         }
 
         private void ObserveChat(StreamChatMessage message)
@@ -149,7 +172,19 @@ namespace GoLive.Viewers
         private void ClearChatWitnesses() { _chatWitnesses.Clear(); _chatWitnessOrder.Clear(); }
 
         private void FinishMemoryReference(ReactionIntent intent, ChatSituation situation, string publishedText)
-            => Community.State(intent.Viewer.ViewerId)?.Memories.Finish(intent.Id, situation?.Memories, publishedText, _gameMinutes);
+        {
+            Community.State(intent.Viewer.ViewerId)?.Memories.Finish(intent.Id, situation?.Memories, publishedText, _gameMinutes);
+            Community.Promises.Finish(intent.Viewer.ViewerId, intent.Id, situation?.Promise, publishedText, _gameMinutes);
+        }
+
+        private void ObservePublished(StreamChatMessage message, ReactionIntent origin)
+        {
+            Community.ObservePublished(message);
+            ReactionIntent reply = _selector?.SelectPublished(message, origin, Events.Now, _gameMinutes);
+            if (reply == null) return;
+            Log.Add(ReactionLog.ForIntent(reply, ReactionOutcome.Scheduled, "social reply"));
+            Director.Submit(reply);
+        }
 
         // Load-time discard: nothing of the replaced world's broadcast (chat, pending reactions) survives.
         public void Discard()
@@ -166,6 +201,7 @@ namespace GoLive.Viewers
             EndBroadcast();
             Director.Dispose();
             Director.Finished -= FinishMemoryReference;
+            Director.Shown -= ObservePublished;
             Chat.Added -= ObserveChat;
             Chat.Cleared -= ClearChatWitnesses;
             Events.Dispose();

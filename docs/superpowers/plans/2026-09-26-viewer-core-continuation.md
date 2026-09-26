@@ -47,8 +47,8 @@ New abstraction: a small C# promise ledger is necessary to distinguish spoken co
 - Only original witnesses or explicitly recorded later knowledge may receive a promise context. No omniscient catch-up on load.
 - Rare viewer replies require an actual published triggering line, both viewers present in matching epochs, a long global cooldown and reply depth one. A social reply cannot trigger another social reply.
 - Anonymous people remain aggregated. Track only existing ephemeral chatters; rare qualifying promotion creates one durable identity, with a strict maximum promoted population and no duplicate after load.
-- [ ] Test conservative parsing, witness sets, gameplay-only transitions, eligible/non-repeating callbacks, bounded replies and deterministic rare stable promotion.
-- [ ] Run targeted tests, review and commit `Add viewer promises and social callbacks`.
+- [x] Test conservative parsing, witness sets, gameplay-only transitions, eligible/non-repeating callbacks, bounded replies and deterministic rare stable promotion.
+- [x] Run targeted tests, review and commit `Add viewer promises and social callbacks`.
 
 ## Task 4: Stage G — integrated acceptance
 

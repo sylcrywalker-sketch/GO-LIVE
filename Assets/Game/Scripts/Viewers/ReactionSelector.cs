@@ -104,6 +104,7 @@ namespace GoLive.Viewers
         private readonly List<ChatParticipant> _chosen = new();
         private readonly List<(ChatParticipant viewer, double weight)> _weights = new();
         private long _intentSerial;
+        private double _lastSocial = double.NegativeInfinity;
 
         public ChatRhythm Rhythm { get; }
 
@@ -123,6 +124,7 @@ namespace GoLive.Viewers
             var intents = new List<ReactionIntent>();
             if (streamEvent == null) throw new ArgumentNullException(nameof(streamEvent));
             if (!live) { reason = "offline"; return intents; }
+            if (streamEvent.Kind == StreamEventKind.ViewerReply) { reason = "social events require publication"; return intents; }
             if (!_seenKeys.Add(streamEvent.Key)) { reason = "duplicate"; return intents; }
             int viewers = _roster.AudienceSize;
             Rhythm.Refill(now, viewers);
@@ -166,6 +168,36 @@ namespace GoLive.Viewers
             }
             reason = intents.Count == 0 ? "silence" : null;
             return intents;
+        }
+
+        // Called only by the director's Shown event. One fixed roll per real line, then a weighted permanent
+        // recipient; budget, gaps, expiry and the director's queue apply exactly as for ordinary reactions.
+        public ReactionIntent SelectPublished(StreamChatMessage message, ReactionIntent origin, double now, double gameMinutes)
+        {
+            if (message == null || origin == null || origin.Event.ReplyDepth != 0 || !origin.Viewer.IsPermanent ||
+                message.IntentId != origin.Id || message.ViewerId != origin.Viewer.ViewerId || !_roster.IsWatching(message.ViewerId) ||
+                _roster.Epoch(message.ViewerId) != origin.PresenceEpoch || !_seenKeys.Add("reply." + message.Id)) return null;
+            if (now - _lastSocial < 180 || _random.NextDouble() >= .03) return null;
+            Rhythm.Refill(now, _roster.AudienceSize);
+            if (!Rhythm.CanSpend(false)) return null;
+            _weights.Clear(); double total = 0;
+            foreach (var viewer in _roster.Named)
+            {
+                if (viewer.ViewerId == message.ViewerId || viewer.Persona.Profile == null ||
+                    Rhythm.SinceLast(viewer.ViewerId, now) < _tuning.ViewerGapSeconds * viewer.Traits.Pace) continue;
+                double weight = viewer.Persona.Profile.SocialTendency;
+                if (!(weight > 0)) continue;
+                _weights.Add((viewer, weight)); total += weight;
+            }
+            if (total <= 0) return null;
+            double roll = _random.NextDouble() * total;
+            foreach (var (viewer, weight) in _weights)
+            {
+                roll -= weight; if (roll > 0) continue;
+                _chosen.Clear(); _lastSocial = now;
+                return Schedule(StreamEvent.Reply(message, now, _roster, gameMinutes), viewer, false, 0, now);
+            }
+            return null;
         }
 
         // The audience's appetite to respond at all: tiny audiences mostly watch.

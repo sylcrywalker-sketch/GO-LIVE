@@ -82,6 +82,10 @@ namespace GoLive.Viewers
         private readonly Dictionary<string, long> _visits = new(StringComparer.Ordinal);
         private readonly Dictionary<string, double> _joinedAt = new(StringComparer.Ordinal);
         private int _chatterSerial;
+        private readonly HashSet<string> _reservedNames = new(StringComparer.OrdinalIgnoreCase);
+
+        public void ReserveNames(IEnumerable<string> names)
+        { _reservedNames.Clear(); foreach (string name in names) _reservedNames.Add(name); }
 
         public IReadOnlyList<ChatParticipant> Named { get; }
         // Anonymous viewers who have written in this broadcast (created on demand, never persisted).
@@ -162,6 +166,18 @@ namespace GoLive.Viewers
             return false;
         }
 
+        // Identity replacement consumes the chatter's existing anonymous seat and invalidates its queued jobs.
+        public bool Promote(string ephemeralId, ChatParticipant permanent)
+        {
+            if (permanent == null || !permanent.IsPermanent || Find(permanent.ViewerId) != null || AnonymousCount == 0) return false;
+            int index = _ephemeral.FindIndex(p => p.ViewerId == ephemeralId);
+            if (index < 0) return false;
+            double at = JoinedAt(ephemeralId);
+            var old = _ephemeral[index]; _ephemeral.RemoveAt(index);
+            _ephemeralNames.Remove(old.DisplayName); _visits.Remove(ephemeralId); _joinedAt.Remove(ephemeralId);
+            return Join(permanent, at);
+        }
+
         // An anonymous chatter: an existing one (they keep writing under the same name) or a new one.
         public ChatParticipant AnonymousChatter(AudienceRandom random, Func<ChatParticipant, bool> available, double streamSeconds = 0)
         {
@@ -181,7 +197,8 @@ namespace GoLive.Viewers
             for (int attempt = 0; attempt < 4; attempt++)
             {
                 ChatParticipant created = _createEphemeral(random, _chatterSerial++);
-                if (created == null || created.IsPermanent || Find(created.ViewerId) != null || !_ephemeralNames.Add(created.DisplayName)) continue;
+                if (created == null || created.IsPermanent || Find(created.ViewerId) != null || _reservedNames.Contains(created.DisplayName) ||
+                    _named.Exists(p => string.Equals(p.DisplayName, created.DisplayName, StringComparison.OrdinalIgnoreCase)) || !_ephemeralNames.Add(created.DisplayName)) continue;
                 _ephemeral.Add(created);
                 _visits[created.ViewerId] = 1;
                 _joinedAt[created.ViewerId] = streamSeconds;

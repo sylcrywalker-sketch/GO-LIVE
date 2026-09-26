@@ -87085,6 +87085,7 @@ MonoBehaviour:
   catalog: {fileID: 11400000, guid: f414acfd493f43d498a0fe17d964bf64, type: 2}
   clock: {fileID: 656476893}
   wallet: {fileID: 656476887}
+  shop: {fileID: 656476895}
   uploadMbps: 5
   audienceTuning: {fileID: 11400000, guid: e5cfa2f61d8bbd7458e3ba0833cff219, type: 2}
   viewerCore: {fileID: 11400000, guid: 85f08c1bf4e028f4ba999061bdccd22a, type: 2}

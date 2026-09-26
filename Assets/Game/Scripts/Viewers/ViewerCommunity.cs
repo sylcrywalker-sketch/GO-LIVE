@@ -19,6 +19,8 @@ namespace GoLive.Viewers
     {
         public int Version = 1;
         public List<PermanentViewerSnapshot> Viewers = new();
+        public ViewerPromiseLedgerSnapshot Promises;
+        public List<PromotedViewerSnapshot> Promoted;
     }
 
     // Only community commands can change the durable relationship. Profiles remain configuration.
@@ -54,6 +56,13 @@ namespace GoLive.Viewers
         private string _broadcast = "";
         private double _gameMinutes;
         private StreamTopic _content;
+        private double _broadcastStarted;
+        private readonly List<ViewerNameForms> _names;
+        private readonly int _authoredCount;
+        private readonly ViewerPromotion _promotion;
+        private HashSet<string> _purchasableSubjects;
+
+        public ViewerPromiseLedger Promises { get; } = new();
 
         public event Action<ChatParticipant> Joined;
         public IReadOnlyList<ViewerProfile> Profiles { get; }
@@ -64,6 +73,7 @@ namespace GoLive.Viewers
         {
             _roster = roster ?? throw new ArgumentNullException(nameof(roster));
             _profiles = new List<ViewerProfile>(profiles ?? Array.Empty<ViewerProfile>());
+            _authoredCount = _profiles.Count;
             Profiles = _profiles.AsReadOnly();
             if (_profiles.Count > 0)
             {
@@ -74,7 +84,11 @@ namespace GoLive.Viewers
             foreach (ViewerProfile profile in _profiles)
                 names.Add(new ViewerNameForms(profile.Id, profile.Participant().NameForms));
             KnownNames = names.AsReadOnly();
+            _names = names;
+            _promotion = new ViewerPromotion(_roster);
+            Promises.KnownOutcome += (id, delta) => { if (_states.TryGetValue(id, out var state)) state.Sentiment = Math.Clamp(state.Sentiment + delta, -100, 100); };
             ResetStates();
+            ReserveDurableNames();
         }
 
         public PermanentViewerState State(string viewerId) => viewerId != null && _states.TryGetValue(viewerId, out var state) ? state : null;
@@ -87,6 +101,8 @@ namespace GoLive.Viewers
             EndBroadcast();
             _roster.SetAudienceSize(seats);
             _broadcast = broadcastId;
+            _broadcastStarted = gameMinutes;
+            _promotion.Begin(broadcastId, seed);
             UpdateContext(gameMinutes, content);
             foreach (ViewerProfile profile in _profiles)
             {
@@ -110,11 +126,13 @@ namespace GoLive.Viewers
             _gameMinutes = gameMinutes;
             _content = content;
             foreach (var state in _states.Values) state.Memories.Decay(gameMinutes);
+            if (Promises.NeedsAdvance(gameMinutes)) Promises.Advance(gameMinutes, EventWitnesses.Capture(_roster));
         }
 
         public void Tick(double streamSeconds)
         {
             if (_broadcast.Length == 0) return;
+            _promotion.Prune();
             foreach (Attendance plan in _attendance)
             {
                 string id = plan.Profile.Id;
@@ -149,6 +167,8 @@ namespace GoLive.Viewers
             _attendance.Clear();
             _lastInteraction.Clear();
             foreach (var state in _states.Values) state.Memories.ClearReservations();
+            Promises.ClearReservations();
+            _promotion.End();
             _roster.Clear();
         }
 
@@ -162,6 +182,12 @@ namespace GoLive.Viewers
                 _states[_profiles[i].Id].Memories.Observe(streamEvent, _profiles[i], KnownNames[i].Forms);
             if (_broadcast.Length == 0 || streamEvent?.Kind != StreamEventKind.StreamerSpeech || streamEvent.Speech == null) return;
             SpeechAnalysis speech = streamEvent.Speech;
+            if (streamEvent.HasWitnesses)
+            {
+                var proposal = ViewerPromiseVocabulary.Parse(speech.Text, streamEvent.GameMinutes, _broadcastStarted);
+                if (proposal != null && (proposal.Action == PromiseAction.StartBroadcast || _purchasableSubjects == null || _purchasableSubjects.Contains(proposal.Subject)))
+                    Promises.Add(streamEvent.Key, proposal, streamEvent.Witnesses);
+            }
             bool knownTarget = false;
             string phrase = " " + SpeechRelevance.Normalize(speech.Text) + " ";
             foreach (ViewerNameForms name in KnownNames)
@@ -230,7 +256,7 @@ namespace GoLive.Viewers
 
         public ViewerCommunitySnapshot Capture()
         {
-            var snapshot = new ViewerCommunitySnapshot();
+            var snapshot = new ViewerCommunitySnapshot { Promises = Promises.Capture(), Promoted = _promotion.Capture() };
             foreach (ViewerProfile profile in _profiles)
             {
                 PermanentViewerState state = _states[profile.Id];
@@ -247,10 +273,17 @@ namespace GoLive.Viewers
         {
             if (snapshot == null) return null; // Pre-community saves seed authored defaults.
             if (snapshot.Version != 1 || snapshot.Viewers == null) return "Invalid viewer community snapshot.";
+            string promotionError = ViewerPromotion.Validate(snapshot.Promoted, _profiles.GetRange(0, _authoredCount));
+            if (promotionError != null) return promotionError;
+            var allowed = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < _authoredCount; i++) allowed.Add(_profiles[i].Id);
+            if (snapshot.Promoted != null) foreach (var promoted in snapshot.Promoted) allowed.Add(promoted.Id);
+            string promiseError = ViewerPromiseLedger.Validate(snapshot.Promises, allowed);
+            if (promiseError != null) return promiseError;
             var ids = new HashSet<string>(StringComparer.Ordinal);
             foreach (PermanentViewerSnapshot saved in snapshot.Viewers)
             {
-                if (saved == null || saved.ViewerId == null || !_states.ContainsKey(saved.ViewerId) || !ids.Add(saved.ViewerId))
+                if (saved == null || saved.ViewerId == null || !allowed.Contains(saved.ViewerId) || !ids.Add(saved.ViewerId))
                     return "Unknown or duplicate saved viewer.";
                 if (saved.Sentiment < -100 || saved.Sentiment > 100 || saved.VisitCount < 0 || saved.Acknowledgements < 0)
                     return "Invalid saved viewer relationship.";
@@ -265,7 +298,13 @@ namespace GoLive.Viewers
             string error = Validate(snapshot);
             if (error != null) throw new ArgumentException(error, nameof(snapshot));
             EndBroadcast();
+            if (_profiles.Count > _authoredCount) _profiles.RemoveRange(_authoredCount, _profiles.Count - _authoredCount);
+            if (_names.Count > _authoredCount) _names.RemoveRange(_authoredCount, _names.Count - _authoredCount);
+            _promotion.Restore(snapshot?.Promoted);
+            foreach (var descriptor in _promotion.Capture()) AddPromotedProfile(ViewerPromotion.Profile(descriptor));
             ResetStates();
+            ReserveDurableNames();
+            Promises.Restore(snapshot?.Promises);
             if (snapshot == null) return;
             foreach (PermanentViewerSnapshot saved in snapshot.Viewers)
             {
@@ -282,6 +321,33 @@ namespace GoLive.Viewers
             _states.Clear();
             foreach (ViewerProfile profile in _profiles) _states.Add(profile.Id, new PermanentViewerState(profile.Id, profile.InitialSentiment));
         }
+
+        public void ObserveGameplay(PromiseGameplayFact fact) => Promises.Observe(fact);
+        internal void SetPurchasablePromiseSubjects(IEnumerable<string> subjects) => _purchasableSubjects = new HashSet<string>(subjects, StringComparer.Ordinal);
+
+        // Only the publication path calls this; queued/generated lines are not an observed conversation.
+        public ChatParticipant ObservePublished(StreamChatMessage message)
+        {
+            if (_broadcast.Length == 0) return null;
+            var descriptor = _promotion.Observe(message, _profiles);
+            if (descriptor == null) return null;
+            var profile = ViewerPromotion.Profile(descriptor);
+            var participant = profile.Participant();
+            if (!_roster.Promote(message.ViewerId, participant)) return null;
+            _promotion.Accept(descriptor);
+            AddPromotedProfile(profile);
+            _states.Add(profile.Id, new PermanentViewerState(profile.Id, profile.InitialSentiment) { VisitCount = 1 });
+            ReserveDurableNames();
+            return participant;
+        }
+
+        private void AddPromotedProfile(ViewerProfile profile)
+        {
+            _profiles.Add(profile);
+            _names.Add(new ViewerNameForms(profile.Id, profile.Participant().NameForms));
+        }
+
+        private void ReserveDurableNames() => _roster.ReserveNames(_profiles.ConvertAll(p => p.DisplayName));
 
         private static int Increment(int value) => value == int.MaxValue ? value : value + 1;
     }

@@ -18,7 +18,8 @@ namespace GoLive.Viewers
         Subscription,       // the audience simulation produced a paid subscription
         AudienceMilestone,  // the audience reached a size worth noticing
         PeripheralChanged,  // webcam or in-game microphone connected/disconnected on air
-        AudienceChatter     // the audience simulation's ambient chat impulse: somebody may just talk
+        AudienceChatter,    // the audience simulation's ambient chat impulse: somebody may just talk
+        ViewerReply        // one reply to a line actually published, never another reply
     }
 
     public enum SilenceLevel { None, Long, VeryLong }
@@ -44,6 +45,7 @@ namespace GoLive.Viewers
             foreach (var viewer in roster.Ephemeral) viewers.Add(new ViewerWitness(viewer.ViewerId, roster.Epoch(viewer.ViewerId)));
             return new EventWitnesses(viewers, roster.AnonymousCount);
         }
+        public static EventWitnesses Empty() => new(new List<ViewerWitness>(), 0);
         public bool Contains(string id, long epoch = 0)
         {
             foreach (var viewer in Viewers) if (viewer.ViewerId == id && (epoch == 0 || viewer.Epoch == epoch)) return true;
@@ -74,12 +76,14 @@ namespace GoLive.Viewers
         public EventWitnesses Witnesses { get; }
         public bool HasWitnesses => Witnesses != null;
         public double GameMinutes { get; }
+        public string TriggeringLine { get; }
+        public int ReplyDepth => Kind == StreamEventKind.ViewerReply ? 1 : 0;
         public bool WitnessedBy(string viewerId, long epoch = 0) => Witnesses?.Contains(viewerId, epoch) == true;
 
         private StreamEvent(long serial, string key, StreamEventKind kind, double streamSeconds, float significance,
             SpeechAnalysis speech = null, string subjectViewerId = null, string subjectName = null, long amountCents = 0,
             double seconds = 0, SilenceLevel silence = SilenceLevel.None, int audienceSize = 0,
-            PcPeripheralKind peripheral = default, bool connected = false, EventWitnesses witnesses = null, double gameMinutes = 0)
+            PcPeripheralKind peripheral = default, bool connected = false, EventWitnesses witnesses = null, double gameMinutes = 0, string triggeringLine = null)
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentException("A stream event needs an idempotency key.", nameof(key));
             Serial = serial;
@@ -98,11 +102,12 @@ namespace GoLive.Viewers
             Connected = connected;
             Witnesses = witnesses;
             GameMinutes = gameMinutes;
+            TriggeringLine = triggeringLine;
         }
 
         // The same fact addressed to a viewer (e.g. the streamer thanks the donor who just gave).
         public StreamEvent WithSubject(string viewerId, string name) =>
-            new(Serial, Key, Kind, StreamSeconds, Significance, Speech, viewerId, name, AmountCents, Seconds, Silence, AudienceSize, Peripheral, Connected, Witnesses, GameMinutes);
+            new(Serial, Key, Kind, StreamSeconds, Significance, Speech, viewerId, name, AmountCents, Seconds, Silence, AudienceSize, Peripheral, Connected, Witnesses, GameMinutes, TriggeringLine);
 
         // Factories remain explicitly unstamped for synthetic tests; production Source.Add always stamps once.
         public StreamEvent WithWitnesses(AudienceRoster roster, double gameMinutes)
@@ -110,7 +115,7 @@ namespace GoLive.Viewers
             if (HasWitnesses) return this;
             if (double.IsNaN(gameMinutes) || double.IsInfinity(gameMinutes) || gameMinutes < 0) throw new ArgumentOutOfRangeException(nameof(gameMinutes));
             return new StreamEvent(Serial, Key, Kind, StreamSeconds, Significance, Speech, SubjectViewerId, SubjectName, AmountCents,
-                Seconds, Silence, AudienceSize, Peripheral, Connected, EventWitnesses.Capture(roster), gameMinutes);
+                Seconds, Silence, AudienceSize, Peripheral, Connected, EventWitnesses.Capture(roster), gameMinutes, TriggeringLine);
         }
 
         public static StreamEvent Started(long serial, string streamId, double at) =>
@@ -148,5 +153,10 @@ namespace GoLive.Viewers
 
         public static StreamEvent AudienceChatter(long serial, string key, double at, int audienceSize) =>
             new(serial, key, StreamEventKind.AudienceChatter, at, .2f, audienceSize: audienceSize);
+
+        internal static StreamEvent Reply(StreamChatMessage message, double now, AudienceRoster roster, double gameMinutes) =>
+            new(0, "reply." + message.Id, StreamEventKind.ViewerReply, now, .25f, subjectViewerId: message.ViewerId,
+                subjectName: message.SenderName, witnesses: EventWitnesses.Capture(roster), gameMinutes: gameMinutes,
+                triggeringLine: ChatContextBuilder.Clean(message.Text, ChatContextBuilder.QuoteLimit));
     }
 }

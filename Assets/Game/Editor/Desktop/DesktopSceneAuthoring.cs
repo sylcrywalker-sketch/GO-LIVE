@@ -51,6 +51,7 @@ namespace GoLive.Editor.Desktop
             Set(session,"monitorAction",InputReference("Use"));Set(session,"focusAction",InputReference("PhoneSubmit"));
             Set(runtime,"pc",pc);Set(runtime,"session",session);Set(runtime,"catalog",catalog);
             Set(runtime,"clock",One<GoLive.GameTime.GameClockBehaviour>());Set(runtime,"wallet",One<GoLive.Economy.WalletBehaviour>());
+            Set(runtime,"shop",One<GoLive.Shop.ShopBehaviour>());
             Set(runtime,"audienceTuning",Config<AudienceTuningConfig>(AudienceTuningPath));
             Set(runtime,"viewerCore",Config<GoLive.Viewers.ViewerCoreConfig>(ViewerCorePath));
             Set(screen,"session",session);Set(workbench,"session",session);Set(One<GameUiInputRouter>(),"pcSession",session);

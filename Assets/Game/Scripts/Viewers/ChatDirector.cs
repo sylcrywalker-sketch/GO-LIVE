@@ -278,7 +278,10 @@ namespace GoLive.Viewers
         }
 
         private static bool SameVisit(AudienceRoster roster, ReactionIntent intent) =>
-            roster.IsWatching(intent.Viewer.ViewerId) && roster.Epoch(intent.Viewer.ViewerId) == intent.PresenceEpoch;
+            roster.IsWatching(intent.Viewer.ViewerId) && roster.Epoch(intent.Viewer.ViewerId) == intent.PresenceEpoch &&
+            (intent.Event.Kind != StreamEventKind.ViewerReply ||
+                roster.IsWatching(intent.Event.SubjectViewerId) && intent.Event.WitnessedBy(intent.Event.SubjectViewerId, roster.Epoch(intent.Event.SubjectViewerId)) &&
+                intent.Event.WitnessedBy(intent.Viewer.ViewerId, intent.PresenceEpoch));
 
         private void DropDeparted(AudienceRoster roster)
         {
