@@ -11,6 +11,7 @@ namespace GoLive.Viewers
         public int Sentiment;
         public int VisitCount;
         public int Acknowledgements;
+        public List<ViewerMemorySnapshot> Memories;
     }
 
     [Serializable]
@@ -27,13 +28,14 @@ namespace GoLive.Viewers
         public int Sentiment { get; internal set; }
         public int VisitCount { get; internal set; }
         public int Acknowledgements { get; internal set; }
-        internal PermanentViewerState(string id, int sentiment) { ViewerId = id; Sentiment = sentiment; }
+        public ViewerMemoryBank Memories { get; }
+        internal PermanentViewerState(string id, int sentiment) { ViewerId = id; Sentiment = sentiment; Memories = new ViewerMemoryBank(id); }
     }
 
     // Owns durable social state and a transient attendance plan. This owner separates authored identity from
     // saves, and presence decisions from text generation. The audience simulation still owns every seat.
     // API: begin/update context/tick/end, process observed facts, capture/validate/restore. Joined is emitted only
-    // after a seat is acquired. Only relationship and visit counters save; plans and cooldowns never save.
+    // after a seat is acquired. Relationships, visits and compact memories save; plans and reservations never save.
     public sealed class ViewerCommunity
     {
         private sealed class Attendance
@@ -107,6 +109,7 @@ namespace GoLive.Viewers
                 throw new ArgumentOutOfRangeException(nameof(gameMinutes));
             _gameMinutes = gameMinutes;
             _content = content;
+            foreach (var state in _states.Values) state.Memories.Decay(gameMinutes);
         }
 
         public void Tick(double streamSeconds)
@@ -145,6 +148,7 @@ namespace GoLive.Viewers
             _broadcast = "";
             _attendance.Clear();
             _lastInteraction.Clear();
+            foreach (var state in _states.Values) state.Memories.ClearReservations();
             _roster.Clear();
         }
 
@@ -152,6 +156,10 @@ namespace GoLive.Viewers
         // over inferred donation subjects, and only current named viewers can receive an acknowledgement.
         public void Process(StreamEvent streamEvent)
         {
+            if (_broadcast.Length == 0 || streamEvent == null) return;
+            // Attendance at normalization is authoritative even if a witness left before this queue drained.
+            for (int i = 0; i < _profiles.Count; i++)
+                _states[_profiles[i].Id].Memories.Observe(streamEvent, _profiles[i], KnownNames[i].Forms);
             if (_broadcast.Length == 0 || streamEvent?.Kind != StreamEventKind.StreamerSpeech || streamEvent.Speech == null) return;
             SpeechAnalysis speech = streamEvent.Speech;
             bool knownTarget = false;
@@ -176,6 +184,7 @@ namespace GoLive.Viewers
         private void Acknowledge(string id, StreamEvent streamEvent, bool explicitName)
         {
             if (!_states.TryGetValue(id, out var state) || !_roster.IsWatching(id)) return;
+            if (streamEvent.HasWitnesses && !streamEvent.WitnessedBy(id, _roster.Epoch(id))) return;
             // The chat relevance detector tolerates transcription typos. Durable social changes are more
             // conservative: a near-match to another viewer's name must not change their relationship.
             if (explicitName && !ExactlyNames(" " + SpeechRelevance.Normalize(streamEvent.Speech.Text) + " ", _roster.Find(id).NameForms)) return;
@@ -228,7 +237,7 @@ namespace GoLive.Viewers
                 snapshot.Viewers.Add(new PermanentViewerSnapshot
                 {
                     ViewerId = state.ViewerId, Sentiment = state.Sentiment,
-                    VisitCount = state.VisitCount, Acknowledgements = state.Acknowledgements
+                    VisitCount = state.VisitCount, Acknowledgements = state.Acknowledgements, Memories = state.Memories.Capture()
                 });
             }
             return snapshot;
@@ -245,6 +254,8 @@ namespace GoLive.Viewers
                     return "Unknown or duplicate saved viewer.";
                 if (saved.Sentiment < -100 || saved.Sentiment > 100 || saved.VisitCount < 0 || saved.Acknowledgements < 0)
                     return "Invalid saved viewer relationship.";
+                string memoryError = ViewerMemoryBank.Validate(saved.Memories);
+                if (memoryError != null) return memoryError;
             }
             return null;
         }
@@ -262,6 +273,7 @@ namespace GoLive.Viewers
                 state.Sentiment = saved.Sentiment;
                 state.VisitCount = saved.VisitCount;
                 state.Acknowledgements = saved.Acknowledgements;
+                state.Memories.Restore(saved.Memories);
             }
         }
 

@@ -14,7 +14,7 @@
 - [x] Verify two confirmed handoff defects with failing tests, then minimally fix unsupported support claims on non-speech events and delayed duplicate publication.
 - [x] Run the same five required contexts through all ten profiles; retain every raw model response, including rejected output. Separate conditional style auditions from actual selector willingness to speak. Evaluate the C quality gate before D implementation. Two complete auditions retained; attention/style/timing distinct, semantic grounding remains a reported quality defect for final evaluation.
 
-## Stage D — presence and relationship
+## Task 1: Stage D — presence and relationship
 
 New abstraction: `ViewerCommunity` is necessary because authored profiles cannot own runtime relationships and ChatDirector must not own presence. It owns stable `PermanentViewerState` records and exposes presence/relationship changes; it never changes the audience number.
 
@@ -27,7 +27,7 @@ New abstraction: `ViewerCommunity` is necessary because authored profiles cannot
 - [x] Integration tests: absent/left viewers cannot publish, UI/LLM cannot create presence, old-save compatibility.
 - [x] Run targeted tests, review and commit `Add viewer presence and relationships`: 194/194 passed; independent review and regression repair complete.
 
-## Stage E — witnessed memory
+## Task 2: Stage E — witnessed memory
 
 New abstraction: a bounded structured memory collection belongs to each permanent viewer. It solves cross-stream continuity without keeping transcripts or allowing generated prose to define truth.
 
@@ -36,10 +36,10 @@ New abstraction: a bounded structured memory collection belongs to each permanen
 - Types remain small: significant failure/achievement reports, direct acknowledgement, technical incident and known promise. Filler and routine chatter do not become memories.
 - Capacity: 16 memories per viewer. Decay lower-value old records and evict the least useful first; retain important/referenced facts longer.
 - Retrieve at most two relevant memories by deterministic topic/type/recency/importance scoring. Cooldowns and reference counts prevent automatic callbacks every stream. Only successful, relevant publication consumes a callback opportunity.
-- [ ] Test witness-only creation, absence and unrelated subjects, trivial-event rejection, capacity/decay, relevant retrieval, prompt isolation, durable save/load and immutable historical truth.
-- [ ] Run targeted tests, review and commit `Add witnessed viewer memory`.
+- [x] Test witness-only creation, absence and unrelated subjects, trivial-event rejection, capacity/decay, relevant retrieval, prompt isolation, durable save/load and immutable historical truth.
+- [x] Run targeted tests, review and commit `Add witnessed viewer memory`: 260/260 passed; independent spec/code-quality review approved after callback-accounting repair.
 
-## Stage F — promises and social callbacks
+## Task 3: Stage F — promises and social callbacks
 
 New abstraction: a small C# promise ledger is necessary to distinguish spoken commitments from objective fulfillment. Speech parsing proposes only explicit supported action/subject/time combinations. The generic state machine consumes typed gameplay facts, not model prose; subject vocabulary stays outside that state machine.
 
@@ -50,7 +50,7 @@ New abstraction: a small C# promise ledger is necessary to distinguish spoken co
 - [ ] Test conservative parsing, witness sets, gameplay-only transitions, eligible/non-repeating callbacks, bounded replies and deterministic rare stable promotion.
 - [ ] Run targeted tests, review and commit `Add viewer promises and social callbacks`.
 
-## Stage G — integrated acceptance
+## Task 4: Stage G — integrated acceptance
 
 - Preserve AudienceSimulation's event-driven chat impulses and authoritative outcomes. Attribute outcomes to eligible identities before prose; never add a second wallet/follow/subscription path.
 - Extend the existing Reaction Monitor with attendance, relationship, candidate/context/memory and latency information. Keep this editor-only.

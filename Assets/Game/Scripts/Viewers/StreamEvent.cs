@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GoLive.PcBuilding;
 
 namespace GoLive.Viewers
@@ -22,6 +23,34 @@ namespace GoLive.Viewers
 
     public enum SilenceLevel { None, Long, VeryLong }
 
+    public readonly struct ViewerWitness
+    {
+        public string ViewerId { get; }
+        public long Epoch { get; }
+        public ViewerWitness(string viewerId, long epoch) { ViewerId = viewerId; Epoch = epoch; }
+    }
+
+    // Immutable observation boundary. Unnamed audience seats stay a count, never permanent identities.
+    public sealed class EventWitnesses
+    {
+        public IReadOnlyList<ViewerWitness> Viewers { get; }
+        public int AnonymousSeats { get; }
+        private EventWitnesses(List<ViewerWitness> viewers, int anonymousSeats)
+        { Viewers = viewers.AsReadOnly(); AnonymousSeats = anonymousSeats; }
+        public static EventWitnesses Capture(AudienceRoster roster)
+        {
+            var viewers = new List<ViewerWitness>(roster.Named.Count + roster.Ephemeral.Count);
+            foreach (var viewer in roster.Named) viewers.Add(new ViewerWitness(viewer.ViewerId, roster.Epoch(viewer.ViewerId)));
+            foreach (var viewer in roster.Ephemeral) viewers.Add(new ViewerWitness(viewer.ViewerId, roster.Epoch(viewer.ViewerId)));
+            return new EventWitnesses(viewers, roster.AnonymousCount);
+        }
+        public bool Contains(string id, long epoch = 0)
+        {
+            foreach (var viewer in Viewers) if (viewer.ViewerId == id && (epoch == 0 || viewer.Epoch == epoch)) return true;
+            return false;
+        }
+    }
+
     public sealed class StreamEvent
     {
         // Per-broadcast order of normalization.
@@ -42,11 +71,15 @@ namespace GoLive.Viewers
         public int AudienceSize { get; }
         public PcPeripheralKind Peripheral { get; }
         public bool Connected { get; }
+        public EventWitnesses Witnesses { get; }
+        public bool HasWitnesses => Witnesses != null;
+        public double GameMinutes { get; }
+        public bool WitnessedBy(string viewerId, long epoch = 0) => Witnesses?.Contains(viewerId, epoch) == true;
 
         private StreamEvent(long serial, string key, StreamEventKind kind, double streamSeconds, float significance,
             SpeechAnalysis speech = null, string subjectViewerId = null, string subjectName = null, long amountCents = 0,
             double seconds = 0, SilenceLevel silence = SilenceLevel.None, int audienceSize = 0,
-            PcPeripheralKind peripheral = default, bool connected = false)
+            PcPeripheralKind peripheral = default, bool connected = false, EventWitnesses witnesses = null, double gameMinutes = 0)
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentException("A stream event needs an idempotency key.", nameof(key));
             Serial = serial;
@@ -63,11 +96,22 @@ namespace GoLive.Viewers
             AudienceSize = audienceSize;
             Peripheral = peripheral;
             Connected = connected;
+            Witnesses = witnesses;
+            GameMinutes = gameMinutes;
         }
 
         // The same fact addressed to a viewer (e.g. the streamer thanks the donor who just gave).
         public StreamEvent WithSubject(string viewerId, string name) =>
-            new(Serial, Key, Kind, StreamSeconds, Significance, Speech, viewerId, name, AmountCents, Seconds, Silence, AudienceSize, Peripheral, Connected);
+            new(Serial, Key, Kind, StreamSeconds, Significance, Speech, viewerId, name, AmountCents, Seconds, Silence, AudienceSize, Peripheral, Connected, Witnesses, GameMinutes);
+
+        // Factories remain explicitly unstamped for synthetic tests; production Source.Add always stamps once.
+        public StreamEvent WithWitnesses(AudienceRoster roster, double gameMinutes)
+        {
+            if (HasWitnesses) return this;
+            if (double.IsNaN(gameMinutes) || double.IsInfinity(gameMinutes) || gameMinutes < 0) throw new ArgumentOutOfRangeException(nameof(gameMinutes));
+            return new StreamEvent(Serial, Key, Kind, StreamSeconds, Significance, Speech, SubjectViewerId, SubjectName, AmountCents,
+                Seconds, Silence, AudienceSize, Peripheral, Connected, EventWitnesses.Capture(roster), gameMinutes);
+        }
 
         public static StreamEvent Started(long serial, string streamId, double at) =>
             new(serial, streamId + ".started", StreamEventKind.StreamStarted, at, .45f);

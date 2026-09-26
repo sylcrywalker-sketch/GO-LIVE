@@ -26,6 +26,9 @@ namespace GoLive.Viewers
         private string _recentSpeech;
         private double _recentSpeechAt;
         private StreamTopic _recentTopics;
+        private double _gameMinutes;
+        private readonly Dictionary<string, EventWitnesses> _chatWitnesses = new(StringComparer.Ordinal);
+        private readonly Queue<string> _chatWitnessOrder = new();
 
         public AudienceRoster Roster { get; }
         public ViewerCommunity Community { get; }
@@ -52,12 +55,17 @@ namespace GoLive.Viewers
             Events = new StreamEventSource(stream, speech, donations, peripherals, channel, Roster, tuning, () => Community.KnownNames);
             Community.Joined += Events.NotifyJoined;
             Director = new ChatDirector(languageModel, modelSettings ?? new ChatModelSettings { Enabled = false }, Chat, Log);
+            Director.Finished += FinishMemoryReference;
+            Chat.Added += ObserveChat;
+            Chat.Cleared += ClearChatWitnesses;
             _speech.SpeechAdded += RememberSpeech;
             _stream.Changed += ObserveLifecycle;
         }
 
         public void Tick(StreamerContext context)
         {
+            _gameMinutes = context.GameMinutes;
+            Events.UpdateClock(context.GameMinutes);
             if (_stream.State != StreamState.Live)
             {
                 Events.Tick(context);
@@ -93,7 +101,7 @@ namespace GoLive.Viewers
                 }
             }
             _events.Clear();
-            Director.Update(now, Roster, SituationFor, _broadcast);
+            Director.Update(now, Roster, GenerationSituationFor, _broadcast);
         }
 
         // What the chat can see right now: bounded, current-broadcast only.
@@ -105,11 +113,43 @@ namespace GoLive.Viewers
         }
 
         public ChatSituation SituationFor(ReactionIntent intent)
+            => SituationFor(intent, false);
+
+        private ChatSituation GenerationSituationFor(ReactionIntent intent) => SituationFor(intent, true);
+
+        private ChatSituation SituationFor(ReactionIntent intent, bool reserve)
         {
             ChatSituation current = Situation();
+            string id = intent.Viewer.ViewerId;
+            long epoch = Roster.Epoch(id);
+            bool currentVisit = Roster.IsWatching(id) && epoch == intent.PresenceEpoch;
+            // New anonymous identities only represent a seat witnessing their selected fact. They receive
+            // no earlier speech/chat. Every established identity needs an explicit matching witness epoch.
+            bool eventOnly = intent.Event.HasWitnesses && !intent.Event.WitnessedBy(id, epoch);
+            var chat = new List<StreamChatMessage>();
+            if (currentVisit && !eventOnly)
+                foreach (var line in current.RecentChat)
+                    if (_chatWitnesses.TryGetValue(line.Id, out var witnesses) && witnesses.Contains(id, epoch)) chat.Add(line);
+            string speech = currentVisit && !eventOnly && Events.LatestSpeech?.WitnessedBy(id, epoch) == true ? current.RecentSpeech : null;
+            ViewerMemoryBank bank = currentVisit && !eventOnly ? Community.State(id)?.Memories : null;
+            IReadOnlyList<ViewerMemory> memories = bank == null ? Array.Empty<ViewerMemory>() : reserve
+                ? bank.Reserve(intent.Event, _gameMinutes, intent.Id) : bank.Retrieve(intent.Event, _gameMinutes);
             return new ChatSituation(current.ChannelName, current.StreamSeconds, current.Viewers, current.ChannelLanguage,
-                current.RecentChat, current.RecentSpeech, Community.RelationshipContext(intent.Viewer.ViewerId));
+                chat.AsReadOnly(), speech, Community.RelationshipContext(id), memories);
         }
+
+        private void ObserveChat(StreamChatMessage message)
+        {
+            Roster.SetAudienceSize(_stream.Audience.CurrentViewers);
+            _chatWitnesses[message.Id] = EventWitnesses.Capture(Roster);
+            _chatWitnessOrder.Enqueue(message.Id);
+            while (_chatWitnessOrder.Count > StreamChat.Capacity) _chatWitnesses.Remove(_chatWitnessOrder.Dequeue());
+        }
+
+        private void ClearChatWitnesses() { _chatWitnesses.Clear(); _chatWitnessOrder.Clear(); }
+
+        private void FinishMemoryReference(ReactionIntent intent, ChatSituation situation, string publishedText)
+            => Community.State(intent.Viewer.ViewerId)?.Memories.Finish(intent.Id, situation?.Memories, publishedText, _gameMinutes);
 
         // Load-time discard: nothing of the replaced world's broadcast (chat, pending reactions) survives.
         public void Discard()
@@ -125,6 +165,9 @@ namespace GoLive.Viewers
             Community.Joined -= Events.NotifyJoined;
             EndBroadcast();
             Director.Dispose();
+            Director.Finished -= FinishMemoryReference;
+            Chat.Added -= ObserveChat;
+            Chat.Cleared -= ClearChatWitnesses;
             Events.Dispose();
         }
 

@@ -60,6 +60,8 @@ namespace GoLive.Viewers
         private bool _awayReported;
         private StreamEvent _lastDonation;
         private int _peripheralSerial;
+        private double _gameMinutes;
+        public StreamEvent LatestSpeech { get; private set; }
 
         public StreamerActivity Activity { get; private set; }
 
@@ -85,6 +87,13 @@ namespace GoLive.Viewers
         public string BroadcastId => _broadcast;
         public double Now => _stream.DurationSeconds;
 
+        // Callback events between frames use the latest supplied game-clock sample, never drain-time time.
+        public void UpdateClock(double gameMinutes)
+        {
+            if (double.IsNaN(gameMinutes) || double.IsInfinity(gameMinutes) || gameMinutes < 0) throw new ArgumentOutOfRangeException(nameof(gameMinutes));
+            _gameMinutes = gameMinutes;
+        }
+
         public void NotifyJoined(ChatParticipant participant)
         {
             if (!_live || participant == null || !_roster.IsWatching(participant.ViewerId)) return;
@@ -102,6 +111,7 @@ namespace GoLive.Viewers
         // Called once per frame after the stream advanced.
         public void Tick(StreamerContext context)
         {
+            UpdateClock(context.GameMinutes);
             ObserveStream();
             if (!_live) return;
             double now = Now;
@@ -150,6 +160,7 @@ namespace GoLive.Viewers
             _pending.Clear();
             _keys.Clear();
             _lastDonation = null;
+            LatestSpeech = null;
             Activity = StreamerActivity.Active;
             if (!live) return;
             _broadcast = _stream.BroadcastId;
@@ -267,6 +278,10 @@ namespace GoLive.Viewers
         private bool Add(StreamEvent streamEvent)
         {
             if (!_keys.Add(streamEvent.Key)) return false;
+            // Donations may arrive after audience advancement but before StreamSession.Changed.
+            _roster.SetAudienceSize(_stream.Audience.CurrentViewers);
+            streamEvent = streamEvent.WithWitnesses(_roster, _gameMinutes);
+            if (streamEvent.Kind == StreamEventKind.StreamerSpeech) LatestSpeech = streamEvent;
             _pending.Add(streamEvent);
             return true;
         }

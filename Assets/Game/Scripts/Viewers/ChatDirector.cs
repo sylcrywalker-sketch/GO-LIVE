@@ -67,6 +67,7 @@ namespace GoLive.Viewers
             public string Reason;
             public double Latency;
             public int PromptCharacters;
+            public ChatSituation Situation;
         }
 
         private readonly IViewerLanguageModel _model;
@@ -86,6 +87,9 @@ namespace GoLive.Viewers
         public ChatModelHealth Health => !ModelEnabled || _model == null ? ChatModelHealth.Disabled
             : _realClock() < _backoffUntil ? ChatModelHealth.BackingOff : ChatModelHealth.Available;
         public event Action<StreamChatMessage, ReactionIntent> Shown;
+        // Owner consumes a callback opportunity only when the chosen memory was actually referenced in a
+        // published line. Every drop/failure/cancellation releases the transient reservation.
+        public event Action<ReactionIntent, ChatSituation, string> Finished;
 
         public ChatDirector(IViewerLanguageModel model, ChatModelSettings settings, StreamChat chat, ReactionLog log, Func<double> realClock = null)
         {
@@ -137,6 +141,7 @@ namespace GoLive.Viewers
                 job.Cancellation?.Cancel();
                 job.Cancellation?.Dispose();
                 _log.Add(ReactionLog.ForIntent(job.Intent, ReactionOutcome.Dropped, reason));
+                Finished?.Invoke(job.Intent, job.Situation, null);
             }
             _jobs.Clear();
         }
@@ -163,7 +168,7 @@ namespace GoLive.Viewers
                 {
                     case LanguageModelStatus.Ok:
                         _failures = 0;
-                        ChatValidation validation = ChatOutputValidator.Validate(result.Text, job.Intent, _chat.Messages);
+                        ChatValidation validation = ChatOutputValidator.Validate(result.Text, job.Intent, _chat.Messages, job.Situation);
                         if (validation.Accepted) Resolve(job, validation.Text, ReactionSource.LanguageModel, null);
                         else
                         {
@@ -203,7 +208,8 @@ namespace GoLive.Viewers
                     continue;
                 }
                 if (running >= _settings.MaximumConcurrent) continue;
-                ViewerChatRequest request = ChatContextBuilder.Build(job.Intent, situation(job.Intent), _settings.MaximumTokens);
+                job.Situation = situation(job.Intent);
+                ViewerChatRequest request = ChatContextBuilder.Build(job.Intent, job.Situation, _settings.MaximumTokens);
                 job.PromptCharacters = request.Characters;
                 job.Cancellation = new CancellationTokenSource();
                 job.Task = _model.GenerateAsync(request, job.Cancellation.Token);
@@ -238,7 +244,7 @@ namespace GoLive.Viewers
                     continue;
                 }
                 // Other jobs may have published since generation finished. Recheck at the last possible moment.
-                ChatValidation current = ChatOutputValidator.Validate(job.Text, intent, _chat.Messages);
+                ChatValidation current = ChatOutputValidator.Validate(job.Text, intent, _chat.Messages, job.Situation);
                 if (!current.Accepted)
                 {
                     if (job.Source == ReactionSource.LanguageModel)
@@ -247,7 +253,7 @@ namespace GoLive.Viewers
                         Stats.AddRejected(current.Reason + ": " + job.Text);
                     }
                     Fallback(job, "publication rejected (" + current.Reason + ")");
-                    if (job.Text == null || !ChatOutputValidator.Validate(job.Text, intent, _chat.Messages).Accepted)
+                    if (job.Text == null || !ChatOutputValidator.Validate(job.Text, intent, _chat.Messages, job.Situation).Accepted)
                     {
                         Stats.Discarded++;
                         Remove(i--, job, ReactionOutcome.Discarded, job.Reason);
@@ -299,6 +305,7 @@ namespace GoLive.Viewers
             _jobs.RemoveAt(index);
             job.Cancellation?.Dispose();
             job.Cancellation = null;
+            Finished?.Invoke(job.Intent, job.Situation, outcome == ReactionOutcome.Shown ? job.Text : null);
             ReactionLogEntry entry = ReactionLog.ForIntent(job.Intent, outcome, reason);
             entry.Source = job.Source;
             entry.LatencySeconds = job.Latency;

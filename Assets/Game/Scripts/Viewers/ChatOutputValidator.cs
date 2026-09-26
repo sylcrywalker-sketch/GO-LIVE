@@ -54,9 +54,20 @@ namespace GoLive.Viewers
         private static readonly Regex RoleLabel = new(@"^\s*(viewer|chat|message|user|assistant|зритель|сообщение|ответ)\s*[:\-–]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         public static ChatValidation Validate(string raw, ReactionIntent intent, IReadOnlyList<StreamChatMessage> recentChat)
+            => Validate(raw, intent, recentChat, null);
+
+        public static ChatValidation Validate(string raw, ReactionIntent intent, IReadOnlyList<StreamChatMessage> recentChat, ChatSituation situation)
         {
             if (intent == null) throw new ArgumentNullException(nameof(intent));
             if (raw == null) return ChatValidation.Reject("empty");
+            // Conservative phrase guard, not a semantic truth guarantee. Model text never enters the bank.
+            if (ViewerMemoryBank.Historical(raw))
+            {
+                bool supported = false;
+                if (situation != null) foreach (var memory in situation.Memories)
+                    if (ViewerMemoryBank.References(raw, memory)) supported = true;
+                if (!supported) return ChatValidation.Reject("unsupported historical claim");
+            }
             string text = Repair(raw, intent.Viewer.DisplayName);
             if (text.Length == 0) return ChatValidation.Reject("empty");
             if (text.Length > MaximumCharacters) return ChatValidation.Reject("too long");

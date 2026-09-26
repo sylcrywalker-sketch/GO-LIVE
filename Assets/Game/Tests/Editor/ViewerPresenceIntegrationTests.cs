@@ -53,7 +53,10 @@ namespace GoLive.Tests
             using var live = new LiveDesktop(20260926);
             var donor = ChatDirectorTests.Viewer("viewer.donor", "Donor");
             var target = ChatDirectorTests.Viewer("viewer.target", "Target");
-            live.State.Viewers.Roster.SetAudienceSize(10);
+            // Both witnesses need real simulated seats: normalization now reconciles the roster immediately.
+            for (int seconds = 0; seconds < 300 && live.State.Stream.Audience.CurrentViewers < 2; seconds++) live.Tick(1);
+            Assert.That(live.State.Stream.Audience.CurrentViewers, Is.GreaterThanOrEqualTo(2));
+            live.State.Viewers.Roster.SetAudienceSize(live.State.Stream.Audience.CurrentViewers);
             live.State.Viewers.Roster.Join(donor); live.State.Viewers.Roster.Join(target);
             Assert.That(live.State.Donation.Receive(live.State.Stream.BroadcastId + ".donation.test", "Donor", 500), Is.Null);
             Assert.That(live.Say("Target спасибо"), Is.True);

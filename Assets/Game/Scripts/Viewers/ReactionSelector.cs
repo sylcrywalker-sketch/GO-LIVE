@@ -138,7 +138,7 @@ namespace GoLive.Viewers
             foreach (string viewerId in DirectViewers(streamEvent))
             {
                 ChatParticipant viewer = _roster.Find(viewerId);
-                if (viewer == null || !_roster.IsWatching(viewerId) || _chosen.Contains(viewer)) continue;
+                if (viewer == null || !_roster.IsWatching(viewerId) || _chosen.Contains(viewer) || !Witnessed(streamEvent, viewer)) continue;
                 if (Rhythm.SinceLast(viewerId, now) < _tuning.DirectGapSeconds) continue;
                 if (_random.NextDouble() >= DirectChance(streamEvent, viewer)) continue;
                 intents.Add(Schedule(streamEvent, viewer, true, intents.Count, now));
@@ -214,7 +214,7 @@ namespace GoLive.Viewers
             double total = 0;
             foreach (ChatParticipant viewer in _roster.Named)
             {
-                if (!Available(viewer, now)) continue;
+                if (!Available(viewer, now) || !Witnessed(streamEvent, viewer)) continue;
                 ReactionTraits traits = viewer.Traits;
                 double weight = traits.Talkativeness * traits.Affinity(streamEvent.Kind);
                 StreamTopic topics = streamEvent.Speech?.Topics ?? StreamTopic.None;
@@ -224,11 +224,13 @@ namespace GoLive.Viewers
                 _weights.Add((viewer, weight));
                 total += weight;
             }
-            double anonymous = _roster.AnonymousCount * _tuning.AnonymousTalkativeness;
+            int anonymousSeats = streamEvent.HasWitnesses ? Math.Min(_roster.AnonymousCount, streamEvent.Witnesses.AnonymousSeats) : _roster.AnonymousCount;
+            double anonymous = anonymousSeats * _tuning.AnonymousTalkativeness;
             double roll = _random.NextDouble() * (total + anonymous);
-            if (roll >= total)
+            if (roll >= total && anonymousSeats > 0)
             {
-                ChatParticipant chatter = _roster.AnonymousChatter(_random, viewer => Available(viewer, now), now);
+                // A new chatter represents an unnamed seat present at this fact and gets event-only context.
+                ChatParticipant chatter = _roster.AnonymousChatter(_random, viewer => Available(viewer, now) && Witnessed(streamEvent, viewer), now);
                 if (chatter != null) return chatter;
                 roll = _random.NextDouble() * total;
             }
@@ -239,6 +241,8 @@ namespace GoLive.Viewers
             }
             return _weights.Count > 0 ? _weights[_weights.Count - 1].viewer : null;
         }
+
+        private bool Witnessed(StreamEvent e, ChatParticipant viewer) => !e.HasWitnesses || e.WitnessedBy(viewer.ViewerId, _roster.Epoch(viewer.ViewerId));
 
         private bool Available(ChatParticipant viewer, double now) =>
             !_chosen.Contains(viewer) && Rhythm.SinceLast(viewer.ViewerId, now) >= _tuning.ViewerGapSeconds * viewer.Traits.Pace;

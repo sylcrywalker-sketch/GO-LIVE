@@ -107,7 +107,6 @@ namespace GoLive.Tests
         [TestCase("норм")]
         [TestCase("?")]
         [TestCase("ХАХАХА")]
-        [TestCase("ты вчера не это говорил?")]
         [TestCase("\"ахах опять\"")]
         [TestCase("NightOwl: опять двадцать пять")]
         public void ValidatorAcceptsOrdinaryChat(string text)
