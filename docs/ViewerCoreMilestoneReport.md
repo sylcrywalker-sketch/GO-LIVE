@@ -224,6 +224,6 @@ Independent reviews of D/E/F and the final technical integration have no outstan
 | D — presence and relationships | `d85158a` |
 | E — witnessed memory | `b688a16` |
 | F — promises and social callbacks | `5ecf9fb` |
-| G — living community integration | pending |
+| G — living community integration | `6356107` |
 
 The branch remains `claude/sharp-wozniak-iakuny`; no squash or merge to main.
