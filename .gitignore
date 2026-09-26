@@ -5,6 +5,8 @@ Logs/
 # Unity local editor settings
 /UserSettings/
 
-# Optional larger speech models installed with "GO! LIVE/Voice/Install base speech model" (142 MiB, not versioned)
-/Assets/StreamingAssets/Whisper/ggml-base.bin
-/Assets/StreamingAssets/Whisper/ggml-base.bin.meta
+# Verified shipping speech model is installed from the GO! LIVE/Voice menu.
+# Benchmark alternatives belong in Logs/SpeechModels, outside the shipped project path.
+/Assets/StreamingAssets/Whisper/*.bin
+/Assets/StreamingAssets/Whisper/*.bin.meta
+/Assets/StreamingAssets/Whisper/*.download

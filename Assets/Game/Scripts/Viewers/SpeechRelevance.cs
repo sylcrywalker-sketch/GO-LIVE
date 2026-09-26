@@ -25,6 +25,23 @@ namespace GoLive.Viewers
         FutureCommitment = 1 << 10  // "завтра куплю", "I'll ... tomorrow": a possible promise
     }
 
+    // What the streamer is doing socially with one recognized phrase. Several acts can apply ("всем привет, как дела?"
+    // is a Greeting and a PersonalQuestion); SpeechAnalysis.PrimaryAct orders them so the question is answered first.
+    [Flags]
+    public enum SpeechAct
+    {
+        None = 0,
+        Greeting = 1 << 0,
+        QuestionToChat = 1 << 1,    // a question or request to the whole chat ("чат, во что поиграем?", "расскажите")
+        QuestionToViewer = 1 << 2,  // a question to one person: named, or asked with "ты"
+        OpinionRequest = 1 << 3,    // "что думаете", "как вам", "согласны?"
+        PersonalQuestion = 1 << 4,  // about the viewers themselves: "как дела", "как настроение", "что сегодня делали"
+        GameplayQuestion = 1 << 5,  // about games / what to play
+        Statement = 1 << 6,
+        PromiseCandidate = 1 << 7,
+        Filler = 1 << 8
+    }
+
     [Flags]
     public enum StreamTopic
     {
@@ -61,9 +78,14 @@ namespace GoLive.Viewers
         public IReadOnlyList<string> MentionedViewerIds { get; }
         // Normalized content words, for matching the phrase against memories and recent chat.
         public IReadOnlyList<string> Words { get; }
+        public SpeechAct Acts { get; }
+        // Asked with "ты"/"тебя"/"-ешь": one listener, not the whole chat.
+        public bool SingularAddress { get; }
+        // Addressed to several people: "чат", "ребят", "вы", "-ете/-ите", "что делали".
+        public bool PluralAddress { get; }
 
         internal SpeechAnalysis(long sequence, string text, string language, float relevance, SpeechCue cues, StreamTopic topics,
-            IReadOnlyList<string> mentioned, IReadOnlyList<string> words)
+            IReadOnlyList<string> mentioned, IReadOnlyList<string> words, SpeechAct acts = SpeechAct.None, bool singular = false, bool plural = false)
         {
             Sequence = sequence;
             Text = text;
@@ -73,9 +95,32 @@ namespace GoLive.Viewers
             Topics = topics;
             MentionedViewerIds = mentioned;
             Words = words;
+            Acts = acts;
+            SingularAddress = singular;
+            PluralAddress = plural;
         }
 
         public bool Has(SpeechCue cue) => (Cues & cue) != 0;
+        public bool Is(SpeechAct act) => (Acts & act) != 0;
+
+        // The streamer asked the audience (or one viewer) something that expects an answer.
+        public bool AsksForAnswer => (Acts & (SpeechAct.QuestionToChat | SpeechAct.QuestionToViewer | SpeechAct.OpinionRequest |
+                                              SpeechAct.PersonalQuestion | SpeechAct.GameplayQuestion)) != 0;
+
+        // The streamer is actively talking TO the chat: a question/request, a greeting, or naming someone.
+        public bool Addresses => AsksForAnswer || Is(SpeechAct.Greeting) || MentionedViewerIds.Count > 0;
+
+        // The act the reaction answers first: a question outranks the greeting it came with.
+        public SpeechAct PrimaryAct =>
+            Is(SpeechAct.PersonalQuestion) ? SpeechAct.PersonalQuestion
+            : Is(SpeechAct.OpinionRequest) ? SpeechAct.OpinionRequest
+            : Is(SpeechAct.GameplayQuestion) ? SpeechAct.GameplayQuestion
+            : Is(SpeechAct.QuestionToViewer) ? SpeechAct.QuestionToViewer
+            : Is(SpeechAct.QuestionToChat) ? SpeechAct.QuestionToChat
+            : Is(SpeechAct.PromiseCandidate) ? SpeechAct.PromiseCandidate
+            : Is(SpeechAct.Greeting) ? SpeechAct.Greeting
+            : Is(SpeechAct.Filler) ? SpeechAct.Filler
+            : SpeechAct.Statement;
     }
 
     public static class SpeechRelevance
@@ -94,9 +139,64 @@ namespace GoLive.Viewers
         };
         private static readonly string[] ChatWords =
         {
-            "чат", "чатик", "чатику", "чате", "ребят", "ребята", "ребятки", "народ", "пацаны", "девчонки", "друзья", "зрители",
-            "chat", "guys", "everyone", "yall", "folks", "people"
+            "чат", "чатик", "чатику", "чате", "ребят", "ребята", "ребятки", "ребзя", "народ", "пацаны", "пацанчики", "парни", "мужики",
+            "девчонки", "девочки", "братва", "друзья", "зрители", "всем", "chat", "guys", "everyone", "yall", "folks", "people"
         };
+        // Talking to one listener ("ты", "тебе", "как сам") or to several ("вы", "вас").
+        private static readonly string[] SingularWords = { "ты", "тебя", "тебе", "тобой", "твой", "твоя", "твое", "твои", "твоих", "сам" };
+        private static readonly string[] PluralWords = { "вы", "вас", "вам", "вами", "ваш", "ваша", "ваше", "ваши", "сами" };
+        // Asking the chat to answer, tell or advise: a request is a question even without "?".
+        private static readonly string[] RequestWords =
+        {
+            "расскажите", "рассказать", "напишите", "написать", "скажите", "ответьте", "ответить", "поделитесь", "подскажите",
+            "посоветуйте", "пишите", "отпишитесь", "tell", "answer", "share", "recommend"
+        };
+        // After "как": the listener's own state ("как дела", "как у вас настроение", "как сам").
+        private static readonly string[] StateWords =
+        {
+            "дела", "делишки", "настроение", "настроения", "настрой", "жизнь", "самочувствие", "день", "денек", "выходные",
+            "учеба", "работа", "поживаете", "поживаешь", "сам", "сами", "ты", "вы", "спалось", "спал", "спали"
+        };
+        // The listener's own recent doings, asked in the 2nd person or plural past ("что делали", "во что играл").
+        private static readonly string[] ActivityWords =
+        {
+            "делали", "делал", "делала", "делаете", "делаешь", "занимались", "занимался", "занималась", "занимаетесь", "занимаешься",
+            "играли", "играл", "играла", "играете", "играешь", "смотрели", "смотрел", "смотрела", "ели", "ел", "ела", "отдыхали",
+            "гуляли", "работал", "работала", "работали", "учился", "училась", "успели", "успел", "успела", "устал", "устала", "устали"
+        };
+        private static readonly string[] ConversationAcknowledgements =
+            { "понятно", "ясно", "жесть", "сочувствую", "отдыхай", "держись", "устаешь", "tired", "rough", "rest" };
+
+        // Shared by selection and planning: a short reply about the listener or their day can continue an
+        // exchange even when recognition omits '?'. A new gameplay/setup topic or streamer self-talk cannot.
+        internal static bool ContinuesConversation(SpeechAnalysis speech)
+        {
+            if (speech == null || speech.Is(SpeechAct.Filler) || speech.PluralAddress) return false;
+            if (speech.Is(SpeechAct.PersonalQuestion)) return true;
+            if (speech.Is(SpeechAct.GameplayQuestion) || speech.Is(SpeechAct.OpinionRequest) ||
+                (speech.Topics & (StreamTopic.Games | StreamTopic.Hardware | StreamTopic.StreamSetup | StreamTopic.Money)) != 0) return false;
+            List<string> tokens = Tokens(speech.Text);
+            if (Contains(tokens, "я") || Contains(tokens, "мы") || Contains(tokens, "i")) return false;
+            return Any(tokens, ActivityWords) || Any(tokens, ConversationAcknowledgements);
+        }
+        private static readonly string[] OpinionPhrases =
+        {
+            " что думаете", " как думаете", " что думаешь", " как думаешь", " как вам ", " как тебе ", " как считаете", " что скажете",
+            " что скажешь", " согласны", " согласен", " нравится", " стоит ли", " what do you think", " thoughts", " do you like", " should i"
+        };
+        private static readonly string[] EnglishPersonal =
+        {
+            " how are you", " how r u", " how you doing", " how is it going", " hows it going", " how was your day", " what did you do",
+            " what are you up to", " what have you been", " where are you from", " how is your day"
+        };
+        private static readonly string[] GameAskWords = { "поиграем", "поиграть", "играть", "игру", "игры", "игра", "сыграть", "сыграем", "play", "game" };
+        private static readonly string[] InnerQuestionWords =
+        {
+            "что", "чем", "чё", "че", "как", "где", "куда", "откуда", "когда", "почему", "зачем", "сколько", "какой", "какая", "какие", "какое",
+            "what", "how", "where", "when", "why"
+        };
+        // Plural past forms asked of the chat ("что делали", "во что играли") also address several people.
+        private static readonly string[] PluralVerbs = { "делали", "занимались", "играли", "смотрели", "отдыхали", "гуляли", "успели", "устали" };
         // Asking for opinions is a question wherever it appears, even when recognition drops the "?".
         private static readonly string[] OpinionWords = { "думаете", "согласны", "считаете", "скажете", "thoughts", "think" };
         // Whisper often hears a leading "чат," as "чет,"; only as the first word does it address the chat.
@@ -198,6 +298,7 @@ namespace GoLive.Viewers
 
             bool onlyFiller = tokens.Count > 0 && AllMatch(tokens, FillerWords);
             if (onlyFiller) cues |= SpeechCue.Filler;
+            SpeechAct acts = ClassifyActs(tokens, ref cues, topics, mentioned.Count > 0, out bool singular, out bool plural);
             const SpeechCue Social = SpeechCue.AddressesChat | SpeechCue.Question | SpeechCue.MentionsViewer | SpeechCue.Greeting | SpeechCue.Thanks;
             if (Any(tokens, SelfTalkWords) && (cues & Social) == 0) cues |= SpeechCue.SelfTalk;
 
@@ -214,6 +315,10 @@ namespace GoLive.Viewers
             if (topics != StreamTopic.None) relevance += .1f;
             if (tokens.Count >= 6) relevance += .08f;
             if ((cues & SpeechCue.SelfTalk) != 0) relevance -= .3f;
+            // A question put to the audience is an invitation, whatever else the phrase carries.
+            const SpeechAct Invitation = SpeechAct.QuestionToChat | SpeechAct.QuestionToViewer | SpeechAct.OpinionRequest |
+                                         SpeechAct.PersonalQuestion | SpeechAct.GameplayQuestion;
+            if ((acts & Invitation) != 0) relevance = Math.Max(relevance, .8f);
             if (onlyFiller) relevance = Math.Min(relevance, .1f);
             if (speech.Confidence is float confidence && confidence < .35f) relevance *= .7f;
 
@@ -221,7 +326,78 @@ namespace GoLive.Viewers
             foreach (string token in tokens)
                 if (token.Length >= 3 && !Matches(token, FillerWords)) words.Add(token);
             return new SpeechAnalysis(speech.Sequence, text, speech.Language, Math.Clamp(relevance, 0f, 1f), cues, topics,
-                mentioned.AsReadOnly(), words.AsReadOnly());
+                mentioned.AsReadOnly(), words.AsReadOnly(), acts, singular, plural);
+        }
+
+        // Small, deterministic social classification of the recognized phrase. Bounded lexicons, never a model.
+        private static SpeechAct ClassifyActs(List<string> tokens, ref SpeechCue cues, StreamTopic topics, bool mentions, out bool singular, out bool plural)
+        {
+            var acts = SpeechAct.None;
+            singular = plural = false;
+            if ((cues & SpeechCue.Filler) != 0) return SpeechAct.Filler;
+            string phrase = " " + string.Join(" ", tokens) + " ";
+            singular = Any(tokens, SingularWords) || EndsAny(tokens, "ешь", "ишь");
+            plural = Any(tokens, PluralWords) || Any(tokens, PluralVerbs) || EndsAny(tokens, "ете", "ите") || (cues & SpeechCue.AddressesChat) != 0;
+            bool asked = (cues & SpeechCue.Question) != 0;
+            bool request = plural && Any(tokens, RequestWords);
+            bool opinion = ContainsAny(phrase, OpinionPhrases);
+            // "как" with the listener's state within three words: "как дела", "как у вас настроение", "как сам".
+            bool state = Near(tokens, "как", StateWords, 3) && !opinion;
+            // The listener's own doings: "что сегодня делали", "а ты во что играл", "устал?" (never "я устал").
+            bool inner = Any(tokens, InnerQuestionWords) && (singular || plural || Contains(tokens, "сегодня"));
+            bool activity = Any(tokens, ActivityWords) && !Contains(tokens, "я") && (asked || request || inner);
+            bool personal = state || activity || ContainsAny(phrase, EnglishPersonal);
+            bool games = (topics & StreamTopic.Games) != 0 || Any(tokens, GameAskWords);
+            if (personal || opinion || request) cues |= SpeechCue.Question;
+            asked = (cues & SpeechCue.Question) != 0;
+
+            if ((cues & SpeechCue.Greeting) != 0) acts |= SpeechAct.Greeting;
+            if (personal) acts |= SpeechAct.PersonalQuestion;
+            if (opinion) acts |= SpeechAct.OpinionRequest;
+            if (asked && games && !personal) acts |= SpeechAct.GameplayQuestion;
+            if (asked && (mentions || singular && !plural)) acts |= SpeechAct.QuestionToViewer;
+            if (asked && (plural || !singular && !mentions)) acts |= SpeechAct.QuestionToChat;
+            if ((cues & SpeechCue.FutureCommitment) != 0) acts |= SpeechAct.PromiseCandidate;
+            // A bare greeting ("всем привет") stays a greeting; anything else said besides it is a statement.
+            if ((acts & ~SpeechAct.Greeting) == SpeechAct.None && tokens.Count > 0 && !(acts == SpeechAct.Greeting && tokens.Count <= 3))
+                acts |= SpeechAct.Statement;
+            return acts;
+        }
+
+        private static bool Near(List<string> tokens, string first, string[] lexicon, int window)
+        {
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                if (tokens[i] != first) continue;
+                for (int j = i + 1; j < tokens.Count && j <= i + window; j++)
+                    if (Matches(tokens[j], lexicon)) return true;
+            }
+            return false;
+        }
+
+        private static bool EndsAny(List<string> tokens, params string[] endings)
+        {
+            foreach (string token in tokens)
+            {
+                if (token.Length < 5) continue;
+                foreach (string ending in endings)
+                    if (token.EndsWith(ending, StringComparison.Ordinal)) return true;
+            }
+            return false;
+        }
+
+        private static bool Contains(List<string> tokens, string word)
+        {
+            foreach (string token in tokens)
+                if (token == word) return true;
+            return false;
+        }
+
+        private static bool ContainsAny(string phrase, string[] fragments)
+        {
+            foreach (string fragment in fragments)
+                if (phrase.Contains(fragment)) return true;
+            return false;
         }
 
         // Lowercase words; 'ё' folds to 'е'; everything but letters and digits separates words.

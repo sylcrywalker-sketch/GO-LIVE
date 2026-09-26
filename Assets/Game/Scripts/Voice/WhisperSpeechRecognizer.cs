@@ -8,6 +8,18 @@ using Whisper.Utils;
 
 namespace GoLive.Voice
 {
+    // How whisper decodes a phrase. Defaults are greedy decoding without a prompt.
+    [Serializable]
+    public sealed class WhisperDecoding
+    {
+        // Beam search (whisper.cpp default beam of 5) instead of greedy decoding: slower, fewer substitutions.
+        public bool BeamSearch;
+        // Optional initial prompts per forced language: a short sentence in the streamer's register primes vocabulary and
+        // punctuation. Never used under auto-detection (a prompt would bias the detected language).
+        public string RussianPrompt = "";
+        public string EnglishPrompt = "";
+    }
+
     // Local, offline speech-to-text through whisper.cpp (com.whisper.unity 1.4.0, whisper.cpp v1.7.5) with a
     // multilingual ggml model from StreamingAssets. Runs only on the recognition worker thread. The native
     // context is created in Initialize and freed in Dispose on that same thread (the package wrapper only
@@ -23,17 +35,21 @@ namespace GoLive.Voice
         private readonly string[] _modelPaths;
         private readonly int _threads;
         private readonly bool _useGpu;
+        private readonly WhisperDecoding _decoding;
         private IntPtr _context;
         private WhisperParams _parameters;
+        // UTF-8 copies owned by this recognizer (the package setter converts to ANSI, which breaks Cyrillic).
+        private IntPtr _russianPrompt, _englishPrompt;
 
         public string ModelPath { get; private set; }
 
         // modelPaths: candidates in preference order; the first existing file is loaded.
-        public WhisperSpeechRecognizer(string[] modelPaths, int threads, bool useGpu)
+        public WhisperSpeechRecognizer(string[] modelPaths, int threads, bool useGpu, WhisperDecoding decoding = null)
         {
             _modelPaths = modelPaths ?? throw new ArgumentNullException(nameof(modelPaths));
             _threads = Math.Max(1, threads);
             _useGpu = useGpu;
+            _decoding = decoding ?? new WhisperDecoding();
         }
 
         public string Initialize()
@@ -52,7 +68,10 @@ namespace GoLive.Voice
             }
             if (_context == IntPtr.Zero) return VoiceFailure.ModelInvalid;
             if (WhisperNative.whisper_is_multilingual(_context) == 0) return VoiceFailure.ModelInvalid;
-            _parameters = WhisperParams.GetDefaultParams(WhisperSamplingStrategy.WHISPER_SAMPLING_GREEDY);
+            _parameters = WhisperParams.GetDefaultParams(_decoding.BeamSearch
+                ? WhisperSamplingStrategy.WHISPER_SAMPLING_BEAM_SEARCH : WhisperSamplingStrategy.WHISPER_SAMPLING_GREEDY);
+            _russianPrompt = Utf8(_decoding.RussianPrompt);
+            _englishPrompt = Utf8(_decoding.EnglishPrompt);
             _parameters.ThreadsCount = _threads;
             _parameters.Translate = false;
             _parameters.NoContext = true;
@@ -78,8 +97,10 @@ namespace GoLive.Voice
         private unsafe SpeechRecognitionResult Run(float[] samples, string language)
         {
             _parameters.Language = language;
+            WhisperNativeParams native = _parameters.NativeParams;
+            native.initial_prompt = (byte*)(language == "ru" ? _russianPrompt : language == "en" ? _englishPrompt : IntPtr.Zero);
             int code;
-            fixed (float* data = samples) code = WhisperNative.whisper_full(_context, _parameters.NativeParams, data, samples.Length);
+            fixed (float* data = samples) code = WhisperNative.whisper_full(_context, native, data, samples.Length);
             if (code != 0) throw new InvalidOperationException("whisper_full failed: " + code);
 
             var text = new StringBuilder();
@@ -111,10 +132,23 @@ namespace GoLive.Voice
 
         public void Dispose()
         {
+            if (_russianPrompt != IntPtr.Zero) Marshal.FreeHGlobal(_russianPrompt);
+            if (_englishPrompt != IntPtr.Zero) Marshal.FreeHGlobal(_englishPrompt);
+            _russianPrompt = _englishPrompt = IntPtr.Zero;
             if (_context == IntPtr.Zero) return;
             WhisperNative.whisper_free(_context);
             _context = IntPtr.Zero;
             _parameters = null;
+        }
+
+        private static IntPtr Utf8(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return IntPtr.Zero;
+            byte[] bytes = Encoding.UTF8.GetBytes(text.Trim());
+            IntPtr buffer = Marshal.AllocHGlobal(bytes.Length + 1);
+            Marshal.Copy(bytes, 0, buffer, bytes.Length);
+            Marshal.WriteByte(buffer, bytes.Length, 0);
+            return buffer;
         }
     }
 }

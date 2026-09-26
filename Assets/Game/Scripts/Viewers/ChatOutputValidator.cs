@@ -79,6 +79,25 @@ namespace GoLive.Viewers
         private static readonly Regex Recurrence = new(@"(?<!\w)(опять|снова)(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex TryAgain = new(@"(?<!\w)(попроб\w*\s+снова|снова\s+попроб\w*)(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex RecurrenceFact = new(@"(?<!\w)(опять|снова|again|ещё раз|еще раз)(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        // What a viewer may claim to have done today, by kind. Checked per clause, only where the viewer talks about
+        // themselves (a clause with "ты"/"вы" is about someone else: "а ты во что играл?").
+        private static readonly (DayActivityKind kind, Regex claim)[] DayClaims =
+        {
+            (DayActivityKind.Work, Claim(@"на работе|с работы|работал\w*|отработал\w*|на смене|смену|в офисе|worked|at work|off shift")),
+            (DayActivityKind.Study, Claim(@"учил(?:ся|ась)|на парах|с пар|универ\w*|в школе|из школы|со школы|лекци\w*|экзамен\w*|зач[её]т\w*|домашк\w*")),
+            (DayActivityKind.Drawing, Claim(@"рисовал\w*|рисую|нарисовал\w*|скетч\w*")),
+            (DayActivityKind.Gaming, Claim(@"играл\w*|поиграл\w*|катал[аи]?|каточк\w*|рубил(?:ся|ась)|played games|playing games|gaming")),
+            (DayActivityKind.Sleep, Claim(@"спал[аи]?|выспал\w*|проспал\w*|дрых\w*|slept|overslept|napped")),
+            (DayActivityKind.Errands, Claim(@"по делам|в магазин\w*|на рын\w*|в поликлиник\w*|в банк\w*")),
+            (DayActivityKind.Housework, Claim(@"убирал\w*|уборк\w*|стирал\w*|стирк\w*|готовил\w*")),
+            (DayActivityKind.Walk, Claim(@"гулял\w*|погулял\w*|на прогулк\w*")),
+            (DayActivityKind.Tech, Claim(@"чинил\w*|починил\w*|собирал\w*|настраивал\w*"))
+        };
+        private static readonly Regex OtherPerson = new(@"(?<!\w)(ты|тебя|тебе|тобой|вы|вас|вам|сам|you)(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex NegatedActivity = new(@"(?:^| )(?:не|not|never|didnt|havent|hasnt|wasnt|werent|dont|doesnt|cant|couldnt)$", RegexOptions.CultureInvariant);
+
+        private static Regex Claim(string alternatives) =>
+            new(@"(?<!\w)(?:" + alternatives + @")(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         public static ChatValidation Validate(string raw, ReactionIntent intent, IReadOnlyList<StreamChatMessage> recentChat)
             => Validate(raw, intent, recentChat, null);
@@ -125,7 +144,8 @@ namespace GoLive.Viewers
             string claim = UngroundedClaim(text, grounded, ((intent.Event.Speech?.Topics ?? StreamTopic.None) & StreamTopic.Hardware) != 0);
             if (claim != null) return ChatValidation.Reject("ungrounded specific claim: " + claim);
             if (situation != null && situation.Memories.Count == 0 && situation.Promise == null && Recurrence.IsMatch(text) &&
-                !TryAgain.IsMatch(text) && !RecurrenceFact.IsMatch(grounded)) return ChatValidation.Reject("unsupported recurrence");
+                !TryAgain.IsMatch(text) && !RecurrenceFact.IsMatch(grounded) && !OtherChatRecurrence(intent, situation.RecentChat))
+                return ChatValidation.Reject("unsupported recurrence");
             RelationshipTier tier = situation?.Tier ?? RelationshipTier.Neutral;
             if (Romance.IsMatch(text) || Devotion.IsMatch(text) && tier != RelationshipTier.Loyal || Hearts.IsMatch(text) && tier < RelationshipTier.Friendly)
                 return ChatValidation.Reject("relationship claim above game state");
@@ -140,6 +160,8 @@ namespace GoLive.Viewers
             bool aboutSupport = intent.Event.Kind == StreamEventKind.Donation || intent.Event.Kind == StreamEventKind.Follow ||
                 intent.Event.Kind == StreamEventKind.Subscription || (topics & (StreamTopic.Money | StreamTopic.Community)) != 0;
             if (!ownSupport && !aboutSupport && Support.IsMatch(text)) return ChatValidation.Reject("support claim");
+            if (situation?.Day != null && ViewerUtterancePlanner.For(intent, situation).Personal && ContradictsDay(text, situation.Day))
+                return ChatValidation.Reject("contradicts your day");
             string languageError = Language(text, intent.Viewer.Persona.Language);
             if (languageError != null) return ChatValidation.Reject(languageError);
             string echo = intent.Event.Speech?.Text;
@@ -147,6 +169,33 @@ namespace GoLive.Viewers
             string duplicate = Duplicate(text, recentChat);
             if (duplicate != null) return ChatValidation.Reject(duplicate);
             return ChatValidation.Accept(text);
+        }
+
+        // A viewer's own story about today stays the one C# gave them ("рисовала весь день" never turns into a day at work).
+        internal static bool ContradictsDay(string text, ViewerDailyState day)
+        {
+            foreach (string clause in text.Split(new[] { ',', '.', '!', '?', ';', '(', ')', '—' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (OtherPerson.IsMatch(clause)) continue;
+                foreach (var (kind, claim) in DayClaims)
+                    if (!day.Allows(kind))
+                        foreach (Match match in claim.Matches(clause))
+                        {
+                            string before = SpeechRelevance.Normalize(clause.Substring(0, match.Index));
+                            if (NegatedActivity.IsMatch(before)) continue;
+                            return true;
+                        }
+            }
+            return false;
+        }
+
+        // Preserve ordinary recurrence cues from another chat participant, without letting the selected viewer's
+        // own personal answer become evidence of an earlier streamer event on the next turn.
+        private static bool OtherChatRecurrence(ReactionIntent intent, IReadOnlyList<StreamChatMessage> chat)
+        {
+            foreach (StreamChatMessage line in chat)
+                if (line.ViewerId != intent.Viewer.ViewerId && RecurrenceFact.IsMatch(line.Text)) return true;
+            return false;
         }
 
         // Only cosmetic repairs: surrounding quotes, the viewer's own name as a prefix, whitespace.

@@ -60,7 +60,7 @@ namespace GoLive.Viewers
             Events = new StreamEventSource(stream, speech, donations, peripherals, channel, Roster, tuning, () => Community.KnownNames, Support);
             Community.Joined += Events.NotifyJoined;
             Director = new ChatDirector(languageModel, modelSettings ?? new ChatModelSettings { Enabled = false }, Chat, Log);
-            Director.Finished += FinishMemoryReference;
+            Director.Finished += FinishReaction;
             Director.Shown += ObservePublished;
             Chat.Added += ObserveChat;
             Chat.Cleared += ClearChatWitnesses;
@@ -181,7 +181,8 @@ namespace GoLive.Viewers
             RelationshipTier? replyTier = intent.Event.Kind == StreamEventKind.ViewerReply ? Community.Tier(intent.Event.SubjectViewerId) : null;
             return new ChatSituation(current.ChannelName, current.StreamSeconds, current.Viewers, current.ChannelLanguage,
                 chat.AsReadOnly(), speech, Community.RelationshipContext(id), memories, promise, tier, _content, _gameMinutes, replyTier)
-            { CallbackCandidates = candidates };
+            { CallbackCandidates = candidates, Day = ViewerUtterancePlanner.UsesDailyContext(intent)
+                ? ViewerDailyLife.For(intent.Viewer, _gameMinutes, _broadcast, tier) : null };
         }
 
         private double LastCallback(string viewerId) => _lastCallback.TryGetValue(viewerId, out double at) ? at : double.NegativeInfinity;
@@ -205,8 +206,9 @@ namespace GoLive.Viewers
 
         private void ClearChatWitnesses() { _chatWitnesses.Clear(); _chatWitnessOrder.Clear(); }
 
-        private void FinishMemoryReference(ReactionIntent intent, ChatSituation situation, string publishedText)
+        private void FinishReaction(ReactionIntent intent, ChatSituation situation, string publishedText)
         {
+            _selector?.FinishConversation(intent);
             if (publishedText != null && situation != null && (situation.Memories.Count > 0 || situation.Promise != null))
                 _lastCallback[intent.Viewer.ViewerId] = Events.Now;
             Community.State(intent.Viewer.ViewerId)?.Memories.FinishPlanned(intent.Id, situation?.Memories, publishedText, _gameMinutes,
@@ -218,6 +220,7 @@ namespace GoLive.Viewers
         private void ObservePublished(StreamChatMessage message, ReactionIntent origin)
         {
             Community.ObservePublished(message);
+            _selector?.ObservePublished(message, origin);
             ReactionIntent reply = _selector?.SelectPublished(message, origin, Events.Now, _gameMinutes);
             if (reply == null) return;
             Log.Add(ReactionLog.ForIntent(reply, ReactionOutcome.Scheduled, "social reply"));
@@ -238,7 +241,7 @@ namespace GoLive.Viewers
             Community.Joined -= Events.NotifyJoined;
             EndBroadcast();
             Director.Dispose();
-            Director.Finished -= FinishMemoryReference;
+            Director.Finished -= FinishReaction;
             Director.Shown -= ObservePublished;
             Chat.Added -= ObserveChat;
             Chat.Cleared -= ClearChatWitnesses;
@@ -270,6 +273,8 @@ namespace GoLive.Viewers
             _selector = new ReactionSelector(_tuning, Roster, new AudienceRandom(AudienceRandom.Hash(_stream.Audience.Seed, SelectionSalt)), Community.Tier);
             _lastCallback.Clear();
             Director.BeginBroadcast(new AudienceRandom(AudienceRandom.Hash(_stream.Audience.Seed, FallbackSalt)));
+            // The first viewer answer should not pay for paging the model back in or rebuilding its prompt cache.
+            Director.Warmup();
             Community.BeginBroadcast(_broadcast, _stream.Audience.Seed, context.GameMinutes, context.Content);
         }
 

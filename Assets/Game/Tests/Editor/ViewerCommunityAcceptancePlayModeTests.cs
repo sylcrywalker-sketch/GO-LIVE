@@ -353,7 +353,7 @@ namespace GoLive.Tests
         [Serializable] private sealed class PlayGeneration
         {
             public long intent;
-            public string eventKey, viewerId, system, user, raw, status;
+            public string eventKey, viewerId, system, user, raw, status, day, plan;
             public double latency;
             public bool completed;
         }
@@ -377,13 +377,18 @@ namespace GoLive.Tests
                 // The director sets Situation/Cancellation immediately before invoking the model, then Task.
                 // This read-only test hook binds the actual HTTP request to that exact ordinary generation.
                 var jobs = (IEnumerable)typeof(ChatDirector).GetField("_jobs", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_director);
-                object starting = jobs.Cast<object>().Single(j => {
+                object starting = jobs.Cast<object>().SingleOrDefault(j => {
                     Type t = j.GetType();
                     return t.GetField("Task").GetValue(j) == null && t.GetField("Cancellation").GetValue(j) != null;
                 });
-                var intent = (ReactionIntent)starting.GetType().GetField("Intent").GetValue(starting);
-                var row = new PlayGeneration { intent = intent.Id, eventKey = intent.Event.Key, viewerId = intent.Viewer.ViewerId,
-                    system = request.System, user = request.User };
+                // Warm-up has no viewer intent. Record that request without inventing a viewer identity.
+                var intent = starting == null ? null : (ReactionIntent)starting.GetType().GetField("Intent").GetValue(starting);
+                var situation = starting == null ? null : (ChatSituation)starting.GetType().GetField("Situation").GetValue(starting);
+                ViewerUtterancePlan plan = situation == null ? null : ViewerUtterancePlanner.For(intent, situation);
+                var row = new PlayGeneration { intent = intent?.Id ?? 0, eventKey = intent?.Event.Key, viewerId = intent?.Viewer.ViewerId,
+                    system = request.System, user = request.User, day = situation?.Day?.Describe(),
+                    plan = plan == null ? null : plan.Intent + " -> " + plan.Target + "; " +
+                        plan.Topic + "; " + string.Join(" | ", plan.AllowedFacts.Select(f => f.Source + ": " + f.Text)) };
                 lock (_gate) _generations.Add(row);
                 MaximumPromptCharacters=Math.Max(MaximumPromptCharacters,request.System.Length+request.User.Length);
                 if (Recording) WritePlay(_writer,"model-request",JsonUtility.ToJson(row));

@@ -59,7 +59,14 @@ namespace GoLive.Editor.Viewers
                 Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Tease, UtteranceIntent.SilenceCheck }, Avoids = new[] { UtteranceIntent.Concern }, CallbackInterest = .55f },
                 Talkativeness = .6f, Pace = 1.2f, ResponseSpeed = .8f,
                 EventAffinity = new[] { 1.2f, 1.4f, 1.3f, .6f, .3f, .5f, .3f, .5f, .6f, 1f, .8f },
-                DonationTendency = .03f, FollowTendency = .6f, SocialTendency = .4f, InitialSentiment = 10
+                DonationTendency = .03f, FollowTendency = .6f, SocialTendency = .4f, InitialSentiment = 10,
+                DailyLife = new[]
+                {
+                    Day("owl.after-shift", "slept most of the day after last night's shift", "on a night shift, bored between rounds", DayActivityKind.Sleep, ViewerMood.Tired, ViewerEnergy.Low),
+                    Day("owl.errands", "ran errands before the shift", "on a night shift, watching from the phone", DayActivityKind.Errands, ViewerMood.Chill, ViewerEnergy.Normal),
+                    Day("owl.day-off", "had a night off and played games at home", "at home tonight, not on shift", DayActivityKind.Gaming, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("owl.tap", "fixed a leaking tap at home before work", "on a night shift, drinking tea in the guard booth", DayActivityKind.Housework, ViewerMood.Chill, ViewerEnergy.Normal)
+                }
             },
             new ViewerProfile
             {
@@ -78,7 +85,14 @@ namespace GoLive.Editor.Viewers
                 Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Question }, Avoids = new[] { UtteranceIntent.Disagree }, CallbackInterest = .35f },
                 Talkativeness = .75f, Pace = 1f, ResponseSpeed = 1f,
                 EventAffinity = new[] { 1.3f, .8f, .7f, 1.4f, .6f, 1f, 1f, 1.1f, 1.3f, .8f, 1f },
-                DonationTendency = .15f, FollowTendency = .9f, SocialTendency = .6f, InitialSentiment = 20
+                DonationTendency = .15f, FollowTendency = .9f, SocialTendency = .6f, InitialSentiment = 20,
+                DailyLife = new[]
+                {
+                    Day("fox.critique", "had classes and a long design critique", "finishing a poster for class with the stream on", DayActivityKind.Study, ViewerMood.Tired, ViewerEnergy.Normal),
+                    Day("fox.portfolio", "worked on a portfolio project most of the day", "taking a break from the project", DayActivityKind.Drawing, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("fox.library", "studied at the university library, then met a friend", "at home, relaxing", DayActivityKind.Study, ViewerMood.Upbeat, ViewerEnergy.High),
+                    Day("fox.photos", "walked around the city taking photos", "editing photos with the stream on", DayActivityKind.Walk, ViewerMood.Upbeat, ViewerEnergy.High)
+                }
             },
             new ViewerProfile
             {
@@ -97,7 +111,14 @@ namespace GoLive.Editor.Viewers
                 Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.TechnicalComment }, Avoids = new[] { UtteranceIntent.Concern }, Ignores = StreamTopic.Life, CallbackInterest = .3f },
                 Talkativeness = .5f, Pace = 1.3f, ResponseSpeed = 1.1f,
                 EventAffinity = new[] { .8f, .4f, .5f, .5f, .2f, .4f, .3f, .4f, .5f, 2f, .7f },
-                DonationTendency = .08f, FollowTendency = .5f, SocialTendency = .35f, InitialSentiment = 0
+                DonationTendency = .08f, FollowTendency = .5f, SocialTendency = .35f, InitialSentiment = 0,
+                DailyLife = new[]
+                {
+                    Day("cat.migration", "fought a server migration at work that failed twice", "finally home, unwinding", DayActivityKind.Work, ViewerMood.Stressed, ViewerEnergy.Low),
+                    Day("cat.psu", "replaced a colleague's broken power supply at work", "tinkering with an old laptop", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("cat.quiet", "had an ordinary shift at work where nothing broke", "watching streams", DayActivityKind.Work, ViewerMood.Chill, ViewerEnergy.Normal),
+                    Day("cat.homeserver", "spent the day off reinstalling the home server", "waiting for updates to finish", DayActivityKind.Tech, ViewerMood.Bored, ViewerEnergy.Normal)
+                }
             },
             new ViewerProfile
             {
@@ -116,7 +137,14 @@ namespace GoLive.Editor.Viewers
                 },
                 Talkativeness = .6f, Pace = 1f, ResponseSpeed = .7f,
                 EventAffinity = new[] { .7f, .9f, .8f, .8f, .4f, 1.4f, .8f, 1.2f, 1.4f, .9f, 1.2f },
-                DonationTendency = .05f, FollowTendency = .5f, SocialTendency = .5f, InitialSentiment = 15
+                DonationTendency = .05f, FollowTendency = .5f, SocialTendency = .5f, InitialSentiment = 15,
+                DailyLife = new[]
+                {
+                    Day("kid.test", "went to school and had a math test", "should be asleep, watching streams instead", DayActivityKind.Study, ViewerMood.Tired, ViewerEnergy.Low),
+                    Day("kid.friends", "played games with friends after school", "chilling on the phone", DayActivityKind.Gaming, ViewerMood.Upbeat, ViewerEnergy.High),
+                    Day("kid.practice", "had basketball practice after school", "eating snacks and watching", DayActivityKind.Walk, ViewerMood.Good, ViewerEnergy.High),
+                    Day("kid.lazy", "had a lazy weekend day", "up late watching streams", DayActivityKind.Rest, ViewerMood.Chill, ViewerEnergy.Normal)
+                }
             },
             new ViewerProfile
             {
@@ -135,7 +163,14 @@ namespace GoLive.Editor.Viewers
                 Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Concern, UtteranceIntent.Question }, Avoids = new[] { UtteranceIntent.Disagree }, CallbackInterest = .45f },
                 Talkativeness = .55f, Pace = 1.5f, ResponseSpeed = 1.8f,
                 EventAffinity = new[] { 1f, 1.2f, 1f, 1.5f, .5f, .8f, .4f, .6f, .9f, .6f, .8f },
-                DonationTendency = .25f, FollowTendency = .7f, SocialTendency = .4f, InitialSentiment = 30
+                DonationTendency = .25f, FollowTendency = .7f, SocialTendency = .4f, InitialSentiment = 30,
+                DailyLife = new[]
+                {
+                    Day("zina.market", "went to the market and cooked soup", "knitting with the stream on", DayActivityKind.Errands, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("zina.clinic", "sat in a long queue at the clinic", "resting with tea and knitting", DayActivityKind.Errands, ViewerMood.Tired, ViewerEnergy.Low),
+                    Day("zina.flat", "cleaned the flat and watered the plants", "knitting a scarf", DayActivityKind.Housework, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("zina.daughter", "talked on the phone with her daughter for an hour", "knitting and listening to the stream", DayActivityKind.Rest, ViewerMood.Upbeat, ViewerEnergy.Normal)
+                }
             },
             new ViewerProfile
             {
@@ -154,7 +189,13 @@ namespace GoLive.Editor.Viewers
                 Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Disagree }, Avoids = new[] { UtteranceIntent.Concern, UtteranceIntent.Question }, CallbackInterest = .15f },
                 Talkativeness = .5f, Pace = 1.2f, ResponseSpeed = .8f,
                 EventAffinity = new[] { 1f, 1.3f, 1.1f, .5f, .3f, .8f, .3f, .6f, .7f, .8f, .9f },
-                DonationTendency = .01f, FollowTendency = .08f, SocialTendency = .5f, InitialSentiment = -35
+                DonationTendency = .01f, FollowTendency = .08f, SocialTendency = .5f, InitialSentiment = -35,
+                DailyLife = new[]
+                {
+                    Day("krit.school", "sat through boring school lessons", "lying on the bed hopping between streams", DayActivityKind.Study, ViewerMood.Bored, ViewerEnergy.Low),
+                    Day("krit.ranked", "played ranked games and kept losing", "hopping between small streams", DayActivityKind.Gaming, ViewerMood.Stressed, ViewerEnergy.Normal),
+                    Day("krit.nothing", "did nothing all day", "bored, looking for something to watch", DayActivityKind.Rest, ViewerMood.Bored, ViewerEnergy.Low)
+                }
             },
             new ViewerProfile
             {
@@ -173,7 +214,14 @@ namespace GoLive.Editor.Viewers
                 Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Acknowledge }, Avoids = new[] { UtteranceIntent.Question, UtteranceIntent.Disagree }, Ignores = StreamTopic.Hardware | StreamTopic.Money, CallbackInterest = .2f },
                 Talkativeness = .18f, Pace = 2.5f, ResponseSpeed = 1.3f,
                 EventAffinity = new[] { .7f, .6f, .5f, 1.6f, .4f, .6f, .5f, .6f, .8f, .5f, .5f },
-                DonationTendency = .2f, FollowTendency = .95f, SocialTendency = .2f, InitialSentiment = 25
+                DonationTendency = .2f, FollowTendency = .95f, SocialTendency = .2f, InitialSentiment = 25,
+                DailyLife = new[]
+                {
+                    Day("mika.commission", "spent most of the day drawing a commission", "sketching with the stream on in the background", DayActivityKind.Drawing, ViewerMood.Tired, ViewerEnergy.Low),
+                    Day("mika.studies", "practised drawing hands for hours", "still drawing, the stream in the background", DayActivityKind.Drawing, ViewerMood.Chill, ViewerEnergy.Normal),
+                    Day("mika.shop", "went to an art supplies shop and took a walk", "trying out new brushes", DayActivityKind.Errands, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("mika.block", "had an art block and barely drew anything", "doodling a little", DayActivityKind.Drawing, ViewerMood.Bored, ViewerEnergy.Low)
+                }
             },
             new ViewerProfile
             {
@@ -192,7 +240,14 @@ namespace GoLive.Editor.Viewers
                 },
                 Talkativeness = .45f, Pace = 1.4f, ResponseSpeed = 1.2f,
                 EventAffinity = new[] { 1f, .7f, .6f, 1f, .5f, .7f, .6f, .7f, .9f, .6f, .9f },
-                DonationTendency = .12f, FollowTendency = .6f, SocialTendency = .5f, InitialSentiment = 15
+                DonationTendency = .12f, FollowTendency = .6f, SocialTendency = .5f, InitialSentiment = 15,
+                DailyLife = new[]
+                {
+                    Day("jonas.class", "had Russian classes at the university", "practising Russian by watching streams", DayActivityKind.Study, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("jonas.metro", "got lost on the metro, then bought groceries", "cooking pelmeni for the first time", DayActivityKind.Errands, ViewerMood.Upbeat, ViewerEnergy.Normal),
+                    Day("jonas.essay", "wrote an essay for the university", "taking a break from the essay", DayActivityKind.Study, ViewerMood.Tired, ViewerEnergy.Low),
+                    Day("jonas.walk", "walked around the city centre with a classmate", "resting at the dormitory", DayActivityKind.Walk, ViewerMood.Good, ViewerEnergy.Normal)
+                }
             },
             new ViewerProfile
             {
@@ -210,7 +265,14 @@ namespace GoLive.Editor.Viewers
                 },
                 Talkativeness = .55f, Pace = 1.1f, ResponseSpeed = .9f,
                 EventAffinity = new[] { 1.1f, .8f, .8f, .8f, .4f, 1.3f, .6f, .9f, .9f, .6f, 1f },
-                DonationTendency = .12f, FollowTendency = .6f, SocialTendency = .6f, InitialSentiment = 15
+                DonationTendency = .12f, FollowTendency = .6f, SocialTendency = .6f, InitialSentiment = 15,
+                DailyLife = new[]
+                {
+                    Day("dosh.delivery", "had lectures, then a shift as a delivery courier", "eating instant noodles with the stream on", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low),
+                    Day("dosh.exam", "tried to study for an exam and mostly procrastinated", "procrastinating some more", DayActivityKind.Study, ViewerMood.Stressed, ViewerEnergy.Normal),
+                    Day("dosh.payday", "counted money until payday and ate noodles again", "lying in the dorm", DayActivityKind.Rest, ViewerMood.Chill, ViewerEnergy.Low),
+                    Day("dosh.cafe", "worked a shift at a cafe", "home, too tired to cook", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low)
+                }
             },
             new ViewerProfile
             {
@@ -229,8 +291,18 @@ namespace GoLive.Editor.Viewers
                 Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Answer }, Avoids = new[] { UtteranceIntent.Question, UtteranceIntent.Concern }, CallbackInterest = .3f },
                 Talkativeness = .6f, Pace = 1.2f, ResponseSpeed = 1.1f,
                 EventAffinity = new[] { 1.2f, .7f, .6f, .6f, .3f, .6f, .4f, .5f, .6f, 1.6f, .8f },
-                DonationTendency = .06f, FollowTendency = .4f, SocialTendency = .55f, InitialSentiment = 0
+                DonationTendency = .06f, FollowTendency = .4f, SocialTendency = .55f, InitialSentiment = 0,
+                DailyLife = new[]
+                {
+                    Day("sov.laptop", "gave a relative long advice about buying a laptop", "watching streams, ready with advice", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal),
+                    Day("sov.forums", "read forum threads about streaming setups", "browsing forums with the stream on", DayActivityKind.Tech, ViewerMood.Chill, ViewerEnergy.Normal),
+                    Day("sov.office", "worked at the office, nothing interesting", "on the phone after work", DayActivityKind.Work, ViewerMood.Bored, ViewerEnergy.Normal),
+                    Day("sov.router", "helped a neighbour set up a router", "watching the stream", DayActivityKind.Tech, ViewerMood.Upbeat, ViewerEnergy.Normal)
+                }
             }
         };
+
+        private static DailyActivity Day(string id, string today, string now, DayActivityKind kind, ViewerMood mood, ViewerEnergy energy) =>
+            new() { Id = id, Today = today, Now = now, Kind = kind, Mood = mood, Energy = energy };
     }
 }

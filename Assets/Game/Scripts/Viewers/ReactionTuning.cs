@@ -37,6 +37,21 @@ namespace GoLive.Viewers
         public float MaximumDelaySeconds = 9f;
         public float StaleSeconds = 14f;
 
+        // Conversation: when the streamer talks TO the chat (asks, requests, greets), somebody normally answers. Up to this
+        // audience size the answer does not depend on the chat budget; bigger chats still let the first answer overdraw it.
+        public int ConversationAudience = 3;
+        public float ConversationAnswerChance = .92f;
+        public float GreetingAnswerChance = .75f;
+        // A viewer in a conversation may write again after this gap (instead of ViewerGapSeconds).
+        public float ConversationGapSeconds = 6f;
+        // The streamer's next phrase within this window after a viewer's answer continues with that viewer, for at most
+        // this many published viewer answers, including the initial answer (never an endless 1:1 thread).
+        public float ConversationWindowSeconds = 40f;
+        public int ConversationMaximumTurns = 5;
+        // Reading/typing delay for conversational answers (the model's own latency comes on top when it is slower).
+        public float ConversationMinimumDelaySeconds = 1.2f;
+        public float ConversationMaximumDelaySeconds = 4.5f;
+
         public string Validate()
         {
             if (!Fraction(SpeechThreshold)) return "Speech threshold must be in (0, 1].";
@@ -49,6 +64,12 @@ namespace GoLive.Viewers
             if (!Fraction(AnonymousTalkativeness)) return "Anonymous talkativeness must be in (0, 1].";
             if (!(MinimumDelaySeconds > 0) || !(MaximumDelaySeconds > MinimumDelaySeconds) || !(StaleSeconds > 0))
                 return "Reaction delays are inconsistent.";
+            if (ConversationAudience < 1 || !Fraction(ConversationAnswerChance) || !Fraction(GreetingAnswerChance))
+                return "Conversation audience and answer chances are invalid.";
+            if (!(ConversationGapSeconds >= DirectGapSeconds) || !(ConversationWindowSeconds > 0) || ConversationMaximumTurns < 1)
+                return "Conversation gap, window or turns are invalid.";
+            if (!(ConversationMinimumDelaySeconds > 0) || !(ConversationMaximumDelaySeconds > ConversationMinimumDelaySeconds) ||
+                !(ConversationMaximumDelaySeconds < StaleSeconds)) return "Conversation delays are inconsistent.";
             return null;
         }
 

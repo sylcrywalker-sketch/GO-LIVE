@@ -1,0 +1,50 @@
+[
+  {
+    "type": "file",
+    "oid": "17993a254ac4e9db7642a261cf53af3dc446145c",
+    "size": 147951465,
+    "lfs": {
+      "oid": "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe",
+      "size": 147951465,
+      "pointerSize": 134
+    },
+    "xetHash": "2f62d18b50c3f3feafbf990eec23a93d319660b1efbdd3fff55e52b7cde2e374",
+    "path": "ggml-base.bin"
+  },
+  {
+    "type": "file",
+    "oid": "0e2474d5ec0361bb1726829aa83317ed4cbc3f18",
+    "size": 574041195,
+    "lfs": {
+      "oid": "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2",
+      "size": 574041195,
+      "pointerSize": 134
+    },
+    "xetHash": "9c7b9c6bf60cf555f34fe7d81e8643764ff03d2f60b6fa550f5630be52eef830",
+    "path": "ggml-large-v3-turbo-q5_0.bin"
+  },
+  {
+    "type": "file",
+    "oid": "87631c52c89d37ed2337a46ec4a009976db1f3f4",
+    "size": 190085487,
+    "lfs": {
+      "oid": "ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb",
+      "size": 190085487,
+      "pointerSize": 134
+    },
+    "xetHash": "f4a8c6ba84184c3af18f9f63ca9f777e27d39858c1435d27b8b9239092c16c15",
+    "path": "ggml-small-q5_1.bin"
+  },
+  {
+    "type": "file",
+    "oid": "d144f735b005ae8cbfa04a49e22fe40faa24dbec",
+    "size": 77691713,
+    "lfs": {
+      "oid": "be07e048e1e599ad46341c8d2a135645097a538221678b7acdd1b1919c6e1b21",
+      "size": 77691713,
+      "pointerSize": 133
+    },
+    "xetHash": "518970a29bedb265f23ac48d486ddbc63bedffd90967b10140ae5ac61243acf3",
+    "path": "ggml-tiny.bin"
+  }
+]

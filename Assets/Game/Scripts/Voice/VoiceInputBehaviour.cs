@@ -21,8 +21,9 @@ namespace GoLive.Voice
 
         [SerializeField] private LocalizationContext localization;
         // StreamingAssets-relative multilingual ggml models in preference order (the first present is used).
-        [SerializeField] private string[] modelFiles = { "Whisper/ggml-base.bin", "Whisper/ggml-tiny.bin" };
-        [SerializeField] private bool useGpu;
+        [SerializeField] private string[] modelFiles = { "Whisper/ggml-large-v3-turbo-q5_0.bin" };
+        [SerializeField] private bool useGpu = true;
+        [SerializeField] private WhisperDecoding decoding = new() { BeamSearch = true };
         [SerializeField, Min(1)] private int maximumThreads = 4;
         [SerializeField] private int preferredSampleRate = 16000;
         [SerializeField] private VoiceActivityConfig activity;
@@ -53,11 +54,20 @@ namespace GoLive.Voice
             for (int i = 0; i < paths.Length; i++) paths[i] = Path.Combine(Application.streamingAssetsPath, modelFiles[i]);
             int threads = Mathf.Clamp(SystemInfo.processorCount / 2, 1, maximumThreads);
             bool gpu = useGpu;
-            Recognition = new VoiceRecognition(activity.Settings, () => new WhisperSpeechRecognizer(paths, threads, gpu));
+            // Snapshot authored decoding on the Unity thread; the worker owns its runtime recognizer.
+            WhisperDecoding authored = decoding ?? new WhisperDecoding { BeamSearch = true };
+            var runtimeDecoding = new WhisperDecoding
+            {
+                BeamSearch = authored.BeamSearch, RussianPrompt = authored.RussianPrompt, EnglishPrompt = authored.EnglishPrompt
+            };
+            Recognition = new VoiceRecognition(activity.Settings, () => new WhisperSpeechRecognizer(paths, threads, gpu, runtimeDecoding));
             Recognition.SetEnabled(PlayerPrefs.GetInt(EnabledKey, 1) == 1);
-            int language = PlayerPrefs.GetInt(LanguageKey, (int)SpeechLanguage.Auto);
+            SpeechLanguage defaultLanguage = localization != null && localization.CurrentLanguage == GameLanguage.English
+                ? SpeechLanguage.English : SpeechLanguage.Russian;
+            Recognition.FallbackLanguage = defaultLanguage;
+            int language = PlayerPrefs.GetInt(LanguageKey, (int)defaultLanguage);
             Recognition.Language = language >= (int)SpeechLanguage.Auto && language <= (int)SpeechLanguage.English
-                ? (SpeechLanguage)language : SpeechLanguage.Auto;
+                ? (SpeechLanguage)language : defaultLanguage;
         }
 
         private void OnDisable() => StopCapture();

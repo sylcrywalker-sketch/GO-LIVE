@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.1575034">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1185" result="Passed" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.157503" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2351" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1185" result="Passed" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.136832" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28436" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2352" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1185" result="Passed" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.118640" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2353" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1185" result="Passed" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.103412" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1995" name="ViewerDailyConversationRegressionTests" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="65" result="Passed" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.056322" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2002" name="EphemeralOneSeatLateStatementFollowUpKeepsConfiguredChanceWithEmptyBudget" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.EphemeralOneSeatLateStatementFollowUpKeepsConfiguredChanceWithEmptyBudget" methodname="EphemeralOneSeatLateStatementFollowUpKeepsConfiguredChanceWithEmptyBudget" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="709716183" result="Passed" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.039556" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Exact late statement follow-ups across 100 seeds: 64
+]]></output>
+            </test-case>
+            <test-case id="2003" name="GlAuthoredConfigurationRetainsConversationWindowTurnsAndGap" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.GlAuthoredConfigurationRetainsConversationWindowTurnsAndGap" methodname="GlAuthoredConfigurationRetainsConversationWindowTurnsAndGap" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1171068058" result="Passed" start-time="2026-09-26 17:09:34Z" end-time="2026-09-26 17:09:34Z" duration="0.003305" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[GL conversation values: window=40, maximumTurns=5, gap=6
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

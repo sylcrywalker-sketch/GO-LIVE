@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 17:04:43Z" end-time="2026-09-26 17:06:06Z" duration="82.855409">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1183" result="Failed" site="Child" start-time="2026-09-26 17:04:43Z" end-time="2026-09-26 17:06:06Z" duration="82.855409" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2349" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1183" result="Failed" site="Child" start-time="2026-09-26 17:04:43Z" end-time="2026-09-26 17:06:06Z" duration="82.841562" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14644" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2350" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1183" result="Failed" site="Child" start-time="2026-09-26 17:04:43Z" end-time="2026-09-26 17:06:06Z" duration="82.834939" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2351" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1183" result="Failed" site="Child" start-time="2026-09-26 17:04:43Z" end-time="2026-09-26 17:06:06Z" duration="82.829562" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1008" name="DesktopFlowPlayModeTests" fullname="GoLive.Tests.DesktopFlowPlayModeTests" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-09-26 17:04:43Z" end-time="2026-09-26 17:06:06Z" duration="82.812558" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="DesktopVisualFlow" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1015" name="SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline" fullname="GoLive.Tests.DesktopFlowPlayModeTests.SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline" methodname="SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Explicit" seed="1968171689" result="Failed" start-time="2026-09-26 17:04:44Z" end-time="2026-09-26 17:06:06Z" duration="82.452182" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="_SKIPREASON" value="Requires the recorded microphone corpus and configured local chat model" />
+                <property name="Category" value="ViewerCoreAcceptance" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  short personal follow-up continues the exchange
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.DesktopFlowPlayModeTests+<SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline>d__76.MoveNext () [0x0096d] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerShortReplayPlayModeTests.cs:139
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__8.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@7a3849e09bd0\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:52
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Props/SM_Shelf_001"
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.11, 0.28, -13.08) camera=(11.10, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

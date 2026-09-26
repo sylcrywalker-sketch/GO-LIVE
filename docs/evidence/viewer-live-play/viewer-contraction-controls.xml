@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.1463456">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1183" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.146346" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2349" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1183" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.124819" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36524" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2350" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1183" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.108905" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2351" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1183" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.094313" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1995" name="ViewerDailyConversationRegressionTests" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="63" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.077316" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2056" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.073396" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2048" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven't slept, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven't slept, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1227521099" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.061861" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2049" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven’t slept, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven’t slept, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1418396894" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.000788" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2050" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn't gaming, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn't gaming, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1827579501" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.000333" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2051" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn’t gaming, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn’t gaming, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="51332700" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.000310" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2052" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have not slept, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have not slept, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1010999787" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.000301" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2053" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was not gaming, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was not gaming, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="885490199" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.000294" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2054" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have slept, worked&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have slept, worked&quot;,False)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="492443587" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.000335" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2055" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was gaming, worked&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was gaming, worked&quot;,False)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="993385596" result="Passed" start-time="2026-09-26 17:02:52Z" end-time="2026-09-26 17:02:52Z" duration="0.000282" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

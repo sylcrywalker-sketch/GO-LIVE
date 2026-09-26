@@ -7,18 +7,18 @@ using UnityEngine;
 
 namespace GoLive.Editor.Voice
 {
-    // Optional, explicit download of the larger multilingual whisper.cpp model (better Russian than the bundled
-    // tiny model). Verified against the SHA-1 published in whisper.cpp's models/README.md. The file is not
-    // versioned (see .gitignore); VoiceInputBehaviour prefers it automatically when present.
+    // Explicit local installation of the model selected by the real-corpus comparison. SHA-256 is the
+    // official Hugging Face LFS object hash retained in the benchmark download manifest. Weights are gitignored.
     public static class SpeechModelInstaller
     {
-        private const string Url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin";
-        private const string Sha1 = "465707469ff3a37a2b9b8d8f89f2f99de7299dac";
+        private const string Model = "ggml-large-v3-turbo-q5_0.bin";
+        private const string Url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/" + Model;
+        private const string Sha256 = "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2";
 
-        [MenuItem("GO! LIVE/Voice/Install base speech model (142 MiB)")]
-        public static void InstallBase()
+        [MenuItem("GO! LIVE/Voice/Install selected turbo speech model (548 MiB)")]
+        public static void InstallShippingModel()
         {
-            string destination = Path.Combine(Application.streamingAssetsPath, "Whisper", "ggml-base.bin");
+            string destination = Path.Combine(Application.streamingAssetsPath, "Whisper", Model);
             string temporary = destination + ".download";
             Directory.CreateDirectory(Path.GetDirectoryName(destination));
             try
@@ -29,7 +29,7 @@ namespace GoLive.Editor.Voice
                 long total = response.Content.Headers.ContentLength ?? -1;
                 using (Stream source = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult())
                 using (FileStream target = File.Create(temporary))
-                using (SHA1 hash = SHA1.Create())
+                using (SHA256 hash = SHA256.Create())
                 {
                     var buffer = new byte[1 << 20];
                     long received = 0;
@@ -40,12 +40,12 @@ namespace GoLive.Editor.Voice
                         hash.TransformBlock(buffer, 0, read, null, 0);
                         received += read;
                         float progress = total > 0 ? received / (float)total : 0;
-                        if (EditorUtility.DisplayCancelableProgressBar("GO! LIVE speech model", $"ggml-base.bin  {received / 1048576} MiB", progress))
+                        if (EditorUtility.DisplayCancelableProgressBar("GO! LIVE speech model", $"{Model}  {received / 1048576} MiB", progress))
                             throw new OperationCanceledException();
                     }
                     hash.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
                     string actual = BitConverter.ToString(hash.Hash).Replace("-", "").ToLowerInvariant();
-                    if (actual != Sha1) throw new InvalidDataException("Downloaded model checksum " + actual + " does not match " + Sha1 + ".");
+                    if (actual != Sha256) throw new InvalidDataException("Downloaded model checksum " + actual + " does not match " + Sha256 + ".");
                 }
                 if (File.Exists(destination)) File.Delete(destination);
                 File.Move(temporary, destination);

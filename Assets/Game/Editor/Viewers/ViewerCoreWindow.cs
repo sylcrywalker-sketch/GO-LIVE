@@ -17,6 +17,7 @@ namespace GoLive.Editor.Viewers
         private const string ConfigPath = "Assets/Game/Config/Viewers/ViewerCore.asset";
         private Vector2 _scroll;
         private bool _onlySpeech;
+        private bool _saveAudio;
         private double _nextRepaint;
 
         [MenuItem("GO! LIVE/Viewer Core/Reaction Monitor")]
@@ -28,7 +29,30 @@ namespace GoLive.Editor.Viewers
             ViewerCoreConfig config = AssetDatabase.LoadAssetAtPath<ViewerCoreConfig>(ConfigPath);
             if (config == null) throw new InvalidOperationException("Missing " + ConfigPath);
             Lms("server start");
+            // `lms load` of an already loaded model adds a SECOND instance (":2"): 5 GB more VRAM that evicts the one the game
+            // uses (2026-09-26: 4.1 s first reply). Load only when the configured model is not loaded yet.
+            if (IsLoaded(config.Model))
+            {
+                UnityEngine.Debug.Log($"{config.Model.Model} is already loaded; not loading a second instance.");
+                return;
+            }
             Lms($"load \"{config.Model.Model}\" --gpu max --context-length 4096 -y");
+        }
+
+        private static bool IsLoaded(ChatModelSettings model)
+        {
+            try
+            {
+                var endpoint = new Uri(model.Endpoint);
+                using var client = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+                string json = client.GetStringAsync(new Uri(endpoint, "/api/v0/models/" + model.Model)).GetAwaiter().GetResult();
+                return json.Contains("\"state\": \"loaded\"") || json.Contains("\"state\":\"loaded\"");
+            }
+            catch (Exception exception)
+            {
+                UnityEngine.Debug.LogWarning("Could not ask LM Studio which models are loaded: " + exception.Message);
+                return false;
+            }
         }
 
         [MenuItem("GO! LIVE/Viewer Core/Stop Local Model (LM Studio)")]
@@ -58,14 +82,20 @@ namespace GoLive.Editor.Viewers
                 GUILayout.Label($"Model: {director.Health}   Queue: {director.QueueDepth}   Audience: {viewers.Roster.AudienceSize} " +
                                 $"(named {viewers.Roster.Named.Count}, anonymous chatters {viewers.Roster.Ephemeral.Count})   Channel: {viewers.ChannelLanguage}");
                 _onlySpeech = EditorGUILayout.ToggleLeft("Speech only", _onlySpeech, GUILayout.Width(100));
+                using (new EditorGUI.DisabledScope(ViewerSessionRecorder.Recording))
+                    _saveAudio = EditorGUILayout.ToggleLeft(new GUIContent("+ mic audio", "Also keep the microphone audio of the recorded session (local files next to the log)"),
+                        _saveAudio, GUILayout.Width(90));
                 bool record = EditorGUILayout.ToggleLeft("Record session", ViewerSessionRecorder.Recording, GUILayout.Width(120));
                 if (record != ViewerSessionRecorder.Recording)
                 {
-                    if (record) ViewerSessionRecorder.Start(viewers);
+                    if (record) ViewerSessionRecorder.Start(viewers, Object.FindAnyObjectByType<GoLive.Voice.VoiceInputBehaviour>()?.Recognition, _saveAudio);
                     else ViewerSessionRecorder.Stop();
                 }
             }
             if (ViewerSessionRecorder.Recording) GUILayout.Label(ViewerSessionRecorder.Status);
+            ConversationThread thread = viewers.Selector?.Thread;
+            GUILayout.Label($"Warm-up {stats.WarmupSeconds:0.00}s  first {stats.FirstSeconds:0.00}s   Conversation: " +
+                            (thread?.ViewerId == null ? "—" : $"{viewers.Roster.Find(thread.ViewerId)?.DisplayName ?? thread.ViewerId}, turn {thread.Turns}, {viewers.Events.Now - thread.LastAt:0}s ago"));
             GUILayout.Label($"Latency median {stats.Percentile(.5):0.00}s  p90 {stats.Percentile(.9):0.00}s  p95 {stats.Percentile(.95):0.00}s  max {stats.Percentile(1):0.00}s   " +
                             $"shown LLM {stats.ShownFromModel} / fallback {stats.ShownFromFallback}   rejected {stats.Rejected}   timeouts {stats.TimedOut}   " +
                             $"unavailable {stats.Unavailable}   stale {stats.DroppedStale}   queue-full {stats.DroppedQueueFull}   max queue {stats.MaximumQueueDepth}");

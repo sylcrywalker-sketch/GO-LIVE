@@ -17,6 +17,30 @@ namespace GoLive.Voice
         RecognizerUnavailable
     }
 
+    // Development diagnostics of one recognized (or discarded) phrase: segment shape and where the time went.
+    public readonly struct PhraseDiagnostics
+    {
+        public long Sequence { get; }
+        public string Text { get; }
+        public string Language { get; }
+        public float? Confidence { get; }
+        public double AudioSeconds { get; }
+        public double VoicedSeconds { get; }
+        public bool Truncated { get; }
+        public double RecognitionSeconds { get; }
+        // From the end of the phrase audio to the text reaching the main thread (VAD tail, queue, inference, polling).
+        public double EndToTextSeconds { get; }
+        public string Error { get; }
+
+        public PhraseDiagnostics(long sequence, string text, string language, float? confidence, double audioSeconds, double voicedSeconds,
+            bool truncated, double recognitionSeconds, double endToTextSeconds, string error)
+        {
+            Sequence = sequence; Text = text ?? ""; Language = language ?? ""; Confidence = confidence; AudioSeconds = audioSeconds;
+            VoicedSeconds = voicedSeconds; Truncated = truncated; RecognitionSeconds = recognitionSeconds; EndToTextSeconds = endToTextSeconds;
+            Error = error;
+        }
+    }
+
     // Main-thread coordinator of the real voice pipeline after capture: VAD -> worker recognizer ->
     // RecognizedSpeech. It owns the VAD of the current listening session, phrase numbering, result
     // de-duplication and the concise status. Audio arrives from a capture bridge; it never touches Unity.
@@ -48,6 +72,12 @@ namespace GoLive.Voice
         public int FailedPhrases { get; private set; }
         public event Action<RecognizedSpeech> Recognized;
         public event Action StatusChanged;
+        // Development-only taps (the editor session recorder): raw captured blocks (samples, count, sample rate), each
+        // closed phrase handed to the recognizer, and the outcome of every phrase, including empty or failed ones.
+        public event Action<float[], int, int> Captured;
+        public event Action<long, SpeechSegment> PhraseQueued;
+        public event Action<PhraseDiagnostics> PhraseFinished;
+        private readonly Dictionary<long, SpeechSegment> _queued = new();
 
         public VoiceRecognition(VoiceActivitySettings vadSettings, Func<ISpeechRecognizer> createRecognizer, Func<double> clock = null)
         {
@@ -111,6 +141,8 @@ namespace GoLive.Voice
         public void Submit(float[] samples, int count)
         {
             if (!_listening || _vad == null || _worker == null) return;
+            Captured?.Invoke(samples, count, _vad.SampleRate);
+            if (_disposed || !_listening || _worker == null) return;
             _segments.Clear();
             _vad.Process(samples, 0, count, _segments);
             foreach (SpeechSegment segment in _segments)
@@ -118,6 +150,18 @@ namespace GoLive.Voice
                 double ended = _captureStart + segment.EndSample / (double)segment.SampleRate;
                 _worker.Submit(new SpeechRequest(++_nextSequence, segment.Samples, segment.SampleRate, ended,
                     SpeechLanguageCodes.Code(Language), SpeechLanguageCodes.Code(FallbackLanguage)));
+                if (PhraseFinished == null && PhraseQueued == null) continue;
+                _queued[_nextSequence] = segment;
+                if (_queued.Count > 32)
+                {
+                    // Diagnostic listeners may detach between phrases, leaving gaps in sequence numbers.
+                    long oldest = long.MaxValue;
+                    foreach (long sequence in _queued.Keys)
+                        if (sequence < oldest) oldest = sequence;
+                    _queued.Remove(oldest);
+                }
+                PhraseQueued?.Invoke(_nextSequence, segment);
+                if (_disposed || !_listening || _worker == null) return;
             }
         }
 
@@ -130,6 +174,11 @@ namespace GoLive.Voice
                 if (response.Sequence <= _lastDelivered) continue;
                 _lastDelivered = response.Sequence;
                 LastRecognitionSeconds = response.RecognitionSeconds;
+                if (_queued.Remove(response.Sequence, out SpeechSegment segment))
+                    PhraseFinished?.Invoke(new PhraseDiagnostics(response.Sequence, response.Result.Text, response.Result.Language,
+                        response.Result.Confidence, segment.Samples.Length / (double)segment.SampleRate, segment.VoicedSeconds, segment.Truncated,
+                        response.RecognitionSeconds, _clock() - response.Timestamp, response.Error));
+                if (_disposed || _worker == null) return;
                 if (response.Error != null)
                 {
                     FailedPhrases++;
@@ -139,7 +188,7 @@ namespace GoLive.Voice
                 LastRecognized = new RecognizedSpeech(response.Sequence, response.Result.Text, response.Timestamp,
                     response.Result.Confidence, response.Result.Language);
                 Recognized?.Invoke(LastRecognized);
-                if (_disposed) return;
+                if (_disposed || _worker == null) return;
             }
             RefreshStatus();
         }
@@ -153,12 +202,18 @@ namespace GoLive.Voice
             StopWorker(3000);
             Recognized = null;
             StatusChanged = null;
+            Captured = null;
+            PhraseQueued = null;
+            PhraseFinished = null;
+            _queued.Clear();
         }
 
         private void StopWorker(int timeoutMilliseconds)
         {
             _worker?.Stop(timeoutMilliseconds);
             _worker = null;
+            // Pending responses are abandoned, so Update can no longer release their diagnostic audio.
+            _queued.Clear();
         }
 
         private void RefreshStatus()

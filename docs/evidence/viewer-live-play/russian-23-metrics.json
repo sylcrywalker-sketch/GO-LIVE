@@ -1,0 +1,164 @@
+[
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "base-ru",
+    "phrases": 23,
+    "meanSeconds": 0.8675464913043479,
+    "meanWer": 0.20248447204968945,
+    "contentRecall": 0.8471014492753624,
+    "inventedWords": 14.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "base-ru-gpu",
+    "phrases": 23,
+    "meanSeconds": 0.05946686956521738,
+    "meanWer": 0.20248447204968945,
+    "contentRecall": 0.8471014492753624,
+    "inventedWords": 14.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "base-ru-gpu-beam",
+    "phrases": 23,
+    "meanSeconds": 0.09644957391304346,
+    "meanWer": 0.19906832298136645,
+    "contentRecall": 0.8449275362318841,
+    "inventedWords": 16.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "small-q5_1-ru",
+    "phrases": 23,
+    "meanSeconds": 3.3218638739130437,
+    "meanWer": 0.13633540372670808,
+    "contentRecall": 0.8782608695652173,
+    "inventedWords": 9.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "small-q5_1-ru-gpu",
+    "phrases": 23,
+    "meanSeconds": 0.06275021304347828,
+    "meanWer": 0.12763975155279503,
+    "contentRecall": 0.8891304347826087,
+    "inventedWords": 9.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "small-q5_1-ru-gpu-beam",
+    "phrases": 23,
+    "meanSeconds": 0.1357017391304348,
+    "meanWer": 0.11024844720496894,
+    "contentRecall": 0.9086956521739131,
+    "inventedWords": 8.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "tiny-ru",
+    "phrases": 23,
+    "meanSeconds": 0.40518279999999995,
+    "meanWer": 0.2779503105590062,
+    "contentRecall": 0.8220496894409939,
+    "inventedWords": 18.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "tiny-ru-gpu",
+    "phrases": 23,
+    "meanSeconds": 0.030274447826086955,
+    "meanWer": 0.2779503105590062,
+    "contentRecall": 0.8220496894409939,
+    "inventedWords": 18.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "tiny-ru-gpu-beam",
+    "phrases": 23,
+    "meanSeconds": 0.07312814347826085,
+    "meanWer": 0.25766045548654243,
+    "contentRecall": 0.8394409937888199,
+    "inventedWords": 17.0
+  },
+  {
+    "run": "stt-warm-ten-configs",
+    "config": "turbo-q5_0-ru-gpu",
+    "phrases": 23,
+    "meanSeconds": 0.13343816521739127,
+    "meanWer": 0.034782608695652174,
+    "contentRecall": 0.9695652173913044,
+    "inventedWords": 1.0
+  },
+  {
+    "run": "stt-boundary-experiment",
+    "config": "turbo-q5_0-ru-gpu-beam-lead500",
+    "phrases": 23,
+    "meanSeconds": 0.16321254347826086,
+    "meanWer": 0.034782608695652174,
+    "contentRecall": 0.9695652173913044,
+    "inventedWords": 1.0
+  },
+  {
+    "run": "stt-boundary-experiment",
+    "config": "turbo-q5_0-ru-gpu-beam-lead500-tail500",
+    "phrases": 23,
+    "meanSeconds": 0.16316139565217389,
+    "meanWer": 0.034782608695652174,
+    "contentRecall": 0.9695652173913044,
+    "inventedWords": 1.0
+  },
+  {
+    "run": "stt-padded-small-contenders",
+    "config": "base-ru-gpu-beam-lead500-tail500",
+    "phrases": 23,
+    "meanSeconds": 0.12003198695652174,
+    "meanWer": 0.16356107660455485,
+    "contentRecall": 0.8775362318840579,
+    "inventedWords": 15.0
+  },
+  {
+    "run": "stt-padded-small-contenders",
+    "config": "base-ru-gpu-lead500-tail500",
+    "phrases": 23,
+    "meanSeconds": 0.05299219565217392,
+    "meanWer": 0.21511387163561074,
+    "contentRecall": 0.8362318840579711,
+    "inventedWords": 16.0
+  },
+  {
+    "run": "stt-padded-small-contenders",
+    "config": "small-q5_1-ru-gpu-beam-lead500-tail500",
+    "phrases": 23,
+    "meanSeconds": 0.12132780869565218,
+    "meanWer": 0.12763975155279503,
+    "contentRecall": 0.9304347826086957,
+    "inventedWords": 8.0
+  },
+  {
+    "run": "stt-padded-small-contenders",
+    "config": "small-q5_1-ru-gpu-lead500-tail500",
+    "phrases": 23,
+    "meanSeconds": 0.06387482173913042,
+    "meanWer": 0.13416149068322983,
+    "contentRecall": 0.9130434782608697,
+    "inventedWords": 8.0
+  },
+  {
+    "run": "stt-padded-small-contenders",
+    "config": "tiny-ru-gpu-lead500-tail500",
+    "phrases": 23,
+    "meanSeconds": 0.025510786956521737,
+    "meanWer": 0.2984472049689441,
+    "contentRecall": 0.7988612836438923,
+    "inventedWords": 22.0
+  },
+  {
+    "run": "stt-production-final",
+    "config": "turbo-q5_0-ru-gpu-beam",
+    "phrases": 23,
+    "meanSeconds": 0.16903147826086956,
+    "meanWer": 0.034782608695652174,
+    "contentRecall": 0.9695652173913044,
+    "inventedWords": 1.0
+  }
+]

@@ -14,7 +14,7 @@ namespace GoLive.Viewers
     public enum UtteranceTarget { Streamer, Chat, OtherViewer }
     // Behavioral reading of the hidden sentiment and familiarity. It changes decisions; it is never shown as a meter.
     public enum RelationshipTier { Wary, Neutral, Friendly, Loyal }
-    public enum FactSource { Stream, StreamerSaid, OtherViewerSaid, GameFact, Memory, Promise }
+    public enum FactSource { Stream, StreamerSaid, OtherViewerSaid, GameFact, Memory, Promise, ViewerDay, OwnLine }
 
     public readonly struct GroundedFact
     {
@@ -45,16 +45,22 @@ namespace GoLive.Viewers
         public string ReplyTarget { get; }
         // The streamer asked which game to play: an answer names a kind of game, never an unverifiable title.
         public bool GameChoice { get; }
-        // Lowercase text of everything the viewer may repeat: facts, quoted speech/chat and visible names.
+        // The streamer asked about the viewer themselves ("как дела", "что делал сегодня"): answered from YOUR DAY.
+        public bool Personal { get; }
+        // The streamer is replying to this viewer's last message: a turn in their short exchange.
+        public bool FollowUp { get; }
+        // Lowercase authority for specific streamer/game claims. Soft day stories and generated chat stay
+        // available to phrase a reply, but cannot establish streamer hardware, quantities or history.
         internal string GroundedText { get; }
 
         internal ViewerUtterancePlan(long intentId, string viewerId, UtteranceIntent intent, UtteranceIntent manner, UtteranceTarget target,
             string topic, List<GroundedFact> facts, string memoryId, string promiseId, RelationshipTier tone, string eventId,
-            ViewerLanguage language, string replyTarget, string groundedText, bool gameChoice)
+            ViewerLanguage language, string replyTarget, string groundedText, bool gameChoice, bool personal = false, bool followUp = false)
         {
             IntentId = intentId; ViewerId = viewerId; Intent = intent; Manner = manner; Target = target; Topic = topic;
             AllowedFacts = facts.AsReadOnly(); RelevantMemoryId = memoryId; RelevantPromiseId = promiseId; RelationshipTone = tone;
             CurrentEventId = eventId; Language = language; ReplyTarget = replyTarget; GroundedText = groundedText; GameChoice = gameChoice;
+            Personal = personal; FollowUp = followUp;
         }
     }
 
@@ -129,11 +135,24 @@ namespace GoLive.Viewers
             return situation.Plan = Build(intent, situation);
         }
 
+        // The producer and planner share this gate so irrelevant speech never receives a viewer's day,
+        // even before prompt assembly. Mirrors social priority: thanks, personal reply, then greeting.
+        internal static bool UsesDailyContext(ReactionIntent intent)
+        {
+            SpeechAnalysis speech = intent.Event.Kind == StreamEventKind.StreamerSpeech ? intent.Event.Speech : null;
+            if (speech == null) return false;
+            bool named = speech.MentionedViewerIds.Contains(intent.Viewer.ViewerId);
+            bool own = intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId;
+            if ((named || own) && speech.Has(SpeechCue.Thanks)) return false;
+            if (speech.Is(SpeechAct.PersonalQuestion) || intent.FollowUp && SpeechRelevance.ContinuesConversation(speech)) return true;
+            return !named && !speech.Has(SpeechCue.Farewell) && speech.Has(SpeechCue.Greeting) && intent.Conversational;
+        }
+
         private static ViewerUtterancePlan Build(ReactionIntent intent, ChatSituation situation)
         {
             StreamEvent e = intent.Event;
             RelationshipTier tier = situation.Tier;
-            UtteranceIntent chosen = Choose(intent, situation, out UtteranceTarget target, out string topic);
+            UtteranceIntent chosen = Choose(intent, situation, out UtteranceTarget target, out string topic, out bool personal);
             UtteranceIntent social = chosen;
             ViewerMemory memory = situation.Memories.Count > 0 ? situation.Memories[0] : null;
             ViewerPromiseContext promise = situation.Promise;
@@ -146,27 +165,42 @@ namespace GoLive.Viewers
                     : Subject(memory.CanonicalSubject) + ", in light of this moment";
             }
 
-            var facts = new List<GroundedFact>(6);
+            var facts = new List<GroundedFact>(8);
             AddFacts(facts, intent, situation);
+            // Soft personal present: only when the moment is about the viewer (asked about themselves, greeted in a small
+            // chat, in an exchange with the streamer), never pushed into ordinary reactions.
+            if (personal && situation.Day != null) facts.Add(new GroundedFact(FactSource.ViewerDay, situation.Day.Describe()));
+            if (intent.FollowUp && OwnLast(intent.Viewer.ViewerId, situation.RecentChat) is string own)
+                facts.Add(new GroundedFact(FactSource.OwnLine, ChatContextBuilder.Clean(own, ChatContextBuilder.QuoteLimit)));
             if (memory != null) facts.Add(new GroundedFact(FactSource.Memory, MemoryFact(memory, situation.GameMinutes)));
             if (promise != null) facts.Add(new GroundedFact(FactSource.Promise, PromiseFact(promise, situation.GameMinutes)));
 
             var grounded = new StringBuilder(512);
             grounded.Append(intent.Viewer.DisplayName).Append(' ').Append(e.SubjectName).Append(' ');
-            foreach (GroundedFact fact in facts) grounded.Append(fact.Label).Append(' ').Append(fact.Text).Append('\n');
-            foreach (StreamChatMessage line in situation.RecentChat) grounded.Append(line.SenderName).Append(' ').Append(line.Text).Append('\n');
+            foreach (GroundedFact fact in facts)
+                if (fact.Source != FactSource.ViewerDay && fact.Source != FactSource.OwnLine && fact.Source != FactSource.OtherViewerSaid)
+                    grounded.Append(fact.Label).Append(' ').Append(fact.Text).Append('\n');
+            foreach (StreamChatMessage line in situation.RecentChat) grounded.Append(line.SenderName).Append('\n');
             return new ViewerUtterancePlan(intent.Id, intent.Viewer.ViewerId, social, chosen, target, topic, facts, memory?.MemoryId, promise?.Id,
                 tier, e.Key, intent.Viewer.Persona.Language, e.Kind == StreamEventKind.ViewerReply ? e.SubjectName : null,
                 grounded.ToString().ToLowerInvariant(),
-                e.Speech != null && e.Speech.Has(SpeechCue.Question) && (e.Speech.Topics & StreamTopic.Games) != 0);
+                e.Speech != null && e.Speech.Has(SpeechCue.Question) && (e.Speech.Topics & StreamTopic.Games) != 0, personal, intent.FollowUp);
+        }
+
+        private static string OwnLast(string viewerId, IReadOnlyList<StreamChatMessage> chat)
+        {
+            for (int i = chat.Count - 1; i >= 0; i--)
+                if (chat[i].ViewerId == viewerId) return chat[i].Text;
+            return null;
         }
 
         // Candidate actions come from what actually happened; authored habits and the relationship reweight them.
-        private static UtteranceIntent Choose(ReactionIntent intent, ChatSituation situation, out UtteranceTarget target, out string topic)
+        private static UtteranceIntent Choose(ReactionIntent intent, ChatSituation situation, out UtteranceTarget target, out string topic, out bool personal)
         {
             StreamEvent e = intent.Event;
             var w = new float[IntentCount];
             target = UtteranceTarget.Streamer;
+            personal = UsesDailyContext(intent);
             bool own = intent.Direct && e.SubjectViewerId == intent.Viewer.ViewerId;
             string name = ChatContextBuilder.Clean(e.SubjectName ?? "someone", 32);
             switch (e.Kind)
@@ -177,7 +211,30 @@ namespace GoLive.Viewers
                     bool named = speech.MentionedViewerIds.Contains(intent.Viewer.ViewerId);
                     string phrase = " " + SpeechRelevance.Normalize(speech.Text) + " ";
                     bool setup = (speech.Topics & (StreamTopic.Hardware | StreamTopic.StreamSetup)) != 0;
+                    bool toYou = named || intent.FollowUp || speech.SingularAddress;
                     if ((named || own) && speech.Has(SpeechCue.Thanks)) { Set(w, UtteranceIntent.ThankResponse, 1); topic = "the streamer thanking you"; }
+                    // A question about the viewers themselves outranks the greeting it came with ("всем привет, как дела?").
+                    else if (speech.Is(SpeechAct.PersonalQuestion))
+                    {
+                        Set(w, UtteranceIntent.Answer, 5); Set(w, UtteranceIntent.Question, .4f);
+                        topic = toYou ? "the streamer asking you personally how you are or what you did" : "the streamer asking the chat how they are and what they did today";
+                    }
+                    else if (intent.FollowUp && SpeechRelevance.ContinuesConversation(speech) && speech.AsksForAnswer)
+                    {
+                        Set(w, UtteranceIntent.Answer, 5); Set(w, UtteranceIntent.Tease, .3f);
+                        topic = "the streamer's question in reply to your message";
+                    }
+                    else if (intent.FollowUp && SpeechRelevance.ContinuesConversation(speech))
+                    {
+                        Set(w, UtteranceIntent.React, 3); Set(w, UtteranceIntent.Answer, 1); Set(w, UtteranceIntent.Question, .6f);
+                        topic = "the streamer's reply to your message";
+                    }
+                    else if (speech.Is(SpeechAct.OpinionRequest) || speech.Is(SpeechAct.GameplayQuestion))
+                    {
+                        Set(w, UtteranceIntent.Answer, 4); Set(w, UtteranceIntent.Question, .5f); Set(w, UtteranceIntent.Tease, .3f);
+                        Set(w, UtteranceIntent.Disagree, .3f); if (setup) Set(w, UtteranceIntent.TechnicalComment, .8f);
+                        topic = speech.Is(SpeechAct.GameplayQuestion) ? "the streamer asking what to play" : "the streamer asking for your opinion";
+                    }
                     else if (named && speech.Has(SpeechCue.Question))
                     {
                         Set(w, UtteranceIntent.Answer, 3); Set(w, UtteranceIntent.Question, .6f); Set(w, UtteranceIntent.Tease, .5f);
@@ -189,7 +246,12 @@ namespace GoLive.Viewers
                         topic = "the streamer talking to you";
                     }
                     else if (speech.Has(SpeechCue.Farewell)) { Set(w, UtteranceIntent.Acknowledge, 3); Set(w, UtteranceIntent.React, .5f); topic = "the streamer saying goodbye"; }
-                    else if (speech.Has(SpeechCue.Greeting)) { Set(w, UtteranceIntent.Acknowledge, 3); Set(w, UtteranceIntent.React, .5f); topic = "the streamer's greeting"; }
+                    else if (speech.Has(SpeechCue.Greeting))
+                    {
+                        Set(w, UtteranceIntent.Acknowledge, 3); Set(w, UtteranceIntent.React, .5f);
+                        // Greeted in a small chat, a person greets back and may add a word about themselves.
+                        topic = "the streamer's greeting";
+                    }
                     else if (speech.Has(SpeechCue.Question))
                     {
                         Set(w, UtteranceIntent.Answer, 3); Set(w, UtteranceIntent.Question, .8f); Set(w, UtteranceIntent.Tease, .4f);

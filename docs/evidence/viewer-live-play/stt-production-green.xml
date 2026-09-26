@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="67" result="Passed" total="67" passed="67" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 16:00:04Z" duration="11.3122466">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1116" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 16:00:04Z" duration="11.312247" total="67" passed="67" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2268" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1116" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 16:00:04Z" duration="11.291609" total="67" passed="67" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36868" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2269" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1116" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 16:00:04Z" duration="11.276275" total="67" passed="67" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2270" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1116" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 16:00:04Z" duration="11.261567" total="67" passed="67" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1037" name="AudioPreparationContextTests" fullname="GoLive.Tests.AudioPreparationContextTests" classname="GoLive.Tests.AudioPreparationContextTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 15:59:53Z" duration="0.093147" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1041" name="DecoderContextIsAddedAfterResamplingToSixteenKilohertz" fullname="GoLive.Tests.AudioPreparationContextTests.DecoderContextIsAddedAfterResamplingToSixteenKilohertz" methodname="DecoderContextIsAddedAfterResamplingToSixteenKilohertz" classname="GoLive.Tests.AudioPreparationContextTests" runstate="Runnable" seed="1329344504" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 15:59:53Z" duration="0.027882" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1040" name="DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples" fullname="GoLive.Tests.AudioPreparationContextTests.DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples" classname="GoLive.Tests.AudioPreparationContextTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 15:59:53Z" duration="0.053697" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1038" name="DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples(8000)" fullname="GoLive.Tests.AudioPreparationContextTests.DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples(8000)" methodname="DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples" classname="GoLive.Tests.AudioPreparationContextTests" runstate="Runnable" seed="1842307164" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 15:59:53Z" duration="0.019904" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1039" name="DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples(32000)" fullname="GoLive.Tests.AudioPreparationContextTests.DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples(32000)" methodname="DecoderContextSurroundsTheWholePhraseWithoutChangingItsSamples" classname="GoLive.Tests.AudioPreparationContextTests" runstate="Runnable" seed="2079780692" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 15:59:53Z" duration="0.028911" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1853" name="SpeechModelComparison" fullname="GoLive.Tests.SpeechModelComparison" classname="GoLive.Tests.SpeechModelComparison" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 16:00:03Z" duration="10.099215" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1854" name="CompareModelsOnRecordedSpeech" fullname="GoLive.Tests.SpeechModelComparison.CompareModelsOnRecordedSpeech" methodname="CompareModelsOnRecordedSpeech" classname="GoLive.Tests.SpeechModelComparison" runstate="Explicit" seed="2036522474" result="Passed" start-time="2026-09-26 15:59:53Z" end-time="2026-09-26 16:00:03Z" duration="10.097045" asserts="0">
+              <properties>
+                <property name="_SKIPREASON" value="Development evidence: needs a recorded corpus and whisper models" />
+                <property name="Category" value="SpeechModelComparison" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Requesting default Whisper Context params...
+Default Whisper Context params generated!
+Requesting default Whisper params for strategy WHISPER_SAMPLING_BEAM_SEARCH...
+Default params generated!
+| Config | Load s | +RAM MiB | +GPU MiB | Mean latency s | p90 s | RTF | CER | WER | Content recall | Invented words | Act match |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| turbo-q5_0-ru-gpu-beam | 0.75 | 1944 | 1017 | 0.17 | 0.19 | 0.05 | 0.16 | 0.13 | 0.89 | 13 | 22/25 |
+
+| Config | Load s | +RAM MiB | +GPU MiB | Mean latency s | p90 s | RTF | CER | WER | Content recall | Invented words | Act match |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| turbo-q5_0-ru-gpu-beam | 0.75 | 1944 | 1017 | 0.17 | 0.19 | 0.05 | 0.16 | 0.13 | 0.89 | 13 | 22/25 |
+
+Evidence: E:\GO-Live-LivePlay-audit-20260926-continue\stt-production-final
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2181" name="VoiceEvidenceRegressionTests" fullname="GoLive.Tests.VoiceEvidenceRegressionTests" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-09-26 16:00:03Z" end-time="2026-09-26 16:00:04Z" duration="0.079204" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2205" name="DiagnosticListenerMayDisposeThePipelineDuringItsCallback" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.DiagnosticListenerMayDisposeThePipelineDuringItsCallback" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.030069" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2202" name="DiagnosticListenerMayDisposeThePipelineDuringItsCallback(&quot;captured&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.DiagnosticListenerMayDisposeThePipelineDuringItsCallback(&quot;captured&quot;)" methodname="DiagnosticListenerMayDisposeThePipelineDuringItsCallback" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="286882586" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.010207" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2203" name="DiagnosticListenerMayDisposeThePipelineDuringItsCallback(&quot;queued&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.DiagnosticListenerMayDisposeThePipelineDuringItsCallback(&quot;queued&quot;)" methodname="DiagnosticListenerMayDisposeThePipelineDuringItsCallback" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1925070795" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.011869" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2204" name="DiagnosticListenerMayDisposeThePipelineDuringItsCallback(&quot;finished&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.DiagnosticListenerMayDisposeThePipelineDuringItsCallback(&quot;finished&quot;)" methodname="DiagnosticListenerMayDisposeThePipelineDuringItsCallback" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="952636316" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.007088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2201" name="DiagnosticOutcomesIncludeEmptyFailedAndSuccessfulPhrasesExactlyOnce" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.DiagnosticOutcomesIncludeEmptyFailedAndSuccessfulPhrasesExactlyOnce" methodname="DiagnosticOutcomesIncludeEmptyFailedAndSuccessfulPhrasesExactlyOnce" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1625334193" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.008664" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2188" name="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.008265" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2183" name="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(-1,16000)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(-1,16000)" methodname="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1821341406" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.002986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2184" name="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(2,16000)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(2,16000)" methodname="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1095319268" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001109" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2185" name="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(1,0)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(1,0)" methodname="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1336865628" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000932" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2186" name="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(1,-1)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(1,-1)" methodname="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="25636936" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000928" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2187" name="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(1,int.MaxValue)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording(1,int.MaxValue)" methodname="WavInvalidWriteArgumentsDoNotOverwriteAnExistingRecording" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1946603471" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001082" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2199" name="WavMalformedInputHasABoundedInvalidDataFailure" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.021703" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2189" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;non-pcm&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;non-pcm&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1618884699" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.002588" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2190" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;zero-channels&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;zero-channels&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="967474237" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001530" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2191" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;negative-channels&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;negative-channels&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1380395956" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001441" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2192" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;zero-rate&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;zero-rate&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="348884562" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.005617" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2193" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;wrong-bits&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;wrong-bits&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1132493777" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001717" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2194" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;short-fmt&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;short-fmt&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="508756190" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001397" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2195" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;oversized-chunk&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;oversized-chunk&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="926751398" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001253" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2196" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;negative-chunk&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;negative-chunk&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="247429672" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001305" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2197" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;truncated-data&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;truncated-data&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="309532383" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001574" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2198" name="WavMalformedInputHasABoundedInvalidDataFailure(&quot;partial-frame&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavMalformedInputHasABoundedInvalidDataFailure(&quot;partial-frame&quot;)" methodname="WavMalformedInputHasABoundedInvalidDataFailure" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="314877043" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001413" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2182" name="WavRoundTripPreservesRateCountAndClampedSamples" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavRoundTripPreservesRateCountAndClampedSamples" methodname="WavRoundTripPreservesRateCountAndClampedSamples" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="882047772" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001941" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2200" name="WavSkipsOddPaddedChunksAndReadsFirstStereoChannel" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WavSkipsOddPaddedChunksAndReadsFirstStereoChannel" methodname="WavSkipsOddPaddedChunksAndReadsFirstStereoChannel" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="104513079" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001787" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2210" name="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.004003" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2206" name="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(null)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(null)" methodname="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1912121162" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001365" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2207" name="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(&quot;&quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(&quot;&quot;)" methodname="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="1446405100" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000489" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2208" name="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(&quot;  \t &quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(&quot;  \t &quot;)" methodname="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="873994795" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000465" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2209" name="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(&quot; Привет, парни! 🎮 &quot;)" fullname="GoLive.Tests.VoiceEvidenceRegressionTests.WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss(&quot; Привет, парни! 🎮 &quot;)" methodname="WhisperPromptUsesNullTerminatedUtf8WithoutAnsiLoss" classname="GoLive.Tests.VoiceEvidenceRegressionTests" runstate="Runnable" seed="856743570" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000731" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2211" name="VoiceInputConfigurationTests" fullname="GoLive.Tests.VoiceInputConfigurationTests" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.016425" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2221" name="NewVoiceBridgeUsesEvaluatedShippingModelAndGpuBeam" fullname="GoLive.Tests.VoiceInputConfigurationTests.NewVoiceBridgeUsesEvaluatedShippingModelAndGpuBeam" methodname="NewVoiceBridgeUsesEvaluatedShippingModelAndGpuBeam" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="1677798516" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.005104" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2220" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.009918" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2212" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,-1,Russian)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,-1,Russian)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="417566763" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001592" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2213" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,-1,English)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,-1,English)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="1941510522" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000553" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2214" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,99,Russian)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,99,Russian)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="1157898671" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000490" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2215" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,99,English)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,99,English)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="1180772897" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.003577" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2216" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,0,Auto)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,0,Auto)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="1434697665" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000505" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2217" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,0,Auto)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,0,Auto)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="1029872332" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000544" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2218" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,2,English)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(Russian,2,English)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="2054445259" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000418" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2219" name="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,1,Russian)" fullname="GoLive.Tests.VoiceInputConfigurationTests.StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice(English,1,Russian)" methodname="StartupForcesUiLanguageOnlyWithoutAValidPlayerChoice" classname="GoLive.Tests.VoiceInputConfigurationTests" runstate="Runnable" seed="1392910124" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000458" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2222" name="VoicePipelineTests" fullname="GoLive.Tests.VoicePipelineTests" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" testcasecount="29" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.885840" total="29" passed="29" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2238" name="DisabledRecognitionIgnoresAudioAndStartsNothing" fullname="GoLive.Tests.VoicePipelineTests.DisabledRecognitionIgnoresAudioAndStartsNothing" methodname="DisabledRecognitionIgnoresAudioAndStartsNothing" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1773685127" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.301283" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2243" name="DisablingReleasesTheModelWithoutBlocking" fullname="GoLive.Tests.VoicePipelineTests.DisablingReleasesTheModelWithoutBlocking" methodname="DisablingReleasesTheModelWithoutBlocking" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="2014029726" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.003089" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2240" name="EmptyAndWhitespaceRecognitionIsIgnored" fullname="GoLive.Tests.VoicePipelineTests.EmptyAndWhitespaceRecognitionIsIgnored" methodname="EmptyAndWhitespaceRecognitionIsIgnored" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="435828434" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.111631" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2241" name="EndListeningDiscardsAPartialPhraseAndKeepsTheModel" fullname="GoLive.Tests.VoicePipelineTests.EndListeningDiscardsAPartialPhraseAndKeepsTheModel" methodname="EndListeningDiscardsAPartialPhraseAndKeepsTheModel" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1352800147" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.204877" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2235" name="InferenceExceptionAffectsOnlyThatPhrase" fullname="GoLive.Tests.VoicePipelineTests.InferenceExceptionAffectsOnlyThatPhrase" methodname="InferenceExceptionAffectsOnlyThatPhrase" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1388196876" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.003565" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2230" name="InvalidDetectorSettingsAreRejected" fullname="GoLive.Tests.VoicePipelineTests.InvalidDetectorSettingsAreRejected" methodname="InvalidDetectorSettingsAreRejected" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="454789010" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000408" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2227" name="MaximumPhraseSplitsLongSpeechAndBuffersStayBounded" fullname="GoLive.Tests.VoicePipelineTests.MaximumPhraseSplitsLongSpeechAndBuffersStayBounded" methodname="MaximumPhraseSplitsLongSpeechAndBuffersStayBounded" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1027870340" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.014110" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2234" name="MissingNativeBackendIsReportedAsUnavailable" fullname="GoLive.Tests.VoicePipelineTests.MissingNativeBackendIsReportedAsUnavailable" methodname="MissingNativeBackendIsReportedAsUnavailable" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1407291276" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.002937" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2233" name="ModelMissingFailsOnceAndStopsAccepting" fullname="GoLive.Tests.VoicePipelineTests.ModelMissingFailsOnceAndStopsAccepting" methodname="ModelMissingFailsOnceAndStopsAccepting" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="269618177" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.002328" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2224" name="NoiseShorterThanTheOnsetIsIgnored" fullname="GoLive.Tests.VoicePipelineTests.NoiseShorterThanTheOnsetIsIgnored" methodname="NoiseShorterThanTheOnsetIsIgnored" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="189646592" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000670" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2236" name="QueueIsBoundedAndDropsTheOldestWaitingPhrase" fullname="GoLive.Tests.VoicePipelineTests.QueueIsBoundedAndDropsTheOldestWaitingPhrase" methodname="QueueIsBoundedAndDropsTheOldestWaitingPhrase" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="520973792" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.004411" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2252" name="RecognizedSpeechIsAPlainValueWithText" fullname="GoLive.Tests.VoicePipelineTests.RecognizedSpeechIsAPlainValueWithText" methodname="RecognizedSpeechIsAPlainValueWithText" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="2072028317" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000682" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2231" name="RecognizerInputIsResampledAndPaddedToTheBackendMinimum" fullname="GoLive.Tests.VoicePipelineTests.RecognizerInputIsResampledAndPaddedToTheBackendMinimum" methodname="RecognizerInputIsResampledAndPaddedToTheBackendMinimum" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1639411602" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.004451" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2229" name="ResetDiscardsAHalfSpokenPhrase" fullname="GoLive.Tests.VoicePipelineTests.ResetDiscardsAHalfSpokenPhrase" methodname="ResetDiscardsAHalfSpokenPhrase" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="22424944" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.014000" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2223" name="SilenceNeverOpensAPhrase" fullname="GoLive.Tests.VoicePipelineTests.SilenceNeverOpensAPhrase" methodname="SilenceNeverOpensAPhrase" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="398460510" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.006292" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2225" name="SilenceTimeoutClosesThePhraseWithPreRollAndShortTail" fullname="GoLive.Tests.VoicePipelineTests.SilenceTimeoutClosesThePhraseWithPreRollAndShortTail" methodname="SilenceTimeoutClosesThePhraseWithPreRollAndShortTail" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1755602759" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.001289" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2226" name="SpeechBelowTheMinimumPhraseIsDiscarded" fullname="GoLive.Tests.VoicePipelineTests.SpeechBelowTheMinimumPhraseIsDiscarded" methodname="SpeechBelowTheMinimumPhraseIsDiscarded" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1071832784" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000544" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2239" name="SpokenPhraseBecomesRecognizedSpeechOnceWithLanguageAndTimestamp" fullname="GoLive.Tests.VoicePipelineTests.SpokenPhraseBecomesRecognizedSpeechOnceWithLanguageAndTimestamp" methodname="SpokenPhraseBecomesRecognizedSpeechOnceWithLanguageAndTimestamp" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="607189263" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.110083" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2242" name="StatusReportsMicrophoneModelAndBackendFailuresWithoutThrowing" fullname="GoLive.Tests.VoicePipelineTests.StatusReportsMicrophoneModelAndBackendFailuresWithoutThrowing" methodname="StatusReportsMicrophoneModelAndBackendFailuresWithoutThrowing" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="580010804" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.008132" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2237" name="StopDuringInferenceNeverFreesTheModelUnderIt" fullname="GoLive.Tests.VoicePipelineTests.StopDuringInferenceNeverFreesTheModelUnderIt" methodname="StopDuringInferenceNeverFreesTheModelUnderIt" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1190414741" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.053278" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2228" name="SustainedBackgroundSoundStopsOpeningPhrasesButSpeechStillDoes" fullname="GoLive.Tests.VoicePipelineTests.SustainedBackgroundSoundStopsOpeningPhrasesButSpeechStillDoes" methodname="SustainedBackgroundSoundStopsOpeningPhrasesButSpeechStillDoes" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1494702074" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.009024" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2251" name="WhisperArtifactsAreNotSpeech" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.006297" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2244" name="WhisperArtifactsAreNotSpeech(&quot;[Bell]&quot;,&quot;&quot;)" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech(&quot;[Bell]&quot;,&quot;&quot;)" methodname="WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1035863881" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000328" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2245" name="WhisperArtifactsAreNotSpeech(&quot;(музыка)&quot;,&quot;&quot;)" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech(&quot;(музыка)&quot;,&quot;&quot;)" methodname="WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1602577379" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000083" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2246" name="WhisperArtifactsAreNotSpeech(&quot;♪ ♪&quot;,&quot;&quot;)" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech(&quot;♪ ♪&quot;,&quot;&quot;)" methodname="WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1257519112" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000070" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2247" name="WhisperArtifactsAreNotSpeech(&quot; Редактор субтитров А.Синецкая Корректор А.Сухиашвили&quot;,&quot;&quot;)" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech(&quot; Редактор субтитров А.Синецкая Корректор А.Сухиашвили&quot;,&quot;&quot;)" methodname="WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1349726300" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000073" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2248" name="WhisperArtifactsAreNotSpeech(&quot;Subtitles by the Amara.org community&quot;,&quot;&quot;)" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech(&quot;Subtitles by the Amara.org community&quot;,&quot;&quot;)" methodname="WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="128766706" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000039" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2249" name="WhisperArtifactsAreNotSpeech(&quot; Привет, чат! &quot;,&quot;Привет, чат!&quot;)" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech(&quot; Привет, чат! &quot;,&quot;Привет, чат!&quot;)" methodname="WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1929720129" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000035" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2250" name="WhisperArtifactsAreNotSpeech(&quot;Hello [laughs] chat,  let's go&quot;,&quot;Hello chat, let's go&quot;)" fullname="GoLive.Tests.VoicePipelineTests.WhisperArtifactsAreNotSpeech(&quot;Hello [laughs] chat,  let's go&quot;,&quot;Hello chat, let's go&quot;)" methodname="WhisperArtifactsAreNotSpeech" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1175492418" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.000031" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2232" name="WorkerRecognizesOffTheCallingThreadAndDisposesTheBackendThere" fullname="GoLive.Tests.VoicePipelineTests.WorkerRecognizesOffTheCallingThreadAndDisposesTheBackendThere" methodname="WorkerRecognizesOffTheCallingThreadAndDisposesTheBackendThere" classname="GoLive.Tests.VoicePipelineTests" runstate="Runnable" seed="1745012256" result="Passed" start-time="2026-09-26 16:00:04Z" end-time="2026-09-26 16:00:04Z" duration="0.008830" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

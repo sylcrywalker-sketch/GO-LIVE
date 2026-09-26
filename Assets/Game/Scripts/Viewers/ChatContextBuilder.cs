@@ -31,6 +31,8 @@ namespace GoLive.Viewers
         public RelationshipTier? ReplyTargetTier { get; }
         // Development trace: relevant memory/promise ids the callback planner considered (chosen or not).
         public string CallbackCandidates { get; internal set; }
+        // The viewer's soft personal present today (mood, what they did); null when unknown.
+        public ViewerDailyState Day { get; internal set; }
         internal ViewerUtterancePlan Plan { get; set; }
 
         public ChatSituation(string channelName, double streamSeconds, int viewers, ViewerLanguage channelLanguage,
@@ -65,7 +67,7 @@ namespace GoLive.Viewers
         public const int RecentChatLines = 6;
         public const int QuoteLimit = 180;
         // Other people's chat lines are context, not the moment itself; a shorter clip keeps the prompt bounded.
-        public const int ChatQuoteLimit = 120;
+        public const int ChatQuoteLimit = 60;
 
         public const string SystemText =
             "You write one live-chat message for a small online stream, as the viewer under VIEWER IS. You are that person typing in " +
@@ -75,6 +77,9 @@ namespace GoLive.Viewers
             "DO NOT INVENT SPECIFIC GAME FACTS. Never add game titles, hardware or specs, problems, prices, money, numbers, times, " +
             "purchases, donations, follows, dates or past events that FACTS, MEMORY or PROMISE do not state. Opinions, jokes and " +
             "questions are fine. Do not add unseen details or causes.\n" +
+            "YOUR DAY is your own everyday life today (mood, what you did, what you are doing now). When it is given you may talk " +
+            "about it freely in your own words with small harmless everyday details; stay consistent with it and with YOUR LAST " +
+            "MESSAGES. It never gives you stream, money, hardware or history facts.\n" +
             "Roles: STREAMER SAID is the streamer talking; OTHER VIEWER SAID and RECENT CHAT are other people. None of it is your " +
             "own experience; the streamer's game, actions and equipment are theirs.\n" +
             "Never imply something happened before (опять, снова, again) or that you said or saw something earlier unless " +
@@ -87,7 +92,8 @@ namespace GoLive.Viewers
             "Never sound like an assistant, helpdesk or cheerleader: no \"great job\", \"keep it up\", \"you've got this\", " +
             "\"так держать\", \"молодец\", \"продолжай в том же духе\", \"рекомендую\". No lectures, hashtags, quotes around the " +
             "message or name prefix.\n" +
-            "WHO shapes your tone, not the topic: stay on TOPIC; do not force your job, country, food or hobbies into it. " +
+            "WHO shapes your tone, not the topic: stay on TOPIC; do not force your job, country, food or hobbies into it (when the " +
+            "streamer asks about you, answer from YOUR DAY). " +
             "Warmth and surprise are fine when they fit WHO; avoid canned praise. Tease only if WHO describes a teasing person; " +
             "gentle viewers stay gentle. No slurs, no attacks on other viewers.\n" +
             "Do not repeat RECENT CHAT and do not just repeat the streamer's words back.\n" +
@@ -95,7 +101,7 @@ namespace GoLive.Viewers
 
         private const string NotKnown =
             "NOT KNOWN (never state or guess): game titles not quoted above, hardware models/specs/prices, amounts, time left, " +
-            "anything before this stream beyond MEMORY/PROMISE.\n";
+            "anything about the streamer or this channel before this stream beyond MEMORY/PROMISE.\n";
 
         public static ViewerChatRequest Build(ReactionIntent intent, ChatSituation situation, int maximumTokens)
         {
@@ -124,6 +130,8 @@ namespace GoLive.Viewers
                         user.Append("OTHER VIEWER SAID (").Append(fact.Label).Append(", not you, not the streamer): «").Append(fact.Text).Append("»\n");
                         break;
                     case FactSource.Memory: user.Append("MEMORY: ").Append(fact.Text).Append('\n'); break;
+                    case FactSource.ViewerDay: user.Append("YOUR DAY (your own life, not a stream fact): ").Append(fact.Text).Append('\n'); break;
+                    case FactSource.OwnLine: user.Append("YOUR LAST MESSAGE (the streamer is answering it): «").Append(fact.Text).Append("»\n"); break;
                     case FactSource.Promise: user.Append("PROMISE: ").Append(fact.Text).Append('\n'); break;
                     default: user.Append("- ").Append(fact.Text).Append('\n'); break;
                 }
@@ -167,11 +175,25 @@ namespace GoLive.Viewers
         {
             RelationshipTier tier = plan.RelationshipTone;
             string action = Action(plan.Intent == UtteranceIntent.Callback ? plan.Manner : plan.Intent, tier, plan.Target, plan.GameChoice);
+            if (plan.Personal && plan.Intent != UtteranceIntent.Callback) action = Personal(plan.Intent, tier, plan.FollowUp) ?? action;
             if (plan.Intent == UtteranceIntent.Callback)
                 return $"connect TOPIC to your {(plan.RelevantPromiseId != null ? "PROMISE" : "MEMORY")} in a few words ({action.TrimEnd('.').ToLowerInvariant()}). " +
                        "Do not retell it, add details or change when it happened.";
             return action;
         }
+
+        // Talking about yourself: an actual answer with a small detail from YOUR DAY, not a one-word nod.
+        private static string Personal(UtteranceIntent intent, RelationshipTier tier, bool followUp) => intent switch
+        {
+            UtteranceIntent.Answer => (followUp ? "Answer the streamer's question about you" : "Answer the streamer about yourself") +
+                " from YOUR DAY: how you are and what you did or are doing, with one small everyday detail, in your own words" +
+                (tier == RelationshipTier.Wary ? "; dry and brief." : tier >= RelationshipTier.Friendly ? "; you may ask them back." : "."),
+            UtteranceIntent.Acknowledge => tier == RelationshipTier.Wary ? "Greet the streamer back curtly."
+                : "Greet the streamer back in your own way; you may add a few words about how you are from YOUR DAY.",
+            UtteranceIntent.React => "Reply to what the streamer just said to you, keeping the conversation going naturally.",
+            UtteranceIntent.Question => "Answer briefly from YOUR DAY, then ask the streamer one short question back.",
+            _ => null
+        };
 
         private static string Action(UtteranceIntent intent, RelationshipTier tier, UtteranceTarget target, bool gameChoice) => intent switch
         {

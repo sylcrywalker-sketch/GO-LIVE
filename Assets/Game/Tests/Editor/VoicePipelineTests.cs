@@ -104,9 +104,9 @@ namespace GoLive.Tests
         public void RecognizerInputIsResampledAndPaddedToTheBackendMinimum()
         {
             float[] resampled = AudioPreparation.ToRecognizerInput(new float[48000 * 2], 48000);
-            Assert.That(resampled.Length, Is.EqualTo(32000));
+            Assert.That(resampled.Length, Is.EqualTo(32000 + 2 * AudioPreparation.DecoderContextSamples));
             float[] padded = AudioPreparation.ToRecognizerInput(new float[8000], 16000);
-            Assert.That(padded.Length, Is.EqualTo(SpeechRecognitionWorker.MinimumRecognitionSamples));
+            Assert.That(padded.Length, Is.EqualTo(SpeechRecognitionWorker.MinimumRecognitionSamples + 2 * AudioPreparation.DecoderContextSamples));
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace GoLive.Tests
             Assert.That(response.Error, Is.Null);
             Assert.That(response.Result.Text, Is.EqualTo("phrase 1"));
             Assert.That(fake.RecognizeThread, Is.Not.EqualTo(Thread.CurrentThread.ManagedThreadId), "inference never runs on the caller (main) thread");
-            Assert.That(fake.LastSamples, Is.EqualTo(24000), "a 1.5 s phrase reaches the backend unpadded at 16 kHz");
+            Assert.That(fake.LastSamples, Is.EqualTo(24000 + 2 * AudioPreparation.DecoderContextSamples), "a 1.5 s phrase reaches the backend at 16 kHz with decoder context on both sides");
             Assert.That(worker.Stop(2000), Is.True);
             Assert.That(worker.State, Is.EqualTo(RecognitionWorkerState.Stopped));
             Assert.That(fake.Disposals, Is.EqualTo(1));

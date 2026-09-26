@@ -34,8 +34,9 @@ namespace GoLive.Tests
             Assert.That(viewers.Director.Health, Is.EqualTo(ChatModelHealth.Available), "start the local model first (GO! LIVE/Viewer Core/Start Local Model)");
             yield return OpenLinkedStreamly();
             var view = One<StreamlyView>();
+            var voiceBridge = One<VoiceInputBehaviour>();
+            voiceBridge.enabled = false; // This replay substitutes recorded input before the broadcast requests the device.
             yield return StartBroadcast(view);
-            One<VoiceInputBehaviour>().enabled = false;
             // The simulation decides the audience; let it run until a few people watch (nobody reacts to an empty room).
             for (int minute = 0; minute < 60 && _runtime.State.Stream.Audience.CurrentViewers < 3; minute++)
             {
@@ -44,16 +45,15 @@ namespace GoLive.Tests
             }
             yield return PlayModeWait.Frames(5);
 
-            var activity = AssetDatabase.LoadAssetAtPath<VoiceActivityConfig>(StreamRuntimeConfigTests.VoiceActivityPath);
-            string[] models = { Path.Combine(Application.streamingAssetsPath, "Whisper/ggml-base.bin"), Path.Combine(Application.streamingAssetsPath, "Whisper/ggml-tiny.bin") };
-            using var recognition = new VoiceRecognition(activity.Settings, () => new WhisperSpeechRecognizer(models, 4, false));
+            // Scene ownership includes the evaluated model, decoding and preparation settings.
+            // DesktopRuntimeBehaviour already forwards this instance's recognized speech to StreamSpeechFeed.
+            VoiceRecognition recognition = voiceBridge.Recognition;
             recognition.SetEnabled(true);
             recognition.Language = SpeechLanguage.Russian;
             var heard = new List<RecognizedSpeech>();
             recognition.Recognized += speech =>
             {
                 heard.Add(speech);
-                _runtime.State.SpeechFeed.Offer(speech);
             };
             recognition.BeginListening(16000);
             yield return PlayModeWait.Until(() => { recognition.Update(); return recognition.Status == VoiceStatus.Listening; }, "the speech model to load", 60);

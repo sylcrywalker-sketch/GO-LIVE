@@ -17,6 +17,8 @@ namespace GoLive.Viewers
             ["greeting"] = (new[] { "привет", "прив", "хай", "здарова", "о, стрим" }, new[] { "hi", "yo", "hey", "o/" }),
             ["direct"] = (new[] { "а?", "я тут", "тут я", "чего", "да-да, тут" }, new[] { "yeah?", "here", "what", "yo im here" }),
             ["question"] = (new[] { "хз", "не знаю даже", "сложно сказать", "без понятия", "а сам как думаешь" }, new[] { "idk", "hard to say", "no idea tbh", "hmm" }),
+            ["personal"] = (new[] { "норм, а ты как?", "да потихоньку, отдыхаю", "нормально, день длинный был", "всё ок, вот стрим смотрю", "живой, а у тебя как?" },
+                new[] { "good, you?", "pretty chill, just watching", "long day but ok", "doing alright, hbu" }),
             ["emotional"] = (new[] { "ахах", "бывает", "спокойно", "ну ты чего", "держись" }, new[] { "lol", "happens", "rip", "oof" }),
             ["speech"] = (new[] { "ахах", "ну да", "лол", "понял", "+" }, new[] { "lol", "true", "fair", "ok" }),
             ["thanks"] = (new[] { "да не за что", "пожалуйста)", "на здоровье" }, new[] { "np", "anytime", "youre welcome" }),
@@ -63,9 +65,11 @@ namespace GoLive.Viewers
                 case StreamEventKind.ViewerJoined: return own ? "greeting" : null;
                 case StreamEventKind.StreamerSpeech:
                     SpeechAnalysis speech = e.Speech;
-                    if (speech.MentionedViewerIds.Contains(intent.Viewer.ViewerId)) return "direct";
                     if (own) return "thanks";
                     if (speech.Has(SpeechCue.Farewell)) return "farewell";
+                    // Asked about themselves, a person answers something, never "hi" or "хз".
+                    if (speech.Is(SpeechAct.PersonalQuestion) || intent.FollowUp && SpeechRelevance.ContinuesConversation(speech)) return "personal";
+                    if (speech.MentionedViewerIds.Contains(intent.Viewer.ViewerId)) return "direct";
                     if (speech.Has(SpeechCue.Greeting)) return "greeting";
                     if (speech.Has(SpeechCue.Question)) return "question";
                     if (speech.Has(SpeechCue.Emotional)) return "emotional";

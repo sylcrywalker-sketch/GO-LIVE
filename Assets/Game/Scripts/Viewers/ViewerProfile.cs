@@ -91,6 +91,9 @@ namespace GoLive.Viewers
         [Range(0, 1)] public float SocialTendency = .3f;
         // Where the relationship starts, -100..100 (a grumpy viewer may start below zero).
         [Range(-100, 100)] public int InitialSentiment;
+        // Harmless ways this person's day may have gone; one is chosen per game day so they can answer "как дела?".
+        // Empty = ordinary everyday options by interests.
+        public DailyActivity[] DailyLife = Array.Empty<DailyActivity>();
 
         private static readonly StreamEventKind[] AffinityOrder =
         {
@@ -122,6 +125,15 @@ namespace GoLive.Viewers
                         return $"{Id}: preferred social actions are invalid.";
                 foreach (UtteranceIntent intent in Habits.Avoids ?? Array.Empty<UtteranceIntent>())
                     if (!Enum.IsDefined(typeof(UtteranceIntent), intent)) return $"{Id}: avoided social actions are invalid.";
+            }
+            if (DailyLife != null)
+            {
+                var days = new HashSet<string>(StringComparer.Ordinal);
+                foreach (DailyActivity day in DailyLife)
+                    if (day == null || string.IsNullOrWhiteSpace(day.Id) || !days.Add(day.Id) || string.IsNullOrWhiteSpace(day.Today) ||
+                        string.IsNullOrWhiteSpace(day.Now) || !Enum.IsDefined(typeof(DayActivityKind), day.Kind) ||
+                        !Enum.IsDefined(typeof(ViewerMood), day.Mood) || !Enum.IsDefined(typeof(ViewerEnergy), day.Energy))
+                        return $"{Id}: daily life options need unique ids, today/now text and valid kinds.";
             }
             return null;
         }

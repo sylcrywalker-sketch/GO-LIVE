@@ -28,6 +28,9 @@ namespace GoLive.Viewers
         public int MaximumQueueDepth { get; internal set; }
         public IReadOnlyList<double> Latencies => _latencies;
         public List<string> RejectedSamples { get; } = new();
+        // Per broadcast: the warm-up request's latency and the first real generation's (NaN until measured).
+        public double WarmupSeconds { get; internal set; } = double.NaN;
+        public double FirstSeconds { get; internal set; } = double.NaN;
 
         internal void AddLatency(double seconds)
         {
@@ -68,6 +71,8 @@ namespace GoLive.Viewers
             public double Latency;
             public int PromptCharacters;
             public ChatSituation Situation;
+            public double SubmittedAt;
+            public double QueueSeconds;
         }
 
         private readonly IViewerLanguageModel _model;
@@ -76,9 +81,15 @@ namespace GoLive.Viewers
         private readonly ReactionLog _log;
         private readonly Func<double> _realClock;
         private readonly List<Job> _jobs = new();
+        // Removed reactions release their state immediately, but their adapter calls still own workers until done.
+        private readonly List<Task<LanguageModelResult>> _retired = new();
         private AudienceRandom _random = new(1);
         private int _failures;
         private double _backoffUntil = double.NegativeInfinity;
+        private Task<LanguageModelResult> _warmup;
+        private CancellationTokenSource _warmupCancellation;
+        private bool _warmupRequested;
+        private bool _warmupWanted;
 
         public ChatDirectorStats Stats { get; } = new();
         // Runtime switch (developer toggle, outage simulation). The authored Enabled flag is the default.
@@ -107,6 +118,27 @@ namespace GoLive.Viewers
         {
             CancelAll("broadcast restarted");
             _random = random ?? throw new ArgumentNullException(nameof(random));
+            _warmupRequested = false;
+            Stats.WarmupSeconds = Stats.FirstSeconds = double.NaN;
+        }
+
+        // One tiny request with the real system text: pages the model back into memory and caches the shared prompt
+        // prefix before the first viewer needs an answer. Its result is never shown and never counts as a failure.
+        public void Warmup()
+        {
+            if (Health != ChatModelHealth.Available || _warmupRequested) return;
+            _warmupWanted = true;
+            StartWarmup();
+        }
+
+        private void StartWarmup()
+        {
+            if (!_warmupWanted || _warmup != null || Health != ChatModelHealth.Available || RunningGenerations() >= _settings.MaximumConcurrent) return;
+            var request = new ViewerChatRequest(ChatContextBuilder.SystemText, "Warm-up before the stream. Reply {\"text\": \"ok\"}.", 8);
+            _warmupCancellation = new CancellationTokenSource();
+            _warmupRequested = true;
+            _warmupWanted = false;
+            _warmup = _model.GenerateAsync(request, _warmupCancellation.Token);
         }
 
         public void Submit(ReactionIntent intent)
@@ -117,9 +149,10 @@ namespace GoLive.Viewers
             {
                 Stats.DroppedQueueFull++;
                 _log.Add(ReactionLog.ForIntent(intent, ReactionOutcome.Dropped, "queue full"));
+                Finished?.Invoke(intent, null, null);
                 return;
             }
-            _jobs.Add(new Job { Intent = intent });
+            _jobs.Add(new Job { Intent = intent, SubmittedAt = _realClock() });
             Stats.MaximumQueueDepth = Math.Max(Stats.MaximumQueueDepth, _jobs.Count);
         }
 
@@ -130,16 +163,18 @@ namespace GoLive.Viewers
         {
             DropDeparted(roster);
             Poll();
+            StartWarmup();
             StartGenerations(now, situation);
             Post(now, roster, broadcastId);
         }
 
         public void CancelAll(string reason)
         {
+            _warmupWanted = false;
+            _warmupCancellation?.Cancel();
             foreach (Job job in _jobs)
             {
-                job.Cancellation?.Cancel();
-                job.Cancellation?.Dispose();
+                Retire(job);
                 _log.Add(ReactionLog.ForIntent(job.Intent, ReactionOutcome.Dropped, reason));
                 Finished?.Invoke(job.Intent, job.Situation, null);
             }
@@ -149,11 +184,29 @@ namespace GoLive.Viewers
         public void Dispose()
         {
             CancelAll("disposed");
+            _warmupCancellation?.Dispose();
+            _warmupCancellation = null;
+            _warmup = null;
             _model?.Dispose();
+            _retired.Clear();
         }
 
         private void Poll()
         {
+            for (int i = _retired.Count - 1; i >= 0; i--)
+                if (_retired[i].IsCompleted)
+                {
+                    if (_retired[i].IsFaulted) _ = _retired[i].Exception;
+                    _retired.RemoveAt(i);
+                }
+            if (_warmup != null && _warmup.IsCompleted)
+            {
+                if (!_warmupCancellation.IsCancellationRequested)
+                    Stats.WarmupSeconds = _warmup.Status == TaskStatus.RanToCompletion ? _warmup.Result.LatencySeconds : double.NaN;
+                _warmup = null;
+                _warmupCancellation.Dispose();
+                _warmupCancellation = null;
+            }
             foreach (Job job in _jobs)
             {
                 if (job.Resolved || job.Task == null || !job.Task.IsCompleted) continue;
@@ -164,6 +217,7 @@ namespace GoLive.Viewers
                 job.Cancellation = null;
                 job.Latency = result.LatencySeconds;
                 Stats.AddLatency(result.LatencySeconds);
+                if (double.IsNaN(Stats.FirstSeconds)) Stats.FirstSeconds = result.LatencySeconds;
                 switch (result.Status)
                 {
                     case LanguageModelStatus.Ok:
@@ -194,9 +248,7 @@ namespace GoLive.Viewers
 
         private void StartGenerations(double now, Func<ReactionIntent, ChatSituation> situation)
         {
-            int running = 0;
-            foreach (Job job in _jobs)
-                if (!job.Resolved && job.Task != null) running++;
+            int running = RunningGenerations();
             _jobs.Sort((a, b) => a.Intent.DueSeconds.CompareTo(b.Intent.DueSeconds));
             foreach (Job job in _jobs)
             {
@@ -213,9 +265,21 @@ namespace GoLive.Viewers
                 ViewerChatRequest request = ChatContextBuilder.Build(job.Intent, job.Situation, _settings.MaximumTokens);
                 job.PromptCharacters = request.Characters;
                 job.Cancellation = new CancellationTokenSource();
+                job.QueueSeconds = _realClock() - job.SubmittedAt;
                 job.Task = _model.GenerateAsync(request, job.Cancellation.Token);
                 running++;
             }
+        }
+
+        private int RunningGenerations()
+        {
+            // A cancelled request retains its slot until the adapter actually completes it. This prevents a
+            // slow cancellation at a broadcast/load boundary from overlapping a new request on one worker.
+            int running = _warmup != null && !_warmup.IsCompleted ? 1 : 0;
+            foreach (Task<LanguageModelResult> task in _retired) if (!task.IsCompleted) running++;
+            foreach (Job job in _jobs)
+                if (!job.Resolved && job.Task != null && !job.Task.IsCompleted) running++;
+            return running;
         }
 
         private void Post(double now, AudienceRoster roster, string broadcastId)
@@ -307,15 +371,23 @@ namespace GoLive.Viewers
         private ReactionLogEntry Remove(int index, Job job, ReactionOutcome outcome, string reason)
         {
             _jobs.RemoveAt(index);
-            job.Cancellation?.Dispose();
-            job.Cancellation = null;
+            Retire(job);
             Finished?.Invoke(job.Intent, job.Situation, outcome == ReactionOutcome.Shown ? job.Text : null);
             ReactionLogEntry entry = ReactionLog.ForIntent(job.Intent, outcome, reason);
             entry.Source = job.Source;
             entry.LatencySeconds = job.Latency;
+            entry.QueueSeconds = job.QueueSeconds;
             entry.PromptCharacters = job.PromptCharacters;
             ReactionLog.Context(entry, job.Situation);
             return _log.Add(entry);
+        }
+
+        private void Retire(Job job)
+        {
+            job.Cancellation?.Cancel();
+            job.Cancellation?.Dispose();
+            job.Cancellation = null;
+            if (job.Task != null && !job.Task.IsCompleted) _retired.Add(job.Task);
         }
 
         // A full queue gives way to a more important reaction: the least important waiting (not generating) one leaves.

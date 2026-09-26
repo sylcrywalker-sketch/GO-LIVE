@@ -1,0 +1,9 @@
+# Second 75-second recorded replay — failed follow-up, retained
+
+Repeated after the four reproduced review repairs, with the same unchanged microphone slices, actual GL scene and actual local adapters. No audience/persona/day/probability injection. This remains a recorded replay, not fresh microphone input.
+
+The opening returned **“Всем привет парни, как дела? Как настроение? Что сегодня делали?”**, classified PersonalQuestion at two viewers. Natural selection chose `anon.1.pixel_play`, Russian persona. Day `gen.bored`: uneventful day, bored mood, normal energy, looking for something to watch. The model wrote and the game published **“все на ура! сижу дома с чаем и гадаю что потупить”**. The reply supplies harmless personal content with no hard streamer facts; its upbeat introduction is looser than the assigned bored mood. It is not a bare greeting. An earlier “привет!” belongs to the independent stream-start event, not the spoken personal question.
+
+“Так, секунду.” was classified Filler and caused no response. “Жесть. Устал, наверное.” was recognized intact as Statement with contextual continuation eligibility, but selection again resulted in silence. The explicit same-viewer-follow-up assertion failed. A further diagnostic replay records thread age, turns and presence so repeated silence can be distinguished from a broken runtime state; response probability is unchanged.
+
+Unity: 1 explicit test, 0 passed, 1 failed, 83.007 s including setup/teardown. All raw prompts, plans, outputs and timestamps are retained in `raw.jsonl`; no post-failure screenshot was captured. Pre-audio stream-start trace timestamps in these first two attempts precede initialization of the audio-relative clock and must not be interpreted as replay-relative latency. Speech and its subsequent publication timestamps use the initialized clock.

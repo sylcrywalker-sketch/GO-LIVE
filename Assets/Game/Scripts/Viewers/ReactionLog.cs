@@ -29,6 +29,8 @@ namespace GoLive.Viewers
         public long IntentId { get; internal set; }
         public ReactionSource Source { get; internal set; }
         public double LatencySeconds { get; internal set; }
+        // Real seconds the reaction waited for a free generation slot before its request started.
+        public double QueueSeconds { get; internal set; }
         public int PromptCharacters { get; internal set; }
         public string Text { get; internal set; }
         public string CandidateIds { get; internal set; }
@@ -98,7 +100,8 @@ namespace GoLive.Viewers
             ViewerUtterancePlan plan = situation.Plan;
             if (plan != null)
                 entry.Plan = plan.Intent + (plan.Intent == UtteranceIntent.Callback ? "(" + plan.Manner + ")" : "") + " -> " + plan.Target +
-                    "; " + plan.RelationshipTone + "; " + plan.Topic;
+                    "; " + plan.RelationshipTone + "; " + plan.Topic + (plan.Personal && situation.Day != null ? "; day: " + situation.Day.Activity.Id +
+                    " " + situation.Day.Mood : "") + (plan.FollowUp ? "; follow-up" : "");
         }
     }
 }

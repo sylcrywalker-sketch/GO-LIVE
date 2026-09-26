@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using GoLive.Editor.Voice;
 using GoLive.Viewers;
+using GoLive.Voice;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -10,7 +12,9 @@ using UnityEngine.Rendering;
 namespace GoLive.Editor.Viewers
 {
     // Development-only acceptance recorder for a human LIVE session: every reaction decision and published chat line
-    // (the Reaction Monitor keeps only the last 80), plus Game-view frame times and hitches. Writes JSONL under Logs/.
+    // (the Reaction Monitor keeps only the last 80), every recognized phrase with its timing (and, when asked, the
+    // microphone audio: each phrase and the whole capture, kept locally next to the log), plus Game-view frame times and
+    // hitches. Writes JSONL under Logs/.
     public static class ViewerSessionRecorder
     {
         private const double HitchMilliseconds = 50;
@@ -25,10 +29,18 @@ namespace GoLive.Editor.Viewers
             public float relevance;
             public long intentId;
             public int frame, promptCharacters;
+            public double queueSeconds, audioSeconds, voicedSeconds, recognitionSeconds, endToTextSeconds, confidence;
+            public long sequence;
+            public string language, audioFile, error;
+            public bool truncated;
         }
 
         private static StreamWriter _writer;
         private static ViewerCore _viewers;
+        private static VoiceRecognition _voice;
+        private static string _audioFolder;
+        private static readonly List<float> _capture = new();
+        private static int _captureRate;
         private static double _started;
         private static int _lastFrame = -1;
         private static readonly List<double> _frames = new();
@@ -56,6 +68,17 @@ namespace GoLive.Editor.Viewers
                 _viewers.Log.Added -= OnReaction;
                 _viewers.Chat.Added -= OnChat;
             }
+            if (_voice != null)
+            {
+                _voice.PhraseFinished -= OnPhrase;
+                _voice.PhraseQueued -= OnQueued;
+                _voice.Captured -= OnCaptured;
+            }
+            if (_audioFolder != null && _capture.Count > 0)
+                WavFile.Write(System.IO.Path.Combine(_audioFolder, "capture.wav"), _capture.ToArray(), _capture.Count, _captureRate);
+            _capture.Clear();
+            _voice = null;
+            _audioFolder = null;
             RenderPipelineManager.endContextRendering -= OnRendered;
             EditorApplication.playModeStateChanged -= OnPlayMode;
             _writer.Dispose();
@@ -64,19 +87,33 @@ namespace GoLive.Editor.Viewers
             Debug.Log("Viewer session recording saved: " + Path);
         }
 
-        public static void Start(ViewerCore viewers)
+        // voice: the real recognition pipeline to trace (null = chat only); saveAudio also keeps the microphone audio locally.
+        public static void Start(ViewerCore viewers, VoiceRecognition voice = null, bool saveAudio = false)
         {
             if (viewers == null) throw new ArgumentNullException(nameof(viewers));
             Stop();
             string directory = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Logs", "ViewerSessions");
             Directory.CreateDirectory(directory);
-            Path = System.IO.Path.Combine(directory, "session-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".jsonl");
+            string name = "session-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
+            Path = System.IO.Path.Combine(directory, name + ".jsonl");
             _writer = new StreamWriter(Path, false, new UTF8Encoding(false)) { AutoFlush = true };
             _viewers = viewers;
             _started = Time.realtimeSinceStartupAsDouble;
             _frames.Clear(); _hitches = _reactions = _shown = 0; _lastFrame = -1;
             viewers.Log.Added += OnReaction;
             viewers.Chat.Added += OnChat;
+            _voice = voice;
+            if (voice != null)
+            {
+                voice.PhraseFinished += OnPhrase;
+                if (saveAudio)
+                {
+                    _audioFolder = System.IO.Path.Combine(directory, name + "-audio");
+                    Directory.CreateDirectory(_audioFolder);
+                    voice.PhraseQueued += OnQueued;
+                    voice.Captured += OnCaptured;
+                }
+            }
             RenderPipelineManager.endContextRendering += OnRendered;
             EditorApplication.playModeStateChanged += OnPlayMode;
             Write(new Row { type = "start", text = "Viewer session recording started" });
@@ -96,10 +133,29 @@ namespace GoLive.Editor.Viewers
                 type = "reaction", streamSeconds = entry.StreamSeconds, eventKey = entry.EventKey, eventKind = entry.EventKind.ToString(),
                 speech = entry.Speech, relevance = entry.Relevance, outcome = entry.Outcome.ToString(), reason = entry.Reason,
                 viewerId = entry.ViewerId, viewerName = entry.ViewerName, intentId = entry.IntentId, source = entry.Source.ToString(),
-                latencySeconds = entry.LatencySeconds, promptCharacters = entry.PromptCharacters, text = entry.Text, plan = entry.Plan,
+                latencySeconds = entry.LatencySeconds, queueSeconds = entry.QueueSeconds, promptCharacters = entry.PromptCharacters, text = entry.Text, plan = entry.Plan,
                 relationship = entry.Relationship, memoryIds = entry.MemoryIds, promiseId = entry.PromiseId,
                 callbackCandidates = entry.CallbackCandidates, candidateIds = entry.CandidateIds
             });
+        }
+
+        private static void OnPhrase(PhraseDiagnostics phrase) => Write(new Row
+        {
+            type = "speech", sequence = phrase.Sequence, text = phrase.Text, language = phrase.Language, confidence = phrase.Confidence ?? -1,
+            audioSeconds = phrase.AudioSeconds, voicedSeconds = phrase.VoicedSeconds, truncated = phrase.Truncated,
+            recognitionSeconds = phrase.RecognitionSeconds, endToTextSeconds = phrase.EndToTextSeconds, error = phrase.Error,
+            audioFile = _audioFolder != null ? $"phrase-{phrase.Sequence:000}.wav" : null, streamSeconds = _viewers?.Events.Now ?? 0
+        });
+
+        private static void OnQueued(long sequence, SpeechSegment segment) =>
+            WavFile.Write(System.IO.Path.Combine(_audioFolder, $"phrase-{sequence:000}.wav"), segment.Samples, segment.Samples.Length, segment.SampleRate);
+
+        // The whole capture, bounded to 20 minutes at the capture rate.
+        private static void OnCaptured(float[] samples, int count, int rate)
+        {
+            _captureRate = rate;
+            if (_capture.Count + count > rate * 1200) return;
+            for (int i = 0; i < count; i++) _capture.Add(samples[i]);
         }
 
         private static void OnChat(StreamChatMessage message) => Write(new Row

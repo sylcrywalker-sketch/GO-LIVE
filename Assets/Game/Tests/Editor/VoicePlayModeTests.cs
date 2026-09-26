@@ -23,6 +23,7 @@ namespace GoLive.Tests
         public IEnumerator StreamlyShowsRealVoiceStatusSeparateFromTheInGameMicrophone()
         {
             int savedEnabled = PlayerPrefs.GetInt(VoiceInputBehaviour.EnabledKey, 1);
+            bool hadLanguage = PlayerPrefs.HasKey(VoiceInputBehaviour.LanguageKey);
             int savedLanguage = PlayerPrefs.GetInt(VoiceInputBehaviour.LanguageKey, 0);
             try
             {
@@ -80,7 +81,7 @@ namespace GoLive.Tests
                 yield return PlayModeWait.Until(() => voice.Recognition.Status != VoiceStatus.Loading, "the speech model to load");
                 TestContext.WriteLine("VOICE_STATUS_LIVE " + voice.Recognition.Status + " devices=" + string.Join(",", Microphone.devices));
                 if (Microphone.devices.Length == 0) Assert.That(voice.Recognition.Status, Is.EqualTo(VoiceStatus.MicrophoneUnavailable));
-                else Assert.That(voice.Recognition.Status, Is.EqualTo(VoiceStatus.Listening), "bundled tiny model and default microphone");
+                else Assert.That(voice.Recognition.Status, Is.EqualTo(VoiceStatus.Listening), "installed shipping model and default microphone");
                 Assert.That(status.text, Is.EqualTo(_localization.Text(voice.Recognition.Status == VoiceStatus.Listening
                     ? "desktop.stream.voice.listening" : "desktop.stream.voice.microphone_unavailable")));
 
@@ -104,7 +105,8 @@ namespace GoLive.Tests
             finally
             {
                 PlayerPrefs.SetInt(VoiceInputBehaviour.EnabledKey, savedEnabled);
-                PlayerPrefs.SetInt(VoiceInputBehaviour.LanguageKey, savedLanguage);
+                if (hadLanguage) PlayerPrefs.SetInt(VoiceInputBehaviour.LanguageKey, savedLanguage);
+                else PlayerPrefs.DeleteKey(VoiceInputBehaviour.LanguageKey);
             }
         }
 

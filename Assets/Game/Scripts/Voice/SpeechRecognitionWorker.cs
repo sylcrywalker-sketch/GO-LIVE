@@ -258,8 +258,11 @@ namespace GoLive.Voice
     public static class AudioPreparation
     {
         public const int RecognizerSampleRate = 16000;
+        // Fixed decoder context, measured on the recorded corpus. It surrounds existing audio/minimum
+        // padding with silence; it neither waits for more microphone data nor shifts capture timestamps.
+        public const int DecoderContextSamples = RecognizerSampleRate / 2;
 
-        // Linear resampling to 16 kHz and padding with trailing silence to the backend's minimum length.
+        // Linear resampling to 16 kHz, backend minimum-length padding, then 500 ms silence on each side.
         public static float[] ToRecognizerInput(float[] samples, int sampleRate)
         {
             if (samples == null) throw new ArgumentNullException(nameof(samples));
@@ -283,9 +286,9 @@ namespace GoLive.Voice
                     resampled[i] = (float)(samples[index] + (samples[index + 1] - samples[index]) * fraction);
                 }
             }
-            if (resampled.Length >= SpeechRecognitionWorker.MinimumRecognitionSamples) return resampled;
-            var padded = new float[SpeechRecognitionWorker.MinimumRecognitionSamples];
-            Array.Copy(resampled, padded, resampled.Length);
+            int minimumPaddedLength = Math.Max(resampled.Length, SpeechRecognitionWorker.MinimumRecognitionSamples);
+            var padded = new float[minimumPaddedLength + 2 * DecoderContextSamples];
+            Array.Copy(resampled, 0, padded, DecoderContextSamples, resampled.Length);
             return padded;
         }
     }

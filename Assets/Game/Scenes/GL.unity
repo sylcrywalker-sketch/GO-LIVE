@@ -87190,9 +87190,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoLive.Voice.VoiceInputBehaviour
   localization: {fileID: 656476889}
   modelFiles:
-  - Whisper/ggml-base.bin
-  - Whisper/ggml-tiny.bin
-  useGpu: 0
+  - Whisper/ggml-large-v3-turbo-q5_0.bin
+  useGpu: 1
+  decoding:
+    BeamSearch: 1
+    RussianPrompt:
+    EnglishPrompt:
   maximumThreads: 4
   preferredSampleRate: 16000
   activity: {fileID: 11400000, guid: f0a6f4e196e038a4b8ec0cf0d9e86833, type: 2}

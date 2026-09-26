@@ -71,6 +71,31 @@ MonoBehaviour:
     FollowTendency: 0.6
     SocialTendency: 0.4
     InitialSentiment: 10
+    DailyLife:
+    - Id: owl.after-shift
+      Today: slept most of the day after last night's shift
+      Now: on a night shift, bored between rounds
+      Kind: 7
+      Mood: 1
+      Energy: 0
+    - Id: owl.errands
+      Today: ran errands before the shift
+      Now: on a night shift, watching from the phone
+      Kind: 5
+      Mood: 2
+      Energy: 1
+    - Id: owl.day-off
+      Today: had a night off and played games at home
+      Now: at home tonight, not on shift
+      Kind: 3
+      Mood: 0
+      Energy: 1
+    - Id: owl.tap
+      Today: fixed a leaking tap at home before work
+      Now: on a night shift, drinking tea in the guard booth
+      Kind: 6
+      Mood: 2
+      Energy: 1
   - Id: viewer.pixelfox
     DisplayName: PixelFox
     SpokenNames:
@@ -127,6 +152,31 @@ MonoBehaviour:
     FollowTendency: 0.9
     SocialTendency: 0.6
     InitialSentiment: 20
+    DailyLife:
+    - Id: fox.critique
+      Today: had classes and a long design critique
+      Now: finishing a poster for class with the stream on
+      Kind: 1
+      Mood: 1
+      Energy: 1
+    - Id: fox.portfolio
+      Today: worked on a portfolio project most of the day
+      Now: taking a break from the project
+      Kind: 2
+      Mood: 0
+      Energy: 1
+    - Id: fox.library
+      Today: studied at the university library, then met a friend
+      Now: at home, relaxing
+      Kind: 1
+      Mood: 4
+      Energy: 2
+    - Id: fox.photos
+      Today: walked around the city taking photos
+      Now: editing photos with the stream on
+      Kind: 10
+      Mood: 4
+      Energy: 2
   - Id: viewer.bytecat
     DisplayName: ByteCat
     SpokenNames:
@@ -183,6 +233,31 @@ MonoBehaviour:
     FollowTendency: 0.5
     SocialTendency: 0.35
     InitialSentiment: 0
+    DailyLife:
+    - Id: cat.migration
+      Today: fought a server migration at work that failed twice
+      Now: finally home, unwinding
+      Kind: 0
+      Mood: 5
+      Energy: 0
+    - Id: cat.psu
+      Today: replaced a colleague's broken power supply at work
+      Now: tinkering with an old laptop
+      Kind: 8
+      Mood: 0
+      Energy: 1
+    - Id: cat.quiet
+      Today: had an ordinary shift at work where nothing broke
+      Now: watching streams
+      Kind: 0
+      Mood: 2
+      Energy: 1
+    - Id: cat.homeserver
+      Today: spent the day off reinstalling the home server
+      Now: waiting for updates to finish
+      Kind: 8
+      Mood: 3
+      Energy: 1
   - Id: viewer.arcadekid
     DisplayName: ArcadeKid
     SpokenNames:
@@ -241,6 +316,31 @@ MonoBehaviour:
     FollowTendency: 0.5
     SocialTendency: 0.5
     InitialSentiment: 15
+    DailyLife:
+    - Id: kid.test
+      Today: went to school and had a math test
+      Now: should be asleep, watching streams instead
+      Kind: 1
+      Mood: 1
+      Energy: 0
+    - Id: kid.friends
+      Today: played games with friends after school
+      Now: chilling on the phone
+      Kind: 3
+      Mood: 4
+      Energy: 2
+    - Id: kid.practice
+      Today: had basketball practice after school
+      Now: eating snacks and watching
+      Kind: 10
+      Mood: 0
+      Energy: 2
+    - Id: kid.lazy
+      Today: had a lazy weekend day
+      Now: up late watching streams
+      Kind: 4
+      Mood: 2
+      Energy: 1
   - Id: viewer.zinaivanovna
     DisplayName: ZinaIvanovna
     SpokenNames:
@@ -296,6 +396,31 @@ MonoBehaviour:
     FollowTendency: 0.7
     SocialTendency: 0.4
     InitialSentiment: 30
+    DailyLife:
+    - Id: zina.market
+      Today: went to the market and cooked soup
+      Now: knitting with the stream on
+      Kind: 5
+      Mood: 0
+      Energy: 1
+    - Id: zina.clinic
+      Today: sat in a long queue at the clinic
+      Now: resting with tea and knitting
+      Kind: 5
+      Mood: 1
+      Energy: 0
+    - Id: zina.flat
+      Today: cleaned the flat and watered the plants
+      Now: knitting a scarf
+      Kind: 6
+      Mood: 0
+      Energy: 1
+    - Id: zina.daughter
+      Today: talked on the phone with her daughter for an hour
+      Now: knitting and listening to the stream
+      Kind: 4
+      Mood: 4
+      Energy: 1
   - Id: viewer.kritik228
     DisplayName: kritik228
     SpokenNames:
@@ -353,6 +478,25 @@ MonoBehaviour:
     FollowTendency: 0.08
     SocialTendency: 0.5
     InitialSentiment: -35
+    DailyLife:
+    - Id: krit.school
+      Today: sat through boring school lessons
+      Now: lying on the bed hopping between streams
+      Kind: 1
+      Mood: 3
+      Energy: 0
+    - Id: krit.ranked
+      Today: played ranked games and kept losing
+      Now: hopping between small streams
+      Kind: 3
+      Mood: 5
+      Energy: 1
+    - Id: krit.nothing
+      Today: did nothing all day
+      Now: bored, looking for something to watch
+      Kind: 4
+      Mood: 3
+      Energy: 0
   - Id: viewer.mika
     DisplayName: mika_draws
     SpokenNames:
@@ -408,6 +552,31 @@ MonoBehaviour:
     FollowTendency: 0.95
     SocialTendency: 0.2
     InitialSentiment: 25
+    DailyLife:
+    - Id: mika.commission
+      Today: spent most of the day drawing a commission
+      Now: sketching with the stream on in the background
+      Kind: 2
+      Mood: 1
+      Energy: 0
+    - Id: mika.studies
+      Today: practised drawing hands for hours
+      Now: still drawing, the stream in the background
+      Kind: 2
+      Mood: 2
+      Energy: 1
+    - Id: mika.shop
+      Today: went to an art supplies shop and took a walk
+      Now: trying out new brushes
+      Kind: 5
+      Mood: 0
+      Energy: 1
+    - Id: mika.block
+      Today: had an art block and barely drew anything
+      Now: doodling a little
+      Kind: 2
+      Mood: 3
+      Energy: 0
   - Id: viewer.jonas
     DisplayName: JonasFromBerlin
     SpokenNames:
@@ -466,6 +635,31 @@ MonoBehaviour:
     FollowTendency: 0.6
     SocialTendency: 0.5
     InitialSentiment: 15
+    DailyLife:
+    - Id: jonas.class
+      Today: had Russian classes at the university
+      Now: practising Russian by watching streams
+      Kind: 1
+      Mood: 0
+      Energy: 1
+    - Id: jonas.metro
+      Today: got lost on the metro, then bought groceries
+      Now: cooking pelmeni for the first time
+      Kind: 5
+      Mood: 4
+      Energy: 1
+    - Id: jonas.essay
+      Today: wrote an essay for the university
+      Now: taking a break from the essay
+      Kind: 1
+      Mood: 1
+      Energy: 0
+    - Id: jonas.walk
+      Today: walked around the city centre with a classmate
+      Now: resting at the dormitory
+      Kind: 10
+      Mood: 0
+      Energy: 1
   - Id: viewer.doshirak
     DisplayName: doshirak_king
     SpokenNames:
@@ -524,6 +718,31 @@ MonoBehaviour:
     FollowTendency: 0.6
     SocialTendency: 0.6
     InitialSentiment: 15
+    DailyLife:
+    - Id: dosh.delivery
+      Today: had lectures, then a shift as a delivery courier
+      Now: eating instant noodles with the stream on
+      Kind: 0
+      Mood: 1
+      Energy: 0
+    - Id: dosh.exam
+      Today: tried to study for an exam and mostly procrastinated
+      Now: procrastinating some more
+      Kind: 1
+      Mood: 5
+      Energy: 1
+    - Id: dosh.payday
+      Today: counted money until payday and ate noodles again
+      Now: lying in the dorm
+      Kind: 4
+      Mood: 2
+      Energy: 0
+    - Id: dosh.cafe
+      Today: worked a shift at a cafe
+      Now: home, too tired to cook
+      Kind: 0
+      Mood: 1
+      Energy: 0
   - Id: viewer.sovetnik
     DisplayName: Sovetnik_Pro
     SpokenNames:
@@ -578,3 +797,28 @@ MonoBehaviour:
     FollowTendency: 0.4
     SocialTendency: 0.55
     InitialSentiment: 0
+    DailyLife:
+    - Id: sov.laptop
+      Today: gave a relative long advice about buying a laptop
+      Now: watching streams, ready with advice
+      Kind: 8
+      Mood: 0
+      Energy: 1
+    - Id: sov.forums
+      Today: read forum threads about streaming setups
+      Now: browsing forums with the stream on
+      Kind: 8
+      Mood: 2
+      Energy: 1
+    - Id: sov.office
+      Today: worked at the office, nothing interesting
+      Now: on the phone after work
+      Kind: 0
+      Mood: 3
+      Energy: 1
+    - Id: sov.router
+      Today: helped a neighbour set up a router
+      Now: watching the stream
+      Kind: 8
+      Mood: 4
+      Energy: 1

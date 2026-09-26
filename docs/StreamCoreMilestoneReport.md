@@ -81,6 +81,8 @@ Sample first-stream series (every 30 s): 3 3 2 2 1 1 1 3 3 3 3 5 5 2 3 3 3 5 6 7
 
 ## C. Real voice / STT
 
+Historical milestone configuration: the model and language defaults below describe this earlier pass. The current evaluated shipping configuration and corpus evidence are in [Viewer Core live-play correction](ViewerCoreLivePlayCorrectionReport.md).
+
 Pipeline: **default OS microphone → `VoiceInputBehaviour` (Unity bridge) → `VoiceActivityDetector` → `SpeechRecognitionWorker` (background thread) → `WhisperSpeechRecognizer` (whisper.cpp) → `RecognizedSpeech` → `VoiceRecognition` (main thread) → `DesktopRuntimeBehaviour` → `StreamSpeechFeed` (Live only)**.
 
 - **Microphone.** `Microphone.Start(null /*default device*/, loop, 4 s, 16 kHz or the device's supported rate)`. Each frame reads every complete 20 ms block since the last read with `AudioClip.GetData` into a preallocated buffer (no per-frame allocation). The microphone is opened only while a broadcast is Starting/Live **and** recognition is enabled; it closes on Stop, on disable, and when no recognizer can be used. Device loss (`IsRecording` false) → status "system microphone unavailable", retry every 3 s, no exception spam.
