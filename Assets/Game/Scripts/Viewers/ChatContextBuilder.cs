@@ -18,9 +18,10 @@ namespace GoLive.Viewers
         public IReadOnlyList<StreamChatMessage> RecentChat { get; }
         // The streamer's last phrase (any relevance) and how long ago, for ambient chatter; null if none recently.
         public string RecentSpeech { get; }
+        public string Relationship { get; }
 
         public ChatSituation(string channelName, double streamSeconds, int viewers, ViewerLanguage channelLanguage,
-            IReadOnlyList<StreamChatMessage> recentChat, string recentSpeech)
+            IReadOnlyList<StreamChatMessage> recentChat, string recentSpeech, string relationship = null)
         {
             ChannelName = string.IsNullOrWhiteSpace(channelName) ? "stream" : channelName;
             StreamSeconds = streamSeconds;
@@ -28,6 +29,7 @@ namespace GoLive.Viewers
             ChannelLanguage = channelLanguage;
             RecentChat = recentChat ?? Array.Empty<StreamChatMessage>();
             RecentSpeech = recentSpeech;
+            Relationship = relationship;
         }
     }
 
@@ -68,6 +70,8 @@ namespace GoLive.Viewers
             var user = new StringBuilder(900);
             user.Append("VIEWER: ").Append(Clean(viewer.DisplayName, 32)).Append('\n');
             user.Append("WHO: ").Append(persona.Personality).Append('\n');
+            if (!string.IsNullOrEmpty(situation.Relationship))
+                user.Append("RELATIONSHIP: ").Append(Clean(situation.Relationship, 360)).Append('\n');
             user.Append("STYLE: ").Append(persona.Style).Append(' ').Append(Length(persona)).Append(Habits(intent)).Append('\n');
             user.Append("LANGUAGE: ").Append(LanguageRule(persona.Language, situation.ChannelLanguage)).Append("\n\n");
 

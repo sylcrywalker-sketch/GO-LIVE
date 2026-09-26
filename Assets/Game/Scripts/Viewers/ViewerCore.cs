@@ -8,7 +8,7 @@ namespace GoLive.Viewers
     // The current broadcast's living chat in one explicit flow:
     //   stream facts -> StreamEventSource (normalized, keyed events) -> ReactionSelector (who reacts, when, or silence)
     //   -> ChatDirector (local model or fallback text, validated) -> StreamChat (what the audience sees).
-    // Owns only transient per-broadcast state; gameplay truth (audience, money, follows) stays with its owners.
+    // Coordinates transient broadcast state and the durable community; audience, money and follows stay with their owners.
     // Owns the language model it is given and disposes it.
     public sealed class ViewerCore : IDisposable
     {
@@ -25,8 +25,10 @@ namespace GoLive.Viewers
         private string _broadcast = "";
         private string _recentSpeech;
         private double _recentSpeechAt;
+        private StreamTopic _recentTopics;
 
         public AudienceRoster Roster { get; }
+        public ViewerCommunity Community { get; }
         public StreamEventSource Events { get; }
         public StreamChat Chat { get; } = new();
         public ChatDirector Director { get; }
@@ -36,7 +38,8 @@ namespace GoLive.Viewers
         public ViewerLanguage ChannelLanguage { get; private set; } = ViewerLanguage.Russian;
 
         public ViewerCore(StreamSession stream, StreamSpeechFeed speech, DonationAccount donations, PcPeripherals peripherals,
-            TrichChannel channel, ReactionTuning tuning, IViewerLanguageModel languageModel = null, ChatModelSettings modelSettings = null)
+            TrichChannel channel, ReactionTuning tuning, IViewerLanguageModel languageModel = null, ChatModelSettings modelSettings = null,
+            IReadOnlyList<ViewerProfile> profiles = null)
         {
             _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _speech = speech ?? throw new ArgumentNullException(nameof(speech));
@@ -45,26 +48,37 @@ namespace GoLive.Viewers
             string error = tuning.Validate();
             if (error != null) throw new ArgumentException(error, nameof(tuning));
             Roster = new AudienceRoster((random, index) => EphemeralViewers.Create(random, index, ChannelLanguage));
-            Events = new StreamEventSource(stream, speech, donations, peripherals, channel, Roster, tuning);
+            Community = new ViewerCommunity(profiles, Roster);
+            Events = new StreamEventSource(stream, speech, donations, peripherals, channel, Roster, tuning, () => Community.KnownNames);
+            Community.Joined += Events.NotifyJoined;
             Director = new ChatDirector(languageModel, modelSettings ?? new ChatModelSettings { Enabled = false }, Chat, Log);
             _speech.SpeechAdded += RememberSpeech;
+            _stream.Changed += ObserveLifecycle;
         }
 
         public void Tick(StreamerContext context)
         {
-            Events.Tick(context);
-            _stream.SetStreamerActivity(Events.IsLive ? Events.Activity : StreamerActivity.Active);
-            if (!Events.IsLive)
+            if (_stream.State != StreamState.Live)
             {
+                Events.Tick(context);
+                _stream.SetStreamerActivity(StreamerActivity.Active);
                 EndBroadcast();
                 return;
             }
-            if (_broadcast != Events.BroadcastId) BeginBroadcast();
+            if (_broadcast != _stream.BroadcastId) BeginBroadcast(context);
             double now = Events.Now;
+            Roster.SetAudienceSize(_stream.Audience.CurrentViewers);
+            StreamTopic topics = context.Content;
+            if (_recentSpeech != null && now - _recentSpeechAt <= RecentSpeechSeconds) topics |= _recentTopics;
+            Community.UpdateContext(context.GameMinutes, topics);
+            Community.Tick(now);
+            Events.Tick(context);
+            _stream.SetStreamerActivity(Events.Activity);
 
             Events.Drain(_events);
             foreach (StreamEvent streamEvent in _events)
             {
+                Community.Process(streamEvent);
                 List<ReactionIntent> intents = _selector.Select(streamEvent, now, true, out string reason);
                 if (intents.Count == 0)
                 {
@@ -79,7 +93,7 @@ namespace GoLive.Viewers
                 }
             }
             _events.Clear();
-            Director.Update(now, Roster, Situation, _broadcast);
+            Director.Update(now, Roster, SituationFor, _broadcast);
         }
 
         // What the chat can see right now: bounded, current-broadcast only.
@@ -88,6 +102,13 @@ namespace GoLive.Viewers
             double now = Events.Now;
             string recent = _recentSpeech != null && now - _recentSpeechAt <= RecentSpeechSeconds ? _recentSpeech : null;
             return new ChatSituation(_channel.Name, now, Roster.AudienceSize, ChannelLanguage, Chat.Messages, recent);
+        }
+
+        public ChatSituation SituationFor(ReactionIntent intent)
+        {
+            ChatSituation current = Situation();
+            return new ChatSituation(current.ChannelName, current.StreamSeconds, current.Viewers, current.ChannelLanguage,
+                current.RecentChat, current.RecentSpeech, Community.RelationshipContext(intent.Viewer.ViewerId));
         }
 
         // Load-time discard: nothing of the replaced world's broadcast (chat, pending reactions) survives.
@@ -99,7 +120,10 @@ namespace GoLive.Viewers
 
         public void Dispose()
         {
+            _stream.Changed -= ObserveLifecycle;
             _speech.SpeechAdded -= RememberSpeech;
+            Community.Joined -= Events.NotifyJoined;
+            EndBroadcast();
             Director.Dispose();
             Events.Dispose();
         }
@@ -108,6 +132,7 @@ namespace GoLive.Viewers
         {
             _recentSpeech = entry.Speech.Text;
             _recentSpeechAt = entry.StreamSeconds;
+            _recentTopics = SpeechRelevance.Analyze(entry.Speech, Array.Empty<ViewerNameForms>()).Topics;
             if (entry.Speech.Language != "ru" && entry.Speech.Language != "en") return;
             if (_speechLanguages.Count == 5) _speechLanguages.RemoveAt(0);
             _speechLanguages.Add(entry.Speech.Language);
@@ -117,15 +142,23 @@ namespace GoLive.Viewers
             ChannelLanguage = english * 2 > _speechLanguages.Count ? ViewerLanguage.English : ViewerLanguage.Russian;
         }
 
-        private void BeginBroadcast()
+        private void BeginBroadcast(StreamerContext context)
         {
-            _broadcast = Events.BroadcastId;
+            _broadcast = _stream.BroadcastId;
             Roster.Clear();
             Roster.SetAudienceSize(_stream.Audience.CurrentViewers);
             Chat.Clear();
             _recentSpeech = null;
+            _recentTopics = StreamTopic.None;
             _selector = new ReactionSelector(_tuning, Roster, new AudienceRandom(AudienceRandom.Hash(_stream.Audience.Seed, SelectionSalt)));
             Director.BeginBroadcast(new AudienceRandom(AudienceRandom.Hash(_stream.Audience.Seed, FallbackSalt)));
+            Community.BeginBroadcast(_broadcast, _stream.Audience.Seed, context.GameMinutes, context.Content);
+        }
+
+        private void ObserveLifecycle()
+        {
+            if (_stream.State != StreamState.Live) EndBroadcast();
+            else Roster.SetAudienceSize(_stream.Audience.CurrentViewers);
         }
 
         private void EndBroadcast()
@@ -133,7 +166,7 @@ namespace GoLive.Viewers
             if (_broadcast.Length == 0) return;
             Director.CancelAll("broadcast ended");
             _broadcast = "";
-            Roster.Clear();
+            Community.EndBroadcast();
         }
     }
 }

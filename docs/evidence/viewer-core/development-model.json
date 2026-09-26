@@ -1,0 +1,10 @@
+{
+  "id": "mistralai/ministral-3-8b-instruct-2512",
+  "object": "model",
+  "type": "llm",
+  "publisher": "mistralai",
+  "compatibility_type": "gguf",
+  "quantization": "Q4_K_M",
+  "state": "loaded",
+  "loaded_context_length": 4096
+}

@@ -17,8 +17,12 @@ namespace GoLive.Viewers
         public int Order { get; }
         public double DueSeconds { get; }
         public double ExpiresSeconds { get; }
+        public long PresenceEpoch { get; }
 
         internal ReactionIntent(long id, StreamEvent streamEvent, ChatParticipant viewer, bool direct, int order, double due, double expires)
+            : this(id, streamEvent, viewer, direct, order, due, expires, 0) { }
+
+        internal ReactionIntent(long id, StreamEvent streamEvent, ChatParticipant viewer, bool direct, int order, double due, double expires, long presenceEpoch)
         {
             Id = id;
             Event = streamEvent;
@@ -27,6 +31,7 @@ namespace GoLive.Viewers
             Order = order;
             DueSeconds = due;
             ExpiresSeconds = expires;
+            PresenceEpoch = presenceEpoch;
         }
     }
 
@@ -223,7 +228,7 @@ namespace GoLive.Viewers
             double roll = _random.NextDouble() * (total + anonymous);
             if (roll >= total)
             {
-                ChatParticipant chatter = _roster.AnonymousChatter(_random, viewer => Available(viewer, now));
+                ChatParticipant chatter = _roster.AnonymousChatter(_random, viewer => Available(viewer, now), now);
                 if (chatter != null) return chatter;
                 roll = _random.NextDouble() * total;
             }
@@ -246,7 +251,8 @@ namespace GoLive.Viewers
             delay += order * (1.4 + 2.4 * _random.NextDouble());
             _chosen.Add(viewer);
             Rhythm.Record(viewer.ViewerId, now + delay);
-            return new ReactionIntent(++_intentSerial, streamEvent, viewer, direct, order, now + delay, now + delay + _tuning.StaleSeconds);
+            return new ReactionIntent(++_intentSerial, streamEvent, viewer, direct, order, now + delay, now + delay + _tuning.StaleSeconds,
+                _roster.Epoch(viewer.ViewerId));
         }
     }
 }

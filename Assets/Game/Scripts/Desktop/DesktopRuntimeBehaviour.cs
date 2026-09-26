@@ -64,7 +64,7 @@ namespace GoLive.Desktop
             // The local model is optional: without it (disabled, not running) the chat uses compact fallback lines.
             IViewerLanguageModel model = viewerCore.Model.Enabled ? new OpenAiCompatibleChatModel(viewerCore.Model) : null;
             State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning.Tuning, reactionTuning: viewerCore.Reactions,
-                languageModel: model, modelSettings: viewerCore.Model);
+                languageModel: model, modelSettings: viewerCore.Model, viewerProfiles: viewerCore.Community.Profiles);
         }
 
         private void Update()
@@ -72,7 +72,8 @@ namespace GoLive.Desktop
             if (!_bound && pc.IsReady && peripherals.IsReady && clock.Clock != null && wallet.Wallet != null) Bind();
             if (!IsReady) return;
             State.Stream.Tick(Time.deltaTime, clock.Clock.Current.MinuteOfDay);
-            State.Viewers.Tick(new StreamerContext(Session.Usage == PcUsageState.Focused, VoiceListening));
+            State.Viewers.Tick(new StreamerContext(Session.Usage == PcUsageState.Focused, VoiceListening,
+                clock.Clock.Current.TotalSeconds / 60d, StreamTopic.Community));
         }
 
         private void Bind()

@@ -23,9 +23,9 @@ New abstraction: `ViewerCommunity` is necessary because authored profiles cannot
 - Reconcile roster shrink immediately. Named watchers never exceed the existing audience count. Track presence epochs so leaving/rejoining cannot publish an old pending response.
 - Extend the desktop snapshot with an optional community snapshot; validate all identities/ranges before restore and replace state atomically. Current presence, chat, requests and timers remain transient.
 - Wire the existing community asset and absolute game minutes through `DesktopRuntimeBehaviour` into plain C#.
-- [ ] Domain tests: joins/leaves/returns, schedule/interests/sentiment, non-universal attendance, seat limits, direct target, intended mutation, save/load and duplicate rejection.
-- [ ] Integration tests: absent/left viewers cannot publish, UI/LLM cannot create presence, old-save compatibility.
-- [ ] Run targeted tests, review and commit `Add viewer presence and relationships`.
+- [x] Domain tests: joins/leaves/returns, schedule/interests/sentiment, non-universal attendance, seat limits, direct target, intended mutation, save/load and duplicate rejection.
+- [x] Integration tests: absent/left viewers cannot publish, UI/LLM cannot create presence, old-save compatibility.
+- [x] Run targeted tests, review and commit `Add viewer presence and relationships`: 194/194 passed; independent review and regression repair complete.
 
 ## Stage E — witnessed memory
 

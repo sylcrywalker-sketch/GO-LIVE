@@ -89,6 +89,8 @@ namespace GoLive.Viewers
             if (string.IsNullOrWhiteSpace(DisplayName) || DisplayName.Length > 32) return $"{Id}: display name must be 1-32 characters.";
             if (string.IsNullOrWhiteSpace(Personality)) return $"{Id}: personality is missing.";
             if (Schedule == null || Style == null) return $"{Id}: schedule and style are required.";
+            if (Schedule.StartHour < 0 || Schedule.StartHour > 23 || Schedule.EndHour < 0 || Schedule.EndHour > 23 ||
+                !(Schedule.Regularity >= 0 && Schedule.Regularity <= 1)) return $"{Id}: schedule hours or regularity are invalid.";
             if (Style.MinimumWords < 1 || Style.MaximumWords < Style.MinimumWords || Style.MaximumWords > 25) return $"{Id}: word range is invalid.";
             if (!(Talkativeness > 0 && Talkativeness <= 1) || !(Pace > 0) || !(ResponseSpeed > 0)) return $"{Id}: reaction tendencies are invalid.";
             if (EventAffinity == null || EventAffinity.Length != AffinityOrder.Length) return $"{Id}: needs {AffinityOrder.Length} event affinities.";

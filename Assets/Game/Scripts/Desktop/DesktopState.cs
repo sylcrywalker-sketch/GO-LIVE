@@ -14,6 +14,7 @@ namespace GoLive.Desktop
         public OutlineSnapshot Outline = new();
         public TrichSnapshot Trich = new();
         public DonationSnapshot Donation = new();
+        public ViewerCommunitySnapshot ViewerCommunity;
     }
 
     // Composition boundary: coordinates completion and atomically validates a durable desktop graph.
@@ -29,14 +30,14 @@ namespace GoLive.Desktop
         // The player's recognized speech admitted into the live broadcast (transient, never saved).
         public StreamSpeechFeed SpeechFeed { get; }
         public PcPeripherals Peripherals { get; }
-        // The current broadcast's living chat: normalized events, reaction decisions (transient, never saved).
+        // Broadcast chat is transient; the contained community owns durable viewer relationships.
         public ViewerCore Viewers { get; }
         public int RestoreGeneration { get; private set; }
         private readonly IReadOnlyList<DesktopAppDefinition> _apps;
         private bool _restoring;
         public DesktopState(IReadOnlyList<DesktopAppDefinition> apps, PcPeripherals peripherals = null,
             AudienceTuning audienceTuning = null, AudienceRandom audienceSeeds = null, ReactionTuning reactionTuning = null,
-            IViewerLanguageModel languageModel = null, ChatModelSettings modelSettings = null)
+            IViewerLanguageModel languageModel = null, ChatModelSettings modelSettings = null, IReadOnlyList<ViewerProfile> viewerProfiles = null)
         {
             _apps = new List<DesktopAppDefinition>(apps).AsReadOnly();
             Storage = new DesktopStorage(apps);
@@ -44,7 +45,7 @@ namespace GoLive.Desktop
             Stream = new StreamSession(Trich, Donation, Peripherals, audienceTuning, audienceSeeds);
             Stream.Completed += CompleteStream;
             SpeechFeed = new StreamSpeechFeed(Stream);
-            Viewers = new ViewerCore(Stream, SpeechFeed, Donation, Peripherals, Trich, reactionTuning ?? new ReactionTuning(), languageModel, modelSettings);
+            Viewers = new ViewerCore(Stream, SpeechFeed, Donation, Peripherals, Trich, reactionTuning ?? new ReactionTuning(), languageModel, modelSettings, viewerProfiles);
         }
         public string EnsureSystemApps()
         {
@@ -66,7 +67,8 @@ namespace GoLive.Desktop
         }
         public DesktopSnapshot Capture() => new()
         {
-            Storage = Storage.CaptureSnapshot(), Outline = Outline.Capture(), Trich = Trich.Capture(), Donation = Donation.Capture()
+            Storage = Storage.CaptureSnapshot(), Outline = Outline.Capture(), Trich = Trich.Capture(), Donation = Donation.Capture(),
+            ViewerCommunity = Viewers.Community.Capture()
         };
         public string Validate(DesktopSnapshot snapshot, IReadOnlyList<DesktopDrive> knownDrives)
         {
@@ -76,6 +78,8 @@ namespace GoLive.Desktop
             if (!OutlineAccount.Validate(snapshot.Outline)) return "Invalid Outline snapshot.";
             if (!TrichChannel.Validate(snapshot.Trich)) return "Invalid Trich snapshot.";
             if (!DonationAccount.Validate(snapshot.Donation)) return "Invalid Donation snapshot.";
+            string communityError = Viewers.Community.Validate(snapshot.ViewerCommunity);
+            if (communityError != null) return communityError;
             if (snapshot.Trich.Email.Length > 0 && snapshot.Trich.Email != snapshot.Outline.Address)
                 return "Trich account does not belong to the saved Outline address.";
             return null;
@@ -101,6 +105,7 @@ namespace GoLive.Desktop
                 Outline.Restore(snapshot.Outline);
                 Trich.Restore(snapshot.Trich);
                 Donation.Restore(snapshot.Donation);
+                Viewers.Community.Restore(snapshot.ViewerCommunity);
                 RestoreGeneration++;
             }
             finally { _restoring = alreadyRestoring; }

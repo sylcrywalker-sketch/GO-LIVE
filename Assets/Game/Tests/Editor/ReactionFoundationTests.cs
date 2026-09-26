@@ -321,10 +321,11 @@ namespace GoLive.Tests
 
         public DesktopState State { get; }
 
-        public LiveDesktop(ulong seed, PcPeripherals peripherals = null, ReactionTuning reactions = null, IViewerLanguageModel languageModel = null)
+        public LiveDesktop(ulong seed, PcPeripherals peripherals = null, ReactionTuning reactions = null, IViewerLanguageModel languageModel = null,
+            IReadOnlyList<ViewerProfile> profiles = null)
         {
             State = new DesktopState(Apps(), peripherals, new AudienceTuning(), new AudienceRandom(seed), reactions, languageModel,
-                languageModel == null ? null : new ChatModelSettings());
+                languageModel == null ? null : new ChatModelSettings(), profiles);
             Assert.That(State.Outline.CreateAddress("viewer.core"), Is.Null);
             Assert.That(State.Trich.Register(State.Outline, State.Outline.Address), Is.Null);
             Assert.That(State.Stream.Connect(State.Trich.ChannelCode), Is.Null);

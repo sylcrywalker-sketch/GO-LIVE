@@ -120,7 +120,11 @@ namespace GoLive.Viewers
         }
 
         public void Update(double now, AudienceRoster roster, Func<ChatSituation> situation, string broadcastId)
+            => Update(now, roster, _ => situation(), broadcastId);
+
+        public void Update(double now, AudienceRoster roster, Func<ReactionIntent, ChatSituation> situation, string broadcastId)
         {
+            DropDeparted(roster);
             Poll();
             StartGenerations(now, situation);
             Post(now, roster, broadcastId);
@@ -183,7 +187,7 @@ namespace GoLive.Viewers
             }
         }
 
-        private void StartGenerations(double now, Func<ChatSituation> situation)
+        private void StartGenerations(double now, Func<ReactionIntent, ChatSituation> situation)
         {
             int running = 0;
             foreach (Job job in _jobs)
@@ -199,7 +203,7 @@ namespace GoLive.Viewers
                     continue;
                 }
                 if (running >= _settings.MaximumConcurrent) continue;
-                ViewerChatRequest request = ChatContextBuilder.Build(job.Intent, situation(), _settings.MaximumTokens);
+                ViewerChatRequest request = ChatContextBuilder.Build(job.Intent, situation(job.Intent), _settings.MaximumTokens);
                 job.PromptCharacters = request.Characters;
                 job.Cancellation = new CancellationTokenSource();
                 job.Task = _model.GenerateAsync(request, job.Cancellation.Token);
@@ -227,7 +231,7 @@ namespace GoLive.Viewers
                     Remove(i--, job, ReactionOutcome.Discarded, job.Reason);
                     continue;
                 }
-                if (!roster.IsWatching(intent.Viewer.ViewerId))
+                if (!SameVisit(roster, intent))
                 {
                     Stats.DroppedViewerLeft++;
                     Remove(i--, job, ReactionOutcome.Dropped, "viewer left");
@@ -265,6 +269,21 @@ namespace GoLive.Viewers
         {
             string text = FallbackChat.Pick(job.Intent, _random, _chat.Messages);
             Resolve(job, text, text == null ? ReactionSource.None : ReactionSource.Fallback, reason);
+        }
+
+        private static bool SameVisit(AudienceRoster roster, ReactionIntent intent) =>
+            roster.IsWatching(intent.Viewer.ViewerId) && roster.Epoch(intent.Viewer.ViewerId) == intent.PresenceEpoch;
+
+        private void DropDeparted(AudienceRoster roster)
+        {
+            for (int i = _jobs.Count - 1; i >= 0; i--)
+            {
+                Job job = _jobs[i];
+                if (SameVisit(roster, job.Intent)) continue;
+                job.Cancellation?.Cancel();
+                Stats.DroppedViewerLeft++;
+                Remove(i, job, ReactionOutcome.Dropped, "viewer left or visit changed");
+            }
         }
 
         private static void Resolve(Job job, string text, ReactionSource source, string reason)

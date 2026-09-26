@@ -79,6 +79,9 @@ namespace GoLive.Viewers
         private readonly List<ChatParticipant> _ephemeral = new();
         private readonly HashSet<string> _ephemeralNames = new(StringComparer.OrdinalIgnoreCase);
         private readonly Func<AudienceRandom, int, ChatParticipant> _createEphemeral;
+        private readonly Dictionary<string, long> _visits = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, double> _joinedAt = new(StringComparer.Ordinal);
+        private int _chatterSerial;
 
         public IReadOnlyList<ChatParticipant> Named { get; }
         // Anonymous viewers who have written in this broadcast (created on demand, never persisted).
@@ -94,7 +97,16 @@ namespace GoLive.Viewers
         }
 
         // The simulation's current viewer count; named viewers can never outnumber it.
-        public void SetAudienceSize(int viewers) => AudienceSize = Math.Max(0, viewers);
+        public void SetAudienceSize(int viewers)
+        {
+            AudienceSize = Math.Max(0, viewers);
+            while (_named.Count > AudienceSize) Leave(_named[_named.Count - 1].ViewerId);
+            TrimEphemeral();
+        }
+
+        // Named visit generations survive Clear; a delayed line from a previous visit can never revive.
+        public long Epoch(string viewerId) => IsWatching(viewerId) && _visits.TryGetValue(viewerId, out long epoch) ? epoch : 0;
+        public double JoinedAt(string viewerId) => viewerId != null && _joinedAt.TryGetValue(viewerId, out double at) ? at : double.NaN;
 
         public bool IsWatching(string viewerId)
         {
@@ -126,11 +138,15 @@ namespace GoLive.Viewers
         }
 
         // Returns false when the viewer already watches or the audience has no room for another named viewer.
-        public bool Join(ChatParticipant participant)
+        public bool Join(ChatParticipant participant, double streamSeconds = 0)
         {
             if (participant == null || !participant.IsPermanent) throw new ArgumentException("Only permanent viewers join by name.", nameof(participant));
             if (Find(participant.ViewerId) != null || _named.Count >= AudienceSize) return false;
             _named.Add(participant);
+            _visits.TryGetValue(participant.ViewerId, out long previous);
+            _visits[participant.ViewerId] = checked(previous + 1);
+            _joinedAt[participant.ViewerId] = streamSeconds;
+            TrimEphemeral();
             return true;
         }
 
@@ -140,13 +156,14 @@ namespace GoLive.Viewers
                 if (_named[i].ViewerId == viewerId)
                 {
                     _named.RemoveAt(i);
+                    _joinedAt.Remove(viewerId);
                     return true;
                 }
             return false;
         }
 
         // An anonymous chatter: an existing one (they keep writing under the same name) or a new one.
-        public ChatParticipant AnonymousChatter(AudienceRandom random, Func<ChatParticipant, bool> available)
+        public ChatParticipant AnonymousChatter(AudienceRandom random, Func<ChatParticipant, bool> available, double streamSeconds = 0)
         {
             if (AnonymousCount == 0) return null;
             int existing = Math.Min(_ephemeral.Count, AnonymousCount);
@@ -160,12 +177,14 @@ namespace GoLive.Viewers
                     if (available(candidate)) return candidate;
                 }
             }
-            if (_ephemeral.Count >= AnonymousCount) return null;
+            if (_ephemeral.Count >= Math.Min(AnonymousCount, 128)) return null;
             for (int attempt = 0; attempt < 4; attempt++)
             {
-                ChatParticipant created = _createEphemeral(random, _ephemeral.Count);
-                if (created == null || created.IsPermanent || !_ephemeralNames.Add(created.DisplayName)) continue;
+                ChatParticipant created = _createEphemeral(random, _chatterSerial++);
+                if (created == null || created.IsPermanent || Find(created.ViewerId) != null || !_ephemeralNames.Add(created.DisplayName)) continue;
                 _ephemeral.Add(created);
+                _visits[created.ViewerId] = 1;
+                _joinedAt[created.ViewerId] = streamSeconds;
                 return created;
             }
             return null;
@@ -182,9 +201,23 @@ namespace GoLive.Viewers
         public void Clear()
         {
             _named.Clear();
+            foreach (ChatParticipant participant in _ephemeral) _visits.Remove(participant.ViewerId);
             _ephemeral.Clear();
             _ephemeralNames.Clear();
+            _joinedAt.Clear();
             AudienceSize = 0;
+        }
+
+        private void TrimEphemeral()
+        {
+            while (_ephemeral.Count > Math.Min(AnonymousCount, 128))
+            {
+                ChatParticipant removed = _ephemeral[_ephemeral.Count - 1];
+                _ephemeral.RemoveAt(_ephemeral.Count - 1);
+                _ephemeralNames.Remove(removed.DisplayName);
+                _visits.Remove(removed.ViewerId);
+                _joinedAt.Remove(removed.ViewerId);
+            }
         }
     }
 }

@@ -12,11 +12,15 @@ namespace GoLive.Viewers
         public bool AtDesk { get; }
         // The real microphone is recognizing speech; silence can only be measured while it is.
         public bool VoiceListening { get; }
+        public double GameMinutes { get; }
+        public StreamTopic Content { get; }
 
-        public StreamerContext(bool atDesk, bool voiceListening)
+        public StreamerContext(bool atDesk, bool voiceListening, double gameMinutes = 0, StreamTopic content = StreamTopic.Community)
         {
             AtDesk = atDesk;
             VoiceListening = voiceListening;
+            GameMinutes = gameMinutes;
+            Content = content;
         }
     }
 
@@ -37,6 +41,9 @@ namespace GoLive.Viewers
         private readonly TrichChannel _channel;
         private readonly AudienceRoster _roster;
         private readonly ReactionTuning _tuning;
+        private readonly Func<IReadOnlyList<ViewerNameForms>> _knownNames;
+        private readonly List<ViewerNameForms> _mentionNames = new();
+        private readonly HashSet<string> _mentionIds = new(StringComparer.Ordinal);
         private readonly List<StreamEvent> _pending = new();
         private readonly HashSet<string> _keys = new(StringComparer.Ordinal);
         private bool _live;
@@ -57,7 +64,7 @@ namespace GoLive.Viewers
         public StreamerActivity Activity { get; private set; }
 
         public StreamEventSource(StreamSession stream, StreamSpeechFeed speech, DonationAccount donations, PcPeripherals peripherals,
-            TrichChannel channel, AudienceRoster roster, ReactionTuning tuning)
+            TrichChannel channel, AudienceRoster roster, ReactionTuning tuning, Func<IReadOnlyList<ViewerNameForms>> knownNames = null)
         {
             _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _speech = speech ?? throw new ArgumentNullException(nameof(speech));
@@ -66,6 +73,7 @@ namespace GoLive.Viewers
             _channel = channel ?? throw new ArgumentNullException(nameof(channel));
             _roster = roster ?? throw new ArgumentNullException(nameof(roster));
             _tuning = tuning ?? throw new ArgumentNullException(nameof(tuning));
+            _knownNames = knownNames;
             _stream.Changed += ObserveStream;
             _speech.SpeechAdded += OnSpeech;
             _donations.Received += OnDonation;
@@ -76,6 +84,13 @@ namespace GoLive.Viewers
         public bool IsLive => _live;
         public string BroadcastId => _broadcast;
         public double Now => _stream.DurationSeconds;
+
+        public void NotifyJoined(ChatParticipant participant)
+        {
+            if (!_live || participant == null || !_roster.IsWatching(participant.ViewerId)) return;
+            Add(StreamEvent.ViewerJoined(++_serial, _broadcast + ".visit." + _roster.Epoch(participant.ViewerId),
+                _roster.JoinedAt(participant.ViewerId), participant.ViewerId, participant.DisplayName, .3f));
+        }
 
         // Moves the events normalized since the last call into the given list, in order.
         public void Drain(List<StreamEvent> into)
@@ -159,15 +174,30 @@ namespace GoLive.Viewers
         private void OnSpeech(StreamSpeechEvent entry)
         {
             if (!_live) return;
-            SpeechAnalysis analysis = SpeechRelevance.Analyze(entry.Speech, _roster.NamesForMentions());
+            SpeechAnalysis analysis = SpeechRelevance.Analyze(entry.Speech, NamesForSpeech());
             _quietSince = entry.StreamSeconds;
             _silenceStep = 0;
             StreamEvent speech = StreamEvent.StreamerSpeech(++_serial, _broadcast, entry.StreamSeconds, analysis);
             // "Thanks" right after a donation is addressed to that donor.
-            if (analysis.Has(SpeechCue.Thanks) && _lastDonation != null && entry.StreamSeconds - _lastDonation.StreamSeconds <= ThanksWindowSeconds
+            if (analysis.Has(SpeechCue.Thanks) && analysis.MentionedViewerIds.Count == 0 && _lastDonation != null && entry.StreamSeconds - _lastDonation.StreamSeconds <= ThanksWindowSeconds
                 && _lastDonation.SubjectViewerId != null)
                 speech = speech.WithSubject(_lastDonation.SubjectViewerId, _lastDonation.SubjectName);
             Add(speech);
+        }
+
+        private IReadOnlyList<ViewerNameForms> NamesForSpeech()
+        {
+            _mentionNames.Clear();
+            _mentionIds.Clear();
+            IReadOnlyList<ViewerNameForms> known = _knownNames?.Invoke();
+            if (known != null)
+                foreach (ViewerNameForms name in known)
+                    if (_mentionIds.Add(name.ViewerId)) _mentionNames.Add(name);
+            foreach (ChatParticipant viewer in _roster.Named)
+                if (_mentionIds.Add(viewer.ViewerId)) _mentionNames.Add(new ViewerNameForms(viewer.ViewerId, viewer.NameForms));
+            foreach (ChatParticipant viewer in _roster.Ephemeral)
+                if (_mentionIds.Add(viewer.ViewerId)) _mentionNames.Add(new ViewerNameForms(viewer.ViewerId, viewer.NameForms));
+            return _mentionNames;
         }
 
         private void OnDonation(DonationReceipt receipt)
