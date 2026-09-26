@@ -53,9 +53,12 @@ namespace GoLive.Viewers
         public static bool MentionsPromise(string text) => Regex.IsMatch(SpeechRelevance.Normalize(text ?? ""),
             @"\b(обещ\w*|promise\w*|сдержал|fulfilled|kept your word|broke your word)\b");
 
-        public static bool References(string text, ViewerPromiseContext context)
+        // currentSubject: a planned callback about the current moment's own subject may omit the subject word.
+        public static bool References(string text, ViewerPromiseContext context, string currentSubject = null)
         {
-            if (context == null || Subject(text) != context.Subject || !(MentionsPromise(text) || ViewerMemoryBank.Historical(text))) return false;
+            string subject = Subject(text);
+            if (context == null || !(subject == context.Subject || subject == null && currentSubject == context.Subject) ||
+                !(MentionsPromise(text) || ViewerMemoryBank.Historical(text))) return false;
             string value = SpeechRelevance.Normalize(text);
             if (context.Action != PromiseAction.Install && Regex.IsMatch(value, @"\b(установ\w*|install\w*)\b") ||
                 context.Action != PromiseAction.Purchase && Regex.IsMatch(value, @"\b(куп\w*|buy|bought)\b")) return false;

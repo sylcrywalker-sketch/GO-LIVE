@@ -38,6 +38,8 @@ namespace GoLive.Editor.Viewers
         }
 
         // Affinity order: speech, silence, away, started, joined, donation, follow, subscription, milestone, peripheral, chatter.
+        // Social habits separate voices that collided in the blind review (sarcastic, gentle and technical Russian
+        // viewers) by what they do and notice, not by extra signature words. Others keep ordinary defaults.
         private static ViewerProfile[] Profiles() => new[]
         {
             new ViewerProfile
@@ -54,6 +56,7 @@ namespace GoLive.Editor.Viewers
                     Profanity = Profanity.Mild, Laughter = new[] { "ахах", "хах" }, LaughterRate = .3f, QuestionRate = .15f,
                     Notes = "Short jabs; never cheers and never explains the joke."
                 },
+                Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Tease, UtteranceIntent.SilenceCheck }, Avoids = new[] { UtteranceIntent.Concern }, CallbackInterest = .55f },
                 Talkativeness = .6f, Pace = 1.2f, ResponseSpeed = .8f,
                 EventAffinity = new[] { 1.2f, 1.4f, 1.3f, .6f, .3f, .5f, .3f, .5f, .6f, 1f, .8f },
                 DonationTendency = .03f, FollowTendency = .6f, SocialTendency = .4f, InitialSentiment = 10
@@ -72,6 +75,7 @@ namespace GoLive.Editor.Viewers
                     EmojiRate = .12f, Profanity = Profanity.None, Smiley = ")", SmileyRate = .35f, Laughter = new[] { "хаха" },
                     LaughterRate = .25f, QuestionRate = .45f, Notes = "Friendly but not sugary; no cheerleading slogans."
                 },
+                Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Question }, Avoids = new[] { UtteranceIntent.Disagree }, CallbackInterest = .35f },
                 Talkativeness = .75f, Pace = 1f, ResponseSpeed = 1f,
                 EventAffinity = new[] { 1.3f, .8f, .7f, 1.4f, .6f, 1f, 1f, 1.1f, 1.3f, .8f, 1f },
                 DonationTendency = .15f, FollowTendency = .9f, SocialTendency = .6f, InitialSentiment = 20
@@ -90,6 +94,7 @@ namespace GoLive.Editor.Viewers
                     Profanity = Profanity.Mild, QuestionRate = .25f,
                     Notes = "Talks hardware only when the moment is about the PC, sound, picture or performance; otherwise a short dry remark."
                 },
+                Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.TechnicalComment }, Avoids = new[] { UtteranceIntent.Concern }, Ignores = StreamTopic.Life, CallbackInterest = .3f },
                 Talkativeness = .5f, Pace = 1.3f, ResponseSpeed = 1.1f,
                 EventAffinity = new[] { .8f, .4f, .5f, .5f, .2f, .4f, .3f, .4f, .5f, 2f, .7f },
                 DonationTendency = .08f, FollowTendency = .5f, SocialTendency = .35f, InitialSentiment = 0
@@ -127,6 +132,7 @@ namespace GoLive.Editor.Viewers
                     Profanity = Profanity.None, Smiley = "))", SmileyRate = .5f, Signatures = new[] { "сынок" }, SignatureRate = .3f,
                     QuestionRate = .35f, Notes = "Polite and old-fashioned, never internet slang."
                 },
+                Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Concern, UtteranceIntent.Question }, Avoids = new[] { UtteranceIntent.Disagree }, CallbackInterest = .45f },
                 Talkativeness = .55f, Pace = 1.5f, ResponseSpeed = 1.8f,
                 EventAffinity = new[] { 1f, 1.2f, 1f, 1.5f, .5f, .8f, .4f, .6f, .9f, .6f, .8f },
                 DonationTendency = .25f, FollowTendency = .7f, SocialTendency = .4f, InitialSentiment = 30
@@ -145,6 +151,7 @@ namespace GoLive.Editor.Viewers
                     Profanity = Profanity.Mild, Laughter = new[] { "хах" }, LaughterRate = .15f, Signatures = new[] { "кринж", "скука" },
                     SignatureRate = .25f, QuestionRate = .1f, Notes = "Unimpressed and blunt; never praises outright."
                 },
+                Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Disagree }, Avoids = new[] { UtteranceIntent.Concern, UtteranceIntent.Question }, CallbackInterest = .15f },
                 Talkativeness = .5f, Pace = 1.2f, ResponseSpeed = .8f,
                 EventAffinity = new[] { 1f, 1.3f, 1.1f, .5f, .3f, .8f, .3f, .6f, .7f, .8f, .9f },
                 DonationTendency = .01f, FollowTendency = .08f, SocialTendency = .5f, InitialSentiment = -35
@@ -163,6 +170,7 @@ namespace GoLive.Editor.Viewers
                     EmojiRate = .15f, Profanity = Profanity.None, Smiley = ")", SmileyRate = .3f, Signatures = new[] { "o/" },
                     SignatureRate = .3f, QuestionRate = .1f, Notes = "Tiny messages, like a nod."
                 },
+                Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Acknowledge }, Avoids = new[] { UtteranceIntent.Question, UtteranceIntent.Disagree }, Ignores = StreamTopic.Hardware | StreamTopic.Money, CallbackInterest = .2f },
                 Talkativeness = .18f, Pace = 2.5f, ResponseSpeed = 1.3f,
                 EventAffinity = new[] { .7f, .6f, .5f, 1.6f, .4f, .6f, .5f, .6f, .8f, .5f, .5f },
                 DonationTendency = .2f, FollowTendency = .95f, SocialTendency = .2f, InitialSentiment = 25
@@ -218,6 +226,7 @@ namespace GoLive.Editor.Viewers
                     Profanity = Profanity.None, Signatures = new[] { "вообще-то" }, SignatureRate = .3f, QuestionRate = .15f,
                     Notes = "Advice in one short sentence, never a lecture."
                 },
+                Habits = new SocialHabits { Prefers = new[] { UtteranceIntent.Answer }, Avoids = new[] { UtteranceIntent.Question, UtteranceIntent.Concern }, CallbackInterest = .3f },
                 Talkativeness = .6f, Pace = 1.2f, ResponseSpeed = 1.1f,
                 EventAffinity = new[] { 1.2f, .7f, .6f, .6f, .3f, .6f, .4f, .5f, .6f, 1.6f, .8f },
                 DonationTendency = .06f, FollowTendency = .4f, SocialTendency = .55f, InitialSentiment = 0

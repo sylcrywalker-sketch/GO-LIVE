@@ -36,6 +36,22 @@ namespace GoLive.Viewers
         public string Notes = "";
     }
 
+    // Which social actions a viewer reaches for or avoids, what they let pass in silence and how readily they bring
+    // up the past. The planner applies these in C#; the prompt only receives the resulting action. Empty = ordinary.
+    [Serializable]
+    public sealed class SocialHabits
+    {
+        public UtteranceIntent[] Prefers = Array.Empty<UtteranceIntent>();
+        public UtteranceIntent[] Avoids = Array.Empty<UtteranceIntent>();
+        // Unprompted moments only about these topics draw no message from this viewer.
+        public StreamTopic Ignores;
+        // Base willingness to turn a relevant memory/promise into a callback; relationship scales it, caps bound it.
+        [Range(0, 1)] public float CallbackInterest = .3f;
+
+        public bool Prefer(UtteranceIntent intent) => Array.IndexOf(Prefers ?? Array.Empty<UtteranceIntent>(), intent) >= 0;
+        public bool Avoid(UtteranceIntent intent) => Array.IndexOf(Avoids ?? Array.Empty<UtteranceIntent>(), intent) >= 0;
+    }
+
     // When a viewer tends to watch (game time) and how regular they are.
     [Serializable]
     public sealed class ScheduleTendency
@@ -62,6 +78,7 @@ namespace GoLive.Viewers
         public StreamTopic Interests;
         public ScheduleTendency Schedule = new();
         public ChatStyle Style = new();
+        public SocialHabits Habits = new();
         [Range(.05f, 1)] public float Talkativeness = .5f;
         // Gap multiplier between two of their messages, and typing/reading delay multiplier.
         [Range(.5f, 4)] public float Pace = 1f;
@@ -97,6 +114,15 @@ namespace GoLive.Viewers
             foreach (float affinity in EventAffinity)
                 if (!(affinity >= 0 && affinity <= 3)) return $"{Id}: event affinities must be 0-3.";
             if (InitialSentiment < -100 || InitialSentiment > 100) return $"{Id}: initial sentiment must be -100..100.";
+            if (Habits != null)
+            {
+                if (!(Habits.CallbackInterest >= 0 && Habits.CallbackInterest <= 1)) return $"{Id}: callback interest must be 0-1.";
+                foreach (UtteranceIntent intent in Habits.Prefers ?? Array.Empty<UtteranceIntent>())
+                    if (!Enum.IsDefined(typeof(UtteranceIntent), intent) || intent == UtteranceIntent.Callback || Habits.Avoid(intent))
+                        return $"{Id}: preferred social actions are invalid.";
+                foreach (UtteranceIntent intent in Habits.Avoids ?? Array.Empty<UtteranceIntent>())
+                    if (!Enum.IsDefined(typeof(UtteranceIntent), intent)) return $"{Id}: avoided social actions are invalid.";
+            }
             return null;
         }
 

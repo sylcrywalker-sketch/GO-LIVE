@@ -19,6 +19,8 @@ namespace GoLive.Viewers
         public double ExpiresSeconds { get; }
         public long PresenceEpoch { get; }
         public string CandidateIds { get; internal set; }
+        // The relationship tier that shaped this selection (eligibility, delay); planning re-reads current state.
+        public RelationshipTier Tier { get; internal set; }
 
         internal ReactionIntent(long id, StreamEvent streamEvent, ChatParticipant viewer, bool direct, int order, double due, double expires)
             : this(id, streamEvent, viewer, direct, order, due, expires, 0) { }
@@ -101,6 +103,7 @@ namespace GoLive.Viewers
         private readonly ReactionTuning _tuning;
         private readonly AudienceRoster _roster;
         private readonly AudienceRandom _random;
+        private readonly Func<string, RelationshipTier> _relationship;
         private readonly HashSet<string> _seenKeys = new(StringComparer.Ordinal);
         private readonly List<ChatParticipant> _chosen = new();
         private readonly List<(ChatParticipant viewer, double weight)> _weights = new();
@@ -113,13 +116,14 @@ namespace GoLive.Viewers
 #endif
         public string LastCandidateIds { get; private set; }
 
-        public ReactionSelector(ReactionTuning tuning, AudienceRoster roster, AudienceRandom random)
+        public ReactionSelector(ReactionTuning tuning, AudienceRoster roster, AudienceRandom random, Func<string, RelationshipTier> relationship = null)
         {
             _tuning = tuning ?? throw new ArgumentNullException(nameof(tuning));
             string error = tuning.Validate();
             if (error != null) throw new ArgumentException(error, nameof(tuning));
             _roster = roster ?? throw new ArgumentNullException(nameof(roster));
             _random = random ?? throw new ArgumentNullException(nameof(random));
+            _relationship = relationship;
             Rhythm = new ChatRhythm(tuning);
         }
 
@@ -200,11 +204,15 @@ namespace GoLive.Viewers
             _candidateIds.Clear();
 #endif
             _weights.Clear(); double total = 0;
+            RelationshipTier originTier = Tier(message.ViewerId);
             foreach (var viewer in _roster.Named)
             {
                 if (viewer.ViewerId == message.ViewerId || viewer.Persona.Profile == null ||
                     Rhythm.SinceLast(viewer.ViewerId, now) < _tuning.ViewerGapSeconds * viewer.Traits.Pace) continue;
-                double weight = viewer.Persona.Profile.SocialTendency;
+                RelationshipTier tier = Tier(viewer.ViewerId);
+                // A skeptic's dig draws out the people who like the streamer; a wary viewer rarely bothers.
+                double weight = viewer.Persona.Profile.SocialTendency * (tier == RelationshipTier.Wary ? .6
+                    : originTier == RelationshipTier.Wary && tier >= RelationshipTier.Friendly ? 2 : 1);
                 if (!(weight > 0)) continue;
                 TraceCandidate(viewer.ViewerId);
                 _weights.Add((viewer, weight)); total += weight;
@@ -255,7 +263,14 @@ namespace GoLive.Viewers
             float affinity = viewer.Traits.Affinity(streamEvent.Kind);
             return streamEvent.Kind switch
             {
-                StreamEventKind.StreamerSpeech => DirectReplyChance,
+                // Friends answer when addressed; a wary viewer may let pleasantries pass but still takes a question.
+                StreamEventKind.StreamerSpeech => Tier(viewer.ViewerId) switch
+                {
+                    RelationshipTier.Wary => streamEvent.Speech?.Has(SpeechCue.Question) == true ? .8 : .5,
+                    RelationshipTier.Friendly => .95,
+                    RelationshipTier.Loyal => .97,
+                    _ => DirectReplyChance
+                },
                 StreamEventKind.Donation => .85 * Math.Min(1f, affinity),
                 StreamEventKind.Subscription => .6 * Math.Min(1f, affinity),
                 StreamEventKind.Follow => .3 * Math.Min(1f, affinity),
@@ -270,11 +285,15 @@ namespace GoLive.Viewers
             double total = 0;
             foreach (ChatParticipant viewer in _roster.Named)
             {
-                if (!Available(viewer, now) || !Witnessed(streamEvent, viewer)) continue;
+                if (!Available(viewer, now) || !Witnessed(streamEvent, viewer) || Ignores(viewer, streamEvent)) continue;
                 ReactionTraits traits = viewer.Traits;
                 double weight = traits.Talkativeness * traits.Affinity(streamEvent.Kind);
                 StreamTopic topics = streamEvent.Speech?.Topics ?? StreamTopic.None;
                 if ((topics & traits.Interests) != 0) weight *= 1.9;
+                weight *= Tier(viewer.ViewerId) switch
+                {
+                    RelationshipTier.Wary => .75, RelationshipTier.Friendly => 1.1, RelationshipTier.Loyal => 1.25, _ => 1
+                };
                 weight /= 1 + Rhythm.Recent(now, 120, viewer.ViewerId);
                 if (weight <= 0) continue;
                 TraceCandidate(viewer.ViewerId);
@@ -302,6 +321,16 @@ namespace GoLive.Viewers
             return _weights.Count > 0 ? _weights[_weights.Count - 1].viewer : null;
         }
 
+        private RelationshipTier Tier(string viewerId) => _relationship?.Invoke(viewerId) ?? RelationshipTier.Neutral;
+
+        // Authored silence: an unprompted phrase only about topics this viewer ignores draws nothing from them.
+        private static bool Ignores(ChatParticipant viewer, StreamEvent e)
+        {
+            StreamTopic ignored = viewer.Persona.Profile?.Habits?.Ignores ?? StreamTopic.None;
+            StreamTopic topics = (e.Speech?.Topics ?? StreamTopic.None) & ~StreamTopic.Community;
+            return ignored != StreamTopic.None && topics != StreamTopic.None && (topics & ~ignored) == 0;
+        }
+
         private bool Witnessed(StreamEvent e, ChatParticipant viewer) => !e.HasWitnesses || e.WitnessedBy(viewer.ViewerId, _roster.Epoch(viewer.ViewerId));
 
         [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
@@ -319,12 +348,17 @@ namespace GoLive.Viewers
         {
             // Reading and typing take time; later reactors to the same moment come later still.
             double delay = _tuning.MinimumDelaySeconds + (_tuning.MaximumDelaySeconds - _tuning.MinimumDelaySeconds) * Math.Pow(_random.NextDouble(), 1.4);
-            delay *= viewer.Traits.Speed * (direct ? .8 : 1);
+            RelationshipTier tier = Tier(viewer.ViewerId);
+            // Closer viewers answer sooner; a wary one takes their time.
+            delay *= viewer.Traits.Speed * (direct ? .8 : 1) * tier switch
+            {
+                RelationshipTier.Wary => 1.15, RelationshipTier.Friendly => direct ? .9 : .95, RelationshipTier.Loyal => direct ? .8 : .9, _ => 1
+            };
             delay += order * (1.4 + 2.4 * _random.NextDouble());
             _chosen.Add(viewer);
             Rhythm.Record(viewer.ViewerId, now + delay);
             return new ReactionIntent(++_intentSerial, streamEvent, viewer, direct, order, now + delay, now + delay + _tuning.StaleSeconds,
-                _roster.Epoch(viewer.ViewerId));
+                _roster.Epoch(viewer.ViewerId)) { Tier = tier };
         }
     }
 }

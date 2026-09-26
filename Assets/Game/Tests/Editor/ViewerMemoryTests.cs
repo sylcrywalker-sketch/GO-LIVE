@@ -252,7 +252,9 @@ namespace GoLive.Tests
             var memories = community.State(a.Id).Memories.Retrieve(current, 100);
             var situation = new ChatSituation("channel", 10, 10, ViewerLanguage.Russian, null, null, memories: memories);
             Assert.That(ChatContextBuilder.Build(intent, situation, 100).User, Does.Contain("knowledge=HeardStreamer"));
-            Assert.That(ChatOutputValidator.Validate("помню твой финал", intent, null, situation).Accepted, Is.False);
+            // Social quality pass: a heard fact may be recalled (it is what the streamer said), never claimed as seen.
+            Assert.That(ChatOutputValidator.Validate("видел как ты вчера слил финал", intent, null, situation).Accepted, Is.False);
+            Assert.That(ChatOutputValidator.Validate("помню твой финал", intent, null, situation).Accepted, Is.True);
             Assert.That(ChatOutputValidator.Validate("помню ты говорил про финал", intent, null, situation).Accepted, Is.True);
             var before = community.Capture().Viewers[0].Memories[0];
             var model = new ChatDirectorTests.FakeModel(_ => new LanguageModelResult(LanguageModelStatus.Ok, "помню вчера сгорела видеокарта", .1));

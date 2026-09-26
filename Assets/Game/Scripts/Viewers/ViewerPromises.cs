@@ -198,13 +198,16 @@ namespace GoLive.Viewers
             if (context != null) _reservations[viewerId + "/" + context.Id] = intent;
             return context;
         }
-        internal void Finish(string viewerId, long intent, ViewerPromiseContext context, string published, double now)
+        internal void Finish(string viewerId, long intent, ViewerPromiseContext context, string published, double now) =>
+            FinishPlanned(viewerId, intent, context, published, now, null);
+
+        internal void FinishPlanned(string viewerId, long intent, ViewerPromiseContext context, string published, double now, string currentSubject)
         {
             if (context == null) return;
             string key = viewerId + "/" + context.Id;
             if (!_reservations.TryGetValue(key, out long owner) || owner != intent) return;
             _reservations.Remove(key);
-            if (published == null || !ViewerPromiseVocabulary.References(published, context)) return;
+            if (published == null || !ViewerPromiseVocabulary.References(published, context, currentSubject)) return;
             var k = _records.FirstOrDefault(r => r.Id == context.Id)?.Knowledge.FirstOrDefault(v => v.ViewerId == viewerId);
             if (k != null) { k.References = Math.Min(3, k.References + 1); k.LastReferenceMinutes = now; }
         }

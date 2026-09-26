@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using GoLive.PcBuilding;
 
 namespace GoLive.Viewers
@@ -111,7 +112,11 @@ namespace GoLive.Viewers
             return fact.Importance * 10 + ((topics & fact.Topics) != 0 ? 2 : 0) + (sameType ? 1 : 0);
         }
 
-        internal void Finish(long requestId, IReadOnlyList<ViewerMemory> memories, string publishedText, double now)
+        internal void Finish(long requestId, IReadOnlyList<ViewerMemory> memories, string publishedText, double now) =>
+            FinishPlanned(requestId, memories, publishedText, now, null);
+
+        // The runtime path: a planned callback about the current moment's own subject may omit the subject word.
+        internal void FinishPlanned(long requestId, IReadOnlyList<ViewerMemory> memories, string publishedText, double now, string currentSubject)
         {
             if (memories == null) return;
             bool consumed = false;
@@ -120,11 +125,19 @@ namespace GoLive.Viewers
                 if (!_reserved.TryGetValue(memory.MemoryId, out long owner) || owner != requestId) continue;
                 _reserved.Remove(memory.MemoryId);
                 var fact = _facts.Find(f => f.MemoryId == memory.MemoryId);
-                if (fact == null || consumed || !References(publishedText, memory)) continue;
+                if (fact == null || consumed || !References(publishedText, memory, currentSubject)) continue;
                 fact.ReferenceCount = Math.Min(3, fact.ReferenceCount + 1);
                 fact.LastReferencedGameMinutes = Math.Max(fact.CreatedGameMinutes, now);
                 consumed = true;
             }
+        }
+
+        // Reserves one retrieved fact the callback planner chose; false if it is gone or already reserved.
+        internal bool ReserveOne(string memoryId, long requestId)
+        {
+            if (requestId == 0 || memoryId == null || _reserved.ContainsKey(memoryId) || !_facts.Exists(f => f.MemoryId == memoryId)) return false;
+            _reserved[memoryId] = requestId;
+            return true;
         }
 
         internal void ClearReservations() => _reserved.Clear();
@@ -221,8 +234,19 @@ namespace GoLive.Viewers
             return (e.Speech?.Topics & StreamTopic.Games) != 0 && e.Speech != null ? "game-session" : null;
         }
 
-        internal static bool Historical(string text) => Contains((text ?? "").ToLowerInvariant(), "помню", "вчера", "прошл", "раньше", "remember", "last stream", "yesterday", "previous stream");
-        internal static bool References(string text, ViewerMemory memory)
+        // "прошлый" (previous) is a history claim; the verb "прошло" (time passed) is not.
+        internal static bool Historical(string text)
+        {
+            string lower = (text ?? "").ToLowerInvariant();
+            return Contains(lower, "помню", "вчера", "раньше", "на днях", "remember", "last stream", "yesterday", "previous stream", "last time",
+                "last week", "the other day") || Regex.IsMatch(lower, @"прошл(ый|ого|ому|ым|ом|ая|ой|ую|ое|ые|ых|ыми)(?!\w)");
+        }
+        internal static bool References(string text, ViewerMemory memory) => References(text, memory, null);
+
+        // A callback names the remembered subject, or omits it while the current moment is about that same subject
+        // (and no other subject). A heard fact may be recalled as what the streamer said; claiming to have seen it is
+        // a firsthand claim the viewer cannot make.
+        internal static bool References(string text, ViewerMemory memory, string currentSubject)
         {
             if (!Historical(text)) return false;
             string normalized = SpeechRelevance.Normalize(text);
@@ -232,19 +256,24 @@ namespace GoLive.Viewers
             bool achievement = ReportsAchievement(normalized);
             if (memory.Kind == ViewerMemoryKind.ReportedFailure && achievement && !failure ||
                 memory.Kind == ViewerMemoryKind.ReportedAchievement && failure && !achievement) return false;
-            bool subject = memory.CanonicalSubject switch
-            {
-                "gpu" => Contains(normalized, "видеокарт", "видюх", "gpu"),
-                "microphone" => Contains(normalized, "микрофон", "microphone"),
-                "webcam" => Contains(normalized, "камер", "вебк", "webcam"),
-                "final" => Contains(normalized, "финал", "турнир", "final", "tournament"),
-                "boss" => Contains(normalized, "босс", "boss"),
-                "personal-acknowledgement" => Contains(normalized, "спасибо", "thanks", "thank"),
-                _ => Contains(normalized, "игр", "game")
-            };
+            bool subject = Names(normalized, memory.CanonicalSubject) || currentSubject == memory.CanonicalSubject &&
+                !Canonicals.Any(other => other != memory.CanonicalSubject && Names(normalized, other));
             return subject && (memory.KnowledgeSource == MemoryKnowledgeSource.Witnessed ||
-                Contains(normalized, "говорил", "рассказывал", "сказал", "said", "told", "heard"));
+                !Contains(" " + normalized + " ", " видел", " видела", " видали", " saw ", " seen "));
         }
+
+        private static readonly string[] Canonicals = { "gpu", "microphone", "webcam", "final", "boss" };
+
+        private static bool Names(string normalized, string subject) => subject switch
+        {
+            "gpu" => Contains(normalized, "видеокарт", "видюх", "gpu"),
+            "microphone" => Contains(normalized, "микрофон", "microphone"),
+            "webcam" => Contains(normalized, "камер", "вебк", "webcam"),
+            "final" => Contains(normalized, "финал", "турнир", "final", "tournament"),
+            "boss" => Contains(normalized, "босс", "boss"),
+            "personal-acknowledgement" => Contains(normalized, "спасибо", "thanks", "thank"),
+            _ => Contains(normalized, "игр", "game")
+        };
         private static bool ReportsFailure(string text) => Contains(text, "проиграл", "провалил", "потерял") ||
             Contains(" " + text + " ", " lost ", " failed ");
         private static bool ReportsAchievement(string text) => Contains(text, "выиграл", "победил", "прошел", "прошёл") ||

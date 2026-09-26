@@ -58,7 +58,14 @@ namespace GoLive.Editor.Viewers
                 GUILayout.Label($"Model: {director.Health}   Queue: {director.QueueDepth}   Audience: {viewers.Roster.AudienceSize} " +
                                 $"(named {viewers.Roster.Named.Count}, anonymous chatters {viewers.Roster.Ephemeral.Count})   Channel: {viewers.ChannelLanguage}");
                 _onlySpeech = EditorGUILayout.ToggleLeft("Speech only", _onlySpeech, GUILayout.Width(100));
+                bool record = EditorGUILayout.ToggleLeft("Record session", ViewerSessionRecorder.Recording, GUILayout.Width(120));
+                if (record != ViewerSessionRecorder.Recording)
+                {
+                    if (record) ViewerSessionRecorder.Start(viewers);
+                    else ViewerSessionRecorder.Stop();
+                }
             }
+            if (ViewerSessionRecorder.Recording) GUILayout.Label(ViewerSessionRecorder.Status);
             GUILayout.Label($"Latency median {stats.Percentile(.5):0.00}s  p90 {stats.Percentile(.9):0.00}s  p95 {stats.Percentile(.95):0.00}s  max {stats.Percentile(1):0.00}s   " +
                             $"shown LLM {stats.ShownFromModel} / fallback {stats.ShownFromFallback}   rejected {stats.Rejected}   timeouts {stats.TimedOut}   " +
                             $"unavailable {stats.Unavailable}   stale {stats.DroppedStale}   queue-full {stats.DroppedQueueFull}   max queue {stats.MaximumQueueDepth}");
@@ -84,8 +91,10 @@ namespace GoLive.Editor.Viewers
                 if (!string.IsNullOrEmpty(entry.Reason)) line.Append($"  ({entry.Reason})");
                 if (entry.Text != null) line.Append($"  : {entry.Text}");
                 EditorGUILayout.SelectableLabel(line.ToString(), GUILayout.Height(EditorGUIUtility.singleLineHeight));
-                string detail = $"Candidates: {entry.CandidateIds ?? "—"} | Selection: {entry.SelectionReason ?? "—"} | Memories: {entry.MemoryIds ?? "—"} | Promise: {entry.PromiseId ?? "—"}";
+                string detail = $"Candidates: {entry.CandidateIds ?? "—"} | Selection: {entry.SelectionReason ?? "—"} | Memories: {entry.MemoryIds ?? "—"} | Promise: {entry.PromiseId ?? "—"} | Callback candidates: {entry.CallbackCandidates ?? "—"}";
                 EditorGUILayout.SelectableLabel(detail, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                if (!string.IsNullOrEmpty(entry.Plan))
+                    EditorGUILayout.SelectableLabel("Plan: " + entry.Plan, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 if (!string.IsNullOrEmpty(entry.Relationship))
                     EditorGUILayout.LabelField("Relationship", entry.Relationship, EditorStyles.wordWrappedLabel);
             }

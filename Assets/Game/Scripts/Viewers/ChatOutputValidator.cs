@@ -59,6 +59,26 @@ namespace GoLive.Viewers
         private static readonly Regex MildProfanity = new(@"\b(блин\w*|капец|жесть|хрен\w*|фиг|фига|фигня|нафиг|черт|чёрт|черти|damn|hell|crap)\b",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex RoleLabel = new(@"^\s*(viewer|chat|message|user|assistant|зритель|сообщение|ответ)\s*[:\-–]", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        // Specific claims need support in the plan's facts: an exact quantity of time or performance, a hardware
+        // brand/model, or a long number. Ordinary chat numbers ("1v5", "10/10", "o7") are not claims of this kind.
+        private const string CountWord = @"\d+|пол|дв[аеу]х?|две|тр[иеё]х?|четыр\w*|пят\w*|шест\w*|сем\w*|восем\w*|восьм\w*|девят\w*|десят\w*|" +
+            @"двадцат\w*|тридцат\w*|сорок\w*|сто|two|three|four|five|six|seven|eight|nine|ten|fifteen|twenty|thirty|forty|fifty|hundred";
+        private static readonly Regex Quantity = new(@"(?<!\w)(?<n>" + CountWord + @")\s*-?\s*(?:минут\w*|мин|час\w*|дн[еяию]\w*|день|недел\w*|месяц\w*|" +
+            @"год\w*|лет|minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?|fps|фпс|гб|gb|мб|mb|тб|tb|гц|hz|ghz|ггц|ватт\w*|watts?)(?!\w)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex HardwareEntity = new(@"(?<!\w)(rtx|gtx|rx|radeon|geforce|nvidia|нвиди\w*|amd|intel|интел\w*|ryzen|райзен\w*|i[3579]|\d{3,5})(?!\w)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex Digits = new(@"\d+", RegexOptions.CultureInvariant);
+        // Relationship claims above what game state supports. Romance is never a state of this game.
+        private static readonly Regex Romance = new(@"(влюбил\w*|влюблен\w*|влюблён\w*|люблю тебя|тебя люблю|целую|in love|love you|luv u|marry me|женись на|😍|🥰|😘|💋|💕|💞|💖)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex Devotion = new(@"(любим\w* стрим\w*|обожаю тебя|скучал\w*|соскучил\w*|favou?rite streamer|missed you|miss you)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex Hearts = new(@"(❤|♥|💗|🫶)", RegexOptions.CultureInvariant);
+        // "Again" asserts an earlier occurrence: the streamer's words, visible chat or a planned callback must back it.
+        private static readonly Regex Recurrence = new(@"(?<!\w)(опять|снова)(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex TryAgain = new(@"(?<!\w)(попроб\w*\s+снова|снова\s+попроб\w*)(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex RecurrenceFact = new(@"(?<!\w)(опять|снова|again|ещё раз|еще раз)(?!\w)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         public static ChatValidation Validate(string raw, ReactionIntent intent, IReadOnlyList<StreamChatMessage> recentChat)
             => Validate(raw, intent, recentChat, null);
@@ -67,15 +87,16 @@ namespace GoLive.Viewers
         {
             if (intent == null) throw new ArgumentNullException(nameof(intent));
             if (raw == null) return ChatValidation.Reject("empty");
-            if (ViewerPromiseVocabulary.MentionsPromise(raw) && !ViewerPromiseVocabulary.References(raw, situation?.Promise))
+            string promiseSubject = ViewerPromiseVocabulary.Subject(intent.Event);
+            if (ViewerPromiseVocabulary.MentionsPromise(raw) && !ViewerPromiseVocabulary.References(raw, situation?.Promise, promiseSubject))
                 return ChatValidation.Reject("unsupported promise claim");
             // Conservative phrase guard, not a semantic truth guarantee. Model text never enters the bank.
             if (ViewerMemoryBank.Historical(raw))
             {
-                bool supported = false;
-                if (ViewerPromiseVocabulary.References(raw, situation?.Promise)) supported = true;
+                bool supported = ViewerPromiseVocabulary.References(raw, situation?.Promise, promiseSubject);
+                string memorySubject = ViewerMemoryBank.Subject(intent.Event);
                 if (situation != null) foreach (var memory in situation.Memories)
-                    if (ViewerMemoryBank.References(raw, memory)) supported = true;
+                    if (ViewerMemoryBank.References(raw, memory, memorySubject)) supported = true;
                 if (!supported) return ChatValidation.Reject("unsupported historical claim");
             }
             string text = Repair(raw, intent.Viewer.DisplayName);
@@ -99,6 +120,15 @@ namespace GoLive.Viewers
             if (allowed == Profanity.None && MildProfanity.IsMatch(text)) return ChatValidation.Reject("profanity above this viewer");
             if (text[0] == '/' || text[0] == '!') return ChatValidation.Reject("command");
             if (Money.IsMatch(text)) return ChatValidation.Reject("money claim");
+            // Structured grounding: the plan's envelope, not a topic blacklist, decides which specifics exist.
+            string grounded = situation != null ? ViewerUtterancePlanner.For(intent, situation).GroundedText : Grounded(intent, recentChat);
+            string claim = UngroundedClaim(text, grounded, ((intent.Event.Speech?.Topics ?? StreamTopic.None) & StreamTopic.Hardware) != 0);
+            if (claim != null) return ChatValidation.Reject("ungrounded specific claim: " + claim);
+            if (situation != null && situation.Memories.Count == 0 && situation.Promise == null && Recurrence.IsMatch(text) &&
+                !TryAgain.IsMatch(text) && !RecurrenceFact.IsMatch(grounded)) return ChatValidation.Reject("unsupported recurrence");
+            RelationshipTier tier = situation?.Tier ?? RelationshipTier.Neutral;
+            if (Romance.IsMatch(text) || Devotion.IsMatch(text) && tier != RelationshipTier.Loyal || Hearts.IsMatch(text) && tier < RelationshipTier.Friendly)
+                return ChatValidation.Reject("relationship claim above game state");
             bool ownSupport = intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId &&
                 (intent.Event.Kind == StreamEventKind.Donation || intent.Event.Kind == StreamEventKind.Follow || intent.Event.Kind == StreamEventKind.Subscription);
             if (OwnDonation.IsMatch(text) && !(ownSupport && intent.Event.Kind == StreamEventKind.Donation) ||
@@ -151,6 +181,64 @@ namespace GoLive.Viewers
             if (language == ViewerLanguage.Russian && cyrillic < latin) return "not Russian";
             if (language == ViewerLanguage.English && cyrillic > 0) return "not English";
             return null;
+        }
+
+        // Without a situation (tests, legacy callers) only the moment itself, visible chat and names are grounded.
+        private static string Grounded(ReactionIntent intent, IReadOnlyList<StreamChatMessage> recentChat)
+        {
+            var grounded = new StringBuilder(256);
+            grounded.Append(intent.Viewer.DisplayName).Append(' ').Append(intent.Event.SubjectName).Append(' ')
+                .Append(intent.Event.Speech?.Text).Append(' ').Append(intent.Event.TriggeringLine).Append('\n');
+            if (recentChat != null)
+                foreach (StreamChatMessage line in recentChat) grounded.Append(line.SenderName).Append(' ').Append(line.Text).Append('\n');
+            return grounded.ToString().ToLowerInvariant();
+        }
+
+        // A brand opinion is ordinary talk while the streamer discusses hardware; a model number is a factual claim.
+        private static string UngroundedClaim(string text, string grounded, bool hardwareMoment)
+        {
+            HashSet<string> numbers = null;
+            foreach (Match match in Quantity.Matches(text))
+            {
+                string value = Number(match.Groups["n"].Value);
+                if (value == null || !(numbers ??= Numbers(grounded)).Contains(value)) return match.Value;
+            }
+            foreach (Match match in HardwareEntity.Matches(text))
+            {
+                string token = match.Value.ToLowerInvariant();
+                bool supported = char.IsDigit(token[0]) ? (numbers ??= Numbers(grounded)).Contains(Number(token))
+                    : hardwareMoment && !Regex.IsMatch(token, @"^(rx|i[3579])$") ||
+                      Regex.IsMatch(grounded, @"(?<!\w)" + Regex.Escape(token) + @"(?!\w)", RegexOptions.CultureInvariant);
+                if (!supported) return match.Value;
+            }
+            return null;
+        }
+
+        private static HashSet<string> Numbers(string grounded)
+        {
+            var numbers = new HashSet<string>(StringComparer.Ordinal);
+            foreach (Match match in Digits.Matches(grounded)) numbers.Add(Number(match.Value));
+            foreach (string token in SpeechRelevance.Tokens(grounded))
+                if (token.Length > 0 && !char.IsDigit(token[0]) && CountToken.IsMatch(token) && Number(token) is string value) numbers.Add(value);
+            return numbers;
+        }
+
+        private static readonly Regex CountToken = new("^(?:" + CountWord + ")$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        // Canonical digits for a numeral or a count word; null for vague amounts ("пол") that no fact can back.
+        private static string Number(string word)
+        {
+            string w = word.ToLowerInvariant();
+            if (w.Length > 0 && char.IsDigit(w[0])) return w.TrimStart('0').Length == 0 ? "0" : w.TrimStart('0');
+            int n = w.StartsWith("пятнадцат") ? 15 : w.StartsWith("пятьдесят") || w.StartsWith("пятидесят") ? 50 : w.StartsWith("двадцат") ? 20
+                : w.StartsWith("тридцат") ? 30 : w.StartsWith("сорок") ? 40 : w.StartsWith("десят") ? 10 : w.StartsWith("девят") ? 9
+                : w.StartsWith("восем") || w.StartsWith("восьм") ? 8 : w.StartsWith("сем") ? 7 : w.StartsWith("шест") ? 6 : w.StartsWith("пят") ? 5
+                : w.StartsWith("четыр") ? 4 : w.StartsWith("тр") ? 3 : w.StartsWith("дв") ? 2 : w == "сто" ? 100 : w switch
+                {
+                    "two" => 2, "three" => 3, "four" => 4, "five" => 5, "six" => 6, "seven" => 7, "eight" => 8, "nine" => 9, "ten" => 10,
+                    "fifteen" => 15, "twenty" => 20, "thirty" => 30, "forty" => 40, "fifty" => 50, "hundred" => 100, _ => -1
+                };
+            return n < 0 ? null : n.ToString(CultureInfo.InvariantCulture);
         }
 
         private static bool Echoes(string text, string speech)

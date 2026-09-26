@@ -26,7 +26,10 @@ namespace GoLive.Viewers
         private string _recentSpeech;
         private double _recentSpeechAt;
         private StreamTopic _recentTopics;
+        private StreamTopic _content;
         private double _gameMinutes;
+        // Transient per broadcast: when each viewer last published a planned callback (a viewer is not a database).
+        private readonly Dictionary<string, double> _lastCallback = new(StringComparer.Ordinal);
         private readonly Dictionary<string, EventWitnesses> _chatWitnesses = new(StringComparer.Ordinal);
         private readonly Queue<string> _chatWitnessOrder = new();
 
@@ -68,6 +71,7 @@ namespace GoLive.Viewers
         public void Tick(StreamerContext context)
         {
             _gameMinutes = context.GameMinutes;
+            _content = context.Content;
             Events.UpdateClock(context.GameMinutes);
             Community.UpdateContext(context.GameMinutes, context.Content);
             if (_stream.State != StreamState.Live)
@@ -159,13 +163,36 @@ namespace GoLive.Viewers
                     if (_chatWitnesses.TryGetValue(line.Id, out var witnesses) && witnesses.Contains(id, epoch)) chat.Add(line);
             string speech = currentVisit && !eventOnly && Events.LatestSpeech?.WitnessedBy(id, epoch) == true ? current.RecentSpeech : null;
             ViewerMemoryBank bank = currentVisit && !eventOnly ? Community.State(id)?.Memories : null;
-            IReadOnlyList<ViewerMemory> memories = bank == null ? Array.Empty<ViewerMemory>() : reserve
-                ? bank.Reserve(intent.Event, _gameMinutes, intent.Id) : bank.Retrieve(intent.Event, _gameMinutes);
+            IReadOnlyList<ViewerMemory> relevant = bank == null ? Array.Empty<ViewerMemory>() : bank.Retrieve(intent.Event, _gameMinutes);
             string subject = ViewerPromiseVocabulary.Subject(intent.Event) ?? ViewerPromiseVocabulary.Subject(speech);
-            ViewerPromiseContext promise = bank == null || subject == null ? null : reserve
-                ? Community.Promises.Reserve(id, subject, _gameMinutes, intent.Id) : Community.Promises.Retrieve(id, subject, _gameMinutes);
+            ViewerPromiseContext known = bank == null || subject == null ? null : Community.Promises.Retrieve(id, subject, _gameMinutes);
+            RelationshipTier tier = Community.Tier(id);
+            // Relevance only makes a callback possible. C# decides whether this line is one (bounded, deterministic,
+            // relationship-scaled); otherwise no historical fact reaches the prompt at all. One fact at most.
+            string candidates = Candidates(relevant, known);
+            IReadOnlyList<ViewerMemory> memories = Array.Empty<ViewerMemory>();
+            ViewerPromiseContext promise = null;
+            if (candidates != null && current.StreamSeconds - LastCallback(id) >= ViewerUtterancePlanner.CallbackGapSeconds &&
+                ViewerUtterancePlanner.ChooseCallback(intent, tier, relevant, known, out ViewerMemory chosen, out ViewerPromiseContext chosenPromise))
+            {
+                if (chosenPromise != null) promise = reserve ? Community.Promises.Reserve(id, subject, _gameMinutes, intent.Id) : chosenPromise;
+                else if (!reserve || bank.ReserveOne(chosen.MemoryId, intent.Id)) memories = new[] { chosen };
+            }
+            RelationshipTier? replyTier = intent.Event.Kind == StreamEventKind.ViewerReply ? Community.Tier(intent.Event.SubjectViewerId) : null;
             return new ChatSituation(current.ChannelName, current.StreamSeconds, current.Viewers, current.ChannelLanguage,
-                chat.AsReadOnly(), speech, Community.RelationshipContext(id), memories, promise);
+                chat.AsReadOnly(), speech, Community.RelationshipContext(id), memories, promise, tier, _content, _gameMinutes, replyTier)
+            { CallbackCandidates = candidates };
+        }
+
+        private double LastCallback(string viewerId) => _lastCallback.TryGetValue(viewerId, out double at) ? at : double.NegativeInfinity;
+
+        private static string Candidates(IReadOnlyList<ViewerMemory> memories, ViewerPromiseContext promise)
+        {
+            if (memories.Count == 0 && promise == null) return null;
+            var ids = new List<string>(memories.Count + 1);
+            if (promise != null) ids.Add(promise.Id);
+            foreach (var memory in memories) ids.Add(memory.MemoryId);
+            return string.Join(", ", ids);
         }
 
         private void ObserveChat(StreamChatMessage message)
@@ -180,8 +207,12 @@ namespace GoLive.Viewers
 
         private void FinishMemoryReference(ReactionIntent intent, ChatSituation situation, string publishedText)
         {
-            Community.State(intent.Viewer.ViewerId)?.Memories.Finish(intent.Id, situation?.Memories, publishedText, _gameMinutes);
-            Community.Promises.Finish(intent.Viewer.ViewerId, intent.Id, situation?.Promise, publishedText, _gameMinutes);
+            if (publishedText != null && situation != null && (situation.Memories.Count > 0 || situation.Promise != null))
+                _lastCallback[intent.Viewer.ViewerId] = Events.Now;
+            Community.State(intent.Viewer.ViewerId)?.Memories.FinishPlanned(intent.Id, situation?.Memories, publishedText, _gameMinutes,
+                ViewerMemoryBank.Subject(intent.Event));
+            Community.Promises.FinishPlanned(intent.Viewer.ViewerId, intent.Id, situation?.Promise, publishedText, _gameMinutes,
+                ViewerPromiseVocabulary.Subject(intent.Event));
         }
 
         private void ObservePublished(StreamChatMessage message, ReactionIntent origin)
@@ -236,7 +267,8 @@ namespace GoLive.Viewers
             Chat.Clear();
             _recentSpeech = null;
             _recentTopics = StreamTopic.None;
-            _selector = new ReactionSelector(_tuning, Roster, new AudienceRandom(AudienceRandom.Hash(_stream.Audience.Seed, SelectionSalt)));
+            _selector = new ReactionSelector(_tuning, Roster, new AudienceRandom(AudienceRandom.Hash(_stream.Audience.Seed, SelectionSalt)), Community.Tier);
+            _lastCallback.Clear();
             Director.BeginBroadcast(new AudienceRandom(AudienceRandom.Hash(_stream.Audience.Seed, FallbackSalt)));
             Community.BeginBroadcast(_broadcast, _stream.Audience.Seed, context.GameMinutes, context.Content);
         }

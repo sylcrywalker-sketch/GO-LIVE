@@ -253,16 +253,14 @@ namespace GoLive.Viewers
             return false;
         }
 
+        // The behavioral tier C# selection and planning use; anonymous chatters are ordinary strangers.
+        public RelationshipTier Tier(string viewerId) => ViewerUtterancePlanner.Tier(State(viewerId));
+
         // A derived social description changes warmth/familiarity without replacing the authored personality.
         public string RelationshipContext(string viewerId)
         {
             PermanentViewerState state = State(viewerId);
-            if (state == null) return null;
-            string familiarity = state.VisitCount >= 5 || state.Acknowledgements >= 3 ? "You recognize this streamer from previous interactions. "
-                : state.VisitCount > 1 ? "You have visited this stream before. " : "You are still getting to know this streamer. ";
-            string warmth = state.Sentiment >= 25 ? "You feel warmly toward the streamer. "
-                : state.Sentiment <= -25 ? "You feel wary of the streamer. " : "Your attitude toward the streamer is neutral. ";
-            return familiarity + warmth + "Keep your authored personality; familiarity never makes a gentle person aggressive.";
+            return state == null ? null : ViewerUtterancePlanner.Describe(ViewerUtterancePlanner.Tier(state), state.VisitCount, state.Acknowledgements);
         }
 
         public ViewerCommunitySnapshot Capture()

@@ -36,6 +36,9 @@ namespace GoLive.Viewers
         public string Relationship { get; internal set; }
         public string MemoryIds { get; internal set; }
         public string PromiseId { get; internal set; }
+        // The C# utterance plan behind the line (social action, target, tone, topic) and the callback candidates.
+        public string Plan { get; internal set; }
+        public string CallbackCandidates { get; internal set; }
     }
 
     // Bounded development trace of the most recent reaction decisions (never saved, never shown in Streamly).
@@ -91,6 +94,11 @@ namespace GoLive.Viewers
             foreach (var memory in situation.Memories) ids.Add(memory.MemoryId);
             entry.MemoryIds = string.Join(", ", ids);
             entry.PromiseId = situation.Promise?.Id;
+            entry.CallbackCandidates = situation.CallbackCandidates;
+            ViewerUtterancePlan plan = situation.Plan;
+            if (plan != null)
+                entry.Plan = plan.Intent + (plan.Intent == UtteranceIntent.Callback ? "(" + plan.Manner + ")" : "") + " -> " + plan.Target +
+                    "; " + plan.RelationshipTone + "; " + plan.Topic;
         }
     }
 }

@@ -175,10 +175,16 @@ namespace GoLive.Tests
             PlayGeneration[] absentRequests = model.Completed(absent.Id, crossEvents);
             Assert.That(witnessRequests, Is.Not.Empty, "Actual director generation must target the witness for this speech");
             Assert.That(absentRequests, Is.Not.Empty, "Actual director generation must target the returning non-witness");
-            Assert.That(witnessRequests.Any(r => r.user.Contains("MEMORY: ReportedFailure; subject=final")), Is.True);
+            // The witnessed fact is a callback candidate for the witness only. Whether one line uses it is a bounded C#
+            // roll (a viewer is not a database), so a prompt carries MEMORY only when the plan chose a callback.
+            var crossTrace = core.Log.Entries.Where(e => crossEvents.Contains(e.EventKey) && e.Outcome != ReactionOutcome.Scheduled).ToArray();
+            Assert.That(crossTrace.Any(e => e.ViewerId == witness.Id && (e.CallbackCandidates ?? "").Contains(memory.MemoryId)), Is.True);
+            Assert.That(crossTrace.Where(e => e.ViewerId == absent.Id).All(e => e.CallbackCandidates == null), Is.True);
+            Assert.That(witnessRequests.Where(r => r.user.Contains("MEMORY:")).All(r => r.user.Contains("MEMORY: ReportedFailure; subject=final")), Is.True);
             Assert.That(absentRequests.All(r => !r.user.Contains("MEMORY:")), Is.True);
             Assert.That(published.Any(p => p.line.ViewerId == witness.Id && crossEvents.Contains(p.intent.Event.Key) && p.line.Source == ReactionSource.LanguageModel), Is.True);
-            WritePlay(evidence, "cross-stream", "Real correlated director requests: witness received the reported final failure; returning absent viewer received no MEMORY. All raw results retained; historical callback optional.");
+            WritePlay(evidence, "cross-stream", "Real correlated director requests: the witness had the reported final failure as a callback candidate (MEMORY in " +
+                witnessRequests.Count(r => r.user.Contains("MEMORY:")) + "/" + witnessRequests.Length + " prompts by the bounded plan roll); the returning absent viewer had no candidate and no MEMORY. All raw results retained.");
 
             // The exact Reaction Monitor switch; domain simulation, rewards and witnessed facts continue.
             core.Director.ModelEnabled = false;

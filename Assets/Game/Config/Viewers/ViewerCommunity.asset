@@ -47,6 +47,11 @@ MonoBehaviour:
       SignatureRate: 0.3
       QuestionRate: 0.15
       Notes: Short jabs; never cheers and never explains the joke.
+    Habits:
+      Prefers: 0100000009000000i
+      Avoids: 04000000i
+      Ignores: 0
+      CallbackInterest: 0.55
     Talkativeness: 0.6
     Pace: 1.2
     ResponseSpeed: 0.8
@@ -98,6 +103,11 @@ MonoBehaviour:
       SignatureRate: 0.3
       QuestionRate: 0.45
       Notes: Friendly but not sugary; no cheerleading slogans.
+    Habits:
+      Prefers: 02000000i
+      Avoids: 05000000i
+      Ignores: 0
+      CallbackInterest: 0.35
     Talkativeness: 0.75
     Pace: 1
     ResponseSpeed: 1
@@ -149,6 +159,11 @@ MonoBehaviour:
       SignatureRate: 0.3
       QuestionRate: 0.25
       Notes: Talks hardware only when the moment is about the PC, sound, picture or performance; otherwise a short dry remark.
+    Habits:
+      Prefers: 0a000000i
+      Avoids: 04000000i
+      Ignores: 16
+      CallbackInterest: 0.3
     Talkativeness: 0.5
     Pace: 1.3
     ResponseSpeed: 1.1
@@ -202,6 +217,11 @@ MonoBehaviour:
       SignatureRate: 0.35
       QuestionRate: 0.3
       Notes: Sometimes asks what the streamer just said.
+    Habits:
+      Prefers: 
+      Avoids: 
+      Ignores: 0
+      CallbackInterest: 0.3
     Talkativeness: 0.6
     Pace: 1
     ResponseSpeed: 0.7
@@ -252,6 +272,11 @@ MonoBehaviour:
       SignatureRate: 0.3
       QuestionRate: 0.35
       Notes: Polite and old-fashioned, never internet slang.
+    Habits:
+      Prefers: 0400000002000000i
+      Avoids: 05000000i
+      Ignores: 0
+      CallbackInterest: 0.45
     Talkativeness: 0.55
     Pace: 1.5
     ResponseSpeed: 1.8
@@ -304,6 +329,11 @@ MonoBehaviour:
       SignatureRate: 0.25
       QuestionRate: 0.1
       Notes: Unimpressed and blunt; never praises outright.
+    Habits:
+      Prefers: 05000000i
+      Avoids: 0400000002000000i
+      Ignores: 0
+      CallbackInterest: 0.15
     Talkativeness: 0.5
     Pace: 1.2
     ResponseSpeed: 0.8
@@ -354,6 +384,11 @@ MonoBehaviour:
       SignatureRate: 0.3
       QuestionRate: 0.1
       Notes: Tiny messages, like a nod.
+    Habits:
+      Prefers: 06000000i
+      Avoids: 0200000005000000i
+      Ignores: 9
+      CallbackInterest: 0.2
     Talkativeness: 0.18
     Pace: 2.5
     ResponseSpeed: 1.3
@@ -407,6 +442,11 @@ MonoBehaviour:
       SignatureRate: 0.2
       QuestionRate: 0.4
       Notes: Uses simple phrasing while learning Russian; sometimes asks what a Russian word means.
+    Habits:
+      Prefers: 
+      Avoids: 
+      Ignores: 0
+      CallbackInterest: 0.3
     Talkativeness: 0.45
     Pace: 1.4
     ResponseSpeed: 1.2
@@ -460,6 +500,11 @@ MonoBehaviour:
       SignatureRate: 0.25
       QuestionRate: 0.2
       Notes: Jokes about being poor, never pity.
+    Habits:
+      Prefers: 
+      Avoids: 
+      Ignores: 0
+      CallbackInterest: 0.3
     Talkativeness: 0.55
     Pace: 1.1
     ResponseSpeed: 0.9
@@ -509,6 +554,11 @@ MonoBehaviour:
       SignatureRate: 0.3
       QuestionRate: 0.15
       Notes: Advice in one short sentence, never a lecture.
+    Habits:
+      Prefers: 03000000i
+      Avoids: 0200000004000000i
+      Ignores: 0
+      CallbackInterest: 0.3
     Talkativeness: 0.6
     Pace: 1.2
     ResponseSpeed: 1.1

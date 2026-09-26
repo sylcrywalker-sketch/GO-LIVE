@@ -18,11 +18,11 @@ namespace GoLive.Tests
         [Test]
         public void ValidModelOutputBecomesTheViewersChatLine()
         {
-            var model = new FakeModel(_ => Ok("ахах опять"));
+            var model = new FakeModel(_ => Ok("ахах тут я"));
             (ChatDirector director, StreamChat chat, ReactionLog log) = Director(model);
             ReactionIntent intent = Intent(Viewer("viewer.nightowl", "NightOwl"), "NightOwl ты тут?");
             RunUntilShown(director, intent);
-            Assert.That(chat.Messages.Select(m => m.Text), Is.EqualTo(new[] { "ахах опять" }));
+            Assert.That(chat.Messages.Select(m => m.Text), Is.EqualTo(new[] { "ахах тут я" }));
             Assert.That(chat.Messages[0].SenderName, Is.EqualTo("NightOwl"));
             Assert.That(chat.Messages[0].Source, Is.EqualTo(ReactionSource.LanguageModel));
             ReactionLogEntry shown = log.Entries.Last();
