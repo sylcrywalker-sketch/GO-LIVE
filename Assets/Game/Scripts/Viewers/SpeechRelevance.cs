@@ -183,13 +183,24 @@ namespace GoLive.Viewers
             if (ShortPersonalQuestion(tokens)) return true;
             if (speech.Is(SpeechAct.GameplayQuestion) || speech.Is(SpeechAct.OpinionRequest) ||
                 (speech.Topics & (StreamTopic.Games | StreamTopic.Hardware | StreamTopic.StreamSetup | StreamTopic.Money)) != 0) return false;
-            return Any(tokens, ActivityWords) || Any(tokens, ConversationAcknowledgements);
+            return ShortExplanation(tokens) || Any(tokens, ActivityWords) || Any(tokens, ConversationAcknowledgements);
         }
 
         // Only selection of an active, present conversation partner (or planning an already selected FollowUp)
         // may use this predicate. It never changes global acts or the recognized text. Whisper punctuation is optional.
         internal static bool ConversationAsksForAnswer(SpeechAnalysis speech) =>
-            ContinuesConversation(speech) && (speech.AsksForAnswer || ShortPersonalQuestion(Tokens(speech.Text)));
+            ContinuesConversation(speech) && (speech.AsksForAnswer || ShortPersonalQuestion(Tokens(speech.Text)) || ShortExplanation(Tokens(speech.Text)));
+
+        private static bool ShortExplanation(List<string> tokens)
+        {
+            if (tokens.Count == 0 || tokens.Count > 10) return false;
+            string text = string.Join(" ", tokens);
+            // Context-only ellipses, not a global conversion of statements into questions.
+            return text == "почему" || text == "зачем" || text == "why" || text == "how come" ||
+                text.StartsWith("почему ") && (Any(tokens, StateWords) || text.Contains("без настроения")) ||
+                text.StartsWith("о чем речь") || text.StartsWith("о чем ты") || text.StartsWith("что значит ") ||
+                text.StartsWith("что это значит") || text.StartsWith("what do you mean");
+        }
 
         private static bool ShortPersonalQuestion(List<string> tokens)
         {
@@ -373,7 +384,7 @@ namespace GoLive.Viewers
             bool request = plural && Any(tokens, RequestWords);
             bool opinion = ContainsAny(phrase, OpinionPhrases);
             // "как" with the listener's state within three words: "как дела", "как у вас настроение", "как сам".
-            bool state = Near(tokens, "как", StateWords, 3) && !opinion;
+            bool state = (Near(tokens, "как", StateWords, 3) || phrase.Contains(" как у вас у всех ") && Any(tokens, StateWords)) && !opinion;
             // The listener's own doings: "что сегодня делали", "а ты во что играл", "устал?" (never "я устал").
             bool inner = Any(tokens, InnerQuestionWords) && (singular || plural || Contains(tokens, "сегодня"));
             bool activity = Any(tokens, ActivityWords) && !Contains(tokens, "я") && (asked || request || inner);

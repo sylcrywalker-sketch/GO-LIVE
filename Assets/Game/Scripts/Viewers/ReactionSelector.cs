@@ -26,6 +26,9 @@ namespace GoLive.Viewers
         public bool Conversational { get; internal set; }
         // The streamer's phrase continues this viewer's exchange with them (the viewer's last line is what they answer).
         public bool FollowUp { get; internal set; }
+        public ConversationTarget ConversationTarget { get; internal set; }
+        public string PreviousViewerLine { get; internal set; }
+        internal long ConversationTurn { get; set; }
 
         internal ReactionIntent(long id, StreamEvent streamEvent, ChatParticipant viewer, bool direct, int order, double due, double expires)
             : this(id, streamEvent, viewer, direct, order, due, expires, 0) { }
@@ -186,6 +189,7 @@ namespace GoLive.Viewers
         private readonly List<ChatParticipant> _chosen = new();
         private readonly List<(ChatParticipant viewer, double weight)> _weights = new();
         private long _intentSerial;
+        private long _conversationTurn;
         private double _lastSocial = double.NegativeInfinity;
 
         public ChatRhythm Rhythm { get; }
@@ -194,6 +198,7 @@ namespace GoLive.Viewers
         private readonly List<string> _candidateIds = new();
 #endif
         public string LastCandidateIds { get; private set; }
+        public ConversationTarget LastTarget { get; private set; }
 
         public ReactionSelector(ReactionTuning tuning, AudienceRoster roster, AudienceRandom random, Func<string, RelationshipTier> relationship = null)
         {
@@ -211,6 +216,7 @@ namespace GoLive.Viewers
         {
             var intents = new List<ReactionIntent>();
             LastCandidateIds = null;
+            LastTarget = default;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             _candidateIds.Clear();
 #endif
@@ -228,10 +234,10 @@ namespace GoLive.Viewers
             bool addressed = speech != null && speech.Addresses;
             // A phrase soon after a viewer's answer continues with that viewer unless the streamer turns to the group
             // or names somebody else. The exchange is bounded by the window and the turn count.
-            bool followUp = SpeechRelevance.ContinuesConversation(speech) && Thread.Active(_roster, now, _tuning) &&
-                            (speech.MentionedViewerIds.Count == 0 || speech.MentionedViewerIds.Contains(Thread.ViewerId));
-            if (speech != null && !followUp && (speech.PluralAddress ||
-                speech.MentionedViewerIds.Count > 0 && !speech.MentionedViewerIds.Contains(Thread.ViewerId))) Thread.End();
+            ConversationTarget target = LastTarget = ResolveTarget(speech, now);
+            bool followUp = target.IsSpecific && target.ViewerId == Thread.ViewerId && target.PresenceEpoch == Thread.Epoch && InConversationWindow(now) &&
+                (SpeechRelevance.ContinuesConversation(speech) || target.Kind == ConversationTargetKind.SpecificViewer && speech.AsksForAnswer);
+            if (target.Kind == ConversationTargetKind.Group || target.IsSpecific && target.ViewerId != Thread.ViewerId) Thread.End();
             if (streamEvent.Kind == StreamEventKind.StreamerSpeech && streamEvent.Significance < _tuning.SpeechThreshold && !followUp)
             {
                 reason = "speech below threshold";
@@ -239,12 +245,58 @@ namespace GoLive.Viewers
             }
             _chosen.Clear();
 
-            // 1. Viewers the moment is about: named by the streamer, thanked, the donor, the one who joined, the one the
-            //    streamer is talking with.
-            foreach (string viewerId in DirectViewers(streamEvent, followUp ? Thread.ViewerId : null))
+            // Recipient ownership survives a failed roll or guard. There is deliberately no audience fallback here.
+            if (target.IsSpecific)
             {
-                bool continuing = followUp && viewerId == Thread.ViewerId;
-                bool conversation = continuing || addressed;
+                ChatParticipant viewer = _roster.Find(target.ViewerId);
+                if (viewer == null || !_roster.IsWatching(target.ViewerId)) reason = "target absent";
+                else if (_roster.Epoch(target.ViewerId) != target.PresenceEpoch || !Witnessed(streamEvent, viewer)) reason = "target presence changed";
+                else if (Thread.Exhausted(target.ViewerId, target.PresenceEpoch, now, _tuning)) reason = "target conversation limit or pending answer";
+                else if (Rhythm.SinceLast(target.ViewerId, now) < _tuning.ConversationGapSeconds) reason = "target cooldown";
+                else if (!small && !Rhythm.CanSpend(true)) reason = "target chat budget";
+                else
+                {
+                    TraceCandidate(target.ViewerId);
+                    double chance = followUp ? (speech.AsksForAnswer || SpeechRelevance.ConversationAsksForAnswer(speech) ? .95 : .6)
+                        : DirectChance(streamEvent, viewer);
+                    reason = "target chose silence";
+                    if (_random.NextDouble() < chance)
+                    {
+                        intents.Add(Schedule(streamEvent, viewer, true, 0, now, true, target, followUp));
+                        reason = null;
+                    }
+                }
+                CompleteTrace(intents);
+                return intents;
+            }
+
+            // One speech event owns this bounded wave. Each respondent uses their own state and answers the streamer.
+            if (small && target.Kind == ConversationTargetKind.Group && speech.AsksForAnswer)
+            {
+                double previousDue = now;
+                // The first answer can borrow energy; repeated group invitations do not keep a tiny chat busy forever.
+                double extraResponseEnergy = Rhythm.Tokens >= 1 ? 1 : .5;
+                for (int order = 0; order < Math.Min(viewers, 3); order++)
+                {
+                    double chance = order == 0 ? _tuning.ConversationAnswerChance : order == 1 ? (viewers == 3 ? .9 : .65) : .2;
+                    if (order > 0) chance *= extraResponseEnergy;
+                    if (_random.NextDouble() >= chance) break;
+                    ChatParticipant viewer = PickConversational(streamEvent, now);
+                    if (viewer == null) break;
+                    var intent = Schedule(streamEvent, viewer, false, order, now, true, target, false,
+                        order == 0 ? now : previousDue + 1.4);
+                    intents.Add(intent);
+                    previousDue = intent.DueSeconds;
+                }
+                reason = intents.Count == 0 ? "group silence" : null;
+                CompleteTrace(intents);
+                return intents;
+            }
+
+            // 1. Non-speech moments about a viewer: the donor, subscriber or someone joining.
+            foreach (string viewerId in DirectViewers(streamEvent))
+            {
+                bool conversation = addressed;
                 if (intents.Count >= Math.Max(1, MaximumReactions(streamEvent, viewers)) ||
                     !(conversation && small) && !Rhythm.CanSpend((streamEvent.Significance >= .8f || conversation) && intents.Count == 0)) break;
                 ChatParticipant viewer = _roster.Find(viewerId);
@@ -252,9 +304,9 @@ namespace GoLive.Viewers
                 if (conversation && Thread.Exhausted(viewerId, _roster.Epoch(viewerId), now, _tuning)) continue;
                 if (Rhythm.SinceLast(viewerId, now) < (conversation ? _tuning.ConversationGapSeconds : _tuning.DirectGapSeconds)) continue;
                 TraceCandidate(viewerId);
-                double chance = continuing ? (SpeechRelevance.ConversationAsksForAnswer(speech) ? .95 : .6) : DirectChance(streamEvent, viewer);
+                double chance = DirectChance(streamEvent, viewer);
                 if (_random.NextDouble() >= chance) continue;
-                ReactionIntent intent = Schedule(streamEvent, viewer, true, intents.Count, now, conversation);
+                ReactionIntent intent = Schedule(streamEvent, viewer, true, intents.Count, now, conversation, target);
                 intents.Add(intent);
             }
 
@@ -267,7 +319,7 @@ namespace GoLive.Viewers
                 ChatParticipant viewer = PickConversational(streamEvent, now);
                 if (viewer != null)
                 {
-                    ReactionIntent intent = Schedule(streamEvent, viewer, false, 0, now, true);
+                    ReactionIntent intent = Schedule(streamEvent, viewer, false, 0, now, true, target);
                     intents.Add(intent);
                 }
             }
@@ -280,28 +332,49 @@ namespace GoLive.Viewers
                 more = Math.Min(.95, more * 1.5);
             if (intents.Count > 0) more *= .45;
             int maximum = MaximumReactions(streamEvent, viewers) - intents.Count;
-            // A small group asked something together ("как дела, парни?") may get a second voice now and then.
-            bool groupQuestion = small && viewers >= 2 && addressed && speech.AsksForAnswer && speech.PluralAddress;
-            if (groupQuestion) maximum = Math.Max(maximum, 2 - intents.Count);
             // A chat that is already busy for its size lets ordinary moments pass.
             if (Rhythm.Recent(now, 60) >= Rhythm.Burst(viewers) + Rhythm.RatePerMinute(viewers) && significance < .75f) more *= .25;
             for (int reaction = 0; reaction < maximum; reaction++)
             {
                 if (_random.NextDouble() >= more) break;
                 bool overdraw = significance >= .8f && reaction == 0 && streamEvent.Kind != StreamEventKind.AudienceChatter;
-                if (!(groupQuestion && intents.Count < 2) && !Rhythm.CanSpend(overdraw)) break;
-                ChatParticipant viewer = groupQuestion ? PickConversational(streamEvent, now) : PickViewer(streamEvent, now);
+                if (!Rhythm.CanSpend(overdraw)) break;
+                ChatParticipant viewer = PickViewer(streamEvent, now);
                 if (viewer == null) break;
-                ReactionIntent intent = Schedule(streamEvent, viewer, false, intents.Count, now, groupQuestion);
+                ReactionIntent intent = Schedule(streamEvent, viewer, false, intents.Count, now, false, target);
                 intents.Add(intent);
                 more *= .42;
             }
             reason = intents.Count == 0 ? "silence" : null;
+            CompleteTrace(intents);
+            return intents;
+        }
+
+        private void CompleteTrace(List<ReactionIntent> intents)
+        {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             LastCandidateIds = string.Join(", ", _candidateIds);
             foreach (var intent in intents) intent.CandidateIds = LastCandidateIds;
 #endif
-            return intents;
+        }
+
+        private bool InConversationWindow(double now) => Thread.ViewerId != null && now - Thread.LastAt <= _tuning.ConversationWindowSeconds;
+
+        private ConversationTarget ResolveTarget(SpeechAnalysis speech, double now)
+        {
+            if (speech == null || speech.Is(SpeechAct.Filler)) return default;
+            if (speech.MentionedViewerIds.Count == 1)
+            {
+                string id = speech.MentionedViewerIds[0];
+                return new ConversationTarget(ConversationTargetKind.SpecificViewer, id, _roster.Epoch(id));
+            }
+            // Explicit plural speech starts a group turn, even during a recent one-to-one exchange.
+            if (speech.MentionedViewerIds.Count > 1 || speech.PluralAddress)
+                return new ConversationTarget(ConversationTargetKind.Group);
+            // Keep ownership separate from answer eligibility: absent/exhausted/pending partners cannot be impersonated.
+            if (InConversationWindow(now) && SpeechRelevance.ContinuesConversation(speech))
+                return new ConversationTarget(ConversationTargetKind.ActiveThreadViewer, Thread.ViewerId, Thread.Epoch);
+            return default;
         }
 
         // Called only by the director's Shown event. One fixed roll per real line, then a weighted permanent
@@ -364,13 +437,9 @@ namespace GoLive.Viewers
             _ => 1f
         };
 
-        private IEnumerable<string> DirectViewers(StreamEvent streamEvent, string conversationPartner)
+        private IEnumerable<string> DirectViewers(StreamEvent streamEvent)
         {
-            if (conversationPartner != null) yield return conversationPartner;
             if (streamEvent.SubjectViewerId != null) yield return streamEvent.SubjectViewerId;
-            if (streamEvent.Speech != null)
-                foreach (string viewerId in streamEvent.Speech.MentionedViewerIds)
-                    yield return viewerId;
         }
 
         // Called for every published line: a viewer's answer to the streamer talking to them opens (or continues) the
@@ -380,6 +449,8 @@ namespace GoLive.Viewers
             if (message == null || origin == null || origin.Event.Kind != StreamEventKind.StreamerSpeech) return;
             if (!(origin.Conversational || origin.FollowUp || origin.Direct)) return;
             Thread.Release(origin.Id);
+            // A late sibling may still appear in chat, but cannot take back a newer exchange's owner/turns/line.
+            if (origin.ConversationTurn != 0 && origin.ConversationTurn != _conversationTurn) return;
             Thread.Observe(message.ViewerId, origin.PresenceEpoch, message.StreamSeconds, message.Text, origin.FollowUp);
         }
 
@@ -527,11 +598,11 @@ namespace GoLive.Viewers
             (!(streamEvent.Speech?.Addresses == true || SpeechRelevance.ContinuesConversation(streamEvent.Speech)) ||
                 !Thread.Exhausted(viewer.ViewerId, _roster.Epoch(viewer.ViewerId), now, _tuning));
 
-        private ReactionIntent Schedule(StreamEvent streamEvent, ChatParticipant viewer, bool direct, int order, double now, bool conversation = false)
+        private ReactionIntent Schedule(StreamEvent streamEvent, ChatParticipant viewer, bool direct, int order, double now,
+            bool conversation = false, ConversationTarget target = default, bool continuing = false, double earliestDue = 0)
         {
-            bool continuing = SpeechRelevance.ContinuesConversation(streamEvent.Speech) &&
-                Thread.Active(_roster, now, _tuning) && viewer.ViewerId == Thread.ViewerId;
             conversation |= continuing || streamEvent.Speech?.Addresses == true;
+            if (conversation && order == 0) _conversationTurn++;
             // Reading and typing take time; later reactors to the same moment come later still. Someone who is being
             // talked to is already looking at the chat.
             double minimum = conversation ? _tuning.ConversationMinimumDelaySeconds : _tuning.MinimumDelaySeconds;
@@ -544,11 +615,14 @@ namespace GoLive.Viewers
                 RelationshipTier.Wary => 1.15, RelationshipTier.Friendly => direct ? .9 : .95, RelationshipTier.Loyal => direct ? .8 : .9, _ => 1
             };
             delay += order * (1.4 + 2.4 * _random.NextDouble());
+            delay = Math.Max(delay, earliestDue - now);
             _chosen.Add(viewer);
             if (conversation) Rhythm.RecordConversation(viewer.ViewerId, now + delay);
             else Rhythm.Record(viewer.ViewerId, now + delay);
             var intent = new ReactionIntent(++_intentSerial, streamEvent, viewer, direct, order, now + delay, now + delay + _tuning.StaleSeconds,
-                _roster.Epoch(viewer.ViewerId)) { Tier = tier, Conversational = conversation, FollowUp = continuing };
+                _roster.Epoch(viewer.ViewerId)) { Tier = tier, Conversational = conversation, FollowUp = continuing,
+                    ConversationTarget = target, PreviousViewerLine = continuing ? Thread.LastLine : null };
+            if (conversation) intent.ConversationTurn = _conversationTurn;
             if (conversation) Thread.Reserve(intent);
             return intent;
         }

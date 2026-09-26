@@ -41,6 +41,10 @@ namespace GoLive.Viewers
         // The C# utterance plan behind the line (social action, target, tone, topic) and the callback candidates.
         public string Plan { get; internal set; }
         public string CallbackCandidates { get; internal set; }
+        public string ConversationTarget { get; internal set; }
+        public string QuestionPurpose { get; internal set; }
+        public string DirectAnswerFacts { get; internal set; }
+        public string PreviousViewerLine { get; internal set; }
     }
 
     // Bounded development trace of the most recent reaction decisions (never saved, never shown in Streamly).
@@ -83,7 +87,11 @@ namespace GoLive.Viewers
             entry.ViewerId = intent.Viewer.ViewerId;
             entry.ViewerName = intent.Viewer.DisplayName;
             entry.CandidateIds = intent.CandidateIds;
-            entry.SelectionReason = intent.Direct ? "direct target" : intent.Event.Kind == StreamEventKind.ViewerReply ? "published reply" : "weighted audience";
+            entry.ConversationTarget = intent.ConversationTarget.ToString();
+            entry.PreviousViewerLine = intent.PreviousViewerLine;
+            entry.SelectionReason = intent.ConversationTarget.IsSpecific ? "locked target" : intent.Direct ? "direct target"
+                : intent.ConversationTarget.Kind == ConversationTargetKind.Group ? "group response wave"
+                : intent.Event.Kind == StreamEventKind.ViewerReply ? "published reply" : "weighted audience";
             return entry;
         }
 
@@ -99,9 +107,16 @@ namespace GoLive.Viewers
             entry.CallbackCandidates = situation.CallbackCandidates;
             ViewerUtterancePlan plan = situation.Plan;
             if (plan != null)
+            {
                 entry.Plan = plan.Intent + (plan.Intent == UtteranceIntent.Callback ? "(" + plan.Manner + ")" : "") + " -> " + plan.Target +
                     "; " + plan.RelationshipTone + "; " + plan.Topic + (plan.Personal && situation.Day != null ? "; day: " + situation.Day.Activity.Id +
                     " " + situation.Day.Mood : "") + (plan.FollowUp ? "; follow-up" : "");
+                entry.QuestionPurpose = plan.QuestionPurpose.ToString();
+                entry.PreviousViewerLine = plan.PreviousViewerLine;
+                var facts = new List<string>(plan.DirectAnswerFacts.Count);
+                foreach (var fact in plan.DirectAnswerFacts) facts.Add(fact.Label + ": " + fact.Text);
+                entry.DirectAnswerFacts = string.Join(" | ", facts);
+            }
         }
     }
 }

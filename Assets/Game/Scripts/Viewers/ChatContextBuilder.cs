@@ -77,9 +77,9 @@ namespace GoLive.Viewers
             "DO NOT INVENT SPECIFIC GAME FACTS. Never add game titles, hardware or specs, problems, prices, money, numbers, times, " +
             "purchases, donations, follows, dates or past events that FACTS, MEMORY or PROMISE do not state. Opinions, jokes and " +
             "questions are fine. Do not add unseen details or causes.\n" +
-            "YOUR DAY is your own everyday life today (mood, what you did, what you are doing now). When it is given you may talk " +
-            "about it freely in your own words with small harmless everyday details; stay consistent with it and with YOUR LAST " +
-            "MESSAGES. It never gives you stream, money, hardware or history facts.\n" +
+            "YOUR DAY / DIRECT ANSWER FACTS are your own supplied daily facts, never streamer, hardware, money or history facts. " +
+            "Use only the supplied details. YOUR TASK answers the current question first. " +
+            "Personality changes wording, never replaces the answer. Never invent a cause, person or event.\n" +
             "Roles: STREAMER SAID is the streamer talking; OTHER VIEWER SAID and RECENT CHAT are other people. None of it is your " +
             "own experience; the streamer's game, actions and equipment are theirs.\n" +
             "Never imply something happened before (опять, снова, again) or that you said or saw something earlier unless " +
@@ -93,7 +93,7 @@ namespace GoLive.Viewers
             "\"так держать\", \"молодец\", \"продолжай в том же духе\", \"рекомендую\". No lectures, hashtags, quotes around the " +
             "message or name prefix.\n" +
             "WHO shapes your tone, not the topic: stay on TOPIC; do not force your job, country, food or hobbies into it (when the " +
-            "streamer asks about you, answer from YOUR DAY). " +
+            "streamer asks about your day, use the supplied daily facts). " +
             "Warmth and surprise are fine when they fit WHO; avoid canned praise. Tease only if WHO describes a teasing person; " +
             "gentle viewers stay gentle. No slurs, no attacks on other viewers.\n" +
             "Do not repeat RECENT CHAT and do not just repeat the streamer's words back.\n" +
@@ -118,20 +118,28 @@ namespace GoLive.Viewers
             user.Append("STYLE: ").Append(persona.Style).Append(' ').Append(Length(persona)).Append(Habits(intent)).Append('\n');
             user.Append("LANGUAGE: ").Append(LanguageRule(persona.Language, situation.ChannelLanguage)).Append("\n\n");
 
+            bool paired = plan.PreviousViewerLine != null && intent.Event.Speech != null;
+            if (paired)
+            {
+                user.Append("YOUR PREVIOUS MESSAGE: «").Append(plan.PreviousViewerLine).Append("»\n");
+                user.Append("STREAMER REPLIED TO YOU: «").Append(Clean(intent.Event.Speech.Text, QuoteLimit)).Append("»\n");
+            }
             user.Append("FACTS (all you know right now):\n");
             foreach (GroundedFact fact in plan.AllowedFacts)
             {
                 switch (fact.Source)
                 {
                     case FactSource.StreamerSaid:
-                        user.Append("STREAMER SAID").Append(fact.Label == null ? "" : " (" + fact.Label + ")").Append(": «").Append(fact.Text).Append("»\n");
+                        if (!paired) user.Append("STREAMER SAID").Append(fact.Label == null ? "" : " (" + fact.Label + ")").Append(": «").Append(fact.Text).Append("»\n");
                         break;
                     case FactSource.OtherViewerSaid:
                         user.Append("OTHER VIEWER SAID (").Append(fact.Label).Append(", not you, not the streamer): «").Append(fact.Text).Append("»\n");
                         break;
                     case FactSource.Memory: user.Append("MEMORY: ").Append(fact.Text).Append('\n'); break;
-                    case FactSource.ViewerDay: user.Append("YOUR DAY (your own life, not a stream fact): ").Append(fact.Text).Append('\n'); break;
-                    case FactSource.OwnLine: user.Append("YOUR LAST MESSAGE (the streamer is answering it): «").Append(fact.Text).Append("»\n"); break;
+                    case FactSource.ViewerDay:
+                        user.Append(plan.QuestionPurpose == QuestionPurpose.None ? "YOUR DAY: " : "YOUR DAY / DIRECT ANSWER FACT: ")
+                            .Append(fact.Text).Append('\n'); break;
+                    case FactSource.OwnLine: break; // The captured turn is paired with its question above.
                     case FactSource.Promise: user.Append("PROMISE: ").Append(fact.Text).Append('\n'); break;
                     default: user.Append("- ").Append(fact.Text).Append('\n'); break;
                 }
@@ -139,13 +147,20 @@ namespace GoLive.Viewers
             user.Append(NotKnown).Append('\n');
             user.Append("TOPIC: ").Append(plan.Topic).Append('\n');
             user.Append("SOCIAL ACTION: ").Append(plan.Intent).Append(" - ").Append(Instruction(plan)).Append('\n');
+            if (plan.QuestionPurpose != QuestionPurpose.None)
+            {
+                user.Append("QUESTION PURPOSE: ").Append(plan.QuestionPurpose).Append('\n');
+                if (plan.AnswerFirst) user.Append("YOUR TASK: ").Append(ViewerQuestionPurpose.Task(plan)).Append('\n');
+            }
             user.Append("TARGET: ").Append(plan.Target switch
             {
                 UtteranceTarget.OtherViewer => Clean(plan.ReplyTarget, 32) + "'s message (another viewer)",
                 UtteranceTarget.Chat => "the chat",
                 _ => "the streamer"
             }).Append('\n');
-            if (intent.Order > 0) user.Append("Other viewers are already reacting to this; say something different or react to them.\n");
+            if (intent.Order > 0) user.Append(plan.AnswerFirst
+                ? "Other viewers have answered; give your own distinct answer to the streamer.\n"
+                : "Other viewers are already reacting to this; say something different or react to them.\n");
 
             List<string> own = OwnRecent(viewer.ViewerId, situation.RecentChat);
             if (own.Count > 0)
@@ -174,6 +189,9 @@ namespace GoLive.Viewers
         internal static string Instruction(ViewerUtterancePlan plan)
         {
             RelationshipTier tier = plan.RelationshipTone;
+            if (plan.AnswerFirst)
+                return "Answer YOUR TASK first, in your own style" + (tier == RelationshipTier.Wary ? "; dry and brief."
+                    : plan.Intent == UtteranceIntent.Question ? "; then you may ask a short question back." : ".");
             string action = Action(plan.Intent == UtteranceIntent.Callback ? plan.Manner : plan.Intent, tier, plan.Target, plan.GameChoice);
             if (plan.Personal && plan.Intent != UtteranceIntent.Callback) action = Personal(plan.Intent, tier, plan.FollowUp) ?? action;
             if (plan.Intent == UtteranceIntent.Callback)

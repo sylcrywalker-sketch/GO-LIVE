@@ -123,6 +123,12 @@ namespace GoLive.Editor.Viewers
                 EditorGUILayout.SelectableLabel(line.ToString(), GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 string detail = $"Candidates: {entry.CandidateIds ?? "—"} | Selection: {entry.SelectionReason ?? "—"} | Memories: {entry.MemoryIds ?? "—"} | Promise: {entry.PromiseId ?? "—"} | Callback candidates: {entry.CallbackCandidates ?? "—"}";
                 EditorGUILayout.SelectableLabel(detail, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                EditorGUILayout.SelectableLabel($"Target: {entry.ConversationTarget ?? "—"} | Purpose: {entry.QuestionPurpose ?? "—"}",
+                    GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                if (!string.IsNullOrEmpty(entry.PreviousViewerLine))
+                    EditorGUILayout.LabelField("Previous viewer line", entry.PreviousViewerLine, EditorStyles.wordWrappedLabel);
+                if (!string.IsNullOrEmpty(entry.DirectAnswerFacts))
+                    EditorGUILayout.LabelField("Answer facts", entry.DirectAnswerFacts, EditorStyles.wordWrappedLabel);
                 if (!string.IsNullOrEmpty(entry.Plan))
                     EditorGUILayout.SelectableLabel("Plan: " + entry.Plan, GUILayout.Height(EditorGUIUtility.singleLineHeight));
                 if (!string.IsNullOrEmpty(entry.Relationship))

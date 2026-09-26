@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="23" result="Failed(Child)" total="23" passed="22" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.3545124">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1288" result="Failed" site="Child" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.354512" total="23" passed="22" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2476" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1288" result="Failed" site="Child" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.334859" total="23" passed="22" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25864" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2477" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1288" result="Failed" site="Child" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.320518" total="23" passed="22" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2478" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1288" result="Failed" site="Child" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.306997" total="23" passed="22" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2041" name="ViewerConversationTargetTests" fullname="GoLive.Tests.ViewerConversationTargetTests" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.290218" total="23" passed="22" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2052" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.096557" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2046" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Почему без настроения?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Почему без настроения?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="533969178" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.037329" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2047" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;критик, почему?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;критик, почему?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="533450495" result="Failed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.013153" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: greater than 125
+  But was:  84
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll (System.String phrase) [0x000eb] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2048" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;почему?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;почему?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1561204674" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.009563" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2049" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;О чём речь? Какое плохое?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;О чём речь? Какое плохое?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="785140629" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.009422" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2050" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;что значит ну да ладно&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;что значит ну да ладно&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1337104257" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.012924" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2051" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Жесть. Устал, наверное.&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Жесть. Устал, наверное.&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="543064031" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.007532" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2059" name="ExpiredThreadAllowsOrdinarySelectionAgain" fullname="GoLive.Tests.ViewerConversationTargetTests.ExpiredThreadAllowsOrdinarySelectionAgain" methodname="ExpiredThreadAllowsOrdinarySelectionAgain" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="513088426" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.011629" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2063" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.077277" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2060" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(1)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(1)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1727805889" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.021624" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[audience=1; counts 0/1/2/3=24/276/0/0
+]]></output>
+              </test-case>
+              <test-case id="2061" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(2)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(2)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="684561256" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.026877" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[audience=2; counts 0/1/2/3=24/115/161/0
+]]></output>
+              </test-case>
+              <test-case id="2062" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(3)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(3)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1663290185" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.024730" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[audience=3; counts 0/1/2/3=24/26/203/47
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="2058" name="ExplicitOtherViewerWinsOverCurrentThread" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitOtherViewerWinsOverCurrentThread" methodname="ExplicitOtherViewerWinsOverCurrentThread" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1150976686" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.003672" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2045" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.027950" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2042" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;критик, почему без настроения?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;критик, почему без настроения?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1365966516" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.007389" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2043" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;О чем ты, критик?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;О чем ты, критик?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="355951866" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.008504" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2044" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;Что? Девочка с девятого этажа? О чем ты критика?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;Что? Девочка с девятого этажа? О чем ты критика?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1849257228" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.011467" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2057" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.020068" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2053" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;cooldown&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;cooldown&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="21838898" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.003499" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2054" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;absent&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;absent&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1250444567" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.003120" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2055" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;changed epoch&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;changed epoch&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="400871003" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.002877" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2056" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;maximum&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;maximum&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1444792110" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.009796" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2069" name="LateGroupGenerationStillPublishesInOrderWithAPause" fullname="GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.030273" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2067" name="LateGroupGenerationStillPublishesInOrderWithAPause(False)" fullname="GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause(False)" methodname="LateGroupGenerationStillPublishesInOrderWithAPause" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="88411938" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.028344" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2068" name="LateGroupGenerationStillPublishesInOrderWithAPause(True)" fullname="GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause(True)" methodname="LateGroupGenerationStillPublishesInOrderWithAPause" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1951019247" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.000784" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2066" name="NonQuestionDoesNotStartAGroupResponseWave" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.008666" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2064" name="NonQuestionDoesNotStartAGroupResponseWave(&quot;ребят я сегодня играл&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave(&quot;ребят я сегодня играл&quot;)" methodname="NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="710673023" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.006631" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2065" name="NonQuestionDoesNotStartAGroupResponseWave(&quot;Так, секунду&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave(&quot;Так, секунду&quot;)" methodname="NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1033927580" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.001419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2070" name="OlderGroupSiblingCannotOverwriteANewerNamedExchange" fullname="GoLive.Tests.ViewerConversationTargetTests.OlderGroupSiblingCannotOverwriteANewerNamedExchange" methodname="OlderGroupSiblingCannotOverwriteANewerNamedExchange" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1271399255" result="Passed" start-time="2026-09-26 19:25:36Z" end-time="2026-09-26 19:25:36Z" duration="0.006789" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

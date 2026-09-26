@@ -1,0 +1,1332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="190" result="Failed(Child)" total="190" passed="186" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 18:58:24Z" end-time="2026-09-26 18:58:25Z" duration="1.0544404">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1276" result="Failed" site="Child" start-time="2026-09-26 18:58:24Z" end-time="2026-09-26 18:58:25Z" duration="1.054440" total="190" passed="186" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2461" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1276" result="Failed" site="Child" start-time="2026-09-26 18:58:24Z" end-time="2026-09-26 18:58:25Z" duration="1.035374" total="190" passed="186" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31304" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2462" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1276" result="Failed" site="Child" start-time="2026-09-26 18:58:24Z" end-time="2026-09-26 18:58:25Z" duration="1.021708" total="190" passed="186" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2463" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1276" result="Failed" site="Child" start-time="2026-09-26 18:58:24Z" end-time="2026-09-26 18:58:25Z" duration="1.008087" total="190" passed="186" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1043" name="ChatDirectorTests" fullname="GoLive.Tests.ChatDirectorTests" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" testcasecount="39" result="Passed" start-time="2026-09-26 18:58:24Z" end-time="2026-09-26 18:58:25Z" duration="0.119303" total="39" passed="39" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1082" name="BroadcastEndCancelsGenerationAndIgnoresLateResults" fullname="GoLive.Tests.ChatDirectorTests.BroadcastEndCancelsGenerationAndIgnoresLateResults" methodname="BroadcastEndCancelsGenerationAndIgnoresLateResults" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1111620033" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.034892" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1083" name="ConcurrencyAndQueueAreBounded" fullname="GoLive.Tests.ChatDirectorTests.ConcurrencyAndQueueAreBounded" methodname="ConcurrencyAndQueueAreBounded" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1859993121" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.004522" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1080" name="ContextStaysBounded" fullname="GoLive.Tests.ChatDirectorTests.ContextStaysBounded" methodname="ContextStaysBounded" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="191795531" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001087" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1075" name="EnglishViewerLinesPass" fullname="GoLive.Tests.ChatDirectorTests.EnglishViewerLinesPass" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.007683" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1072" name="EnglishViewerLinesPass(&quot;bro????&quot;)" fullname="GoLive.Tests.ChatDirectorTests.EnglishViewerLinesPass(&quot;bro????&quot;)" methodname="EnglishViewerLinesPass" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="334074694" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.004722" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1073" name="EnglishViewerLinesPass(&quot;nah no way&quot;)" fullname="GoLive.Tests.ChatDirectorTests.EnglishViewerLinesPass(&quot;nah no way&quot;)" methodname="EnglishViewerLinesPass" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1145089104" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000525" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1074" name="EnglishViewerLinesPass(&quot;chat clip that&quot;)" fullname="GoLive.Tests.ChatDirectorTests.EnglishViewerLinesPass(&quot;chat clip that&quot;)" methodname="EnglishViewerLinesPass" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1580146919" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000119" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1076" name="InvalidOutputIsNeverRegeneratedInALoop" fullname="GoLive.Tests.ChatDirectorTests.InvalidOutputIsNeverRegeneratedInALoop" methodname="InvalidOutputIsNeverRegeneratedInALoop" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1512798044" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.004365" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1085" name="LiveSpeechReachesTheChatThroughTheModelEndToEnd" fullname="GoLive.Tests.ChatDirectorTests.LiveSpeechReachesTheChatThroughTheModelEndToEnd" methodname="LiveSpeechReachesTheChatThroughTheModelEndToEnd" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="916565028" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.028808" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[speech outcome Scheduled (chat), chat: rogue: ну ты опять
+]]></output>
+            </test-case>
+            <test-case id="1047" name="MalformedServerResponsesAreResultsNotExceptions" fullname="GoLive.Tests.ChatDirectorTests.MalformedServerResponsesAreResultsNotExceptions" methodname="MalformedServerResponsesAreResultsNotExceptions" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="477034826" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001054" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1084" name="ModelTextCanNeverCreateMoneyAndDonationLinesCarryTheRealAmount" fullname="GoLive.Tests.ChatDirectorTests.ModelTextCanNeverCreateMoneyAndDonationLinesCarryTheRealAmount" methodname="ModelTextCanNeverCreateMoneyAndDonationLinesCarryTheRealAmount" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1659758664" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001458" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1078" name="NonSpeechMomentsCannotInventSupportTransactions" fullname="GoLive.Tests.ChatDirectorTests.NonSpeechMomentsCannotInventSupportTransactions" methodname="NonSpeechMomentsCannotInventSupportTransactions" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="808630717" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000999" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1079" name="ResolvedMessagesAreCheckedAgainstChatAtPublicationTime" fullname="GoLive.Tests.ChatDirectorTests.ResolvedMessagesAreCheckedAgainstChatAtPublicationTime" methodname="ResolvedMessagesAreCheckedAgainstChatAtPublicationTime" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="429557747" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000627" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1081" name="StaleResponseIsDroppedNotShownLate" fullname="GoLive.Tests.ChatDirectorTests.StaleResponseIsDroppedNotShownLate" methodname="StaleResponseIsDroppedNotShownLate" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="920148953" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000384" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1077" name="StreamerSpeechIsQuotedDataNotInstructions" fullname="GoLive.Tests.ChatDirectorTests.StreamerSpeechIsQuotedDataNotInstructions" methodname="StreamerSpeechIsQuotedDataNotInstructions" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="2033125876" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001160" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1046" name="TimeoutFallsBackForAnAddressedViewer" fullname="GoLive.Tests.ChatDirectorTests.TimeoutFallsBackForAnAddressedViewer" methodname="TimeoutFallsBackForAnAddressedViewer" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="522274872" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000332" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1045" name="UnavailableBackendFallsBackAndBacksOff" fullname="GoLive.Tests.ChatDirectorTests.UnavailableBackendFallsBackAndBacksOff" methodname="UnavailableBackendFallsBackAndBacksOff" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1240828442" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001234" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1071" name="ValidatorAcceptsOrdinaryChat" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003318" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1064" name="ValidatorAcceptsOrdinaryChat(&quot;че ты делаешь ахах&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat(&quot;че ты делаешь ахах&quot;)" methodname="ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1777218784" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000747" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1065" name="ValidatorAcceptsOrdinaryChat(&quot;НАХУЯ ТЫ ТУДА ПОШЕЛ&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat(&quot;НАХУЯ ТЫ ТУДА ПОШЕЛ&quot;)" methodname="ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1544185002" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000150" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1066" name="ValidatorAcceptsOrdinaryChat(&quot;норм&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat(&quot;норм&quot;)" methodname="ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="916553285" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000106" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1067" name="ValidatorAcceptsOrdinaryChat(&quot;?&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat(&quot;?&quot;)" methodname="ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1550536467" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000083" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1068" name="ValidatorAcceptsOrdinaryChat(&quot;ХАХАХА&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat(&quot;ХАХАХА&quot;)" methodname="ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="821089925" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000089" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1069" name="ValidatorAcceptsOrdinaryChat(&quot;\&quot;ахах опять\&quot;&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat(&quot;\&quot;ахах опять\&quot;&quot;)" methodname="ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1971105129" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000110" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1070" name="ValidatorAcceptsOrdinaryChat(&quot;NightOwl: опять двадцать пять&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorAcceptsOrdinaryChat(&quot;NightOwl: опять двадцать пять&quot;)" methodname="ValidatorAcceptsOrdinaryChat" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="2242313" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1062" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.005119" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1048" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;As an AI language model, I think this was great&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;As an AI language model, I think this was great&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="468577772" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000203" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Sure! Here's a fun reaction: lol&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Sure! Here's a fun reaction: lol&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="47576886" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000097" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1050" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Viewer response: Wow, that was amazing!&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Viewer response: Wow, that was amazing!&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="360134230" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000087" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1051" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;According to the system prompt I should react&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;According to the system prompt I should react&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="2077571449" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000085" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1052" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Great job! Keep it up, you've got this!&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Great job! Keep it up, you've got this!&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="302639888" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000104" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Это было потрясающе. Ты молодец. Продолжай в том же духе. Мы все тебя поддерживаем. Так держать!&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;Это было потрясающе. Ты молодец. Продолжай в том же духе. Мы все тебя поддерживаем. Так держать!&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1422771518" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000106" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1054" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;ну как так\nвторая строка&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;ну как так\nвторая строка&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1389928657" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000081" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1055" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;**жирный** текст&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;**жирный** текст&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="2047818878" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000078" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1056" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;держи 500 рублей&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;держи 500 рублей&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1680310037" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000084" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1057" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;задонатил тебе на новую видюху&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;задонатил тебе на новую видюху&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="223382594" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000112" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1058" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;/give 500&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;/give 500&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1485650253" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000083" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1059" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;ахах 😂😂😂😂&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;ахах 😂😂😂😂&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1233088546" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000175" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1060" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;NightOwl: As NightOwl I say hi&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;NightOwl: As NightOwl I say hi&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1932798370" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000095" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1061" name="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;this is english from a russian viewer&quot;)" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage(&quot;this is english from a russian viewer&quot;)" methodname="ValidatorRejectsAssistantVoiceLeaksClaimsAndWrongLanguage" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="1890074887" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000137" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1063" name="ValidatorRejectsOversizedEchoAndDuplicateLines" fullname="GoLive.Tests.ChatDirectorTests.ValidatorRejectsOversizedEchoAndDuplicateLines" methodname="ValidatorRejectsOversizedEchoAndDuplicateLines" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="874544545" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000464" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1044" name="ValidModelOutputBecomesTheViewersChatLine" fullname="GoLive.Tests.ChatDirectorTests.ValidModelOutputBecomesTheViewersChatLine" methodname="ValidModelOutputBecomesTheViewersChatLine" classname="GoLive.Tests.ChatDirectorTests" runstate="Runnable" seed="671806689" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001260" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1970" name="ViewerAnswerPurposeTests" fullname="GoLive.Tests.ViewerAnswerPurposeTests" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.041831" total="31" passed="30" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1998" name="CombinedGroupQuestionIncludesBothStateAndTodaysActivity" fullname="GoLive.Tests.ViewerAnswerPurposeTests.CombinedGroupQuestionIncludesBothStateAndTodaysActivity" methodname="CombinedGroupQuestionIncludesBothStateAndTodaysActivity" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1696045901" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.012071" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2003" name="DirectAnswerDayAndPriorMessageCannotAuthorizeStreamerHardware" fullname="GoLive.Tests.ViewerAnswerPurposeTests.DirectAnswerDayAndPriorMessageCannotAuthorizeStreamerHardware" methodname="DirectAnswerDayAndPriorMessageCannotAuthorizeStreamerHardware" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1973408310" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002178" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1999" name="FollowUpPromptPairsThePriorMessageWithTheStreamersQuestionAndAnswerTask" fullname="GoLive.Tests.ViewerAnswerPurposeTests.FollowUpPromptPairsThePriorMessageWithTheStreamersQuestionAndAnswerTask" methodname="FollowUpPromptPairsThePriorMessageWithTheStreamersQuestionAndAnswerTask" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1368321095" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000616" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2002" name="MissingDayDoesNotCreateAFictionalMoodCause" fullname="GoLive.Tests.ViewerAnswerPurposeTests.MissingDayDoesNotCreateAFictionalMoodCause" methodname="MissingDayDoesNotCreateAFictionalMoodCause" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1697371674" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000562" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1993" name="PersonalAnswerAuthorizesOnlyRelevantDayFields" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001694" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1991" name="PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сегодня делал?&quot;,&quot;had boring school lessons today&quot;,&quot;lying on the bed watching streams&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сегодня делал?&quot;,&quot;had boring school lessons today&quot;,&quot;lying on the bed watching streams&quot;)" methodname="PersonalAnswerAuthorizesOnlyRelevantDayFields" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1093411056" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001048" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1992" name="PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сейчас делаешь?&quot;,&quot;lying on the bed watching streams&quot;,&quot;had boring school lessons today&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сейчас делаешь?&quot;,&quot;lying on the bed watching streams&quot;,&quot;had boring school lessons today&quot;)" methodname="PersonalAnswerAuthorizesOnlyRelevantDayFields" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1581565563" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000217" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2001" name="PersonalQuestionAlwaysAnswersBeforeTheViewersPersonality" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalQuestionAlwaysAnswersBeforeTheViewersPersonality" methodname="PersonalQuestionAlwaysAnswersBeforeTheViewersPersonality" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="999897181" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.010330" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2004" name="PriorMessageAndDayFactsStayBoundedInTheAnswerEnvelope" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PriorMessageAndDayFactsStayBoundedInTheAnswerEnvelope" methodname="PriorMessageAndDayFactsStayBoundedInTheAnswerEnvelope" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="801507642" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000628" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1989" name="QuestionPurposeFollowsTheActualQuestion" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.005825" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1971" name="QuestionPurposeFollowsTheActualQuestion(&quot;как дела?&quot;,null,&quot;Mood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;как дела?&quot;,null,&quot;Mood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="632309012" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000298" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1972" name="QuestionPurposeFollowsTheActualQuestion(&quot;да как у вас у всех дела расскажите мне пожалуйста&quot;,null,&quot;Mood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;да как у вас у всех дела расскажите мне пожалуйста&quot;,null,&quot;Mood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="2023469403" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000260" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1973" name="QuestionPurposeFollowsTheActualQuestion(&quot;что сегодня делал?&quot;,null,&quot;TodayActivity&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;что сегодня делал?&quot;,null,&quot;TodayActivity&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1497354991" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000198" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1974" name="QuestionPurposeFollowsTheActualQuestion(&quot;Зина, а у тебя как день прошёл?&quot;,null,&quot;TodayActivity&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;Зина, а у тебя как день прошёл?&quot;,null,&quot;TodayActivity&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1865239437" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000225" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1975" name="QuestionPurposeFollowsTheActualQuestion(&quot;что сейчас делаешь?&quot;,null,&quot;CurrentActivity&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;что сейчас делаешь?&quot;,null,&quot;CurrentActivity&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1317234711" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1976" name="QuestionPurposeFollowsTheActualQuestion(&quot;Почему без настроения?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;Почему без настроения?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="2043761301" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000189" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1977" name="QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="58819984" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000160" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1978" name="QuestionPurposeFollowsTheActualQuestion(&quot;why?&quot;,&quot;feeling bored today&quot;,&quot;ReasonForMood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;why?&quot;,&quot;feeling bored today&quot;,&quot;ReasonForMood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="380913408" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000166" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1979" name="QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;я выбираю такие игры&quot;,&quot;Explanation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;я выбираю такие игры&quot;,&quot;Explanation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1174398661" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000167" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1980" name="QuestionPurposeFollowsTheActualQuestion(&quot;О чем ты, критик?&quot;,&quot;я про стрим&quot;,&quot;Explanation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;О чем ты, критик?&quot;,&quot;я про стрим&quot;,&quot;Explanation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="230522135" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000167" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1981" name="QuestionPurposeFollowsTheActualQuestion(&quot;жесть, устал наверное?&quot;,&quot;в школе весь день&quot;,&quot;Confirmation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;жесть, устал наверное?&quot;,&quot;в школе весь день&quot;,&quot;Confirmation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1585584813" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000169" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1982" name="QuestionPurposeFollowsTheActualQuestion(&quot;и как?&quot;,&quot;в школе весь день&quot;,&quot;Explanation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;и как?&quot;,&quot;в школе весь день&quot;,&quot;Explanation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="798356942" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000165" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1983" name="QuestionPurposeFollowsTheActualQuestion(&quot;какую игру лучше запустить?&quot;,null,&quot;GamePreference&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;какую игру лучше запустить?&quot;,null,&quot;GamePreference&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1063349788" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000165" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1984" name="QuestionPurposeFollowsTheActualQuestion(&quot;как тебе стрим?&quot;,null,&quot;Opinion&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;как тебе стрим?&quot;,null,&quot;Opinion&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="2086542122" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000156" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1985" name="QuestionPurposeFollowsTheActualQuestion(&quot;откуда ты?&quot;,null,&quot;OriginLocation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;откуда ты?&quot;,null,&quot;OriginLocation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1322112705" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000166" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1986" name="QuestionPurposeFollowsTheActualQuestion(&quot;where are you from?&quot;,null,&quot;OriginLocation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;where are you from?&quot;,null,&quot;OriginLocation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="731186708" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000154" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1987" name="QuestionPurposeFollowsTheActualQuestion(&quot;сколько будет два плюс два?&quot;,null,&quot;GenericQuestion&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;сколько будет два плюс два?&quot;,null,&quot;GenericQuestion&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="982312893" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000179" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1988" name="QuestionPurposeFollowsTheActualQuestion(&quot;так, секунду&quot;,null,&quot;None&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;так, секунду&quot;,null,&quot;None&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1543809936" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000157" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1990" name="RealMoodFollowUpGetsTheViewersStructuredReason" fullname="GoLive.Tests.ViewerAnswerPurposeTests.RealMoodFollowUpGetsTheViewersStructuredReason" methodname="RealMoodFollowUpGetsTheViewersStructuredReason" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1316898578" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000628" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2000" name="ThreadSnapshotWinsOverMoreRecentOwnChatWhenGenerationStarts" fullname="GoLive.Tests.ViewerAnswerPurposeTests.ThreadSnapshotWinsOverMoreRecentOwnChatWhenGenerationStarts" methodname="ThreadSnapshotWinsOverMoreRecentOwnChatWhenGenerationStarts" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="2116866222" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000659" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1997" name="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" fullname="GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.004224" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1994" name="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;сколько будет два плюс два?&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;сколько будет два плюс два?&quot;)" methodname="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="875960639" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000505" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1995" name="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;where are you from?&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;where are you from?&quot;)" methodname="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1086106179" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000263" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1996" name="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;почему небо синее?&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;почему небо синее?&quot;)" methodname="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="2062300497" result="Failed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002843" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: <empty>
+  But was:  < GoLive.Viewers.GroundedFact, GoLive.Viewers.GroundedFact, GoLive.Viewers.GroundedFact >
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation (System.String question) [0x00027] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:106
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2030" name="ViewerConversationTargetTests" fullname="GoLive.Tests.ViewerConversationTargetTests" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="21" result="Failed" site="Child" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.202811" total="21" passed="19" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2040" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.053176" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2035" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Почему без настроения?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Почему без настроения?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1368538418" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.014962" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2036" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;почему?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;почему?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="311041888" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.006154" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2037" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;О чём речь? Какое плохое?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;О чём речь? Какое плохое?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1793164489" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.012139" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2038" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;что значит ну да ладно&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;что значит ну да ладно&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="322204504" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.009161" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2039" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Жесть. Устал, наверное.&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Жесть. Устал, наверное.&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1975703550" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.010169" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2047" name="ExpiredThreadAllowsOrdinarySelectionAgain" fullname="GoLive.Tests.ViewerConversationTargetTests.ExpiredThreadAllowsOrdinarySelectionAgain" methodname="ExpiredThreadAllowsOrdinarySelectionAgain" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="781576134" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.007715" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2051" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.071872" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2048" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(1)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(1)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1374332155" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.020410" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[audience=1; counts 0/1/2/3=24/276/0/0
+]]></output>
+              </test-case>
+              <test-case id="2049" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(2)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(2)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="2123430140" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.023045" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[audience=2; counts 0/1/2/3=24/115/161/0
+]]></output>
+              </test-case>
+              <test-case id="2050" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(3)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(3)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1220500422" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.027875" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[audience=3; counts 0/1/2/3=24/26/203/47
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="2046" name="ExplicitOtherViewerWinsOverCurrentThread" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitOtherViewerWinsOverCurrentThread" methodname="ExplicitOtherViewerWinsOverCurrentThread" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1583376652" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003501" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2034" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.026227" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2031" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;критик, почему без настроения?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;критик, почему без настроения?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1470663243" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.007728" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2032" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;О чем ты, критик?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;О чем ты, критик?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1517219357" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.008884" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2033" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;Что? Девочка с девятого этажа? О чем ты критика?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;Что? Девочка с девятого этажа? О чем ты критика?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1900145399" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.009026" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2045" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.033669" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2041" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;cooldown&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;cooldown&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="748351853" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003210" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2042" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;absent&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;absent&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1196424989" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003060" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2043" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;changed epoch&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;changed epoch&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1030456227" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.016196" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2044" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;maximum&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;maximum&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="194733951" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.010196" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2057" name="LateGroupGenerationStillPublishesInOrderWithAPause" fullname="GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002946" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2055" name="LateGroupGenerationStillPublishesInOrderWithAPause(False)" fullname="GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause(False)" methodname="LateGroupGenerationStillPublishesInOrderWithAPause" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="908604179" result="Failed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002100" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Delayed results cannot arrive in a simultaneous burst.
+  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause (System.Boolean secondFinishesFirst) [0x00276] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:197
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2056" name="LateGroupGenerationStillPublishesInOrderWithAPause(True)" fullname="GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause(True)" methodname="LateGroupGenerationStillPublishesInOrderWithAPause" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="281931739" result="Failed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000438" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The later answer waits for its earlier sibling or that sibling's cancellation.
+  Expected: <empty>
+  But was:  < <GoLive.Viewers.StreamChatMessage> >
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.LateGroupGenerationStillPublishesInOrderWithAPause (System.Boolean secondFinishesFirst) [0x001f7] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:191
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2054" name="NonQuestionDoesNotStartAGroupResponseWave" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002575" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2052" name="NonQuestionDoesNotStartAGroupResponseWave(&quot;ребят я сегодня играл&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave(&quot;ребят я сегодня играл&quot;)" methodname="NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1201809668" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001448" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2053" name="NonQuestionDoesNotStartAGroupResponseWave(&quot;Так, секунду&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave(&quot;Так, секунду&quot;)" methodname="NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1711575042" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000845" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2058" name="ViewerDailyConversationRegressionTests" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="65" result="Failed" site="Child" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.100843" total="65" passed="64" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2090" name="ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.006576" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2088" name="ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech(&quot;Tester0, как дела?&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech(&quot;Tester0, как дела?&quot;,True)" methodname="ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1247226150" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003936" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2089" name="ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech(&quot;Я опять умер в игре!&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech(&quot;Я опять умер в игре!&quot;,False)" methodname="ActualCorePlannerIncludesSelectedViewerDayOnlyForPersonalSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="464207878" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002099" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2124" name="BilingualSleepStoryAllowsOwnSleepClaim" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualSleepStoryAllowsOwnSleepClaim" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001947" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2122" name="BilingualSleepStoryAllowsOwnSleepClaim(English,&quot;slept too much&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualSleepStoryAllowsOwnSleepClaim(English,&quot;slept too much&quot;)" methodname="BilingualSleepStoryAllowsOwnSleepClaim" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1192575418" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001059" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2123" name="BilingualSleepStoryAllowsOwnSleepClaim(Russian,&quot;проспал весь день&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualSleepStoryAllowsOwnSleepClaim(Russian,&quot;проспал весь день&quot;)" methodname="BilingualSleepStoryAllowsOwnSleepClaim" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="435926550" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000342" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2112" name="BilingualWorkDayRejectsContradictionsAndKeepsControls" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.009775" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2101" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;slept too much&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;slept too much&quot;,False)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1773808357" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000631" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2102" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;проспал весь день&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;проспал весь день&quot;,False)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1899343217" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000367" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2103" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;played games all day&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;played games all day&quot;,False)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="697358879" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000331" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2104" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;играл весь день&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;играл весь день&quot;,False)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1537245025" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000335" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2105" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;worked all day&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;worked all day&quot;,True)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="594306652" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000316" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2106" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;работал весь день&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;работал весь день&quot;,True)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1627666252" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2107" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;didn't sleep, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;didn't sleep, worked&quot;,True)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="990875656" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000331" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2108" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;did not sleep, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;did not sleep, worked&quot;,True)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1589136795" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000340" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2109" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;не спал, работал&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;не спал, работал&quot;,True)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="627370096" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000462" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2110" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;you slept too much&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(English,&quot;you slept too much&quot;,True)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1125998529" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000327" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2111" name="BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;ты проспал весь день&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BilingualWorkDayRejectsContradictionsAndKeepsControls(Russian,&quot;ты проспал весь день&quot;,True)" methodname="BilingualWorkDayRejectsContradictionsAndKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="337515950" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2131" name="BroadcastEndOrLoadCancelsWarmup" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BroadcastEndOrLoadCancelsWarmup" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.006370" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2129" name="BroadcastEndOrLoadCancelsWarmup(False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BroadcastEndOrLoadCancelsWarmup(False)" methodname="BroadcastEndOrLoadCancelsWarmup" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="229120125" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000450" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2130" name="BroadcastEndOrLoadCancelsWarmup(True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.BroadcastEndOrLoadCancelsWarmup(True)" methodname="BroadcastEndOrLoadCancelsWarmup" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1986275406" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.005420" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2136" name="CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002529" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2133" name="CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion(&quot;restart&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion(&quot;restart&quot;)" methodname="CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1051546957" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001552" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2134" name="CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion(&quot;stale&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion(&quot;stale&quot;)" methodname="CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1968106763" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000149" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2135" name="CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion(&quot;departure&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion(&quot;departure&quot;)" methodname="CancellationResistantOrdinaryRequestRetainsWorkerUntilCompletion" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="258591797" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000141" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2132" name="CancellationResistantWarmupRetainsWorkerAcrossBroadcastRestart" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancellationResistantWarmupRetainsWorkerAcrossBroadcastRestart" methodname="CancellationResistantWarmupRetainsWorkerAcrossBroadcastRestart" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="662203022" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000823" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2085" name="CancelledOrExpiredFinalAnswerReleasesConversationTurn" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancelledOrExpiredFinalAnswerReleasesConversationTurn" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.011767" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2083" name="CancelledOrExpiredFinalAnswerReleasesConversationTurn(False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancelledOrExpiredFinalAnswerReleasesConversationTurn(False)" methodname="CancelledOrExpiredFinalAnswerReleasesConversationTurn" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="272293992" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.005994" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2084" name="CancelledOrExpiredFinalAnswerReleasesConversationTurn(True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.CancelledOrExpiredFinalAnswerReleasesConversationTurn(True)" methodname="CancelledOrExpiredFinalAnswerReleasesConversationTurn" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="2082879661" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.005281" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2121" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.007832" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2113" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven't slept, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven't slept, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="436213454" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000369" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2114" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven’t slept, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;haven’t slept, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1209683979" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000311" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2115" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn't gaming, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn't gaming, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="2029481481" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000309" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2116" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn’t gaming, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;wasn’t gaming, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="379002885" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003709" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2117" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have not slept, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have not slept, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="763302523" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000381" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2118" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was not gaming, worked&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was not gaming, worked&quot;,True)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="217466854" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2119" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have slept, worked&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;have slept, worked&quot;,False)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1384541114" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000340" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2120" name="ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was gaming, worked&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ContractedEnglishNegationOfMatchedDayClaimKeepsControls(&quot;was gaming, worked&quot;,False)" methodname="ContractedEnglishNegationOfMatchedDayClaimKeepsControls" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="759968584" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2098" name="DailyStoryDoesNotAuthorizeHardStreamerClaims" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.004098" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2091" name="DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;у тебя rtx 4090&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;у тебя rtx 4090&quot;)" methodname="DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="2036177469" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000586" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2092" name="DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;стрим уже 12 часов&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;стрим уже 12 часов&quot;)" methodname="DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1837355554" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000345" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2093" name="DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;ты опять слил&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;ты опять слил&quot;)" methodname="DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="858570682" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000393" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2094" name="DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;задонатил тебе&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;задонатил тебе&quot;)" methodname="DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="2142784332" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000295" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2095" name="DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;ты купил rtx 4090&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;ты купил rtx 4090&quot;)" methodname="DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="721846468" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000291" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2096" name="DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;ты обещал rtx 4090&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;ты обещал rtx 4090&quot;)" methodname="DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="191720256" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000394" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2097" name="DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;видел вчера как ты выиграл&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.DailyStoryDoesNotAuthorizeHardStreamerClaims(&quot;видел вчера как ты выиграл&quot;)" methodname="DailyStoryDoesNotAuthorizeHardStreamerClaims" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1442156984" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000322" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2065" name="EphemeralOneSeatLateSemanticQuestionUsesQuestionChanceWithEmptyBudget" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.EphemeralOneSeatLateSemanticQuestionUsesQuestionChanceWithEmptyBudget" methodname="EphemeralOneSeatLateSemanticQuestionUsesQuestionChanceWithEmptyBudget" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="143598467" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.005476" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Exact late semantic question follow-ups across 100 seeds: 96
+]]></output>
+            </test-case>
+            <test-case id="2073" name="ExpiredOrChangedVisitCannotContinueConversation" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.ExpiredOrChangedVisitCannotContinueConversation" methodname="ExpiredOrChangedVisitCannotContinueConversation" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1707633542" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000341" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2079" name="FallbackSelectedContinuationPublishesFinalTurnWithoutResettingThread" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FallbackSelectedContinuationPublishesFinalTurnWithoutResettingThread" methodname="FallbackSelectedContinuationPublishesFinalTurnWithoutResettingThread" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1861123037" result="Failed" label="Error" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001419" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <f1b392d8fe224ca2b1f9fab1000b77eb>:0 
+  at GoLive.Tests.ViewerDailyConversationRegressionTests.FallbackSelectedContinuationPublishesFinalTurnWithoutResettingThread () [0x0007f] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerDailyConversationRegressionTests.cs:201 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <c5ae8a4eeb824526b5df2932bc2395e0>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2063" name="FillerRemainsSilentInsideActiveConversation" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FillerRemainsSilentInsideActiveConversation" methodname="FillerRemainsSilentInsideActiveConversation" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="217337509" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000655" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2072" name="FollowUpStaysWithViewerOnlyForRelatedSpeech" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FollowUpStaysWithViewerOnlyForRelatedSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.006422" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2067" name="FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Жесть. Устал, наверное.&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Жесть. Устал, наверное.&quot;,True)" methodname="FollowUpStaysWithViewerOnlyForRelatedSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="70588971" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001343" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2068" name="FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;А ты во что играл?&quot;,True)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;А ты во что играл?&quot;,True)" methodname="FollowUpStaysWithViewerOnlyForRelatedSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1016775019" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000906" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2069" name="FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Я опять умер в игре!&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Я опять умер в игре!&quot;,False)" methodname="FollowUpStaysWithViewerOnlyForRelatedSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1415066626" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001036" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2070" name="FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Какую игру запустить?&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Какую игру запустить?&quot;,False)" methodname="FollowUpStaysWithViewerOnlyForRelatedSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1989977015" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000966" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2071" name="FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Всем привет, как дела, парни?&quot;,False)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.FollowUpStaysWithViewerOnlyForRelatedSpeech(&quot;Всем привет, как дела, парни?&quot;,False)" methodname="FollowUpStaysWithViewerOnlyForRelatedSpeech" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="2085408790" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000996" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2066" name="GlAuthoredConfigurationRetainsConversationWindowTurnsAndGap" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.GlAuthoredConfigurationRetainsConversationWindowTurnsAndGap" methodname="GlAuthoredConfigurationRetainsConversationWindowTurnsAndGap" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="384742043" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001036" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[GL conversation values: window=40, maximumTurns=5, gap=6
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2076" name="MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.007314" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2074" name="MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer(&quot;Устал?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer(&quot;Устал?&quot;)" methodname="MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1643313459" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001771" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2075" name="MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer(&quot;Alpha, как дела?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer(&quot;Alpha, как дела?&quot;)" methodname="MaximumIncludesInitialAnswerAndCannotImmediatelyReopenSameViewer" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="287480444" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001633" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2100" name="NegatedActivityDoesNotContradictWorkDay" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.NegatedActivityDoesNotContradictWorkDay" methodname="NegatedActivityDoesNotContradictWorkDay" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="49897136" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000642" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2077" name="OrdinarySpeechStillUsesBudgetAndOrdinaryViewerGap" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.OrdinarySpeechStillUsesBudgetAndOrdinaryViewerGap" methodname="OrdinarySpeechStillUsesBudgetAndOrdinaryViewerGap" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1511473757" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000746" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2099" name="OwnDailyAnswerCannotLaunderHardwareIntoFollowUpGrounding" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.OwnDailyAnswerCannotLaunderHardwareIntoFollowUpGrounding" methodname="OwnDailyAnswerCannotLaunderHardwareIntoFollowUpGrounding" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1711616833" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000659" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2078" name="PendingFinalAnswerReservesLastConversationTurn" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PendingFinalAnswerReservesLastConversationTurn" methodname="PendingFinalAnswerReservesLastConversationTurn" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="469780621" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001711" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2082" name="PendingInitialAnswerReservesOneAnswerConversation" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PendingInitialAnswerReservesOneAnswerConversation" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003091" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2080" name="PendingInitialAnswerReservesOneAnswerConversation(&quot;Alpha, как дела?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PendingInitialAnswerReservesOneAnswerConversation(&quot;Alpha, как дела?&quot;)" methodname="PendingInitialAnswerReservesOneAnswerConversation" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1745661119" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001538" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2081" name="PendingInitialAnswerReservesOneAnswerConversation(&quot;Как дела?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PendingInitialAnswerReservesOneAnswerConversation(&quot;Как дела?&quot;)" methodname="PendingInitialAnswerReservesOneAnswerConversation" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1391943572" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001042" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2087" name="PermanentDayIsStableAcrossBroadcastsAndAnonymousDayWithinBroadcast" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PermanentDayIsStableAcrossBroadcastsAndAnonymousDayWithinBroadcast" methodname="PermanentDayIsStableAcrossBroadcastsAndAnonymousDayWithinBroadcast" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1965321833" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001753" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2127" name="PersonalFallbackAnswersStateBeforeGreetingOrPresence" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PersonalFallbackAnswersStateBeforeGreetingOrPresence" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001349" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2125" name="PersonalFallbackAnswersStateBeforeGreetingOrPresence(&quot;Tester0, привет, как дела?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PersonalFallbackAnswersStateBeforeGreetingOrPresence(&quot;Tester0, привет, как дела?&quot;)" methodname="PersonalFallbackAnswersStateBeforeGreetingOrPresence" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1847422625" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000590" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2126" name="PersonalFallbackAnswersStateBeforeGreetingOrPresence(&quot;Привет, парни, как дела?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PersonalFallbackAnswersStateBeforeGreetingOrPresence(&quot;Привет, парни, как дела?&quot;)" methodname="PersonalFallbackAnswersStateBeforeGreetingOrPresence" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="30323735" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000247" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2062" name="PersonalQuestionOutranksGreetingAndPluralAddressesGroup" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PersonalQuestionOutranksGreetingAndPluralAddressesGroup" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001153" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2059" name="PersonalQuestionOutranksGreetingAndPluralAddressesGroup(&quot;Всем привет, как дела, парни?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PersonalQuestionOutranksGreetingAndPluralAddressesGroup(&quot;Всем привет, как дела, парни?&quot;)" methodname="PersonalQuestionOutranksGreetingAndPluralAddressesGroup" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1422501306" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000334" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2060" name="PersonalQuestionOutranksGreetingAndPluralAddressesGroup(&quot;Ребят, что сегодня делали?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PersonalQuestionOutranksGreetingAndPluralAddressesGroup(&quot;Ребят, что сегодня делали?&quot;)" methodname="PersonalQuestionOutranksGreetingAndPluralAddressesGroup" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="292849511" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000060" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2061" name="PersonalQuestionOutranksGreetingAndPluralAddressesGroup(&quot;Как вы, настроение норм?&quot;)" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.PersonalQuestionOutranksGreetingAndPluralAddressesGroup(&quot;Как вы, настроение норм?&quot;)" methodname="PersonalQuestionOutranksGreetingAndPluralAddressesGroup" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1306797302" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000062" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2086" name="QueueRejectedFinalAnswerReleasesConversationTurn" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.QueueRejectedFinalAnswerReleasesConversationTurn" methodname="QueueRejectedFinalAnswerReleasesConversationTurn" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="1613772210" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.007682" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2064" name="SmallAudiencePersonalQuestionCanAnswerWithEmptyBudget" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.SmallAudiencePersonalQuestionCanAnswerWithEmptyBudget" methodname="SmallAudiencePersonalQuestionCanAnswerWithEmptyBudget" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="447985016" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000667" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2128" name="WarmupUsesWorkerAndRunsOncePerBroadcast" fullname="GoLive.Tests.ViewerDailyConversationRegressionTests.WarmupUsesWorkerAndRunsOncePerBroadcast" methodname="WarmupUsesWorkerAndRunsOncePerBroadcast" classname="GoLive.Tests.ViewerDailyConversationRegressionTests" runstate="Runnable" seed="823983476" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000469" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2333" name="ViewerUtterancePlanTests" fullname="GoLive.Tests.ViewerUtterancePlanTests" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" testcasecount="34" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.480898" total="34" passed="34" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2367" name="AgainNeedsTheStreamersWordsChatOrAPlannedCallback" fullname="GoLive.Tests.ViewerUtterancePlanTests.AgainNeedsTheStreamersWordsChatOrAPlannedCallback" methodname="AgainNeedsTheStreamersWordsChatOrAPlannedCallback" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="788657396" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000884" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2362" name="AuthoredSilenceKeepsViewersOutOfTopicsTheyIgnore" fullname="GoLive.Tests.ViewerUtterancePlanTests.AuthoredSilenceKeepsViewersOutOfTopicsTheyIgnore" methodname="AuthoredSilenceKeepsViewersOutOfTopicsTheyIgnore" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="890187230" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.019855" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2360" name="CallbacksAreSparseRelevantAndRelationshipScaled" fullname="GoLive.Tests.ViewerUtterancePlanTests.CallbacksAreSparseRelevantAndRelationshipScaled" methodname="CallbacksAreSparseRelevantAndRelationshipScaled" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="959854929" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.069336" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2363" name="CollidingVoicesDifferInWhatTheyDoNotOnlyInWords" fullname="GoLive.Tests.ViewerUtterancePlanTests.CollidingVoicesDifferInWhatTheyDoNotOnlyInWords" methodname="CollidingVoicesDifferInWhatTheyDoNotOnlyInWords" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="877035140" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000978" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2366" name="ElapsedTimeFromTheFactsIsNotAHistoryClaim" fullname="GoLive.Tests.ViewerUtterancePlanTests.ElapsedTimeFromTheFactsIsNotAHistoryClaim" methodname="ElapsedTimeFromTheFactsIsNotAHistoryClaim" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1881274591" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000733" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2359" name="FactsKeepSpeakerRolesAndCurrentState" fullname="GoLive.Tests.ViewerUtterancePlanTests.FactsKeepSpeakerRolesAndCurrentState" methodname="FactsKeepSpeakerRolesAndCurrentState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1448651530" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000552" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2370" name="HistoricalClaimsWithoutAPlannedCallbackAreRejected" fullname="GoLive.Tests.ViewerUtterancePlanTests.HistoricalClaimsWithoutAPlannedCallbackAreRejected" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001043" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2368" name="HistoricalClaimsWithoutAPlannedCallbackAreRejected(&quot;viewer.arcadekid&quot;,&quot;last time you lost the final lol&quot;)" fullname="GoLive.Tests.ViewerUtterancePlanTests.HistoricalClaimsWithoutAPlannedCallbackAreRejected(&quot;viewer.arcadekid&quot;,&quot;last time you lost the final lol&quot;)" methodname="HistoricalClaimsWithoutAPlannedCallbackAreRejected" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="23080217" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000331" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2369" name="HistoricalClaimsWithoutAPlannedCallbackAreRejected(&quot;viewer.nightowl&quot;,&quot;на днях ты тоже слил&quot;)" fullname="GoLive.Tests.ViewerUtterancePlanTests.HistoricalClaimsWithoutAPlannedCallbackAreRejected(&quot;viewer.nightowl&quot;,&quot;на днях ты тоже слил&quot;)" methodname="HistoricalClaimsWithoutAPlannedCallbackAreRejected" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="95004676" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000144" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2365" name="PlanFactsAnswerTheAuditedGaps" fullname="GoLive.Tests.ViewerUtterancePlanTests.PlanFactsAnswerTheAuditedGaps" methodname="PlanFactsAnswerTheAuditedGaps" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="955457188" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000785" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2334" name="PlanIsBuiltFromGameStateAndBoundsThePrompt" fullname="GoLive.Tests.ViewerUtterancePlanTests.PlanIsBuiltFromGameStateAndBoundsThePrompt" methodname="PlanIsBuiltFromGameStateAndBoundsThePrompt" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="685384103" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001092" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2364" name="PlannedCallbacksMayRecallHeardFactsNaturallyButNeverAsSeen" fullname="GoLive.Tests.ViewerUtterancePlanTests.PlannedCallbacksMayRecallHeardFactsNaturallyButNeverAsSeen" methodname="PlannedCallbacksMayRecallHeardFactsNaturallyButNeverAsSeen" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="212786537" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003111" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2337" name="RelationshipChangesEligibilityAndDelayBeforeThePrompt" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipChangesEligibilityAndDelayBeforeThePrompt" methodname="RelationshipChangesEligibilityAndDelayBeforeThePrompt" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1635382514" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.032349" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2336" name="RelationshipChangesTheSocialActionNotOnlyAnAdjective" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipChangesTheSocialActionNotOnlyAnAdjective" methodname="RelationshipChangesTheSocialActionNotOnlyAnAdjective" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="219483943" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.154564" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2346" name="RelationshipClaimsCannotExceedGameState" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.003412" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2339" name="RelationshipClaimsCannotExceedGameState(Wary,&quot;Ох, а я тут же! Смотрю уже с начала и влюбилась 😍&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState(Wary,&quot;Ох, а я тут же! Смотрю уже с начала и влюбилась 😍&quot;,False)" methodname="RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="564986985" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000479" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2340" name="RelationshipClaimsCannotExceedGameState(Loyal,&quot;я в тебя влюбилась&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState(Loyal,&quot;я в тебя влюбилась&quot;,False)" methodname="RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1354792419" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000234" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2341" name="RelationshipClaimsCannotExceedGameState(Neutral,&quot;мой любимый стример тут&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState(Neutral,&quot;мой любимый стример тут&quot;,False)" methodname="RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="524947792" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2342" name="RelationshipClaimsCannotExceedGameState(Loyal,&quot;мой любимый стример тут&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState(Loyal,&quot;мой любимый стример тут&quot;,True)" methodname="RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1110958471" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2343" name="RelationshipClaimsCannotExceedGameState(Neutral,&quot;я тут, смотрю ❤&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState(Neutral,&quot;я тут, смотрю ❤&quot;,False)" methodname="RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1708150640" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000231" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2344" name="RelationshipClaimsCannotExceedGameState(Friendly,&quot;я тут, смотрю ❤&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState(Friendly,&quot;я тут, смотрю ❤&quot;,True)" methodname="RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="2041569833" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000240" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2345" name="RelationshipClaimsCannotExceedGameState(Wary,&quot;ну тут я, смотрю&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.RelationshipClaimsCannotExceedGameState(Wary,&quot;ну тут я, смотрю&quot;,True)" methodname="RelationshipClaimsCannotExceedGameState" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="902430148" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000208" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2361" name="RuntimeTracesCallbackCandidatesOnlyForTheWitness" fullname="GoLive.Tests.ViewerUtterancePlanTests.RuntimeTracesCallbackCandidatesOnlyForTheWitness" methodname="RuntimeTracesCallbackCandidatesOnlyForTheWitness" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="699732009" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.002138" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2338" name="SkepticsDigDrawsOutFriendsWhoPushBack" fullname="GoLive.Tests.ViewerUtterancePlanTests.SkepticsDigDrawsOutFriendsWhoPushBack" methodname="SkepticsDigDrawsOutFriendsWhoPushBack" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="756847250" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.013739" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2335" name="SocialActionFollowsTheMomentAndAuthoredHabits" fullname="GoLive.Tests.ViewerUtterancePlanTests.SocialActionFollowsTheMomentAndAuthoredHabits" methodname="SocialActionFollowsTheMomentAndAuthoredHabits" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1359009427" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.163675" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2357" name="SpecificNumbersAndHardwareNeedFactualSupport" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.004249" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2347" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.sovetnik&quot;,&quot;Да я здесь, только ждать осталось всего пять минут до конца.&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.sovetnik&quot;,&quot;Да я здесь, только ждать осталось всего пять минут до конца.&quot;,False)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="925346415" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000583" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2348" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.sovetnik&quot;,&quot;Что, RTX 4090 уже устарела? И зачем такой мощности на стриме?&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.sovetnik&quot;,&quot;Что, RTX 4090 уже устарела? И зачем такой мощности на стриме?&quot;,False)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1566292952" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000304" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2349" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.kritik228&quot;,&quot;тут же р5 1060 с года&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.kritik228&quot;,&quot;тут же р5 1060 с года&quot;,False)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1694400897" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000238" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2350" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;на интеле такое бывает&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;на интеле такое бывает&quot;,True)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="686675968" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000160" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2351" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;амд или нвидиа вот в чём вопрос&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;амд или нвидиа вот в чём вопрос&quot;,True)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1780810564" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000173" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2352" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;видюха это всегда больная тема&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;видюха это всегда больная тема&quot;,True)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="92037225" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000169" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2353" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;уже 20 минут стрима и ничего&quot;,False)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;уже 20 минут стрима и ничего&quot;,False)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="980288077" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2354" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;10 минут стрима а уже весело&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.bytecat&quot;,&quot;10 минут стрима а уже весело&quot;,True)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1461975169" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000235" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2355" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.nightowl&quot;,&quot;1v5 это сильно&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.nightowl&quot;,&quot;1v5 это сильно&quot;,True)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="1274238215" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000151" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2356" name="SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.nightowl&quot;,&quot;ну 10/10 конечно&quot;,True)" fullname="GoLive.Tests.ViewerUtterancePlanTests.SpecificNumbersAndHardwareNeedFactualSupport(&quot;viewer.nightowl&quot;,&quot;ну 10/10 конечно&quot;,True)" methodname="SpecificNumbersAndHardwareNeedFactualSupport" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="435168205" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.000181" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2358" name="SupportedSpecificsPassFromSpeechChatAndNames" fullname="GoLive.Tests.ViewerUtterancePlanTests.SupportedSpecificsPassFromSpeechChatAndNames" methodname="SupportedSpecificsPassFromSpeechChatAndNames" classname="GoLive.Tests.ViewerUtterancePlanTests" runstate="Runnable" seed="344569455" result="Passed" start-time="2026-09-26 18:58:25Z" end-time="2026-09-26 18:58:25Z" duration="0.001407" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

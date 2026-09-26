@@ -73,6 +73,7 @@ namespace GoLive.Viewers
             public ChatSituation Situation;
             public double SubmittedAt;
             public double QueueSeconds;
+            public double PublishAfter;
         }
 
         private readonly IViewerLanguageModel _model;
@@ -296,6 +297,15 @@ namespace GoLive.Viewers
                     continue;
                 }
                 if (!job.Resolved || intent.DueSeconds > now) continue;
+                if (intent.ConversationTarget.Kind == ConversationTargetKind.Group)
+                {
+                    if (now < job.PublishAfter) continue;
+                    bool earlierPending = false;
+                    foreach (Job sibling in _jobs)
+                        if (sibling.Intent.Event.Key == intent.Event.Key && sibling.Intent.Order < intent.Order)
+                        { earlierPending = true; break; }
+                    if (earlierPending) continue;
+                }
                 if (job.Text == null)
                 {
                     Stats.Discarded++;
@@ -330,8 +340,11 @@ namespace GoLive.Viewers
                 StreamChatMessage message = _chat.Add(broadcastId, intent.Viewer.ViewerId, intent.Viewer.DisplayName, job.Text, now, intent.Id, job.Source, donation);
                 if (job.Source == ReactionSource.LanguageModel) Stats.ShownFromModel++;
                 else Stats.ShownFromFallback++;
-                ReactionLogEntry entry = Remove(i--, job, ReactionOutcome.Shown, job.Reason);
-                entry.Text = job.Text;
+                if (intent.ConversationTarget.Kind == ConversationTargetKind.Group)
+                    foreach (Job sibling in _jobs)
+                        if (sibling.Intent.Event.Key == intent.Event.Key && sibling.Intent.Order > intent.Order)
+                            sibling.PublishAfter = now + 1.4;
+                Remove(i--, job, ReactionOutcome.Shown, job.Reason);
                 Shown?.Invoke(message, intent);
             }
         }
@@ -378,6 +391,7 @@ namespace GoLive.Viewers
             entry.LatencySeconds = job.Latency;
             entry.QueueSeconds = job.QueueSeconds;
             entry.PromptCharacters = job.PromptCharacters;
+            entry.Text = outcome == ReactionOutcome.Shown ? job.Text : null;
             ReactionLog.Context(entry, job.Situation);
             return _log.Add(entry);
         }

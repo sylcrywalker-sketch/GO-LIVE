@@ -122,6 +122,7 @@ namespace GoLive.Viewers
                     {
                         var entry = ReactionLog.ForEvent(streamEvent, ReactionOutcome.Rejected, reason);
                         entry.CandidateIds = _selector.LastCandidateIds;
+                        entry.ConversationTarget = _selector.LastTarget.ToString();
                         Log.Add(entry);
                     }
                     continue;

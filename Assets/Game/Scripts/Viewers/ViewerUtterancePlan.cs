@@ -49,18 +49,27 @@ namespace GoLive.Viewers
         public bool Personal { get; }
         // The streamer is replying to this viewer's last message: a turn in their short exchange.
         public bool FollowUp { get; }
+        public QuestionPurpose QuestionPurpose { get; }
+        // Only the supplied fields that answer this question. They remain soft ViewerDay facts.
+        public IReadOnlyList<GroundedFact> DirectAnswerFacts { get; }
+        public string PreviousViewerLine { get; }
+        internal bool AnswerFirst { get; }
         // Lowercase authority for specific streamer/game claims. Soft day stories and generated chat stay
         // available to phrase a reply, but cannot establish streamer hardware, quantities or history.
         internal string GroundedText { get; }
 
         internal ViewerUtterancePlan(long intentId, string viewerId, UtteranceIntent intent, UtteranceIntent manner, UtteranceTarget target,
             string topic, List<GroundedFact> facts, string memoryId, string promiseId, RelationshipTier tone, string eventId,
-            ViewerLanguage language, string replyTarget, string groundedText, bool gameChoice, bool personal = false, bool followUp = false)
+            ViewerLanguage language, string replyTarget, string groundedText, bool gameChoice, bool personal = false, bool followUp = false,
+            QuestionPurpose questionPurpose = QuestionPurpose.None, List<GroundedFact> answerFacts = null, string previousViewerLine = null,
+            bool answerFirst = false)
         {
             IntentId = intentId; ViewerId = viewerId; Intent = intent; Manner = manner; Target = target; Topic = topic;
             AllowedFacts = facts.AsReadOnly(); RelevantMemoryId = memoryId; RelevantPromiseId = promiseId; RelationshipTone = tone;
             CurrentEventId = eventId; Language = language; ReplyTarget = replyTarget; GroundedText = groundedText; GameChoice = gameChoice;
             Personal = personal; FollowUp = followUp;
+            QuestionPurpose = questionPurpose; DirectAnswerFacts = (answerFacts ?? new List<GroundedFact>()).AsReadOnly();
+            PreviousViewerLine = previousViewerLine; AnswerFirst = answerFirst;
         }
     }
 
@@ -144,7 +153,8 @@ namespace GoLive.Viewers
             bool named = speech.MentionedViewerIds.Contains(intent.Viewer.ViewerId);
             bool own = intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId;
             if ((named || own) && speech.Has(SpeechCue.Thanks)) return false;
-            if (speech.Is(SpeechAct.PersonalQuestion) || intent.FollowUp && SpeechRelevance.ContinuesConversation(speech)) return true;
+            QuestionPurpose purpose = ViewerQuestionPurpose.Resolve(intent, intent.PreviousViewerLine);
+            if (ViewerQuestionPurpose.UsesDay(purpose, speech.Text, intent.PreviousViewerLine)) return true;
             return !named && !speech.Has(SpeechCue.Farewell) && speech.Has(SpeechCue.Greeting) && intent.Conversational;
         }
 
@@ -152,12 +162,31 @@ namespace GoLive.Viewers
         {
             StreamEvent e = intent.Event;
             RelationshipTier tier = situation.Tier;
+            string previous = intent.PreviousViewerLine ?? (intent.FollowUp ? OwnLast(intent.Viewer.ViewerId, situation.RecentChat) : null);
+            if (previous != null) previous = ChatContextBuilder.Clean(previous, ChatContextBuilder.QuoteLimit);
+            QuestionPurpose purpose = ViewerQuestionPurpose.Resolve(intent, previous);
+            bool personalAnswer = ViewerQuestionPurpose.UsesDay(purpose, e.Speech?.Text, previous);
             UtteranceIntent chosen = Choose(intent, situation, out UtteranceTarget target, out string topic, out bool personal);
+            personal = personalAnswer || purpose == QuestionPurpose.None && personal;
+            bool answerFirst = purpose != QuestionPurpose.None && (personalAnswer || intent.Direct || intent.FollowUp ||
+                intent.ConversationTarget.IsSpecific || intent.ConversationTarget.Kind == ConversationTargetKind.Group ||
+                e.Speech.MentionedViewerIds.Contains(intent.Viewer.ViewerId));
+            // A personal question already has true answer content. Personality affects delivery, not whether it gets answered.
+            if (personalAnswer)
+            {
+                chosen = UtteranceIntent.Answer;
+                target = UtteranceTarget.Streamer;
+                topic = "the streamer's question about you: " + purpose;
+            }
+            else if (answerFirst) topic = "the streamer's current question: " + purpose;
             UtteranceIntent social = chosen;
+            // A supplied relevant memory remains factual knowledge even when this answer is not a callback.
+            // Its knowledge source still prevents the viewer from claiming a heard event as something they saw.
             ViewerMemory memory = situation.Memories.Count > 0 ? situation.Memories[0] : null;
             ViewerPromiseContext promise = situation.Promise;
             if (promise != null) memory = null; // at most one callback fact per line
-            if (memory != null || promise != null)
+            // A callback cannot displace the current direct answer with a different topic.
+            if (!answerFirst && (memory != null || promise != null))
             {
                 social = UtteranceIntent.Callback;
                 target = UtteranceTarget.Streamer;
@@ -167,11 +196,12 @@ namespace GoLive.Viewers
 
             var facts = new List<GroundedFact>(8);
             AddFacts(facts, intent, situation);
-            // Soft personal present: only when the moment is about the viewer (asked about themselves, greeted in a small
-            // chat, in an exchange with the streamer), never pushed into ordinary reactions.
-            if (personal && situation.Day != null) facts.Add(new GroundedFact(FactSource.ViewerDay, situation.Day.Describe()));
-            if (intent.FollowUp && OwnLast(intent.Viewer.ViewerId, situation.RecentChat) is string own)
-                facts.Add(new GroundedFact(FactSource.OwnLine, ChatContextBuilder.Clean(own, ChatContextBuilder.QuoteLimit)));
+            List<GroundedFact> answerFacts = ViewerQuestionPurpose.Facts(purpose, e.Speech?.Text, previous, situation.Day);
+            facts.AddRange(answerFacts);
+            // A conversational greeting may mention current state without becoming a question.
+            if (personal && purpose == QuestionPurpose.None && situation.Day != null)
+                facts.Add(new GroundedFact(FactSource.ViewerDay, ChatContextBuilder.Clean(situation.Day.Describe(), ChatContextBuilder.QuoteLimit)));
+            if (previous != null) facts.Add(new GroundedFact(FactSource.OwnLine, previous));
             if (memory != null) facts.Add(new GroundedFact(FactSource.Memory, MemoryFact(memory, situation.GameMinutes)));
             if (promise != null) facts.Add(new GroundedFact(FactSource.Promise, PromiseFact(promise, situation.GameMinutes)));
 
@@ -184,7 +214,8 @@ namespace GoLive.Viewers
             return new ViewerUtterancePlan(intent.Id, intent.Viewer.ViewerId, social, chosen, target, topic, facts, memory?.MemoryId, promise?.Id,
                 tier, e.Key, intent.Viewer.Persona.Language, e.Kind == StreamEventKind.ViewerReply ? e.SubjectName : null,
                 grounded.ToString().ToLowerInvariant(),
-                e.Speech != null && e.Speech.Has(SpeechCue.Question) && (e.Speech.Topics & StreamTopic.Games) != 0, personal, intent.FollowUp);
+                purpose == QuestionPurpose.GamePreference, personal, intent.FollowUp,
+                purpose, answerFacts, previous, answerFirst);
         }
 
         private static string OwnLast(string viewerId, IReadOnlyList<StreamChatMessage> chat)

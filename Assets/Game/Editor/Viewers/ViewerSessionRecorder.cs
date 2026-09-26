@@ -26,6 +26,7 @@ namespace GoLive.Editor.Viewers
             public double realSeconds, streamSeconds, latencySeconds, frameMilliseconds;
             public string eventKey, eventKind, speech, outcome, reason, viewerId, viewerName, source, text, plan;
             public string relationship, memoryIds, promiseId, callbackCandidates, candidateIds;
+            public string conversationTarget, questionPurpose, directAnswerFacts, previousViewerLine;
             public float relevance;
             public long intentId;
             public int frame, promptCharacters;
@@ -135,7 +136,9 @@ namespace GoLive.Editor.Viewers
                 viewerId = entry.ViewerId, viewerName = entry.ViewerName, intentId = entry.IntentId, source = entry.Source.ToString(),
                 latencySeconds = entry.LatencySeconds, queueSeconds = entry.QueueSeconds, promptCharacters = entry.PromptCharacters, text = entry.Text, plan = entry.Plan,
                 relationship = entry.Relationship, memoryIds = entry.MemoryIds, promiseId = entry.PromiseId,
-                callbackCandidates = entry.CallbackCandidates, candidateIds = entry.CandidateIds
+                callbackCandidates = entry.CallbackCandidates, candidateIds = entry.CandidateIds,
+                conversationTarget = entry.ConversationTarget, questionPurpose = entry.QuestionPurpose,
+                directAnswerFacts = entry.DirectAnswerFacts, previousViewerLine = entry.PreviousViewerLine
             });
         }
 

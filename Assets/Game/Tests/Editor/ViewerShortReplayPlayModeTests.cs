@@ -143,7 +143,8 @@ namespace GoLive.Tests
                 ReactionLogEntry[] opening = trace.Where(e => e.Speech == heard[0].text && e.Outcome == ReactionOutcome.Shown).ToArray();
                 ReactionLogEntry[] filler = trace.Where(e => e.Speech == heard[1].text && e.Outcome == ReactionOutcome.Shown).ToArray();
                 ReactionLogEntry[] followup = trace.Where(e => e.Speech == heard[2].text && e.Outcome == ReactionOutcome.Shown).ToArray();
-                Assert.That(opening.Length, Is.InRange(1, 2), "normally one meaningful answer, at most a bounded second voice");
+                Assert.That(opening.Length, Is.InRange(1, heard[0].viewers), "one group turn is bounded by the actual 1–3 viewers present");
+                Assert.That(opening.Select(e => e.ViewerId).Distinct().Count(), Is.EqualTo(opening.Length), "each viewer answers the group turn at most once");
                 Assert.That(opening[0].Source, Is.EqualTo(ReactionSource.LanguageModel), "exercise the actual local model, not only fallback");
                 Assert.That(opening[0].Plan, Does.Contain("day:"));
                 Assert.That(opening[0].Text, Does.Not.Match(@"(?i)^(hi|hello|прив(ет)?|йо|я тут)[!.… ]*$"),

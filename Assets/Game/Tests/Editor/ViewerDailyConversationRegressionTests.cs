@@ -191,20 +191,23 @@ namespace GoLive.Tests
         }
 
         [Test]
-        public void FallbackSelectedContinuationPublishesFinalTurnWithoutResettingThread()
+        public void MissedContinuationStaysSilentAndTheNextPublishedAnswerRespectsTheFinalTurn()
         {
             var viewer = ChatDirectorTests.Viewer("viewer.a", "Alpha");
             var roster = ReactionFoundationTests.Roster(1, viewer);
             var selector = new ReactionSelector(new ReactionTuning { ConversationMaximumTurns = 3 }, roster, new AudienceRandom(44));
             Publish(selector, viewer, roster, 0);
             Publish(selector, viewer, roster, 10, true, 2);
-            var answer = selector.Select(Said(roster, "Устал?", 3), 20, true, out _).Single(i => i.Viewer.ViewerId == viewer.ViewerId);
-            Assert.That(answer.Direct, Is.False, "Seed 44 misses the direct continuation roll and takes the conversational fallback.");
+            Assert.That(selector.Select(Said(roster, "Устал?", 3), 20, true, out _), Is.Empty,
+                "Seed 44 misses the target roll. A failed target roll must no longer enter the audience fallback.");
+            Assert.That(selector.Thread.Turns, Is.EqualTo(2), "Silence consumes no conversation turn.");
+            var answer = selector.Select(Said(roster, "Устал?", 4), 21, true, out _).Single(i => i.Viewer.ViewerId == viewer.ViewerId);
+            Assert.That(answer.Direct, Is.True, "The next question still belongs to the thread owner.");
             var chat = new StreamChat();
             selector.ObservePublished(chat.Add("daily", viewer.ViewerId, viewer.DisplayName, "да, отдыхаю", answer.DueSeconds, answer.Id, ReactionSource.Fallback), answer);
             Assert.That(selector.Thread.Turns, Is.EqualTo(3), "Publishing the actual fallback origin must increment, not reset, the thread.");
             Assert.That(answer.FollowUp, Is.True);
-            Assert.That(selector.Select(Said(roster, "Устал?", 4), answer.DueSeconds + 6, true, out _)
+            Assert.That(selector.Select(Said(roster, "Устал?", 5), answer.DueSeconds + 6, true, out _)
                 .Any(i => i.Conversational || i.FollowUp), Is.False);
         }
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 19:19:26Z" end-time="2026-09-26 19:21:57Z" duration="150.8169796">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1287" result="Passed" start-time="2026-09-26 19:19:26Z" end-time="2026-09-26 19:21:57Z" duration="150.816980" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2475" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1287" result="Passed" start-time="2026-09-26 19:19:26Z" end-time="2026-09-26 19:21:57Z" duration="150.793366" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30612" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2476" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1287" result="Passed" start-time="2026-09-26 19:19:26Z" end-time="2026-09-26 19:21:57Z" duration="150.775728" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2477" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1287" result="Passed" start-time="2026-09-26 19:19:26Z" end-time="2026-09-26 19:21:57Z" duration="150.754785" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2345" name="ViewerRealPlay2ReplayTests" fullname="GoLive.Tests.ViewerRealPlay2ReplayTests" classname="GoLive.Tests.ViewerRealPlay2ReplayTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-26 19:19:26Z" end-time="2026-09-26 19:21:57Z" duration="150.736061" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="LocalModel" />
+            </properties>
+            <test-case id="2346" name="ReplayRecordedSpeechAndCollectEveryModelOutcome" fullname="GoLive.Tests.ViewerRealPlay2ReplayTests.ReplayRecordedSpeechAndCollectEveryModelOutcome" methodname="ReplayRecordedSpeechAndCollectEveryModelOutcome" classname="GoLive.Tests.ViewerRealPlay2ReplayTests" runstate="Explicit" seed="5789732" result="Passed" start-time="2026-09-26 19:19:26Z" end-time="2026-09-26 19:21:57Z" duration="150.723752" asserts="0">
+              <properties>
+                <property name="_SKIPREASON" value="Requires the unchanged configured local model; writes every attempt outside the repository" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[REALPLAY2_REPLAY E:\GO-Live-RealPlay2-audit-20260926\model-replay\realplay2-replay-20260926-191926-988.jsonl
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

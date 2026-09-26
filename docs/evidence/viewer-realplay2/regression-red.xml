@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="49" result="Failed(Child)" total="49" passed="5" failed="44" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 18:50:01Z" end-time="2026-09-26 18:50:02Z" duration="0.2361279">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1273" result="Failed" site="Child" start-time="2026-09-26 18:50:01Z" end-time="2026-09-26 18:50:02Z" duration="0.236128" total="49" passed="5" failed="44" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2457" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1273" result="Failed" site="Child" start-time="2026-09-26 18:50:01Z" end-time="2026-09-26 18:50:02Z" duration="0.211368" total="49" passed="5" failed="44" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34220" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2458" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1273" result="Failed" site="Child" start-time="2026-09-26 18:50:01Z" end-time="2026-09-26 18:50:02Z" duration="0.195549" total="49" passed="5" failed="44" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2459" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1273" result="Failed" site="Child" start-time="2026-09-26 18:50:01Z" end-time="2026-09-26 18:50:02Z" duration="0.176498" total="49" passed="5" failed="44" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1970" name="ViewerAnswerPurposeTests" fullname="GoLive.Tests.ViewerAnswerPurposeTests" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="30" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.071135" total="30" passed="1" failed="29" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1997" name="CombinedGroupQuestionIncludesBothStateAndTodaysActivity" fullname="GoLive.Tests.ViewerAnswerPurposeTests.CombinedGroupQuestionIncludesBothStateAndTodaysActivity" methodname="CombinedGroupQuestionIncludesBothStateAndTodaysActivity" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="675793912" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.027590" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The answer plan must expose DirectAnswerFacts
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.AnswerFacts (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:46
+at GoLive.Tests.ViewerAnswerPurposeTests.CombinedGroupQuestionIncludesBothStateAndTodaysActivity () [0x00028] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:114
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2002" name="DirectAnswerDayAndPriorMessageCannotAuthorizeStreamerHardware" fullname="GoLive.Tests.ViewerAnswerPurposeTests.DirectAnswerDayAndPriorMessageCannotAuthorizeStreamerHardware" methodname="DirectAnswerDayAndPriorMessageCannotAuthorizeStreamerHardware" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1012574918" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.001397" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The answer plan must expose DirectAnswerFacts
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.AnswerFacts (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:46
+at GoLive.Tests.ViewerAnswerPurposeTests.DirectAnswerDayAndPriorMessageCannotAuthorizeStreamerHardware () [0x0002b] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:170
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1998" name="FollowUpPromptPairsThePriorMessageWithTheStreamersQuestionAndAnswerTask" fullname="GoLive.Tests.ViewerAnswerPurposeTests.FollowUpPromptPairsThePriorMessageWithTheStreamersQuestionAndAnswerTask" methodname="FollowUpPromptPairsThePriorMessageWithTheStreamersQuestionAndAnswerTask" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="240635001" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.002815" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: String containing "YOUR PREVIOUS MESSAGE: «без настроения но здесь сижу»"
+  But was:  "VIEWER IS: kritik228
+WHO: Bored teenager who drifts between small streams looking for something to mock. Thinks this channel is weak and says so, yet keeps coming back; can only be won over slowly.
+STYLE: All lowercase. No punctuation at all. Heavy internet slang. No emoji. Mild words at most, no obscenities. Unimpressed and blunt; never praises outright. (2-7 words.) If it is funny, laugh like «хах».
+LANGUAGE: Russian. Write in Russian, like Russian-speaking internet chat.
+
+FACTS (all you know right now):
+- Stream: live for less than a minute, 3 viewers watching. Nobody knows when it will end.
+STREAMER SAID: «Почему без настроения?»
+- No picture, sound, PC or settings problem has been reported; the hardware is unknown.
+YOUR LAST MESSAGE (the streamer is answering it): «без настроения но здесь сижу»
+NOT KNOWN (never state or guess): game titles not quoted above, hardware models/specs/prices, amounts, time left, anything about the streamer or this channel before this stream beyond MEMORY/PROMISE.
+
+TOPIC: the streamer's question to the chat
+SOCIAL ACTION: Answer - Answer with your own short opinion.
+TARGET: the streamer
+YOUR LAST MESSAGES (do not repeat them or start the same way): «без настроения но здесь сижу»
+
+RECENT CHAT (other people's messages, oldest first):
+kritik228: «без настроения но здесь сижу»
+
+Write kritik228's chat message now (2-7 words)."
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.FollowUpPromptPairsThePriorMessageWithTheStreamersQuestionAndAnswerTask () [0x0002d] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:124
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2001" name="MissingDayDoesNotCreateAFictionalMoodCause" fullname="GoLive.Tests.ViewerAnswerPurposeTests.MissingDayDoesNotCreateAFictionalMoodCause" methodname="MissingDayDoesNotCreateAFictionalMoodCause" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1060381586" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.003427" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.MissingDayDoesNotCreateAFictionalMoodCause () [0x0002b] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:159
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1993" name="PersonalAnswerAuthorizesOnlyRelevantDayFields" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.002324" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1991" name="PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сегодня делал?&quot;,&quot;had boring school lessons today&quot;,&quot;lying on the bed watching streams&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сегодня делал?&quot;,&quot;had boring school lessons today&quot;,&quot;lying on the bed watching streams&quot;)" methodname="PersonalAnswerAuthorizesOnlyRelevantDayFields" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="469976104" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000502" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose DirectAnswerFacts
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.AnswerFacts (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:46
+at GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields (System.String question, System.String included, System.String excluded) [0x00024] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:93
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1992" name="PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сейчас делаешь?&quot;,&quot;lying on the bed watching streams&quot;,&quot;had boring school lessons today&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields(&quot;что сейчас делаешь?&quot;,&quot;lying on the bed watching streams&quot;,&quot;had boring school lessons today&quot;)" methodname="PersonalAnswerAuthorizesOnlyRelevantDayFields" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1184402580" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000187" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose DirectAnswerFacts
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.AnswerFacts (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:46
+at GoLive.Tests.ViewerAnswerPurposeTests.PersonalAnswerAuthorizesOnlyRelevantDayFields (System.String question, System.String included, System.String excluded) [0x00024] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:93
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="2000" name="PersonalQuestionAlwaysAnswersBeforeTheViewersPersonality" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PersonalQuestionAlwaysAnswersBeforeTheViewersPersonality" methodname="PersonalQuestionAlwaysAnswersBeforeTheViewersPersonality" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="13507499" result="Passed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.013200" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2003" name="PriorMessageAndDayFactsStayBoundedInTheAnswerEnvelope" fullname="GoLive.Tests.ViewerAnswerPurposeTests.PriorMessageAndDayFactsStayBoundedInTheAnswerEnvelope" methodname="PriorMessageAndDayFactsStayBoundedInTheAnswerEnvelope" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="2132645998" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000541" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The answer plan must expose PreviousViewerLine
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.PriorMessageAndDayFactsStayBoundedInTheAnswerEnvelope () [0x00050] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:180
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1989" name="QuestionPurposeFollowsTheActualQuestion" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.006659" total="18" passed="0" failed="18" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1971" name="QuestionPurposeFollowsTheActualQuestion(&quot;как дела?&quot;,null,&quot;Mood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;как дела?&quot;,null,&quot;Mood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="851556077" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000295" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1972" name="QuestionPurposeFollowsTheActualQuestion(&quot;да как у вас у всех дела расскажите мне пожалуйста&quot;,null,&quot;Mood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;да как у вас у всех дела расскажите мне пожалуйста&quot;,null,&quot;Mood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1146292728" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000232" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1973" name="QuestionPurposeFollowsTheActualQuestion(&quot;что сегодня делал?&quot;,null,&quot;TodayActivity&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;что сегодня делал?&quot;,null,&quot;TodayActivity&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="407146525" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000187" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1974" name="QuestionPurposeFollowsTheActualQuestion(&quot;Зина, а у тебя как день прошёл?&quot;,null,&quot;TodayActivity&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;Зина, а у тебя как день прошёл?&quot;,null,&quot;TodayActivity&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1403225816" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000194" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1975" name="QuestionPurposeFollowsTheActualQuestion(&quot;что сейчас делаешь?&quot;,null,&quot;CurrentActivity&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;что сейчас делаешь?&quot;,null,&quot;CurrentActivity&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1789910321" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000178" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1976" name="QuestionPurposeFollowsTheActualQuestion(&quot;Почему без настроения?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;Почему без настроения?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="292019565" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000197" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1977" name="QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;без настроения но здесь сижу&quot;,&quot;ReasonForMood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1838962310" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000176" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1978" name="QuestionPurposeFollowsTheActualQuestion(&quot;why?&quot;,&quot;feeling bored today&quot;,&quot;ReasonForMood&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;why?&quot;,&quot;feeling bored today&quot;,&quot;ReasonForMood&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="424041994" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1979" name="QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;я выбираю такие игры&quot;,&quot;Explanation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;почему?&quot;,&quot;я выбираю такие игры&quot;,&quot;Explanation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="795370990" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000223" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1980" name="QuestionPurposeFollowsTheActualQuestion(&quot;О чем ты, критик?&quot;,&quot;я про стрим&quot;,&quot;Explanation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;О чем ты, критик?&quot;,&quot;я про стрим&quot;,&quot;Explanation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="211450534" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1981" name="QuestionPurposeFollowsTheActualQuestion(&quot;жесть, устал наверное?&quot;,&quot;в школе весь день&quot;,&quot;Confirmation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;жесть, устал наверное?&quot;,&quot;в школе весь день&quot;,&quot;Confirmation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="956663798" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000193" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1982" name="QuestionPurposeFollowsTheActualQuestion(&quot;и как?&quot;,&quot;в школе весь день&quot;,&quot;Explanation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;и как?&quot;,&quot;в школе весь день&quot;,&quot;Explanation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1356288719" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000182" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1983" name="QuestionPurposeFollowsTheActualQuestion(&quot;какую игру лучше запустить?&quot;,null,&quot;GamePreference&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;какую игру лучше запустить?&quot;,null,&quot;GamePreference&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1609957053" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000191" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1984" name="QuestionPurposeFollowsTheActualQuestion(&quot;как тебе стрим?&quot;,null,&quot;Opinion&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;как тебе стрим?&quot;,null,&quot;Opinion&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1219788342" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000379" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1985" name="QuestionPurposeFollowsTheActualQuestion(&quot;откуда ты?&quot;,null,&quot;OriginLocation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;откуда ты?&quot;,null,&quot;OriginLocation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="239344299" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000189" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1986" name="QuestionPurposeFollowsTheActualQuestion(&quot;where are you from?&quot;,null,&quot;OriginLocation&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;where are you from?&quot;,null,&quot;OriginLocation&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1451313647" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000244" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1987" name="QuestionPurposeFollowsTheActualQuestion(&quot;сколько будет два плюс два?&quot;,null,&quot;GenericQuestion&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;сколько будет два плюс два?&quot;,null,&quot;GenericQuestion&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1924808703" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000321" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1988" name="QuestionPurposeFollowsTheActualQuestion(&quot;так, секунду&quot;,null,&quot;None&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion(&quot;так, секунду&quot;,null,&quot;None&quot;)" methodname="QuestionPurposeFollowsTheActualQuestion" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="2027897537" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000264" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.QuestionPurposeFollowsTheActualQuestion (System.String question, System.String previous, System.String expected) [0x0001c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1990" name="RealMoodFollowUpGetsTheViewersStructuredReason" fullname="GoLive.Tests.ViewerAnswerPurposeTests.RealMoodFollowUpGetsTheViewersStructuredReason" methodname="RealMoodFollowUpGetsTheViewersStructuredReason" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1292287489" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000554" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The answer plan must expose QuestionPurpose
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.Purpose (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:44
+at GoLive.Tests.ViewerAnswerPurposeTests.RealMoodFollowUpGetsTheViewersStructuredReason () [0x0002b] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:77
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1999" name="ThreadSnapshotWinsOverMoreRecentOwnChatWhenGenerationStarts" fullname="GoLive.Tests.ViewerAnswerPurposeTests.ThreadSnapshotWinsOverMoreRecentOwnChatWhenGenerationStarts" methodname="ThreadSnapshotWinsOverMoreRecentOwnChatWhenGenerationStarts" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="900098786" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000361" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The selected conversation must snapshot its own LastLine.
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.ThreadSnapshotWinsOverMoreRecentOwnChatWhenGenerationStarts () [0x00038] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:137
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1996" name="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" fullname="GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.001010" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1994" name="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;сколько будет два плюс два?&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;сколько будет два плюс два?&quot;)" methodname="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1314673294" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000446" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose DirectAnswerFacts
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.AnswerFacts (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:46
+at GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation (System.String question) [0x00027] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:104
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1995" name="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;where are you from?&quot;)" fullname="GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation(&quot;where are you from?&quot;)" methodname="UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation" classname="GoLive.Tests.ViewerAnswerPurposeTests" runstate="Runnable" seed="1194613128" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000184" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The answer plan must expose DirectAnswerFacts
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerAnswerPurposeTests.Field (GoLive.Viewers.ViewerUtterancePlan plan, System.String name) [0x00010] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:40
+at GoLive.Tests.ViewerAnswerPurposeTests.AnswerFacts (GoLive.Viewers.ViewerUtterancePlan plan) [0x00000] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:46
+at GoLive.Tests.ViewerAnswerPurposeTests.UnrelatedQuestionDoesNotAuthorizeDailyFactsEvenInsideAConversation (System.String question) [0x00027] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerAnswerPurposeTests.cs:104
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2029" name="ViewerConversationTargetTests" fullname="GoLive.Tests.ViewerConversationTargetTests" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="19" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.079677" total="19" passed="4" failed="15" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2039" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.018341" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2034" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Почему без настроения?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Почему без настроения?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="5912845" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.010998" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Почему без настроения?
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll (System.String phrase) [0x00096] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:63
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2035" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;почему?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;почему?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1427448537" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000167" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  почему?
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll (System.String phrase) [0x00096] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:63
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2036" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;О чём речь? Какое плохое?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;О чём речь? Какое плохое?&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="347040847" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000166" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  О чём речь? Какое плохое?
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll (System.String phrase) [0x00096] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:63
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2037" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;что значит ну да ладно&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;что значит ну да ладно&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="836321016" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000161" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  что значит ну да ладно
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll (System.String phrase) [0x00096] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:63
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2038" name="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Жесть. Устал, наверное.&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll(&quot;Жесть. Устал, наверное.&quot;)" methodname="ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="504134670" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.006330" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Жесть. Устал, наверное.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ActiveExchangeOwnsTheOnlyAnswerEvenAfterFailedRoll (System.String phrase) [0x00096] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:63
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="2046" name="ExpiredThreadAllowsOrdinarySelectionAgain" fullname="GoLive.Tests.ViewerConversationTargetTests.ExpiredThreadAllowsOrdinarySelectionAgain" methodname="ExpiredThreadAllowsOrdinarySelectionAgain" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1968989657" result="Passed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.011820" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2050" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.032856" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2047" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(1)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(1)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="537667313" result="Passed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.021513" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[audience=1; counts 0/1/2/3=8/292/0/0
+]]></output>
+              </test-case>
+              <test-case id="2048" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(2)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(2)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1164130920" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.005569" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Different people should not publish simultaneously.
+  Expected: greater than or equal to 1.2d
+  But was:  1.1883404598481953d
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave (System.Int32 audience) [0x00131] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:134
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2049" name="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(3)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave(3)" methodname="ExplicitGroupQuestionCreatesOneBoundedStaggeredWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="15692771" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.005195" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Different people should not publish simultaneously.
+  Expected: greater than or equal to 1.2d
+  But was:  1.1883404598481953d
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ExplicitGroupQuestionCreatesOneBoundedStaggeredWave (System.Int32 audience) [0x00131] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:134
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="2045" name="ExplicitOtherViewerWinsOverCurrentThread" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitOtherViewerWinsOverCurrentThread" methodname="ExplicitOtherViewerWinsOverCurrentThread" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1714844611" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.003026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ExplicitOtherViewerWinsOverCurrentThread () [0x0006c] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:95
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2033" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.007799" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2030" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;критик, почему без настроения?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;критик, почему без настроения?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1654397788" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.002903" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  No primary audience fallback after a direct roll.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails (System.String phrase) [0x000b7] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:42
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2031" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;О чем ты, критик?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;О чем ты, критик?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="770861086" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.001557" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  No primary audience fallback after a direct roll.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails (System.String phrase) [0x000b7] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:42
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2032" name="ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;Что? Девочка с девятого этажа? О чем ты критика?&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails(&quot;Что? Девочка с девятого этажа? О чем ты критика?&quot;)" methodname="ExplicitTargetCannotBeStolenEvenIfItsRollFails" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="981978513" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.002837" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  No primary audience fallback after a direct roll.
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.ExplicitTargetCannotBeStolenEvenIfItsRollFails (System.String phrase) [0x000b7] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:42
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2044" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.002281" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2040" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;cooldown&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;cooldown&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1023427630" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000983" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  cooldown
+  Expected: <empty>
+  But was:  < <GoLive.Viewers.ReactionIntent> >
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery (System.String guard) [0x000e0] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:83
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2041" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;absent&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;absent&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1563287406" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000475" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  absent
+  Expected: <empty>
+  But was:  < <GoLive.Viewers.ReactionIntent> >
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery (System.String guard) [0x000e0] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:83
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2042" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;changed epoch&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;changed epoch&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="753018577" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  changed epoch
+  Expected: <empty>
+  But was:  < <GoLive.Viewers.ReactionIntent> >
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery (System.String guard) [0x000e0] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:83
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2043" name="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;maximum&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery(&quot;maximum&quot;)" methodname="IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1315141812" result="Failed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000187" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  maximum
+  Expected: <empty>
+  But was:  < <GoLive.Viewers.ReactionIntent> >
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerConversationTargetTests.IneligibleThreadOwnerIsNotReplacedByAnAudienceLottery (System.String guard) [0x000e0] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerConversationTargetTests.cs:83
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2053" name="NonQuestionDoesNotStartAGroupResponseWave" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.002597" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2051" name="NonQuestionDoesNotStartAGroupResponseWave(&quot;ребят я сегодня играл&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave(&quot;ребят я сегодня играл&quot;)" methodname="NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="1873247725" result="Passed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.001484" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2052" name="NonQuestionDoesNotStartAGroupResponseWave(&quot;Так, секунду&quot;)" fullname="GoLive.Tests.ViewerConversationTargetTests.NonQuestionDoesNotStartAGroupResponseWave(&quot;Так, секунду&quot;)" methodname="NonQuestionDoesNotStartAGroupResponseWave" classname="GoLive.Tests.ViewerConversationTargetTests" runstate="Runnable" seed="638230371" result="Passed" start-time="2026-09-26 18:50:02Z" end-time="2026-09-26 18:50:02Z" duration="0.000818" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
