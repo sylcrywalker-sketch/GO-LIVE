@@ -42,6 +42,7 @@ namespace GoLive.Viewers
         private readonly AudienceRoster _roster;
         private readonly ReactionTuning _tuning;
         private readonly Func<IReadOnlyList<ViewerNameForms>> _knownNames;
+        private readonly ViewerSupportAttribution _support;
         private readonly List<ViewerNameForms> _mentionNames = new();
         private readonly HashSet<string> _mentionIds = new(StringComparer.Ordinal);
         private readonly List<StreamEvent> _pending = new();
@@ -66,7 +67,8 @@ namespace GoLive.Viewers
         public StreamerActivity Activity { get; private set; }
 
         public StreamEventSource(StreamSession stream, StreamSpeechFeed speech, DonationAccount donations, PcPeripherals peripherals,
-            TrichChannel channel, AudienceRoster roster, ReactionTuning tuning, Func<IReadOnlyList<ViewerNameForms>> knownNames = null)
+            TrichChannel channel, AudienceRoster roster, ReactionTuning tuning, Func<IReadOnlyList<ViewerNameForms>> knownNames = null,
+            ViewerSupportAttribution support = null)
         {
             _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _speech = speech ?? throw new ArgumentNullException(nameof(speech));
@@ -76,6 +78,7 @@ namespace GoLive.Viewers
             _roster = roster ?? throw new ArgumentNullException(nameof(roster));
             _tuning = tuning ?? throw new ArgumentNullException(nameof(tuning));
             _knownNames = knownNames;
+            _support = support;
             _stream.Changed += ObserveStream;
             _speech.SpeechAdded += OnSpeech;
             _donations.Received += OnDonation;
@@ -120,10 +123,16 @@ namespace GoLive.Viewers
 
             for (int emitted = 0; _follows < audience.Follows; _follows++)
                 if (emitted++ < MaximumPerKindPerTick)
-                    Add(StreamEvent.Follow(++_serial, _broadcast + ".follow." + (_follows + 1), now, null, null));
+                {
+                    var viewer = _support?.Choose(StreamEventKind.Follow, audience.Seed, _follows + 1, now, audience.CurrentViewers);
+                    Add(StreamEvent.Follow(++_serial, _broadcast + ".follow." + (_follows + 1), now, viewer?.ViewerId, viewer?.DisplayName));
+                }
             for (int emitted = 0; _subscriptions < audience.Subscriptions; _subscriptions++)
                 if (emitted++ < MaximumPerKindPerTick)
-                    Add(StreamEvent.Subscription(++_serial, _broadcast + ".subscription." + (_subscriptions + 1), now, null, null));
+                {
+                    var viewer = _support?.Choose(StreamEventKind.Subscription, audience.Seed, _subscriptions + 1, now, audience.CurrentViewers);
+                    Add(StreamEvent.Subscription(++_serial, _broadcast + ".subscription." + (_subscriptions + 1), now, viewer?.ViewerId, viewer?.DisplayName));
+                }
             // Chat impulses beyond a couple per frame would all fall to the budget anyway.
             long impulses = audience.ChatMessages - _chatter;
             _chatter = audience.ChatMessages;
@@ -214,7 +223,9 @@ namespace GoLive.Viewers
         private void OnDonation(DonationReceipt receipt)
         {
             if (!_live || !receipt.Id.StartsWith(_broadcast + ".", StringComparison.Ordinal)) return;
-            ChatParticipant donor = _roster.FindByName(receipt.SenderName);
+            // Anonymous is the reserved presentation fallback, never proof of a namesake viewer's action.
+            ChatParticipant donor = string.Equals(receipt.SenderName, "Anonymous", StringComparison.OrdinalIgnoreCase)
+                ? null : _roster.FindByName(receipt.SenderName);
             StreamEvent donation = StreamEvent.Donation(++_serial, receipt.Id, Now, donor?.ViewerId, receipt.SenderName, receipt.AmountCents);
             if (Add(donation)) _lastDonation = donation;
         }

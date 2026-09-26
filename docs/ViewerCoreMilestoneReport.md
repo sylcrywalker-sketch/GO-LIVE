@@ -1,6 +1,6 @@
 # Viewer Core milestone — continuation report
 
-Status: **in progress**, continuing `claude/sharp-wozniak-iakuny`. A–C commits are preserved: A `4a4eb06`, B `5af07d1`, C `39710e5`. Nothing merged to main. This report does not yet claim the living-community quality gate is met.
+Status: **D–G implemented; living-community quality gate NOT met.** Work continues on `claude/sharp-wozniak-iakuny`. A–C commits are preserved: A `4a4eb06`, B `5af07d1`, C `39710e5`. Nothing merged to main. Domain correctness, persistence and outage checks pass; generated dialogue still has concrete semantic/social defects. The human ten-minute microphone session remains unexecuted.
 
 ## Handoff audit of actual A–C code
 
@@ -20,13 +20,13 @@ Two concrete pre-existing issues were reproduced with failing regressions: nulla
 
 Unity 6000.6.0f1 complete non-Explicit suite: **900 passed, 0 failed**, 134.14 seconds. Four Explicit cases require a person/microphone, recorded voice or a local model and were excluded by the normal suite. Existing reaction/director/profile target: **79/79 passed**. The handoff's quoted 125 targeted total is not used as evidence; these are the actual results in this checkout.
 
-Evidence: [complete baseline](<E:/GO-Live-ViewerCore-audit-20260926/stage-c-full-suite.xml>), [baseline targeted](<E:/GO-Live-ViewerCore-audit-20260926/stage-c-targeted.xml>), [two failing handoff regressions](<E:/GO-Live-ViewerCore-audit-20260926/handoff-red.xml>).
+Evidence: [complete baseline](evidence/viewer-core/stage-c-full-suite.xml), [baseline targeted](evidence/viewer-core/stage-c-targeted.xml), [two failing handoff regressions](<E:/GO-Live-ViewerCore-audit-20260926/handoff-red.xml>).
 
 ## Current development model
 
 Local server inventory confirms `mistralai/ministral-3-8b-instruct-2512`, GGUF **Q4_K_M**, loaded context **4096**. Current settings: temperature 0.85, top-p 0.95, maximum 64 output tokens, 6-second timeout, one concurrent request and queue capacity six. LM Studio is a development runtime, not shippable game packaging.
 
-Implementation and acceptance are tracked in [the continuation plan](superpowers/plans/2026-09-26-viewer-core-continuation.md). Raw model comparisons, stages D–G, performance, blind review, acceptance and final commit evidence will be appended as performed.
+Implementation and acceptance are tracked in [the continuation plan](superpowers/plans/2026-09-26-viewer-core-continuation.md). Raw comparisons, stage verification, quality review and acceptance evidence are retained below, including unsuccessful scene-fixture attempts.
 
 ## Stage C profile gate: raw evidence before continuation
 
@@ -50,7 +50,7 @@ One hidden relationship dimension is sufficient here: **Sentiment**, -100..100, 
 
 Presence epochs invalidate old visits before generation and again before publication. Leaving/rejoining or loading a save cannot revive an in-flight response. The optional community snapshot holds stable IDs, sentiment and counters; missing legacy rows seed current defaults. Validation rejects unknown/duplicate identities, null records and invalid ranges before touching any desktop state. Snapshot capture/restore does not share mutable records with the caller. Plans, visitors, cooldowns, chat and model requests are transient.
 
-Verification: eight initial RED cases; the subsequent integration run exposed a real fuzzy-name social mutation and missing schedule validation (fixed), plus two incorrect expectations in new tests (actual email domain and lifetime visits versus current seats). Independent review caught thanks to an absent known viewer being misattributed to the last donor. A failing regression proved it; cached known-name matching now prevents that inference, with an independent conservative check in the community. Re-review approved. Final targeted **194/194 passed**, including viewer/director/speech/audience and desktop persistence/completion checks. Evidence: [D final results](<E:/GO-Live-ViewerCore-audit-20260926/stage-d-final.xml>). Event-time knowledge isolation follows in E; D does not claim to implement memory.
+Verification: eight initial RED cases; the subsequent integration run exposed a real fuzzy-name social mutation and missing schedule validation (fixed), plus two incorrect expectations in new tests (actual email domain and lifetime visits versus current seats). Independent review caught thanks to an absent known viewer being misattributed to the last donor. A failing regression proved it; cached known-name matching now prevents that inference, with an independent conservative check in the community. Re-review approved. Final targeted **194/194 passed**, including viewer/director/speech/audience and desktop persistence/completion checks. Evidence: [D final results](evidence/viewer-core/stage-d-final.xml). Event-time knowledge isolation follows in E; D does not claim to implement memory.
 
 ## Embedded Local Inference Migration
 
@@ -88,9 +88,9 @@ Capacity is **16 facts per permanent viewer**, with deterministic eviction by im
 
 The optional memory save field preserves older saves. Detached capture/restore and whole-graph validation reject invalid enums/subjects, non-finite times, duplicate IDs/event keys, oversized banks and inconsistent reference metadata before any desktop mutation. Repeated load does not duplicate facts. In-flight requests, reservations and chat remain transient.
 
-Initial three regressions failed as intended. The first expanded run passed 180/182; one legacy test treated an invented yesterday claim as valid, and another arranged two named viewers inside an actual one-seat audience. Those fixtures now assert the new historical boundary and actual audience requirement. Three extraction regressions and one finite-retention regression were separately reproduced before fixes. Final targeted and independent review results are recorded below when complete. Semantic history validation remains lexical rather than proof of arbitrary generated claims; the strict enforceable boundary is which canonical facts enter a viewer's context.
+Initial three regressions failed as intended. The first expanded run passed 180/182; one legacy test treated an invented yesterday claim as valid, and another arranged two named viewers inside an actual one-seat audience. Those fixtures now assert the new historical boundary and actual audience requirement. Three extraction regressions and one finite-retention regression were separately reproduced before fixes. Semantic history validation remains lexical rather than proof of arbitrary generated claims; the strict enforceable boundary is which canonical facts enter a viewer's context.
 
-Final E expanded regression: **260/260 passed**, zero failed, 1.1148458 seconds ([Unity result](<E:/GO-Live-ViewerCore-audit-20260926/stage-e-complete.xml>)). Independent review found one concrete accounting defect: a callback about losing a final consumed both loss and victory memories for that subject. Two failing regressions reproduced it; publication now consumes at most one compatible fact and rejects explicitly opposite known outcomes. A separate failing English case prevents `wonderful` from being parsed as `won`. The final run includes all D fixture groups, memory, stream session and desktop state/save integration.
+Final E expanded regression: **260/260 passed**, zero failed, 1.1148458 seconds ([Unity result](evidence/viewer-core/stage-e-complete.xml)). Independent review found one concrete accounting defect: a callback about losing a final consumed both loss and victory memories for that subject. Two failing regressions reproduced it; publication now consumes at most one compatible fact and rejects explicitly opposite known outcomes. A separate failing English case prevents `wonderful` from being parsed as `won`. The final run includes all D fixture groups, memory, stream session and desktop state/save integration.
 
 Final independent Stage E re-review: specification PASS, code quality PASS; no outstanding actionable findings.
 
@@ -106,7 +106,112 @@ Rare social replies originate only from an actual published line. Both permanent
 
 Promotion considers only an already named ephemeral chatter after three published lines and eight minutes. Each identity receives one seeded 0.02 eligibility roll, with at most one promotion per broadcast and eight additional permanent profiles overall. A compact generated descriptor and stable identity survive save/load; anonymous audience remains aggregated. All durable names, including absent promoted viewers, are reserved against future ephemeral generation.
 
-Independent review reproduced a same-frame ordering defect: recognized commitment speech was queued while a checkout was observed immediately, so the purchase could be lost before the next viewer tick. The core now processes earlier normalized events before observing the completed gameplay fact. Generation still begins during its ordinary tick. The regression also checks purchase-before-speech exclusion and absence of repeated acknowledgement or scheduling. Final F expanded regression: **291/291 passed**, zero failures, 1.244557 seconds ([Unity result](<E:/GO-Live-ViewerCore-audit-20260926/stage-f-complete.xml>)). Independent re-review: specification PASS, code PASS, no remaining actionable findings.
+Independent review reproduced a same-frame ordering defect: recognized commitment speech was queued while a checkout was observed immediately, so the purchase could be lost before the next viewer tick. The core now processes earlier normalized events before observing the completed gameplay fact. Generation still begins during its ordinary tick. The regression also checks purchase-before-speech exclusion and absence of repeated acknowledgement or scheduling. Final F expanded regression: **291/291 passed**, zero failures, 1.244557 seconds ([Unity result](evidence/viewer-core/stage-f-complete.xml)). Independent re-review: specification PASS, code PASS, no remaining actionable findings.
+
+## Stage G — integrated authority, rhythm and observability
+
+`ViewerSupportAttribution` names an already decided C# outcome using eligible current seats and authored support tendencies. It does not choose donation amounts, create receipts or credit the wallet. Desktop composition injects it before the existing `DonationAccount.Receive` call; the old four-name donor rotation is removed. A donor may be a current permanent viewer or an ephemeral identity occupying an anonymous seat. Unattributed support stays Anonymous. The aggregate simulation remains the sole owner of viewer/follow/subscription totals.
+
+Two persistent flags prevent repeatedly presenting a permanent viewer as a new follower or first subscriber. Old saves default both flags to false. These are lifetime first-event attribution flags; renewal, subscription expiration and billing are outside this game's current model. Follow/subscription presentation receives a C# attribution after its authoritative aggregate outcome. No separate economy path exists.
+
+Direct-name responses now obey the existing total rhythm budget and per-event cap. This closes a demonstrated case that scheduled 35 replies to a mass-name phrase where the event limit was three. Meaningful events, audience impulses, speech and silence still drive selection; no global chat timer is added. A narrow first-person transaction guard requires the correct own C# donation/follow/subscription event, while discussion about support remains allowed. Promise saves also reject terminal timestamps/statuses unreachable through actual transitions.
+
+The existing editor Reaction Monitor now exposes actual attendance, relationship counters, first-support flags, candidate IDs, selected memory/promise IDs, relationship context and p95 latency. Candidate capture is capped at 64 IDs and the existing trace remains capped at 80 entries. Diagnostic string construction is editor/development-only. The release interface is unchanged.
+
+Ordinary `DesktopRuntimeBehaviour.Update` contains one `GO! LIVE Viewer Tick` marker around its existing viewer update. The editor/development `GO! LIVE Viewer Allocations` counter measures native `GC.Alloc` **occurrences** on that same thread during that update. Its instance recorder is created on binding, reset for each scope and disposed on disable. It excludes StreamSession's preceding simulation step and worker-thread inference allocations; whole-editor bytes are reported separately. There is no second update loop.
+
+All six initial G regressions failed for their expected defects. Expanded targeted verification first passed **309/309**, zero failures, 1.3583946 seconds. New coverage includes 3,600 simulated seconds of repeated model outages/recovery against a same-seed baseline, comparing authoritative audience, follows, subscriptions, accepted support and unique receipt IDs.
+
+Independent review then reproduced three edge cases: an invalid display name discarded an otherwise valid simulated donation; a saved before-midnight condition accepted an impossible fulfilled status; and a real profile named Anonymous could inherit a generic support receipt. Name validation now falls back before receipt creation, save validation follows reachable transitions, and the case-insensitive Anonymous sentinel remains unattributed. Explicit spoken acknowledgement of that profile still works. The first two repairs passed [311/311 expanded checks](evidence/viewer-core/stage-g-reviewed.xml); the final two case variants passed with the complete **22-case G fixture** plus scene acceptance, [23/23, zero failures](evidence/viewer-core/scene-acceptance-3.xml). [Independent technical re-review](evidence/viewer-core/technical-review.md): no remaining actionable findings in the reviewed technical scope. This is separate from the failed dialogue-quality gate.
+
+## Final 140-generation quality audit and blind review
+
+The integrated ordinary adapter/director ran a fixed 14-context × 10-profile matrix, **140/140 real local generations**, with no retries or selected replacements. Each cell is a conditional style fixture, not a claim that every profile would naturally speak. It covers RU/EN questions, failure/win/filler/silence, microphone degradation, direct thanks, cold/warm relationships, witnessed versus absent memory and known fulfilled/broken promises. Actual C# community/ledger state supplies those contexts. [Every raw request, wire response, result and publication](evidence/viewer-core/viewer-milestone-raw.jsonl), [complete readable table](evidence/viewer-core/all-raw.md), [metrics](evidence/viewer-core/metrics.json), [Unity execution result](evidence/viewer-core/model-audit-results.xml).
+
+| Measure | Observed |
+|---|---:|
+| Real generations / malformed responses | 140 / 0 |
+| Accepted model publications | 135 |
+| Rejected and published fallback | 5 / 140 = 3.57% |
+| Exact normalized duplicate excess | 1 / 140 = 0.71% |
+| Mean raw length | 37.73 characters / 6.9 words |
+| Model latency median / p90 / p95 / max | 319 / 442 / 481 / 814 ms |
+| Mean / maximum prompt characters | 3,208 / 3,489 |
+| Fixed assistant-phrase proxy | 0 / 140 |
+| Narrow manual assistant-tone annotation | 2 / 140 = 1.43% |
+
+The most repeated first word is `да` (10/140); the most repeated two-word opener is `у меня` (4/140). Four lexical-overlap pairs were inspected; the concrete personality collision is ByteCat and kritik228 both writing `нафиг спасибо` (rows 73/76). Rejections were two viewer-length violations, one profanity violation, one unsupported history and one unsupported promise claim. The false-positive risk of lexical rules remains: natural paraphrases are not semantically proven by the validator.
+
+**The living-community quality gate does not pass.** Manual reading flags 27 concrete coherence/grounding/speaker-role failures in this conditional audition; 26 passed validation. Accepted examples include `ну наконец-то заговорил` during continued silence (51), inventing five minutes before the stream ends (90), and unsolicited RTX 4090 details (140). Row 130's invented purchase last week was rejected. Rows 118/120 show advice-desk language despite the phrase proxy being zero. [Complete semantic review and issue list](evidence/viewer-core/semantic-review.md).
+
+The actual cold/warm relationship prompts are different, but generated behavior is unreliable: a wary PixelFox says she is in love (82), while the warm response is less engaged (92). Witness contexts correctly contain the reported final failure and absent contexts do not, yet the ten witness-audition messages do not demonstrate a convincing specific callback. Technical knowledge isolation and callback limits therefore must not be presented as socially convincing memory. Forced hardware/food themes, incoherent remarks and role confusion remain concrete model-quality defects.
+
+The fixed blind sample uses zero-based start 3 and stride 17 modulo 140, chosen before seeing the outputs. A separate assistant saw only those 20 lines and authored profiles and froze its guesses before the key was opened. Root comparison: **13/20 correct**, with 7/7 high-confidence, 3/6 medium and 3/7 low. This is an assistant review with prior Stage C familiarity, not a human panel or calibrated study. Language/hardware/caretaker traits are recognizable; sarcastic and gentle Russian voices often overlap, and obvious topic cues can make bad dialogue easier to identify. [Blind worksheet](evidence/viewer-core/blind-review.md), [frozen guesses](evidence/viewer-core/blind-guesses.md), [answer key](evidence/viewer-core/blind-answer-key.md).
+
+No 9.5/10, production packaging or completed game-quality milestone is claimed. The remaining work is stronger semantic grounding, dependable relationship expression, useful sparse callbacks and the unexecuted human conversation acceptance.
+
+## Real Unity persistence, outage and cross-stream acceptance
+
+The Explicit scene fixture enters Play Mode in the actual `GL` scene and operates the PC/Streamly controls. Speech is supplied as `RecognizedSpeech` through the ordinary feed; OS capture is deliberately disabled for this automated scenario. It is therefore **Session B/C and a controlled cross-stream scenario, not physical-microphone Session A**. Named visits are held inside real audience seats, and the later high-audience fixture clones discovery tuning; it never writes the authoritative viewer total. Natural attendance variability is covered separately by deterministic tests.
+
+In the first broadcast NightOwl witnesses thanks and a reported lost final; PixelFox is absent. The real save controller captures state after an accepted donation and restores the same JSON snapshot twice. Relationship, memory identity, donation total/history and wallet balance survive unchanged, with no receipt re-emission, duplicate memory or retained in-flight chat. After 121 game minutes and a new stream, actual correlated generation requests give NightOwl the old reported-failure memory and give PixelFox no MEMORY context. Both generate through the ordinary director. NightOwl's published `ну ты и уточнил` does **not** demonstrate a convincing historical callback; the enforceable knowledge-isolation test passes while social recall remains a quality limitation.
+
+With the existing Reaction Monitor model switch disabled, the stream stays Live. The captured interval ends at 37 viewers, produces 11 fallback publications, 8 follows, 1 subscription and $7 of accepted donations. Wallet delta exactly equals accepted donation delta. Direct thanks still changes the intended relationship and a newly reported boss victory still creates a witnessed memory. Re-enabling the adapter produces a publication correlated to a fresh question, without replaying rewards. [Complete scene trace, raw model requests/results and save snapshots](evidence/viewer-core/scene-acceptance/living-community-play.jsonl), [passing execution](evidence/viewer-core/scene-acceptance-3.xml).
+
+The first two fixture executions failed and are retained: the first incorrectly expected both names in one phrase to pass the shared chat budget; the second fired five English questions immediately before another request and exhausted that budget. The fixture now asks names separately, establishes language using filler and spaces questions without bypassing selection. Production rhythm was not loosened, no test was ignored, and model outputs were not retried to obtain better wording. [Attempt 1 result](evidence/viewer-core/scene-acceptance-1.xml) and [all raw evidence](evidence/viewer-core/scene-acceptance-1-raw.jsonl); [attempt 2 result](evidence/viewer-core/scene-acceptance-2.xml) and [all raw evidence](evidence/viewer-core/scene-acceptance-2-raw.jsonl).
+
+## Stream Chat visual review
+
+All six real Game-view captures are **1920×1080**, with frame/timestamp provenance in the [capture manifest](evidence/viewer-core/scene-acceptance/capture-manifest.txt). Each was visually inspected; the fixture also asserts that active chat/application TMP text is not truncated. No concrete clipping, oversized messages, username overlap, unreadable amount or HUD collision was observed in these samples. Longer Russian lines wrap naturally; the English ArcadeKid line fits. Streamly was not redesigned.
+
+| Situation | Russian UI | English UI |
+|---|---|---|
+| Two viewers, normal silence | [RU low](evidence/viewer-core/scene-acceptance/viewer-community-ru-low.png) | [EN low](evidence/viewer-core/scene-acceptance/viewer-community-en-low.png) |
+| 34 viewers, accepted donation line and alert | [RU donation](evidence/viewer-core/scene-acceptance/viewer-community-ru-donation.png) | [EN donation](evidence/viewer-core/scene-acceptance/viewer-community-en-donation.png) |
+| Denser chat, 41/39 viewers | [RU high](evidence/viewer-core/scene-acceptance/viewer-community-ru-high.png) | [EN high with English model line](evidence/viewer-core/scene-acceptance/viewer-community-en-high.png) |
+
+UI language does not rewrite already published chat. Donation prose may appear later than its immediate alert because publication observes ordinary typing delay and rate limits; the amount remains attached to the original accepted receipt. These captures establish readability, not dialogue quality or a long natural play session.
+
+## Representative LIVE performance
+
+The corrected measurement repeats the complete scene scenario and passes **25/25** checks (22 G guards, two native-allocation calibration checks and the real-scene acceptance), zero failures, 64.7632979 seconds. [Execution result](evidence/viewer-core/scene-acceptance-4.xml), [complete repeated scene trace](evidence/viewer-core/performance-verification/living-community-play.jsonl).
+
+The measurement window is 30 real seconds / **12,323 ordinary LIVE frames** on the workstation above, with a recognized question every 7.5 real seconds. The ordinary runtime drives time; there is no extra viewer/simulation tick during measurement. Audit disk callbacks and the reflecting HTTP recorder are disabled for the window, and the original model adapter is restored. Timing includes ordinary editor/development diagnostic construction; native allocation scope start/stop sits outside the Viewer Tick timing marker.
+
+| Measure | Observed |
+|---|---:|
+| Viewer Tick median / p95 / maximum | 0.0082 / 0.0107 / 0.5317 ms |
+| Viewer Tick allocation count mean / p95 / maximum | 1.7 / 1 / 824 allocations |
+| Entire Editor frame allocated bytes mean / maximum | 9,015.9 / 533,244 bytes |
+| Entire Editor frame median / p95 / maximum | 2.338 / 2.968 / 96.809 ms |
+| Scenario maximum queue / configured capacity | 5 / 6 |
+| Scenario stale requests discarded | 13 |
+| Permanent profiles / retained memories | 10 / 5 |
+| Maximum recorded scene prompt | 3,715 characters |
+
+Queue/stale counts are cumulative over the repeated two-stream fixture, including deliberately accelerated waiting and cancellation boundaries; they are not thirty-second natural-play rates. The model still has one shared inference worker, never one per viewer or frame. The scene recorder contains 15 completed requests outside the uninstrumented profiling window: median/p90/p95 **668/872/945 ms**. The director's bounded 17-sample history, including that window, reports **684/851/872 ms**. The separate fixed 140-generation audit provides the larger latency distribution above. No Viewer Tick exceeded 0.532 ms in this window; the 96.809 ms whole-editor frame spike is real and was not causally attributed. This does not prove freeze-free release performance or minimum-spec suitability.
+
+The first measurement's all-zero scoped byte values are **invalid evidence**, not an optimization success. A known 65,536-byte allocation returned zero through `GC.GetAllocatedBytesForCurrentThread` while the native profiler saw one allocation. The installed Unity Mono/Boehm implementation returns zero for that managed API. The corrected measurement uses the native marker's sample **Count**; its Value has TimeNanoseconds units and is not bytes. Calibration also verifies two allocations inside a reset scope and zero in a subsequent empty scope. [Original diagnostic](evidence/viewer-core/allocation-diagnostic.xml). The existing Unity counter API supports custom profiling values; count/byte units remain explicitly separate. [Unity counter documentation](https://docs.unity.com/en-us/engine/6000.7/manual/analysis/profiler/customizing/adding-information-code/add-counters-code).
+
+Source inspection identifies allocation candidates consistent with the low idle baseline and request-time bursts: the instance method-group delegate passed to `Director.Update`, reaction intent lists, request/context StringBuilders, bounded witnessed-chat/memory copies and LINQ retrieval, cancellation/task/HTTP objects, and development trace strings. This is a code-level attribution, not a captured allocation-call-stack percentage ranking. Worker-thread model buffers and StreamSession allocations are outside the scoped count. The first passing scene's complete serialized community snapshot is 3,009 UTF-8 bytes with five memories; it is not a managed-heap-size measurement. Banks remain capped at 16 per permanent viewer, with ten authored plus at most eight promoted identities; retrieval gives at most two facts and one known promise per request.
+
+The repeated scene also re-verifies persistence, isolated knowledge and recovery with the corrected instrumentation. Its outage interval ends at 36 viewers with eight fallback publications, $9 accepted donation/wallet delta, eight follows and one subscription. All repeated raw responses and captures are retained; earlier scene results and the fixed 140-cell audit are not replaced.
+
+## Final complete-suite verification
+
+After the native allocation-counter repair, Unity 6000.6.0f1 ran the **complete non-Explicit project suite: 1,035 passed, 0 failed**, 133.9535878 seconds. The result enumerates 1,042 tests with seven Explicit cases excluded by the ordinary run. [Final full-suite XML](evidence/viewer-core/final-suite-results.xml). No tests were disabled, ignored or weakened to obtain this result. Existing unrelated PC, peripheral, desktop, save, economy and speech tests remain green.
+
+The model/scene Explicit cases were run separately where stated: the before/after ten-profile comparisons, the fixed 140-generation audit, and the real scene persistence/outage/cross-stream/performance fixture. The other legacy model/recorded-speech Explicit utilities and real-microphone test are not claimed as executed by this final full-suite run. Human ten-minute Session A remains unexecuted. The preceding full run before the diagnostic correction also passed 1,033 tests; two calibration regressions account for the final increase.
+
+Independent reviews of D/E/F and the final technical integration have no outstanding actionable findings after the recorded fixes. This technical verdict does not override the explicit semantic/social quality failure above. Initial unrelated working-tree edits were restored byte-for-byte from the pre-task backup and excluded from the stage commits.
+
+## Remaining acceptance and product limits
+
+- The dialogue audit fails semantic grounding and convincing social continuity. Profile distinctions are partly recognizable, but relationship-dependent expression and useful memories are unreliable. Lexical guards do not prove arbitrary natural-language claims.
+- Session A requires a person speaking for ten minutes and remains explicitly unexecuted; its exact path is above. Scripted recognized speech does not validate microphone transcription quality.
+- Performance evidence is from this workstation's Unity Editor, not a release build or minimum-spec device. Development diagnostic strings allocate; final embedded inference packaging is not implemented.
+- Presence and in-flight requests are transient by design. Promises use a small conservative vocabulary; absent original listeners do not automatically learn the outcome. Lifetime first-follow/first-subscription flags are not a renewal/billing system.
+- No quality score of 9.5/10 and no completed game-quality milestone is claimed. A–C are preserved and nothing is merged to main.
 
 ## Commit sequence
 
@@ -118,7 +223,7 @@ Independent review reproduced a same-frame ordering defect: recognized commitmen
 | Handoff validation and narrow guards | `86145b5` |
 | D — presence and relationships | `d85158a` |
 | E — witnessed memory | `b688a16` |
-| F — promises and social callbacks | pending |
+| F — promises and social callbacks | `5ecf9fb` |
 | G — living community integration | pending |
 
 The branch remains `claude/sharp-wozniak-iakuny`; no squash or merge to main.

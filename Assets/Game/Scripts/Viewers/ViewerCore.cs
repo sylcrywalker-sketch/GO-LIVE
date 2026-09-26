@@ -32,6 +32,7 @@ namespace GoLive.Viewers
 
         public AudienceRoster Roster { get; }
         public ViewerCommunity Community { get; }
+        public ViewerSupportAttribution Support { get; }
         public StreamEventSource Events { get; }
         public StreamChat Chat { get; } = new();
         public ChatDirector Director { get; }
@@ -52,7 +53,8 @@ namespace GoLive.Viewers
             if (error != null) throw new ArgumentException(error, nameof(tuning));
             Roster = new AudienceRoster((random, index) => EphemeralViewers.Create(random, index, ChannelLanguage));
             Community = new ViewerCommunity(profiles, Roster);
-            Events = new StreamEventSource(stream, speech, donations, peripherals, channel, Roster, tuning, () => Community.KnownNames);
+            Support = new ViewerSupportAttribution(Roster, Community);
+            Events = new StreamEventSource(stream, speech, donations, peripherals, channel, Roster, tuning, () => Community.KnownNames, Support);
             Community.Joined += Events.NotifyJoined;
             Director = new ChatDirector(languageModel, modelSettings ?? new ChatModelSettings { Enabled = false }, Chat, Log);
             Director.Finished += FinishMemoryReference;
@@ -112,7 +114,12 @@ namespace GoLive.Viewers
                 if (intents.Count == 0)
                 {
                     // Ambient impulses that fall to the budget are too frequent to trace one by one.
-                    if (streamEvent.Kind != StreamEventKind.AudienceChatter) Log.Add(ReactionLog.ForEvent(streamEvent, ReactionOutcome.Rejected, reason));
+                    if (streamEvent.Kind != StreamEventKind.AudienceChatter)
+                    {
+                        var entry = ReactionLog.ForEvent(streamEvent, ReactionOutcome.Rejected, reason);
+                        entry.CandidateIds = _selector.LastCandidateIds;
+                        Log.Add(entry);
+                    }
                     continue;
                 }
                 foreach (ReactionIntent intent in intents)

@@ -18,6 +18,7 @@ namespace GoLive.Viewers
         public double DueSeconds { get; }
         public double ExpiresSeconds { get; }
         public long PresenceEpoch { get; }
+        public string CandidateIds { get; internal set; }
 
         internal ReactionIntent(long id, StreamEvent streamEvent, ChatParticipant viewer, bool direct, int order, double due, double expires)
             : this(id, streamEvent, viewer, direct, order, due, expires, 0) { }
@@ -107,6 +108,10 @@ namespace GoLive.Viewers
         private double _lastSocial = double.NegativeInfinity;
 
         public ChatRhythm Rhythm { get; }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private readonly List<string> _candidateIds = new();
+#endif
+        public string LastCandidateIds { get; private set; }
 
         public ReactionSelector(ReactionTuning tuning, AudienceRoster roster, AudienceRandom random)
         {
@@ -122,6 +127,10 @@ namespace GoLive.Viewers
         public List<ReactionIntent> Select(StreamEvent streamEvent, double now, bool live, out string reason)
         {
             var intents = new List<ReactionIntent>();
+            LastCandidateIds = null;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            _candidateIds.Clear();
+#endif
             if (streamEvent == null) throw new ArgumentNullException(nameof(streamEvent));
             if (!live) { reason = "offline"; return intents; }
             if (streamEvent.Kind == StreamEventKind.ViewerReply) { reason = "social events require publication"; return intents; }
@@ -139,9 +148,12 @@ namespace GoLive.Viewers
             // 1. Viewers the moment is about: named by the streamer, thanked, the donor, the one who joined.
             foreach (string viewerId in DirectViewers(streamEvent))
             {
+                if (intents.Count >= MaximumReactions(streamEvent, viewers) ||
+                    !Rhythm.CanSpend(streamEvent.Significance >= .8f && intents.Count == 0)) break;
                 ChatParticipant viewer = _roster.Find(viewerId);
                 if (viewer == null || !_roster.IsWatching(viewerId) || _chosen.Contains(viewer) || !Witnessed(streamEvent, viewer)) continue;
                 if (Rhythm.SinceLast(viewerId, now) < _tuning.DirectGapSeconds) continue;
+                TraceCandidate(viewerId);
                 if (_random.NextDouble() >= DirectChance(streamEvent, viewer)) continue;
                 intents.Add(Schedule(streamEvent, viewer, true, intents.Count, now));
             }
@@ -167,6 +179,10 @@ namespace GoLive.Viewers
                 chance *= .42;
             }
             reason = intents.Count == 0 ? "silence" : null;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            LastCandidateIds = string.Join(", ", _candidateIds);
+            foreach (var intent in intents) intent.CandidateIds = LastCandidateIds;
+#endif
             return intents;
         }
 
@@ -180,6 +196,9 @@ namespace GoLive.Viewers
             if (now - _lastSocial < 180 || _random.NextDouble() >= .03) return null;
             Rhythm.Refill(now, _roster.AudienceSize);
             if (!Rhythm.CanSpend(false)) return null;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            _candidateIds.Clear();
+#endif
             _weights.Clear(); double total = 0;
             foreach (var viewer in _roster.Named)
             {
@@ -187,6 +206,7 @@ namespace GoLive.Viewers
                     Rhythm.SinceLast(viewer.ViewerId, now) < _tuning.ViewerGapSeconds * viewer.Traits.Pace) continue;
                 double weight = viewer.Persona.Profile.SocialTendency;
                 if (!(weight > 0)) continue;
+                TraceCandidate(viewer.ViewerId);
                 _weights.Add((viewer, weight)); total += weight;
             }
             if (total <= 0) return null;
@@ -195,7 +215,11 @@ namespace GoLive.Viewers
             {
                 roll -= weight; if (roll > 0) continue;
                 _chosen.Clear(); _lastSocial = now;
-                return Schedule(StreamEvent.Reply(message, now, _roster, gameMinutes), viewer, false, 0, now);
+                var intent = Schedule(StreamEvent.Reply(message, now, _roster, gameMinutes), viewer, false, 0, now);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                intent.CandidateIds = string.Join(", ", _candidateIds);
+#endif
+                return intent;
             }
             return null;
         }
@@ -253,11 +277,15 @@ namespace GoLive.Viewers
                 if ((topics & traits.Interests) != 0) weight *= 1.9;
                 weight /= 1 + Rhythm.Recent(now, 120, viewer.ViewerId);
                 if (weight <= 0) continue;
+                TraceCandidate(viewer.ViewerId);
                 _weights.Add((viewer, weight));
                 total += weight;
             }
             int anonymousSeats = streamEvent.HasWitnesses ? Math.Min(_roster.AnonymousCount, streamEvent.Witnesses.AnonymousSeats) : _roster.AnonymousCount;
             double anonymous = anonymousSeats * _tuning.AnonymousTalkativeness;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (anonymousSeats > 0) TraceCandidate("anonymous seats: " + anonymousSeats);
+#endif
             double roll = _random.NextDouble() * (total + anonymous);
             if (roll >= total && anonymousSeats > 0)
             {
@@ -275,6 +303,14 @@ namespace GoLive.Viewers
         }
 
         private bool Witnessed(StreamEvent e, ChatParticipant viewer) => !e.HasWitnesses || e.WitnessedBy(viewer.ViewerId, _roster.Epoch(viewer.ViewerId));
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        private void TraceCandidate(string id)
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_candidateIds.Count < 64 && !_candidateIds.Contains(id)) _candidateIds.Add(id);
+#endif
+        }
 
         private bool Available(ChatParticipant viewer, double now) =>
             !_chosen.Contains(viewer) && Rhythm.SinceLast(viewer.ViewerId, now) >= _tuning.ViewerGapSeconds * viewer.Traits.Pace;

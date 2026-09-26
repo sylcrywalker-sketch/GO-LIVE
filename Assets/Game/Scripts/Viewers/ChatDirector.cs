@@ -204,6 +204,7 @@ namespace GoLive.Viewers
                 if (now > job.Intent.ExpiresSeconds) continue;
                 if (Health != ChatModelHealth.Available)
                 {
+                    job.Situation = situation(job.Intent);
                     Fallback(job, Health == ChatModelHealth.Disabled ? "model disabled" : "model backing off");
                     continue;
                 }
@@ -313,6 +314,7 @@ namespace GoLive.Viewers
             entry.Source = job.Source;
             entry.LatencySeconds = job.Latency;
             entry.PromptCharacters = job.PromptCharacters;
+            ReactionLog.Context(entry, job.Situation);
             return _log.Add(entry);
         }
 

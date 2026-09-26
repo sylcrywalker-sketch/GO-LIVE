@@ -8,6 +8,8 @@ using GoLive.Viewers;
 using GoLive.Voice;
 using GoLive.Shop;
 using UnityEngine;
+using Unity.Profiling;
+using Unity.Profiling.LowLevel;
 
 namespace GoLive.Desktop
 {
@@ -40,6 +42,11 @@ namespace GoLive.Desktop
         private bool _restoring;
         private DonationPayout _payout;
         private ViewerPromiseGameplayAdapter _promiseGameplay;
+        private readonly ProfilerMarker _viewerTick = new(ProfilerCategory.Scripts, "GO! LIVE Viewer Tick");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private ProfilerCounterValue<long> _viewerAllocations = new(ProfilerCategory.Scripts, "GO! LIVE Viewer Allocations", ProfilerMarkerDataUnit.Count);
+        private ProfilerRecorder _viewerGcAlloc;
+#endif
 
         private void Awake()
         {
@@ -75,8 +82,30 @@ namespace GoLive.Desktop
             if (!_bound && pc.IsReady && peripherals.IsReady && clock.Clock != null && wallet.Wallet != null) Bind();
             if (!IsReady) return;
             State.Stream.Tick(Time.deltaTime, clock.Clock.Current.MinuteOfDay);
-            State.Viewers.Tick(new StreamerContext(Session.Usage == PcUsageState.Focused, VoiceListening,
-                clock.Clock.Current.TotalSeconds / 60d, StreamTopic.Community));
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // Unity's Boehm runtime returns zero for GC.GetAllocatedBytesForCurrentThread. The native
+            // GC.Alloc marker measures allocation occurrences (Count), not bytes or its timing Value.
+            _viewerGcAlloc.Reset();
+            _viewerGcAlloc.Start();
+            try
+            {
+#endif
+                using (_viewerTick.Auto())
+                {
+                    State.Viewers.Tick(new StreamerContext(Session.Usage == PcUsageState.Focused, VoiceListening,
+                        clock.Clock.Current.TotalSeconds / 60d, StreamTopic.Community));
+                }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            }
+            finally
+            {
+                if (_viewerGcAlloc.Valid)
+                {
+                    _viewerGcAlloc.Stop();
+                    _viewerAllocations.Value = _viewerGcAlloc.Count > 0 ? _viewerGcAlloc.GetSample(0).Count : 0;
+                }
+            }
+#endif
         }
 
         private void Bind()
@@ -89,6 +118,11 @@ namespace GoLive.Desktop
                 pc.Assembly, peripherals.State, State.Stream, () => clock.Clock.Current.TotalSeconds / 60d);
             State.Stream.Changed += RequestVoice;
             if (voice != null && voice.Recognition != null) voice.Recognition.Recognized += OfferSpeech;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            _viewerGcAlloc = new ProfilerRecorder(ProfilerCategory.Memory, "GC.Alloc", 1,
+                ProfilerRecorderOptions.WrapAroundWhenCapacityReached | ProfilerRecorderOptions.SumAllSamplesInFrame |
+                ProfilerRecorderOptions.CollectOnlyOnCurrentThread);
+#endif
             _bound = true;
             HardwareChanged();
             IsReady = true;
@@ -97,6 +131,10 @@ namespace GoLive.Desktop
 
         private void OnDisable()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_viewerGcAlloc.Valid) _viewerGcAlloc.Dispose();
+            _viewerGcAlloc = default;
+#endif
             if (!_bound) return;
             pc.Assembly.Changed -= HardwareChanged;
             Session.Changed -= PowerChanged;

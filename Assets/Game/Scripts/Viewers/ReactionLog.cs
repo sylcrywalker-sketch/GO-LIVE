@@ -31,6 +31,11 @@ namespace GoLive.Viewers
         public double LatencySeconds { get; internal set; }
         public int PromptCharacters { get; internal set; }
         public string Text { get; internal set; }
+        public string CandidateIds { get; internal set; }
+        public string SelectionReason { get; internal set; }
+        public string Relationship { get; internal set; }
+        public string MemoryIds { get; internal set; }
+        public string PromiseId { get; internal set; }
     }
 
     // Bounded development trace of the most recent reaction decisions (never saved, never shown in Streamly).
@@ -72,7 +77,20 @@ namespace GoLive.Viewers
             entry.IntentId = intent.Id;
             entry.ViewerId = intent.Viewer.ViewerId;
             entry.ViewerName = intent.Viewer.DisplayName;
+            entry.CandidateIds = intent.CandidateIds;
+            entry.SelectionReason = intent.Direct ? "direct target" : intent.Event.Kind == StreamEventKind.ViewerReply ? "published reply" : "weighted audience";
             return entry;
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        internal static void Context(ReactionLogEntry entry, ChatSituation situation)
+        {
+            if (situation == null) return;
+            entry.Relationship = situation.Relationship;
+            var ids = new List<string>(situation.Memories.Count);
+            foreach (var memory in situation.Memories) ids.Add(memory.MemoryId);
+            entry.MemoryIds = string.Join(", ", ids);
+            entry.PromiseId = situation.Promise?.Id;
         }
     }
 }

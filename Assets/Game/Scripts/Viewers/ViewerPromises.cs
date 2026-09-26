@@ -224,6 +224,7 @@ namespace GoLive.Viewers
                     !Enum.IsDefined(typeof(PromiseStatus), r.Status) || !Time(r.Created) || !Time(r.WindowStart) || !Time(r.Deadline) ||
                     r.WindowStart < r.Created || r.Deadline <= r.WindowStart || !Time(r.Threshold) || !Time(r.TerminalMinutes) ||
                     (r.Status == PromiseStatus.Open ? r.TerminalMinutes != 0 : r.TerminalMinutes < r.Created) ||
+                    !ReachableTerminal(r) ||
                     r.Witnesses == null || r.Knowledge == null || r.Witnesses.Count > knownIds.Count || r.Knowledge.Count != r.Witnesses.Count)
                     return "Invalid saved promise.";
                 var witnesses = new HashSet<string>(StringComparer.Ordinal);
@@ -236,6 +237,19 @@ namespace GoLive.Viewers
                         (k.References == 0 ? k.LastReferenceMinutes != -1 : k.LastReferenceMinutes < r.Created)) return "Invalid promise knowledge.";
             }
             return null;
+        }
+        private static bool ReachableTerminal(ViewerPromiseSnapshot record)
+        {
+            bool inWindow = record.TerminalMinutes >= record.WindowStart && record.TerminalMinutes <= record.Deadline;
+            return record.Status switch
+            {
+                PromiseStatus.Open => true,
+                PromiseStatus.Fulfilled => inWindow && (record.Condition == PromiseCondition.Occurrence || record.Threshold > 0),
+                PromiseStatus.Broken => record.Condition == PromiseCondition.ValueBelow && inWindow ||
+                    record.VerifiableDeadline && record.TerminalMinutes > record.Deadline,
+                PromiseStatus.Expired => !record.VerifiableDeadline && record.TerminalMinutes > record.Deadline,
+                _ => false
+            };
         }
         internal void Restore(ViewerPromiseLedgerSnapshot snapshot)
         { _records.Clear(); _reservations.Clear(); _admissionFloor = snapshot?.AdmissionFloor ?? 0;

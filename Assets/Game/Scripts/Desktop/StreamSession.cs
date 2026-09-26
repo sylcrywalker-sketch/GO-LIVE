@@ -59,6 +59,8 @@ namespace GoLive.Desktop
         private bool _hasBeenLive;
         private bool _dedicatedGraphics;
         private float _uploadMbps;
+        // Set by the desktop composition root. Presentation identity cannot change the simulation outcome.
+        internal Func<ulong, int, double, int, string> DonationSender { get; set; }
 
         // All commands and synchronous observers run on the owning game thread. Only this instance owns
         // the current broadcast. The root commits Completed to Trich and Outline; it must do so before Start.
@@ -238,7 +240,10 @@ namespace GoLive.Desktop
                 if (DonationCents > long.MaxValue - amount) break;
                 // Counted before observers run, so a completion triggered by a receipt observer includes it.
                 DonationCents += amount;
-                if (_donation.Receive(id, SupporterName(_receiptSerial), amount) != null)
+                string sender = DonationSender?.Invoke(Audience.Seed, _receiptSerial, DurationSeconds, Audience.CurrentViewers) ?? "Anonymous";
+                // Presentation identity must never invalidate an already-decided support amount.
+                if (!DesktopAccountValidation.Text(sender, 1, 32)) sender = "Anonymous";
+                if (_donation.Receive(id, sender, amount) != null)
                 {
                     DonationCents -= amount;
                     break;
@@ -281,13 +286,6 @@ namespace GoLive.Desktop
             audience.Finish();
             return audience;
         }
-
-        private string SupporterName(int receiptSerial) => Sender(AudienceRandom.Hash(Audience.Seed, ~(ulong)receiptSerial));
-
-        private static string Sender(ulong variation) => (variation % 4) switch
-        {
-            0 => "PixelFox", 1 => "NightOwl", 2 => "ByteCat", _ => "ArcadeKid"
-        };
 
     }
 }

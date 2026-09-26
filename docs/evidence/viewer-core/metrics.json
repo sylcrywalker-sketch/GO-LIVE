@@ -1,0 +1,222 @@
+{
+  "attempts": 140,
+  "httpResponses": 140,
+  "rawGenerations": 140,
+  "malformedResponses": 0,
+  "accepted": 135,
+  "rejectedRate": 0.03571428571428571,
+  "duplicateRateAllNonemptyRaw": 0.007142857142857143,
+  "assistantPhraseProxyRate": 0.0,
+  "assistantProxyRows": [],
+  "averageCharactersAllRaw": 37.72857142857143,
+  "averageWordsAllRaw": 6.9,
+  "latencySeconds": {
+    "median": 0.31938639999999996,
+    "p90": 0.44215679999999996,
+    "p95": 0.4810853,
+    "max": 0.8141573
+  },
+  "repeatedFirstWords": [
+    {
+      "text": "да",
+      "count": 10
+    },
+    {
+      "text": "у",
+      "count": 6
+    },
+    {
+      "text": "а",
+      "count": 6
+    },
+    {
+      "text": "ну",
+      "count": 6
+    },
+    {
+      "text": "ты",
+      "count": 4
+    },
+    {
+      "text": "я",
+      "count": 4
+    },
+    {
+      "text": "всё",
+      "count": 3
+    },
+    {
+      "text": "ого",
+      "count": 3
+    },
+    {
+      "text": "ой",
+      "count": 3
+    },
+    {
+      "text": "это",
+      "count": 3
+    },
+    {
+      "text": "даже",
+      "count": 3
+    },
+    {
+      "text": "опять",
+      "count": 2
+    },
+    {
+      "text": "ох",
+      "count": 2
+    },
+    {
+      "text": "снова",
+      "count": 2
+    },
+    {
+      "text": "аудит",
+      "count": 2
+    },
+    {
+      "text": "мне",
+      "count": 2
+    },
+    {
+      "text": "просто",
+      "count": 2
+    },
+    {
+      "text": "конечно",
+      "count": 2
+    },
+    {
+      "text": "тут",
+      "count": 2
+    },
+    {
+      "text": "уже",
+      "count": 2
+    },
+    {
+      "text": "как",
+      "count": 2
+    },
+    {
+      "text": "что",
+      "count": 2
+    },
+    {
+      "text": "bro",
+      "count": 2
+    },
+    {
+      "text": "сынок",
+      "count": 2
+    },
+    {
+      "text": "i",
+      "count": 2
+    },
+    {
+      "text": "нафиг",
+      "count": 2
+    },
+    {
+      "text": "давно",
+      "count": 2
+    }
+  ],
+  "repeatedTwoWordOpeners": [
+    {
+      "text": "у меня",
+      "count": 4
+    },
+    {
+      "text": "ты что",
+      "count": 3
+    },
+    {
+      "text": "да я",
+      "count": 3
+    },
+    {
+      "text": "я бы",
+      "count": 3
+    },
+    {
+      "text": "снова на",
+      "count": 2
+    },
+    {
+      "text": "а вот",
+      "count": 2
+    },
+    {
+      "text": "ну что",
+      "count": 2
+    },
+    {
+      "text": "нафиг спасибо",
+      "count": 2
+    }
+  ],
+  "lexicalCollisionCandidates": [
+    {
+      "rows": [
+        31,
+        36
+      ],
+      "jaccard": 0.5
+    },
+    {
+      "rows": [
+        73,
+        76
+      ],
+      "jaccard": 1.0
+    },
+    {
+      "rows": [
+        73,
+        78
+      ],
+      "jaccard": 0.5
+    },
+    {
+      "rows": [
+        76,
+        78
+      ],
+      "jaccard": 0.5
+    }
+  ],
+  "rejectionReasons": {
+    "too long for this viewer": 2,
+    "profanity above this viewer": 1,
+    "unsupported historical claim": 1,
+    "unsupported promise claim": 1
+  },
+  "publishedSources": {
+    "LanguageModel": 135,
+    "Fallback": 5
+  },
+  "fallbackAmongPublished": 0.03571428571428571,
+  "fallbackRate": 0.03571428571428571,
+  "fallbackRateNote": "Measured via normal ChatDirector publication",
+  "profiles": [
+    "viewer.arcadekid",
+    "viewer.bytecat",
+    "viewer.doshirak",
+    "viewer.jonas",
+    "viewer.kritik228",
+    "viewer.mika",
+    "viewer.nightowl",
+    "viewer.pixelfox",
+    "viewer.sovetnik",
+    "viewer.zinaivanovna"
+  ],
+  "promptCharacters": {
+    "mean": 3208.3214285714284,
+    "max": 3489
+  }
+}

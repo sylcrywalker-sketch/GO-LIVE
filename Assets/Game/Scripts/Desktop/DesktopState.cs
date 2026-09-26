@@ -46,6 +46,7 @@ namespace GoLive.Desktop
             Stream.Completed += CompleteStream;
             SpeechFeed = new StreamSpeechFeed(Stream);
             Viewers = new ViewerCore(Stream, SpeechFeed, Donation, Peripherals, Trich, reactionTuning ?? new ReactionTuning(), languageModel, modelSettings, viewerProfiles);
+            Stream.DonationSender = Viewers.Support.DonationSender;
         }
         public string EnsureSystemApps()
         {
@@ -131,6 +132,7 @@ namespace GoLive.Desktop
         }
         public void Dispose()
         {
+            Stream.DonationSender = null;
             Stream.Completed -= CompleteStream;
             Viewers.Dispose();
             SpeechFeed.Dispose();

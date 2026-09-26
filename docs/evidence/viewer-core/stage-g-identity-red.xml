@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 05:57:53Z" end-time="2026-09-26 05:57:53Z" duration="0.1096133">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-09-26 05:57:53Z" end-time="2026-09-26 05:57:53Z" duration="0.109613" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2175" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-09-26 05:57:53Z" end-time="2026-09-26 05:57:53Z" duration="0.091456" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2992" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2176" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-09-26 05:57:53Z" end-time="2026-09-26 05:57:53Z" duration="0.078936" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2177" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1039" result="Failed" site="Child" start-time="2026-09-26 05:57:53Z" end-time="2026-09-26 05:57:53Z" duration="0.066569" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1986" name="ViewerIntegrationGuardTests" fullname="GoLive.Tests.ViewerIntegrationGuardTests" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" testcasecount="21" result="Failed" site="Child" start-time="2026-09-26 05:57:53Z" end-time="2026-09-26 05:57:53Z" duration="0.054371" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1987" name="AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName" fullname="GoLive.Tests.ViewerIntegrationGuardTests.AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName" methodname="AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="4106920" result="Failed" start-time="2026-09-26 05:57:53Z" end-time="2026-09-26 05:57:53Z" duration="0.044014" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The fallback sender is an unowned outcome, not a present viewer's personal donation.
+  Expected: null
+  But was:  "viewer.test0"
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerIntegrationGuardTests.AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName () [0x00161] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerIntegrationGuardTests.cs:28
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

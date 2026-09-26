@@ -59,10 +59,18 @@ namespace GoLive.Editor.Viewers
                                 $"(named {viewers.Roster.Named.Count}, anonymous chatters {viewers.Roster.Ephemeral.Count})   Channel: {viewers.ChannelLanguage}");
                 _onlySpeech = EditorGUILayout.ToggleLeft("Speech only", _onlySpeech, GUILayout.Width(100));
             }
-            GUILayout.Label($"Latency median {stats.Percentile(.5):0.00}s  p90 {stats.Percentile(.9):0.00}s  max {stats.Percentile(1):0.00}s   " +
+            GUILayout.Label($"Latency median {stats.Percentile(.5):0.00}s  p90 {stats.Percentile(.9):0.00}s  p95 {stats.Percentile(.95):0.00}s  max {stats.Percentile(1):0.00}s   " +
                             $"shown LLM {stats.ShownFromModel} / fallback {stats.ShownFromFallback}   rejected {stats.Rejected}   timeouts {stats.TimedOut}   " +
                             $"unavailable {stats.Unavailable}   stale {stats.DroppedStale}   queue-full {stats.DroppedQueueFull}   max queue {stats.MaximumQueueDepth}");
+            int memoryCount = 0;
+            foreach (var profile in viewers.Community.Profiles) memoryCount += viewers.Community.State(profile.Id).Memories.Summary.Count;
+            GUILayout.Label($"Persistent {viewers.Community.Profiles.Count}, present {viewers.Roster.Named.Count}, memories {memoryCount}, promises {viewers.Community.Promises.Summary.Count}");
             _scroll = EditorGUILayout.BeginScrollView(_scroll);
+            foreach (var profile in viewers.Community.Profiles)
+            {
+                var state = viewers.Community.State(profile.Id);
+                GUILayout.Label($"{profile.DisplayName}: {(viewers.Roster.IsWatching(profile.Id) ? "watching" : "absent")} | sentiment {state.Sentiment}, visits {state.VisitCount}, acknowledgements {state.Acknowledgements} | follow {state.HasFollowed}, sub {state.HasSubscribed}");
+            }
             var entries = viewers.Log.Entries;
             for (int i = entries.Count - 1; i >= 0; i--)
             {
@@ -76,6 +84,10 @@ namespace GoLive.Editor.Viewers
                 if (!string.IsNullOrEmpty(entry.Reason)) line.Append($"  ({entry.Reason})");
                 if (entry.Text != null) line.Append($"  : {entry.Text}");
                 EditorGUILayout.SelectableLabel(line.ToString(), GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                string detail = $"Candidates: {entry.CandidateIds ?? "—"} | Selection: {entry.SelectionReason ?? "—"} | Memories: {entry.MemoryIds ?? "—"} | Promise: {entry.PromiseId ?? "—"}";
+                EditorGUILayout.SelectableLabel(detail, GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                if (!string.IsNullOrEmpty(entry.Relationship))
+                    EditorGUILayout.LabelField("Relationship", entry.Relationship, EditorStyles.wordWrappedLabel);
             }
             EditorGUILayout.EndScrollView();
         }

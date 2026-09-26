@@ -60,8 +60,8 @@ New abstraction: a small C# promise ledger is necessary to distinguish spoken co
 - Execute real Unity persistence/outage/cross-stream witness scenarios and 1920×1080 RU/EN chat captures. A 10+ minute live-microphone session requires a person; if unavailable, provide the exact path and mark it unexecuted.
 - Measure representative live queue depth, stale drops, inference and main-thread timing/allocation behavior, prompt sizes and bounded population/memory sizes.
 - Document the embedded local inference migration: replace the development adapter/runtime packaging, preserve backend-independent domain systems. No replacement runtime in this milestone.
-- [ ] Complete `docs/ViewerCoreMilestoneReport.md` with evidence, commit hashes and remaining quality/acceptance limitations.
-- [ ] Run the complete non-Explicit Unity suite, review and commit `Complete living community integration`.
+- [x] Complete `docs/ViewerCoreMilestoneReport.md` with evidence, commit hashes and remaining quality/acceptance limitations. The fixed 140-generation audit fails social quality; human ten-minute Session A is unexecuted, with an exact acceptance path.
+- [x] Run the complete non-Explicit Unity suite, review and commit `Complete living community integration`: 1,035 passed, zero failed; separate 25-case scene/integration/native-allocation verification passed. Technical stage completion does not claim the game's 9.5/10 quality target.
 
 ## Verification discipline
 

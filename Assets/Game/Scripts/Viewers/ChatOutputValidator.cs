@@ -45,6 +45,13 @@ namespace GoLive.Viewers
         private static readonly Regex Money = new(@"(\$\s?\d|\d\s?(\$|₽|руб|р\.|бакс|доллар|usd|rub|bucks|dollars))", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex Support = new(@"(донат|задонат|закинул|подписал|подписк|сабнул|фоллов|фолловнул|donat|subscrib|\bsubbed\b|\bfollowed\b|gifted)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        // Narrow first-person past-tense claims. Merely discussing support remains valid topic content.
+        private const string OwnRu = @"(?:\bя\s+(?:(?:уже|только что|тебе|вам|тоже|сейчас)\s+){0,3}|^)";
+        private const string OwnEn = @"\bi(?:['’]ve| have)?\s+(?:(?:just|already|also)\s+){0,2}";
+        private static readonly Regex OwnDonation = new(OwnRu + @"(?:задонатил[аи]?|донатил[аи]?|закинул[аи]?)\b|" + OwnEn + @"(?:donated|tipped|gifted)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex OwnFollow = new(OwnRu + @"(?:зафолловил[аи]?|фолловнул[аи]?)\b|" + OwnEn + @"followed\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex OwnSubscription = new(OwnRu + @"(?:сабнул[аи]?|оформил[аи]? подписку)\b|" + OwnEn + @"(?:subscribed|subbed)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex OwnRussianSubscription = new(OwnRu + @"подписал(?:ся|ась)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex Markup = new(@"(```|\*\*|__|^#+\s|^\s*[-*•]\s|<\/?data>|[{}\[\]])", RegexOptions.Multiline | RegexOptions.CultureInvariant);
         // Word-start matches only ("рубля" and "корабля" are not "бля").
         private static readonly Regex StrongProfanity = new(@"\b(бля|сук[аи]|хуй|хуе|хуё|хуя|пизд|ебат|ебан|ебал|ёб|еби|ебу|нахуй|похуй|fuck|shit|bitch|cunt|dick)",
@@ -94,6 +101,11 @@ namespace GoLive.Viewers
             if (Money.IsMatch(text)) return ChatValidation.Reject("money claim");
             bool ownSupport = intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId &&
                 (intent.Event.Kind == StreamEventKind.Donation || intent.Event.Kind == StreamEventKind.Follow || intent.Event.Kind == StreamEventKind.Subscription);
+            if (OwnDonation.IsMatch(text) && !(ownSupport && intent.Event.Kind == StreamEventKind.Donation) ||
+                OwnFollow.IsMatch(text) && !(ownSupport && intent.Event.Kind == StreamEventKind.Follow) ||
+                OwnSubscription.IsMatch(text) && !(ownSupport && intent.Event.Kind == StreamEventKind.Subscription) ||
+                OwnRussianSubscription.IsMatch(text) && !(ownSupport && (intent.Event.Kind == StreamEventKind.Follow || intent.Event.Kind == StreamEventKind.Subscription)))
+                return ChatValidation.Reject("unsupported own transaction");
             StreamTopic topics = intent.Event.Speech?.Topics ?? StreamTopic.None;
             bool aboutSupport = intent.Event.Kind == StreamEventKind.Donation || intent.Event.Kind == StreamEventKind.Follow ||
                 intent.Event.Kind == StreamEventKind.Subscription || (topics & (StreamTopic.Money | StreamTopic.Community)) != 0;

@@ -11,6 +11,7 @@ namespace GoLive.Viewers
         public int Sentiment;
         public int VisitCount;
         public int Acknowledgements;
+        public bool HasFollowed, HasSubscribed;
         public List<ViewerMemorySnapshot> Memories;
     }
 
@@ -30,6 +31,8 @@ namespace GoLive.Viewers
         public int Sentiment { get; internal set; }
         public int VisitCount { get; internal set; }
         public int Acknowledgements { get; internal set; }
+        public bool HasFollowed { get; internal set; }
+        public bool HasSubscribed { get; internal set; }
         public ViewerMemoryBank Memories { get; }
         internal PermanentViewerState(string id, int sentiment) { ViewerId = id; Sentiment = sentiment; Memories = new ViewerMemoryBank(id); }
     }
@@ -92,6 +95,14 @@ namespace GoLive.Viewers
         }
 
         public PermanentViewerState State(string viewerId) => viewerId != null && _states.TryGetValue(viewerId, out var state) ? state : null;
+
+        internal void RecordSupport(string viewerId, StreamEventKind kind)
+        {
+            var state = State(viewerId);
+            if (state == null || !_roster.IsWatching(viewerId)) return;
+            if (kind == StreamEventKind.Follow) state.HasFollowed = true;
+            if (kind == StreamEventKind.Subscription) state.HasSubscribed = true;
+        }
 
         public void BeginBroadcast(string broadcastId, ulong seed, double gameMinutes, StreamTopic content)
         {
@@ -263,7 +274,8 @@ namespace GoLive.Viewers
                 snapshot.Viewers.Add(new PermanentViewerSnapshot
                 {
                     ViewerId = state.ViewerId, Sentiment = state.Sentiment,
-                    VisitCount = state.VisitCount, Acknowledgements = state.Acknowledgements, Memories = state.Memories.Capture()
+                    VisitCount = state.VisitCount, Acknowledgements = state.Acknowledgements, Memories = state.Memories.Capture(),
+                    HasFollowed = state.HasFollowed, HasSubscribed = state.HasSubscribed
                 });
             }
             return snapshot;
@@ -312,6 +324,8 @@ namespace GoLive.Viewers
                 state.Sentiment = saved.Sentiment;
                 state.VisitCount = saved.VisitCount;
                 state.Acknowledgements = saved.Acknowledgements;
+                state.HasFollowed = saved.HasFollowed;
+                state.HasSubscribed = saved.HasSubscribed;
                 state.Memories.Restore(saved.Memories);
             }
         }

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="23" result="Passed" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 05:59:40Z" end-time="2026-09-26 06:00:32Z" duration="51.975987">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1040" result="Passed" start-time="2026-09-26 05:59:40Z" end-time="2026-09-26 06:00:32Z" duration="51.975987" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2177" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1040" result="Passed" start-time="2026-09-26 05:59:40Z" end-time="2026-09-26 06:00:32Z" duration="51.956423" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33348" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2178" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1040" result="Passed" start-time="2026-09-26 05:59:40Z" end-time="2026-09-26 06:00:32Z" duration="51.943997" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2179" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1040" result="Passed" start-time="2026-09-26 05:59:40Z" end-time="2026-09-26 06:00:32Z" duration="51.931928" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1008" name="DesktopFlowPlayModeTests" fullname="GoLive.Tests.DesktopFlowPlayModeTests" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-26 05:59:40Z" end-time="2026-09-26 06:00:32Z" duration="51.195418" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="DesktopVisualFlow" />
+            </properties>
+            <test-case id="1013" name="LivingCommunityPersistenceOutageAndBilingualChat" fullname="GoLive.Tests.DesktopFlowPlayModeTests.LivingCommunityPersistenceOutageAndBilingualChat" methodname="LivingCommunityPersistenceOutageAndBilingualChat" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Explicit" seed="33470376" result="Passed" start-time="2026-09-26 05:59:41Z" end-time="2026-09-26 06:00:32Z" duration="50.842915" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="_SKIPREASON" value="Requires the configured local model" />
+                <property name="Category" value="ViewerCoreAcceptance" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Props/SM_Shelf_001"
+MONITOR_AIM body=(11.11, 0.28, -13.08) camera=(11.10, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-ru-low.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-en-low.png
+MONITOR_AIM body=(11.11, 0.28, -13.08) camera=(11.10, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-ru-donation.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-en-donation.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-ru-high.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-en-high.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1986" name="ViewerIntegrationGuardTests" fullname="GoLive.Tests.ViewerIntegrationGuardTests" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.713155" total="22" passed="22" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1996" name="AddressingEveryNamedViewerStillUsesTheTotalChatBudgetAndEventCap" fullname="GoLive.Tests.ViewerIntegrationGuardTests.AddressingEveryNamedViewerStillUsesTheTotalChatBudgetAndEventCap" methodname="AddressingEveryNamedViewerStillUsesTheTotalChatBudgetAndEventCap" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1862782520" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.002411" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1989" name="AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName" fullname="GoLive.Tests.ViewerIntegrationGuardTests.AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.003676" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1987" name="AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName(&quot;Anonymous&quot;)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName(&quot;Anonymous&quot;)" methodname="AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1545073458" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.003056" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1988" name="AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName(&quot;anonymous&quot;)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName(&quot;anonymous&quot;)" methodname="AnonymousReceiptCannotBelongToAPresentViewerWithTheSameDisplayName" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1266586920" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000214" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2003" name="DiscussingSupportRemainsAllowed" fullname="GoLive.Tests.ViewerIntegrationGuardTests.DiscussingSupportRemainsAllowed" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.001025" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2001" name="DiscussingSupportRemainsAllowed(&quot;донаты тут вообще работают&quot;,Russian)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.DiscussingSupportRemainsAllowed(&quot;донаты тут вообще работают&quot;,Russian)" methodname="DiscussingSupportRemainsAllowed" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1761099295" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000613" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2002" name="DiscussingSupportRemainsAllowed(&quot;do subscriptions work here&quot;,English)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.DiscussingSupportRemainsAllowed(&quot;do subscriptions work here&quot;,English)" methodname="DiscussingSupportRemainsAllowed" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="2076011792" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000108" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1995" name="DiscussionOfSupportCannotInventAnOwnTransaction" fullname="GoLive.Tests.ViewerIntegrationGuardTests.DiscussionOfSupportCannotInventAnOwnTransaction" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000685" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1992" name="DiscussionOfSupportCannotInventAnOwnTransaction(&quot;я задонатил тебе&quot;)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.DiscussionOfSupportCannotInventAnOwnTransaction(&quot;я задонатил тебе&quot;)" methodname="DiscussionOfSupportCannotInventAnOwnTransaction" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1954076065" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000170" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1993" name="DiscussionOfSupportCannotInventAnOwnTransaction(&quot;я подписался на канал&quot;)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.DiscussionOfSupportCannotInventAnOwnTransaction(&quot;я подписался на канал&quot;)" methodname="DiscussionOfSupportCannotInventAnOwnTransaction" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="600383472" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000094" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1994" name="DiscussionOfSupportCannotInventAnOwnTransaction(&quot;я сабнул наконец&quot;)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.DiscussionOfSupportCannotInventAnOwnTransaction(&quot;я сабнул наконец&quot;)" methodname="DiscussionOfSupportCannotInventAnOwnTransaction" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1883554686" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000081" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1990" name="InvalidSelectedDonorNameCannotDiscardTheAuthoritativeAmount" fullname="GoLive.Tests.ViewerIntegrationGuardTests.InvalidSelectedDonorNameCannotDiscardTheAuthoritativeAmount" methodname="InvalidSelectedDonorNameCannotDiscardTheAuthoritativeAmount" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="738602723" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.662161" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1999" name="OnlyPresentWillingSupportersCanOwnAnOutcomeAndFirstFollowsSurviveRepeatedLoad" fullname="GoLive.Tests.ViewerIntegrationGuardTests.OnlyPresentWillingSupportersCanOwnAnOutcomeAndFirstFollowsSurviveRepeatedLoad" methodname="OnlyPresentWillingSupportersCanOwnAnOutcomeAndFirstFollowsSurviveRepeatedLoad" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="600979711" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000588" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1997" name="OrdinaryDonationReceiptsCannotInventAbsentAuthoredNames" fullname="GoLive.Tests.ViewerIntegrationGuardTests.OrdinaryDonationReceiptsCannotInventAbsentAuthoredNames" methodname="OrdinaryDonationReceiptsCannotInventAbsentAuthoredNames" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="2083376555" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.004046" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2007" name="OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome" fullname="GoLive.Tests.ViewerIntegrationGuardTests.OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.001041" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2004" name="OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome(&quot;i just donated&quot;,English)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome(&quot;i just donated&quot;,English)" methodname="OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="759898758" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000228" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2005" name="OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome(&quot;i have subscribed&quot;,English)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome(&quot;i have subscribed&quot;,English)" methodname="OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1147876250" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000102" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2006" name="OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome(&quot;я зафолловил&quot;,Russian)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome(&quot;я зафолловил&quot;,Russian)" methodname="OtherFirstPersonClaimsAlsoNeedTheirMatchingOutcome" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="64701171" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000089" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2008" name="OwnDonationMayBeAcknowledgedButCannotBecomeOwnSubscription" fullname="GoLive.Tests.ViewerIntegrationGuardTests.OwnDonationMayBeAcknowledgedButCannotBecomeOwnSubscription" methodname="OwnDonationMayBeAcknowledgedButCannotBecomeOwnSubscription" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="586739069" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000352" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2013" name="RepeatedModelOutagesCannotChangeOrReplayAuthoritativeSupport" fullname="GoLive.Tests.ViewerIntegrationGuardTests.RepeatedModelOutagesCannotChangeOrReplayAuthoritativeSupport" methodname="RepeatedModelOutagesCannotChangeOrReplayAuthoritativeSupport" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1877430207" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.031430" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1998" name="SaveCannotAssertFulfillmentBeforeItsPromisedWindow" fullname="GoLive.Tests.ViewerIntegrationGuardTests.SaveCannotAssertFulfillmentBeforeItsPromisedWindow" methodname="SaveCannotAssertFulfillmentBeforeItsPromisedWindow" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="189322426" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.001685" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1991" name="SaveCannotClaimAStartEarlierThanMidnightWasFulfilled" fullname="GoLive.Tests.ViewerIntegrationGuardTests.SaveCannotClaimAStartEarlierThanMidnightWasFulfilled" methodname="SaveCannotClaimAStartEarlierThanMidnightWasFulfilled" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="335765074" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000476" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2012" name="SaveRejectsOtherUnreachableTerminalOutcomes" fullname="GoLive.Tests.ViewerIntegrationGuardTests.SaveRejectsOtherUnreachableTerminalOutcomes" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000782" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2009" name="SaveRejectsOtherUnreachableTerminalOutcomes(Fulfilled,3000)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.SaveRejectsOtherUnreachableTerminalOutcomes(Fulfilled,3000)" methodname="SaveRejectsOtherUnreachableTerminalOutcomes" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="871016357" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000273" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2010" name="SaveRejectsOtherUnreachableTerminalOutcomes(Broken,1441)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.SaveRejectsOtherUnreachableTerminalOutcomes(Broken,1441)" methodname="SaveRejectsOtherUnreachableTerminalOutcomes" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="821875108" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000068" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2011" name="SaveRejectsOtherUnreachableTerminalOutcomes(Expired,3000)" fullname="GoLive.Tests.ViewerIntegrationGuardTests.SaveRejectsOtherUnreachableTerminalOutcomes(Expired,3000)" methodname="SaveRejectsOtherUnreachableTerminalOutcomes" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1425000188" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000058" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2000" name="ZeroTendencyCannotBorrowAnAbsentProfileAndAnonymousSupportStaysTransient" fullname="GoLive.Tests.ViewerIntegrationGuardTests.ZeroTendencyCannotBorrowAnAbsentProfileAndAnonymousSupportStaysTransient" methodname="ZeroTendencyCannotBorrowAnAbsentProfileAndAnonymousSupportStaysTransient" classname="GoLive.Tests.ViewerIntegrationGuardTests" runstate="Runnable" seed="1468434652" result="Passed" start-time="2026-09-26 06:00:32Z" end-time="2026-09-26 06:00:32Z" duration="0.000288" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

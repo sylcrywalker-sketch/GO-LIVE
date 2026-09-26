@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 05:53:13Z" end-time="2026-09-26 05:53:29Z" duration="15.9639643">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1038" result="Failed" site="Child" start-time="2026-09-26 05:53:13Z" end-time="2026-09-26 05:53:29Z" duration="15.963964" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2174" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1038" result="Failed" site="Child" start-time="2026-09-26 05:53:13Z" end-time="2026-09-26 05:53:29Z" duration="15.953304" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13932" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2175" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1038" result="Failed" site="Child" start-time="2026-09-26 05:53:13Z" end-time="2026-09-26 05:53:29Z" duration="15.945167" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2176" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1038" result="Failed" site="Child" start-time="2026-09-26 05:53:13Z" end-time="2026-09-26 05:53:29Z" duration="15.940066" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1008" name="DesktopFlowPlayModeTests" fullname="GoLive.Tests.DesktopFlowPlayModeTests" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-09-26 05:53:13Z" end-time="2026-09-26 05:53:29Z" duration="15.927747" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="DesktopVisualFlow" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1013" name="LivingCommunityPersistenceOutageAndBilingualChat" fullname="GoLive.Tests.DesktopFlowPlayModeTests.LivingCommunityPersistenceOutageAndBilingualChat" methodname="LivingCommunityPersistenceOutageAndBilingualChat" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Explicit" seed="865392668" result="Failed" start-time="2026-09-26 05:53:13Z" end-time="2026-09-26 05:53:29Z" duration="15.562053" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="_SKIPREASON" value="Requires the configured local model" />
+                <property name="Category" value="ViewerCoreAcceptance" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Actual director generation must target the returning non-witness
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.DesktopFlowPlayModeTests+<LivingCommunityPersistenceOutageAndBilingualChat>d__61.MoveNext () [0x012ba] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerCommunityAcceptancePlayModeTests.cs:174
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__8.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@7a3849e09bd0\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:52
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Props/SM_Shelf_001"
+MONITOR_AIM body=(11.11, 0.28, -13.08) camera=(11.10, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-1\viewer-community-ru-low.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-1\viewer-community-en-low.png
+MONITOR_AIM body=(11.11, 0.28, -13.08) camera=(11.10, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

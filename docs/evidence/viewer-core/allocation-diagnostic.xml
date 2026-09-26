@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 06:10:15Z" end-time="2026-09-26 06:10:15Z" duration="0.084909">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1041" result="Passed" start-time="2026-09-26 06:10:15Z" end-time="2026-09-26 06:10:15Z" duration="0.084909" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2179" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1041" result="Passed" start-time="2026-09-26 06:10:15Z" end-time="2026-09-26 06:10:15Z" duration="0.065313" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23040" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2180" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1041" result="Passed" start-time="2026-09-26 06:10:15Z" end-time="2026-09-26 06:10:15Z" duration="0.051043" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2181" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1041" result="Passed" start-time="2026-09-26 06:10:15Z" end-time="2026-09-26 06:10:15Z" duration="0.035989" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1959" name="ViewerAllocationDiagnosticsTests" fullname="GoLive.Tests.ViewerAllocationDiagnosticsTests" classname="GoLive.Tests.ViewerAllocationDiagnosticsTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-26 06:10:15Z" end-time="2026-09-26 06:10:15Z" duration="0.023802" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1960" name="NativeProfilerCalibratesAKnownManagedAllocation" fullname="GoLive.Tests.ViewerAllocationDiagnosticsTests.NativeProfilerCalibratesAKnownManagedAllocation" methodname="NativeProfilerCalibratesAKnownManagedAllocation" classname="GoLive.Tests.ViewerAllocationDiagnosticsTests" runstate="Runnable" seed="1052588626" result="Passed" start-time="2026-09-26 06:10:15Z" end-time="2026-09-26 06:10:15Z" duration="0.013590" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Known allocation payload=65536; managed API delta=0; native unit=TimeNanoseconds; value=0; allocation count=1
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,6 @@
+2026-09-26T05:59:47.7317043Z 1920x1080 frame=1748 E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-ru-low.png
+2026-09-26T05:59:47.8407317Z 1920x1080 frame=1754 E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-en-low.png
+2026-09-26T05:59:56.7089753Z 1920x1080 frame=5258 E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-ru-donation.png
+2026-09-26T05:59:56.8076227Z 1920x1080 frame=5264 E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-en-donation.png
+2026-09-26T05:59:58.2932042Z 1920x1080 frame=5767 E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-ru-high.png
+2026-09-26T06:00:01.5762649Z 1920x1080 frame=6833 E:\GO-Live-ViewerCore-audit-20260926\scene-acceptance-3\viewer-community-en-high.png
