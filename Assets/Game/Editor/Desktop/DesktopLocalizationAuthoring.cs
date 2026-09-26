@@ -16,7 +16,7 @@ namespace GoLive.Editor.Desktop
             for(int i=0;i<entries.arraySize;i++) known.Add(entries.GetArrayElementAtIndex(i).FindPropertyRelative("_key").stringValue,i);
             foreach(var line in Lines.Concat(ShellPolishLocalization.Lines).Concat(CommunityPolishLocalization.Lines)
                 .Concat(BroadcastPolishLocalization.Lines).Concat(PcPolishLocalization.Lines).Concat(PeripheralReadinessLocalization.Lines)
-                .Concat(StreamCoreLocalization.Lines))
+                .Concat(StreamCoreLocalization.Lines).Concat(ViewerCoreLocalization.Lines))
             {
                 string[] fields=line.Split('|');
                 if(fields.Length!=3) throw new System.InvalidOperationException("Invalid desktop localization line: "+line);
@@ -153,10 +153,6 @@ namespace GoLive.Editor.Desktop
             "desktop.stream.upload_low|Скорости отдачи недостаточно. Снизьте качество.|Upload speed is too low. Choose a lower quality.",
             "desktop.stream.not_live|Сейчас нет активного эфира.|There is no active stream.",
             "desktop.stream.total_limit|Достигнут предел статистики эфиров.|The stream statistics limit has been reached.",
-            "desktop.stream.chat.hello|Привет! Как настроение?|Hey! How's it going?",
-            "desktop.stream.chat.looks_good|Картинка отличная!|Looking good!",
-            "desktop.stream.chat.nice_play|Вот это было круто!|That was a good one!",
-            "desktop.stream.chat.keep_going|Продолжай, мы смотрим :)|Keep going, we're watching :)",
             "desktop.overlay.chat|ЧАТ ЭФИРА|STREAM CHAT",
             "desktop.overlay.stats|Зрителей  {0}\nВремя  {1:00}:{2:00}\nПодписки  +{3}\nПоддержка  ${4:0.00}|Viewers  {0}\nTime  {1:00}:{2:00}\nFollowers  +{3}\nSupport  ${4:0.00}",
             "desktop.donation.title|Маленькое спасибо. Большая поддержка.|A small thank you. A big difference.",

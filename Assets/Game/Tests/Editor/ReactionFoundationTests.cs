@@ -34,6 +34,8 @@ namespace GoLive.Tests
         [TestCase("чат если я сейчас опять умру всё", .75f)]
         [TestCase("ok chat what do you think, mic or webcam first?", .75f)]
         [TestCase("спасибо за донат", .35f)]
+        [TestCase("Чет, как думаете, я сейчас опять умру.", .75f)]
+        [TestCase("Чет, если я сейчас опять умру, всё.", .75f)]
         public void InterestingSpeechBecomesEligible(string text, float atLeast)
         {
             Assert.That(Analyze(text).Relevance, Is.GreaterThanOrEqualTo(atLeast), text);
@@ -224,7 +226,7 @@ namespace GoLive.Tests
             live.Tick(1);
             live.Say("чат что думаете?");
             live.Tick(1);
-            Assert.That(live.State.Viewers.Pending, Is.Empty);
+            Assert.That(live.State.Viewers.Director.QueueDepth, Is.Zero);
             Assert.That(live.State.Viewers.Events.IsLive, Is.False);
         }
 
@@ -263,7 +265,8 @@ namespace GoLive.Tests
             live.Tick(.1);
             ReactionLogEntry interesting = live.State.Viewers.Log.Entries.Last(e => e.EventKind == StreamEventKind.StreamerSpeech);
             Assert.That(interesting.Relevance, Is.GreaterThanOrEqualTo(.75f));
-            Assert.That(interesting.Outcome, Is.Not.EqualTo(ReactionOutcome.Rejected).Or.Property("Reason").EqualTo("silence"));
+            Assert.That(interesting.Outcome == ReactionOutcome.Scheduled || interesting.Reason == "silence", Is.True,
+                "an interesting phrase is scheduled, or chance let it pass");
         }
 
         // Ten minutes of the same moments for a given audience size: scheduled messages and the longest quiet gap.
@@ -318,9 +321,10 @@ namespace GoLive.Tests
 
         public DesktopState State { get; }
 
-        public LiveDesktop(ulong seed, PcPeripherals peripherals = null, ReactionTuning reactions = null)
+        public LiveDesktop(ulong seed, PcPeripherals peripherals = null, ReactionTuning reactions = null, IViewerLanguageModel languageModel = null)
         {
-            State = new DesktopState(Apps(), peripherals, new AudienceTuning(), new AudienceRandom(seed), reactions);
+            State = new DesktopState(Apps(), peripherals, new AudienceTuning(), new AudienceRandom(seed), reactions, languageModel,
+                languageModel == null ? null : new ChatModelSettings());
             Assert.That(State.Outline.CreateAddress("viewer.core"), Is.Null);
             Assert.That(State.Trich.Register(State.Outline, State.Outline.Address), Is.Null);
             Assert.That(State.Stream.Connect(State.Trich.ChannelCode), Is.Null);

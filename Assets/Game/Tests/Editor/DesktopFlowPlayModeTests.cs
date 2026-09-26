@@ -329,10 +329,17 @@ namespace GoLive.Tests
             _runtime.State.Stream.Tick(16, StreamSessionTests.PrimeTime);
             yield return PlayModeWait.Frames(3);
             TMP_Text visibleChat = Field<TMP_Text>(_overlay, "chat");
+            // Layout check with more lines than the overlay shows: short, long and a donation line.
+            string[] lines = { "ахах", "ну и где твоя новая видюха", "a much longer message from somebody who types a full sentence here", "?", "норм", "bro what",
+                "это что за звук был", "о, камера", "ну ты даёшь", "gg" };
+            for (int i = 0; i < lines.Length; i++)
+                _runtime.State.Viewers.Chat.Add(_runtime.State.Stream.BroadcastId, "layout." + i, i % 2 == 0 ? "NightOwl" : "kotik_play2284", lines[i],
+                    _runtime.State.Stream.DurationSeconds, 0, GoLive.Viewers.ReactionSource.Fallback, i == 8 ? 500 : 0);
+            yield return PlayModeWait.Frames(2);
             visibleChat.ForceMeshUpdate();
             Assert.That(_runtime.State.Stream.DurationSeconds, Is.GreaterThan(45));
             Assert.That(visibleChat.isTextOverflowing, Is.False, "the latest chat lines fit after the buffer exceeds the visible history");
-            Assert.That(visibleChat.text, Does.Contain(_localization.Text(_runtime.State.Stream.Chat.Last().BodyKey)));
+            Assert.That(visibleChat.text, Does.Contain(_runtime.State.Viewers.Chat.Messages.Last().Text));
             yield return CaptureApp("en-02-streamly-live", DesktopAppId.Streamly);
             yield return Press(Key.Escape);
             yield return Press(Key.Escape);
@@ -494,6 +501,8 @@ namespace GoLive.Tests
             yield return _capture.WaitForResolution();
             yield return PlayModeWait.Frames(10);
             _runtime = One<DesktopRuntimeBehaviour>();
+            // Deterministic chat in journeys: the fallback path only, never a locally running model.
+            _runtime.State.Viewers.Director.ModelEnabled = false;
             _session = One<PcSessionBehaviour>();
             _shell = One<DesktopShellView>();
             _overlay = One<StreamOverlayView>();
@@ -609,8 +618,7 @@ namespace GoLive.Tests
             Assert.That(audience.PeakViewers, Is.GreaterThanOrEqualTo(audience.CurrentViewers));
             Assert.That(Field<TMP_Text>(_overlay, "statistics").text, Is.EqualTo(_localization.Format("desktop.overlay.count", audience.CurrentViewers)),
                 "the LIVE HUD shows the authoritative simulation value");
-            Assert.That(_runtime.State.Stream.Chat.Count, Is.EqualTo(Math.Min(StreamSession.MaximumChatMessages, audience.ChatMessages)));
-            Assert.That(_runtime.State.Stream.Chat.Count, Is.GreaterThan(0), "fifteen minutes with an audience produce chat");
+            Assert.That(audience.ChatMessages, Is.GreaterThan(0), "fifteen minutes with an audience produce chat impulses");
             Assert.That(wallet.BalanceCents - walletBefore, Is.EqualTo(_runtime.State.Stream.DonationCents), "accepted support is paid into the wallet once");
             Assert.That(Field<GameObject>(_overlay, "panel").activeInHierarchy, Is.True);
         }

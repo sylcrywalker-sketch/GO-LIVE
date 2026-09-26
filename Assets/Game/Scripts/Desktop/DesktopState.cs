@@ -35,7 +35,8 @@ namespace GoLive.Desktop
         private readonly IReadOnlyList<DesktopAppDefinition> _apps;
         private bool _restoring;
         public DesktopState(IReadOnlyList<DesktopAppDefinition> apps, PcPeripherals peripherals = null,
-            AudienceTuning audienceTuning = null, AudienceRandom audienceSeeds = null, ReactionTuning reactionTuning = null)
+            AudienceTuning audienceTuning = null, AudienceRandom audienceSeeds = null, ReactionTuning reactionTuning = null,
+            IViewerLanguageModel languageModel = null, ChatModelSettings modelSettings = null)
         {
             _apps = new List<DesktopAppDefinition>(apps).AsReadOnly();
             Storage = new DesktopStorage(apps);
@@ -43,7 +44,7 @@ namespace GoLive.Desktop
             Stream = new StreamSession(Trich, Donation, Peripherals, audienceTuning, audienceSeeds);
             Stream.Completed += CompleteStream;
             SpeechFeed = new StreamSpeechFeed(Stream);
-            Viewers = new ViewerCore(Stream, SpeechFeed, Donation, Peripherals, Trich, reactionTuning ?? new ReactionTuning());
+            Viewers = new ViewerCore(Stream, SpeechFeed, Donation, Peripherals, Trich, reactionTuning ?? new ReactionTuning(), languageModel, modelSettings);
         }
         public string EnsureSystemApps()
         {
@@ -83,6 +84,7 @@ namespace GoLive.Desktop
         {
             _restoring = true;
             Stream.Reset();
+            Viewers.Discard();
             Windows.CloseAll();
             Storage.SetDrives(Array.Empty<DesktopDrive>());
         }

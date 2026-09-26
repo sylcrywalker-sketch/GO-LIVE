@@ -29,3 +29,15 @@ MonoBehaviour:
     MinimumDelaySeconds: 1.6
     MaximumDelaySeconds: 9
     StaleSeconds: 14
+  model:
+    Enabled: 1
+    Endpoint: http://127.0.0.1:1234/v1/chat/completions
+    Model: mistralai/ministral-3-8b-instruct-2512
+    TimeoutSeconds: 6
+    MaximumTokens: 64
+    Temperature: 0.85
+    TopP: 0.95
+    MaximumConcurrent: 1
+    QueueCapacity: 6
+    FailuresBeforeBackoff: 2
+    BackoffSeconds: 20

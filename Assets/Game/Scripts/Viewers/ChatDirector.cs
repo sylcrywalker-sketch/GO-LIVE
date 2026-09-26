@@ -1,0 +1,292 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using GoLive.Desktop;
+using GoLive.Voice;
+
+namespace GoLive.Viewers
+{
+    public enum ChatModelHealth { Disabled, Available, BackingOff }
+
+    // Development measurements of text generation (never saved).
+    public sealed class ChatDirectorStats
+    {
+        private readonly List<double> _latencies = new();
+
+        public int Submitted { get; internal set; }
+        public int ShownFromModel { get; internal set; }
+        public int ShownFromFallback { get; internal set; }
+        public int Rejected { get; internal set; }
+        public int TimedOut { get; internal set; }
+        public int Unavailable { get; internal set; }
+        public int Malformed { get; internal set; }
+        public int DroppedStale { get; internal set; }
+        public int DroppedQueueFull { get; internal set; }
+        public int DroppedViewerLeft { get; internal set; }
+        public int Discarded { get; internal set; }
+        public int MaximumQueueDepth { get; internal set; }
+        public IReadOnlyList<double> Latencies => _latencies;
+        public List<string> RejectedSamples { get; } = new();
+
+        internal void AddLatency(double seconds)
+        {
+            if (_latencies.Count == 2000) _latencies.RemoveAt(0);
+            _latencies.Add(seconds);
+        }
+
+        internal void AddRejected(string sample)
+        {
+            if (RejectedSamples.Count == 40) RejectedSamples.RemoveAt(0);
+            RejectedSamples.Add(sample);
+        }
+
+        public double Percentile(double fraction)
+        {
+            if (_latencies.Count == 0) return 0;
+            var sorted = new List<double>(_latencies);
+            sorted.Sort();
+            return sorted[Math.Min(sorted.Count - 1, (int)Math.Floor(fraction * (sorted.Count - 1) + .5))];
+        }
+    }
+
+    // Turns C#-approved reaction intents into chat lines. Generation starts as soon as a reaction is scheduled and
+    // the line appears at the reaction's due time. Inference runs off the main thread with bounded concurrency and
+    // a bounded queue; the main thread only polls finished tasks. Every model result is validated; failures fall
+    // back to compact lines (or silence). Stale reactions are dropped, never shown late. Broadcast end cancels all.
+    public sealed class ChatDirector : IDisposable
+    {
+        private sealed class Job
+        {
+            public ReactionIntent Intent;
+            public Task<LanguageModelResult> Task;
+            public CancellationTokenSource Cancellation;
+            public bool Resolved;
+            public string Text;
+            public ReactionSource Source;
+            public string Reason;
+            public double Latency;
+            public int PromptCharacters;
+        }
+
+        private readonly IViewerLanguageModel _model;
+        private readonly ChatModelSettings _settings;
+        private readonly StreamChat _chat;
+        private readonly ReactionLog _log;
+        private readonly Func<double> _realClock;
+        private readonly List<Job> _jobs = new();
+        private AudienceRandom _random = new(1);
+        private int _failures;
+        private double _backoffUntil = double.NegativeInfinity;
+
+        public ChatDirectorStats Stats { get; } = new();
+        // Runtime switch (developer toggle, outage simulation). The authored Enabled flag is the default.
+        public bool ModelEnabled { get; set; }
+        public int QueueDepth => _jobs.Count;
+        public ChatModelHealth Health => !ModelEnabled || _model == null ? ChatModelHealth.Disabled
+            : _realClock() < _backoffUntil ? ChatModelHealth.BackingOff : ChatModelHealth.Available;
+        public event Action<StreamChatMessage, ReactionIntent> Shown;
+
+        public ChatDirector(IViewerLanguageModel model, ChatModelSettings settings, StreamChat chat, ReactionLog log, Func<double> realClock = null)
+        {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            string error = settings.Validate();
+            if (error != null) throw new ArgumentException(error, nameof(settings));
+            _model = model;
+            _chat = chat ?? throw new ArgumentNullException(nameof(chat));
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _realClock = realClock ?? (() => SpeechClock.Now);
+            ModelEnabled = settings.Enabled && model != null;
+        }
+
+        public void BeginBroadcast(AudienceRandom random)
+        {
+            CancelAll("broadcast restarted");
+            _random = random ?? throw new ArgumentNullException(nameof(random));
+        }
+
+        public void Submit(ReactionIntent intent)
+        {
+            if (intent == null) throw new ArgumentNullException(nameof(intent));
+            Stats.Submitted++;
+            if (_jobs.Count >= _settings.QueueCapacity && !MakeRoom(intent))
+            {
+                Stats.DroppedQueueFull++;
+                _log.Add(ReactionLog.ForIntent(intent, ReactionOutcome.Dropped, "queue full"));
+                return;
+            }
+            _jobs.Add(new Job { Intent = intent });
+            Stats.MaximumQueueDepth = Math.Max(Stats.MaximumQueueDepth, _jobs.Count);
+        }
+
+        public void Update(double now, AudienceRoster roster, Func<ChatSituation> situation, string broadcastId)
+        {
+            Poll();
+            StartGenerations(now, situation);
+            Post(now, roster, broadcastId);
+        }
+
+        public void CancelAll(string reason)
+        {
+            foreach (Job job in _jobs)
+            {
+                job.Cancellation?.Cancel();
+                job.Cancellation?.Dispose();
+                _log.Add(ReactionLog.ForIntent(job.Intent, ReactionOutcome.Dropped, reason));
+            }
+            _jobs.Clear();
+        }
+
+        public void Dispose()
+        {
+            CancelAll("disposed");
+            _model?.Dispose();
+        }
+
+        private void Poll()
+        {
+            foreach (Job job in _jobs)
+            {
+                if (job.Resolved || job.Task == null || !job.Task.IsCompleted) continue;
+                LanguageModelResult result = job.Task.Status == TaskStatus.RanToCompletion
+                    ? job.Task.Result
+                    : new LanguageModelResult(LanguageModelStatus.Unavailable, null, 0, detail: job.Task.Exception?.GetBaseException().Message);
+                job.Cancellation?.Dispose();
+                job.Cancellation = null;
+                job.Latency = result.LatencySeconds;
+                Stats.AddLatency(result.LatencySeconds);
+                switch (result.Status)
+                {
+                    case LanguageModelStatus.Ok:
+                        _failures = 0;
+                        ChatValidation validation = ChatOutputValidator.Validate(result.Text, job.Intent, _chat.Messages);
+                        if (validation.Accepted) Resolve(job, validation.Text, ReactionSource.LanguageModel, null);
+                        else
+                        {
+                            Stats.Rejected++;
+                            Stats.AddRejected(validation.Reason + ": " + result.Text);
+                            Fallback(job, "rejected (" + validation.Reason + ")");
+                        }
+                        break;
+                    case LanguageModelStatus.Cancelled:
+                        Resolve(job, null, ReactionSource.None, "cancelled");
+                        break;
+                    default:
+                        if (result.Status == LanguageModelStatus.TimedOut) Stats.TimedOut++;
+                        else if (result.Status == LanguageModelStatus.Malformed) Stats.Malformed++;
+                        else Stats.Unavailable++;
+                        if (result.Status != LanguageModelStatus.Malformed && ++_failures >= _settings.FailuresBeforeBackoff)
+                            _backoffUntil = _realClock() + _settings.BackoffSeconds;
+                        Fallback(job, result.Status.ToString().ToLowerInvariant());
+                        break;
+                }
+            }
+        }
+
+        private void StartGenerations(double now, Func<ChatSituation> situation)
+        {
+            int running = 0;
+            foreach (Job job in _jobs)
+                if (!job.Resolved && job.Task != null) running++;
+            _jobs.Sort((a, b) => a.Intent.DueSeconds.CompareTo(b.Intent.DueSeconds));
+            foreach (Job job in _jobs)
+            {
+                if (job.Resolved || job.Task != null) continue;
+                if (now > job.Intent.ExpiresSeconds) continue;
+                if (Health != ChatModelHealth.Available)
+                {
+                    Fallback(job, Health == ChatModelHealth.Disabled ? "model disabled" : "model backing off");
+                    continue;
+                }
+                if (running >= _settings.MaximumConcurrent) continue;
+                ViewerChatRequest request = ChatContextBuilder.Build(job.Intent, situation(), _settings.MaximumTokens);
+                job.PromptCharacters = request.Characters;
+                job.Cancellation = new CancellationTokenSource();
+                job.Task = _model.GenerateAsync(request, job.Cancellation.Token);
+                running++;
+            }
+        }
+
+        private void Post(double now, AudienceRoster roster, string broadcastId)
+        {
+            for (int i = 0; i < _jobs.Count; i++)
+            {
+                Job job = _jobs[i];
+                ReactionIntent intent = job.Intent;
+                if (now > intent.ExpiresSeconds)
+                {
+                    job.Cancellation?.Cancel();
+                    Stats.DroppedStale++;
+                    Remove(i--, job, ReactionOutcome.Dropped, job.Resolved ? "stale" : "stale (still generating)");
+                    continue;
+                }
+                if (!job.Resolved || intent.DueSeconds > now) continue;
+                if (job.Text == null)
+                {
+                    Stats.Discarded++;
+                    Remove(i--, job, ReactionOutcome.Discarded, job.Reason);
+                    continue;
+                }
+                if (!roster.IsWatching(intent.Viewer.ViewerId))
+                {
+                    Stats.DroppedViewerLeft++;
+                    Remove(i--, job, ReactionOutcome.Dropped, "viewer left");
+                    continue;
+                }
+                long donation = intent.Event.Kind == StreamEventKind.Donation && intent.Direct && intent.Event.SubjectViewerId == intent.Viewer.ViewerId
+                    ? intent.Event.AmountCents : 0;
+                StreamChatMessage message = _chat.Add(broadcastId, intent.Viewer.ViewerId, intent.Viewer.DisplayName, job.Text, now, intent.Id, job.Source, donation);
+                if (job.Source == ReactionSource.LanguageModel) Stats.ShownFromModel++;
+                else Stats.ShownFromFallback++;
+                ReactionLogEntry entry = Remove(i--, job, ReactionOutcome.Shown, job.Reason);
+                entry.Text = job.Text;
+                Shown?.Invoke(message, intent);
+            }
+        }
+
+        private void Fallback(Job job, string reason)
+        {
+            string text = FallbackChat.Pick(job.Intent, _random, _chat.Messages);
+            Resolve(job, text, text == null ? ReactionSource.None : ReactionSource.Fallback, reason);
+        }
+
+        private static void Resolve(Job job, string text, ReactionSource source, string reason)
+        {
+            job.Resolved = true;
+            job.Text = text;
+            job.Source = source;
+            job.Reason = reason;
+        }
+
+        private ReactionLogEntry Remove(int index, Job job, ReactionOutcome outcome, string reason)
+        {
+            _jobs.RemoveAt(index);
+            job.Cancellation?.Dispose();
+            job.Cancellation = null;
+            ReactionLogEntry entry = ReactionLog.ForIntent(job.Intent, outcome, reason);
+            entry.Source = job.Source;
+            entry.LatencySeconds = job.Latency;
+            entry.PromptCharacters = job.PromptCharacters;
+            return _log.Add(entry);
+        }
+
+        // A full queue gives way to a more important reaction: the least important waiting (not generating) one leaves.
+        private bool MakeRoom(ReactionIntent incoming)
+        {
+            int victim = -1;
+            for (int i = 0; i < _jobs.Count; i++)
+            {
+                Job job = _jobs[i];
+                if (job.Task != null || job.Resolved) continue;
+                if (victim < 0 || Importance(job.Intent) < Importance(_jobs[victim].Intent)) victim = i;
+            }
+            if (victim < 0 || Importance(_jobs[victim].Intent) >= Importance(incoming)) return false;
+            Job dropped = _jobs[victim];
+            Stats.DroppedQueueFull++;
+            Remove(victim, dropped, ReactionOutcome.Dropped, "queue full");
+            return true;
+        }
+
+        private static float Importance(ReactionIntent intent) => (intent.Direct ? 2f : 0f) + intent.Event.Significance - intent.Order * .2f;
+    }
+}

@@ -46,8 +46,11 @@ namespace GoLive.Viewers
         public ReactionTraits Traits { get; }
         // Spoken/transcribed forms of the name, normalized.
         public IReadOnlyList<string> NameForms { get; }
+        // How they write (prompt data only).
+        public ViewerPersona Persona { get; }
 
-        public ChatParticipant(string viewerId, string displayName, bool isPermanent, ReactionTraits traits, IReadOnlyList<string> nameForms = null)
+        public ChatParticipant(string viewerId, string displayName, bool isPermanent, ReactionTraits traits, IReadOnlyList<string> nameForms = null,
+            ViewerPersona persona = null)
         {
             if (string.IsNullOrWhiteSpace(viewerId)) throw new ArgumentException("A participant needs an id.", nameof(viewerId));
             if (string.IsNullOrWhiteSpace(displayName)) throw new ArgumentException("A participant needs a name.", nameof(displayName));
@@ -55,6 +58,7 @@ namespace GoLive.Viewers
             DisplayName = displayName;
             IsPermanent = isPermanent;
             Traits = traits ?? throw new ArgumentNullException(nameof(traits));
+            Persona = persona ?? ViewerPersona.AnonymousPersona(0, ViewerLanguage.Russian);
             var forms = new List<string> { SpeechRelevance.Normalize(displayName) };
             if (nameForms != null)
                 foreach (string form in nameForms)

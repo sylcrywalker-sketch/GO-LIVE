@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using GoLive.Localization;
+using GoLive.Viewers;
 using TMPro;
 using UnityEngine;
 
@@ -37,7 +38,8 @@ namespace GoLive.Desktop
             var receipts = runtime.State.Donation.History;
             _lastReceiptId = receipts.Count == 0 ? null : receipts[receipts.Count - 1].Id;
             runtime.State.Stream.Changed += Refresh;
-            runtime.State.Stream.ChatAdded += ChatAdded;
+            runtime.State.Viewers.Chat.Added += ChatAdded;
+            runtime.State.Viewers.Chat.Cleared += RefreshChat;
             runtime.State.Donation.Changed += DonationChanged;
             localization.LanguageChanged += LanguageChanged;
             Refresh();
@@ -50,7 +52,8 @@ namespace GoLive.Desktop
             if (_bound)
             {
                 runtime.State.Stream.Changed -= Refresh;
-                runtime.State.Stream.ChatAdded -= ChatAdded;
+                runtime.State.Viewers.Chat.Added -= ChatAdded;
+                runtime.State.Viewers.Chat.Cleared -= RefreshChat;
                 runtime.State.Donation.Changed -= DonationChanged;
                 localization.LanguageChanged -= LanguageChanged;
                 _bound = false;
@@ -96,16 +99,19 @@ namespace GoLive.Desktop
             chatViewers.text = statistics.text;
         }
 
+        // Viewer text is untrusted presentation text: it is shown literally (no rich-text tags from chat).
         private void RefreshChat()
         {
-            var messages = runtime.State.Stream.Chat;
+            var messages = runtime.State.Viewers.Chat.Messages;
             var builder = new StringBuilder();
             for (int i = Mathf.Max(0, messages.Count - 8); i < messages.Count; i++)
             {
-                string name = messages[i].SenderName.Replace("<", "").Replace(">", "");
-                builder.Append("<color=#").Append(NameColor(name)).Append("><b>")
-                    .Append(name).Append("</b></color>  ")
-                    .Append(localization.Text(messages[i].BodyKey)).Append('\n');
+                StreamChatMessage message = messages[i];
+                string name = message.SenderName.Replace("<", "").Replace(">", "");
+                builder.Append("<color=#").Append(NameColor(name)).Append("><b>").Append(name).Append("</b></color>  ");
+                if (message.DonationCents > 0)
+                    builder.Append("<color=#E2B869>").Append(localization.Format("desktop.overlay.donation_amount", message.DonationCents / 100d)).Append("</color>  ");
+                builder.Append("<noparse>").Append(message.Text.Replace("</noparse>", "")).Append("</noparse>").Append('\n');
             }
             chat.text = builder.ToString();
         }

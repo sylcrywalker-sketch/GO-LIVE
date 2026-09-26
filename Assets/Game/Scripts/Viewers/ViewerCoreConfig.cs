@@ -7,8 +7,12 @@ namespace GoLive.Viewers
     public sealed class ViewerCoreConfig : ScriptableObject
     {
         [SerializeField] private ReactionTuning reactions = new();
+        [SerializeField] private ChatModelSettings model = new();
 
         public ReactionTuning Reactions => reactions;
-        public string ValidationError => reactions == null ? "Reaction tuning values are missing." : reactions.Validate();
+        public ChatModelSettings Model => model;
+        public string ValidationError => reactions == null ? "Reaction tuning values are missing."
+            : model == null ? "Chat model settings are missing."
+            : reactions.Validate() ?? model.Validate();
     }
 }

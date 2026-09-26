@@ -97,6 +97,10 @@ namespace GoLive.Viewers
             "чат", "чатик", "чатику", "чате", "ребят", "ребята", "ребятки", "народ", "пацаны", "девчонки", "друзья", "зрители",
             "chat", "guys", "everyone", "yall", "folks", "people"
         };
+        // Asking for opinions is a question wherever it appears, even when recognition drops the "?".
+        private static readonly string[] OpinionWords = { "думаете", "согласны", "считаете", "скажете", "thoughts", "think" };
+        // Whisper often hears a leading "чат," as "чет,"; only as the first word does it address the chat.
+        private static readonly string[] LeadingChatMishearings = { "чет", "чят", "чад" };
         private static readonly string[] QuestionWords =
         {
             "что", "чё", "че", "как", "почему", "зачем", "кто", "где", "когда", "какой", "какая", "какое", "какие", "сколько",
@@ -122,12 +126,12 @@ namespace GoLive.Viewers
         private static readonly string[] ConditionalWords = { "если", "if" };
         private static readonly string[] FutureMarkers =
         {
-            "завтра", "послезавтра", "потом", "скоро", "следующ*", "вечером", "обещаю", "обещаю*",
+            "завтра", "послезавтра", "потом", "скоро", "следующ*", "вечером", "сегодня", "обещаю", "обещаю*",
             "tomorrow", "tonight", "next", "later", "promise", "soon"
         };
         private static readonly string[] CommitmentVerbs =
         {
-            "куплю", "сделаю", "поставлю", "покажу", "сыграю", "буду", "проведу", "запущу", "начну", "подключу", "накоплю",
+            "куплю", "сделаю", "поставлю", "покажу", "сыграю", "буду", "будем", "проведу", "запущу", "начну", "подключу", "накоплю",
             "обещаю", "закажу", "стримлю", "постримлю",
             "ill", "will", "gonna", "promise", "buy", "get"
         };
@@ -169,8 +173,10 @@ namespace GoLive.Viewers
             List<string> tokens = Tokens(text);
             var cues = SpeechCue.None;
             StreamTopic topics = StreamTopic.None;
-            if (text.IndexOf('?') >= 0 || (tokens.Count > 0 && Matches(tokens[0], QuestionWords))) cues |= SpeechCue.Question;
-            if (Any(tokens, ChatWords)) cues |= SpeechCue.AddressesChat;
+            if (Any(tokens, ChatWords) || (tokens.Count > 1 && Matches(tokens[0], LeadingChatMishearings))) cues |= SpeechCue.AddressesChat;
+            // A question: "?", a question word first (or right after addressing the chat), or asking for opinions.
+            int first = (cues & SpeechCue.AddressesChat) != 0 && tokens.Count > 1 && (Matches(tokens[0], ChatWords) || Matches(tokens[0], LeadingChatMishearings)) ? 1 : 0;
+            if (text.IndexOf('?') >= 0 || (tokens.Count > first && Matches(tokens[first], QuestionWords)) || Any(tokens, OpinionWords)) cues |= SpeechCue.Question;
             if (Any(tokens, GreetingWords)) cues |= SpeechCue.Greeting;
             if (Any(tokens, FarewellWords) || Contains(tokens, "до", "завтра") || Contains(tokens, "see", "you")) cues |= SpeechCue.Farewell;
             if (Any(tokens, ThanksWords)) cues |= SpeechCue.Thanks;

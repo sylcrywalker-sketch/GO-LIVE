@@ -82,7 +82,7 @@ namespace GoLive.Tests.Desktop
             Assert.That(state.Stream.State, Is.EqualTo(StreamState.Offline));
             Assert.That(state.Stream.IsConnected, Is.False);
             Assert.That(state.Stream.Quality, Is.EqualTo(StreamQuality.Low));
-            Assert.That(state.Stream.Chat, Is.Empty);
+            Assert.That(state.Viewers.Chat.Messages, Is.Empty, "the live chat is transient and discarded by a load");
             Assert.That(state.Stream.DurationSeconds, Is.Zero);
             Assert.That(state.Windows.Windows, Is.Empty);
             Assert.That(state.Trich.ChannelCode, Is.EqualTo(code));

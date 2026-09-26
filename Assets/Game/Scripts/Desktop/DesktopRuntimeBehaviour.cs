@@ -61,7 +61,10 @@ namespace GoLive.Desktop
                 enabled = false;
                 return;
             }
-            State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning.Tuning, reactionTuning: viewerCore.Reactions);
+            // The local model is optional: without it (disabled, not running) the chat uses compact fallback lines.
+            IViewerLanguageModel model = viewerCore.Model.Enabled ? new OpenAiCompatibleChatModel(viewerCore.Model) : null;
+            State = new DesktopState(catalog.Apps, peripherals.State, audienceTuning.Tuning, reactionTuning: viewerCore.Reactions,
+                languageModel: model, modelSettings: viewerCore.Model);
         }
 
         private void Update()

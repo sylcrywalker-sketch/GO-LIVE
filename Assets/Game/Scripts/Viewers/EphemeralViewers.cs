@@ -15,7 +15,9 @@ namespace GoLive.Viewers
         };
         private static readonly string[] Suffixes = { "", "_", "", "x", "_tv", "_play", "", "228", "_ru", "_", "" };
 
-        public static ChatParticipant Create(AudienceRandom random, int index)
+        public static ChatParticipant Create(AudienceRandom random, int index) => Create(random, index, ViewerLanguage.Russian);
+
+        public static ChatParticipant Create(AudienceRandom random, int index, ViewerLanguage channelLanguage)
         {
             string stem = Stems[random.NextInt(Stems.Length)];
             string suffix = Suffixes[random.NextInt(Suffixes.Length)];
@@ -25,7 +27,10 @@ namespace GoLive.Viewers
             StreamTopic interests = (StreamTopic)(1 << random.NextInt(6));
             var traits = new ReactionTraits(.25f + .6f * (float)random.NextDouble(), 1f + (float)random.NextDouble(),
                 .8f + .6f * (float)random.NextDouble(), interests);
-            return new ChatParticipant("anon." + index + "." + name, name, false, traits);
+            // Most anonymous chatters speak the channel's language; a few write in English anyway.
+            ViewerLanguage language = channelLanguage == ViewerLanguage.English || random.NextDouble() < .1 ? ViewerLanguage.English : ViewerLanguage.Russian;
+            ViewerPersona persona = ViewerPersona.AnonymousPersona(random.NextInt(ViewerPersona.Anonymous.Length), language);
+            return new ChatParticipant("anon." + index + "." + name, name, false, traits, null, persona);
         }
     }
 }

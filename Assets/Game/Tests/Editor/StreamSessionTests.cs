@@ -116,12 +116,12 @@ namespace GoLive.Tests
             session.Tick(60.75f, PrimeTime);
             session.Stop();
             session.Tick(0.25f, PrimeTime);
-            int chatCount = session.Chat.Count;
             AudienceSimulation audience = session.Audience;
+            long chatImpulses = audience.ChatMessages;
             Assert.That(session.Disconnect(), Is.Null);
             Assert.That(session.DurationSeconds, Is.EqualTo(60));
-            Assert.That(session.Chat.Count, Is.EqualTo(chatCount));
-            Assert.That(chatCount, Is.GreaterThan(0));
+            Assert.That(audience.ChatMessages, Is.EqualTo(chatImpulses));
+            Assert.That(chatImpulses, Is.GreaterThan(0));
             Assert.That(session.Audience, Is.SameAs(audience));
             Assert.That(audience.IsFinished, Is.True);
             Assert.That(audience.Follows, Is.GreaterThan(0));
@@ -205,9 +205,7 @@ namespace GoLive.Tests
             Assert.That(one.DonationCents, Is.GreaterThan(0));
             Assert.That(one.DonationCents, Is.EqualTo(many.DonationCents));
             Assert.That(oneDonations.TotalCents, Is.EqualTo(manyDonations.TotalCents));
-            Assert.That(one.Chat.Count, Is.EqualTo(StreamSession.MaximumChatMessages));
-            Assert.That(one.Chat.Select(m => m.BodyKey), Is.EqualTo(many.Chat.Select(m => m.BodyKey)));
-            Assert.That(one.Chat.Select(m => m.Id).Distinct().Count(), Is.EqualTo(one.Chat.Count));
+            Assert.That(one.Audience.ChatMessages, Is.EqualTo(many.Audience.ChatMessages));
             Assert.That(oneDonations.History.Count, Is.LessThanOrEqualTo(DonationAccount.MaximumHistory));
         }
 
@@ -274,19 +272,15 @@ namespace GoLive.Tests
         public void ExtremeFiniteDeltaKeepsFiniteDurationAndBoundedActivity()
         {
             var session = Connected(out _, out var donations, BusyAudience());
-            int chatEvents = 0;
             int receiptEvents = 0;
-            session.ChatAdded += _ => chatEvents++;
             donations.Changed += () => receiptEvents++;
             session.Start(_desktop, true, 5);
             session.Tick(float.MaxValue, PrimeTime);
             Assert.That(session.State, Is.EqualTo(StreamState.Live), "long elapsed time must not impose a stream cutoff");
             Assert.That(double.IsNaN(session.DurationSeconds) || double.IsInfinity(session.DurationSeconds), Is.False);
             Assert.That(session.DurationSeconds, Is.GreaterThan(1e30));
-            Assert.That(chatEvents, Is.LessThanOrEqualTo(StreamSession.MaximumChatMessages));
             Assert.That(receiptEvents, Is.LessThanOrEqualTo(DonationAccount.MaximumReceivedIds));
-            Assert.That(session.Chat.Select(m => m.Id).Distinct().Count(), Is.EqualTo(session.Chat.Count));
-            Assert.That(chatEvents, Is.GreaterThan(0));
+            Assert.That(session.Audience.ChatMessages, Is.GreaterThan(0));
             Assert.That(session.Audience.Follows, Is.GreaterThanOrEqualTo(0));
             Assert.That(session.Audience.CurrentViewers, Is.GreaterThanOrEqualTo(0));
             Assert.That(double.IsNaN(session.Audience.AverageViewers) || double.IsInfinity(session.Audience.AverageViewers), Is.False);
@@ -327,7 +321,6 @@ namespace GoLive.Tests
             session.Start(_gaming, true, 6);
             session.Tick(60.75f, PrimeTime);
             long committedReceipts = donations.TotalCents;
-            Assert.That(session.Chat.Count, Is.GreaterThan(0));
             session.Reset();
             Assert.That(session.State, Is.EqualTo(StreamState.Offline));
             Assert.That(session.IsConnected, Is.False);
@@ -337,7 +330,6 @@ namespace GoLive.Tests
             Assert.That(session.Audience.PeakViewers, Is.Zero);
             Assert.That(session.Audience.Follows, Is.Zero);
             Assert.That(session.DonationCents, Is.Zero);
-            Assert.That(session.Chat, Is.Empty);
             Assert.That(completions, Is.Zero);
             Assert.That(channel.CompletedStreams, Is.Zero);
             Assert.That(donations.TotalCents, Is.EqualTo(committedReceipts), "donation account owns saved receipts");

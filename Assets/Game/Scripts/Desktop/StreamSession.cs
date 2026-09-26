@@ -29,17 +29,8 @@ namespace GoLive.Desktop
         }
     }
 
-    public sealed class StreamChatMessage
-    {
-        public string Id { get; }
-        public string SenderName { get; }
-        public string BodyKey { get; }
-        internal StreamChatMessage(string id, string senderName, string bodyKey) { Id = id; SenderName = senderName; BodyKey = bodyKey; }
-    }
-
     public sealed class StreamSession
     {
-        public const int MaximumChatMessages = 60;
         public StreamState State { get; private set; }
         public StreamQuality Quality { get; private set; }
         public bool IsConnected => _channel.IsRegistered && _connectedCode.Length > 0 && string.Equals(_connectedCode, _channel.ChannelCode, StringComparison.Ordinal);
@@ -52,21 +43,17 @@ namespace GoLive.Desktop
         public long DonationCents { get; private set; }
         // Set every frame by the viewer layer from silence/away tracking; Active whenever offline.
         public StreamerActivity StreamerActivity { get; private set; }
-        public IReadOnlyList<StreamChatMessage> Chat { get; }
         public event Action Changed;
-        public event Action<StreamChatMessage> ChatAdded;
         public event Action<StreamSummary> Completed;
         private readonly TrichChannel _channel;
         private readonly DonationAccount _donation;
         private readonly PcPeripherals _peripherals;
         private readonly AudienceTuning _tuning;
         private readonly AudienceRandom _seeds;
-        private readonly List<StreamChatMessage> _chat = new();
         private readonly List<long> _newDonations = new();
         private string _connectedCode = "";
         private string _streamId = "";
         private long _sequence;
-        private long _chatSerial;
         private int _receiptSerial;
         private double _transitionRemaining;
         private bool _hasBeenLive;
@@ -87,7 +74,6 @@ namespace GoLive.Desktop
             if (tuningError != null) throw new ArgumentException(tuningError, nameof(audienceTuning));
             _seeds = audienceSeeds ?? AudienceRandom.FromEntropy();
             Audience = IdleAudience();
-            Chat = _chat.AsReadOnly();
         }
 
         public string Connect(string code)
@@ -145,7 +131,6 @@ namespace GoLive.Desktop
             if (error != null) return error;
             _streamId = Guid.NewGuid().ToString("N");
             _sequence = _channel.CompletedStreams + 1;
-            _chatSerial = 0;
             _receiptSerial = 0;
             _hasBeenLive = false;
             _dedicatedGraphics = capabilities.GamingGraphicsAvailable;
@@ -155,7 +140,6 @@ namespace GoLive.Desktop
             DurationSeconds = 0;
             DonationCents = 0;
             StreamerActivity = StreamerActivity.Active;
-            _chat.Clear();
             State = StreamState.Starting;
             _transitionRemaining = 0.75;
             Changed?.Invoke();
@@ -190,7 +174,6 @@ namespace GoLive.Desktop
             _connectedCode = "";
             _streamId = "";
             _sequence = 0;
-            _chatSerial = 0;
             _receiptSerial = 0;
             _transitionRemaining = 0;
             _hasBeenLive = false;
@@ -198,7 +181,6 @@ namespace GoLive.Desktop
             Audience = IdleAudience();
             DonationCents = 0;
             StreamerActivity = StreamerActivity.Active;
-            _chat.Clear();
             Changed?.Invoke();
         }
 
@@ -245,9 +227,9 @@ namespace GoLive.Desktop
             DurationSeconds = DurationSeconds > double.MaxValue - elapsed ? double.MaxValue : DurationSeconds + elapsed;
 
             // The audience simulation decides who watches and what they do; this session only applies the
-            // outcomes it owns: support receipts (idempotent ids) and the bounded visible chat.
+            // outcome it owns: support receipts (idempotent ids). Chat is the viewer layer's presentation.
             _newDonations.Clear();
-            AudienceAdvance advance = Audience.Advance(elapsed, new AudienceConditions(minuteOfDay, Quality, _uploadMbps,
+            Audience.Advance(elapsed, new AudienceConditions(minuteOfDay, Quality, _uploadMbps,
                 _dedicatedGraphics, _peripherals.HasMicrophone, _peripherals.HasWebcam, StreamerActivity), _newDonations);
             for (int i = 0; i < _newDonations.Count && _donation.RemainingReceiptCapacity > 0; i++)
             {
@@ -264,20 +246,6 @@ namespace GoLive.Desktop
                 if (State != StreamState.Live || streamId != _streamId) return;
             }
 
-            // A huge delta materializes only the last visible entries; serials still count every message.
-            long chatCount = advance.ChatMessages;
-            long visible = Math.Min(MaximumChatMessages, chatCount);
-            _chatSerial = _chatSerial > long.MaxValue - (chatCount - visible) ? long.MaxValue : _chatSerial + chatCount - visible;
-            for (long i = 0; i < visible; i++)
-            {
-                if (_chatSerial == long.MaxValue) break;
-                ulong variation = AudienceRandom.Hash(Audience.Seed, (ulong)++_chatSerial);
-                var message = new StreamChatMessage(_streamId + ".chat." + _chatSerial, Sender(variation), ChatKey(variation >> 8));
-                if (_chat.Count == MaximumChatMessages) _chat.RemoveAt(0);
-                _chat.Add(message);
-                ChatAdded?.Invoke(message);
-                if (State != StreamState.Live || streamId != _streamId) return;
-            }
             if (previousWholeSecond != Math.Floor(DurationSeconds)) Changed?.Invoke();
         }
 
@@ -321,10 +289,5 @@ namespace GoLive.Desktop
             0 => "PixelFox", 1 => "NightOwl", 2 => "ByteCat", _ => "ArcadeKid"
         };
 
-        private static string ChatKey(ulong variation) => (variation % 4) switch
-        {
-            0 => "desktop.stream.chat.hello", 1 => "desktop.stream.chat.looks_good",
-            2 => "desktop.stream.chat.nice_play", _ => "desktop.stream.chat.keep_going"
-        };
     }
 }

@@ -1071,18 +1071,6 @@ MonoBehaviour:
   - _key: desktop.stream.total_limit
     _russian: "\u0414\u043E\u0441\u0442\u0438\u0433\u043D\u0443\u0442 \u043F\u0440\u0435\u0434\u0435\u043B \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043A\u0438 \u044D\u0444\u0438\u0440\u043E\u0432."
     _english: The stream statistics limit has been reached.
-  - _key: desktop.stream.chat.hello
-    _russian: "\u041F\u0440\u0438\u0432\u0435\u0442! \u041A\u0430\u043A \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043D\u0438\u0435?"
-    _english: Hey! How's it going?
-  - _key: desktop.stream.chat.looks_good
-    _russian: "\u041A\u0430\u0440\u0442\u0438\u043D\u043A\u0430 \u043E\u0442\u043B\u0438\u0447\u043D\u0430\u044F!"
-    _english: Looking good!
-  - _key: desktop.stream.chat.nice_play
-    _russian: "\u0412\u043E\u0442 \u044D\u0442\u043E \u0431\u044B\u043B\u043E \u043A\u0440\u0443\u0442\u043E!"
-    _english: That was a good one!
-  - _key: desktop.stream.chat.keep_going
-    _russian: "\u041F\u0440\u043E\u0434\u043E\u043B\u0436\u0430\u0439, \u043C\u044B \u0441\u043C\u043E\u0442\u0440\u0438\u043C :)"
-    _english: Keep going, we're watching :)
   - _key: desktop.overlay.chat
     _russian: "\u0427\u0430\u0442 \u0442\u0440\u0430\u043D\u0441\u043B\u044F\u0446\u0438\u0438"
     _english: Stream chat
@@ -1309,6 +1297,9 @@ MonoBehaviour:
   - _key: desktop.overlay.count
     _russian: '{0:N0}'
     _english: '{0:N0}'
+  - _key: desktop.overlay.donation_amount
+    _russian: "${0:0.00}"
+    _english: "${0:0.00}"
   - _key: desktop.overlay.duration
     _russian: '{0:00}:{1:00}:{2:00}'
     _english: '{0:00}:{1:00}:{2:00}'

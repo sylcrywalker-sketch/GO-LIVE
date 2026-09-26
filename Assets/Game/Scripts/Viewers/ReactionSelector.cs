@@ -142,6 +142,9 @@ namespace GoLive.Viewers
             // 2. The rest of the watching chat, at a chance and count scaled by significance and audience size.
             float significance = streamEvent.Significance;
             double chance = Math.Pow(significance, .9) * Engagement(viewers) * KindFactor(streamEvent.Kind);
+            // Being asked something (or the chat being addressed) is an invitation even a tiny audience usually takes.
+            if (streamEvent.Speech != null && (streamEvent.Speech.Has(SpeechCue.AddressesChat) || streamEvent.Speech.Has(SpeechCue.Question)))
+                chance = Math.Min(.95, chance * 1.5);
             if (intents.Count > 0) chance *= .45;
             int maximum = MaximumReactions(streamEvent, viewers) - intents.Count;
             // A chat that is already busy for its size lets ordinary moments pass.
