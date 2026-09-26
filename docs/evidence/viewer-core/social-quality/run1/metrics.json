@@ -1,0 +1,305 @@
+{
+  "matrix": {
+    "attempts": 140,
+    "httpResponses": 140,
+    "rawGenerations": 140,
+    "malformedResponses": 0,
+    "accepted": 131,
+    "rejectedRate": 0.06428571428571428,
+    "rejectionReasons": {
+      "unsupported historical claim": 4,
+      "profanity above this viewer": 1,
+      "unsupported promise claim": 1,
+      "too long for this viewer": 1,
+      "ungrounded specific claim: нвидиа": 1,
+      "ungrounded specific claim: RTX": 1
+    },
+    "publishedSources": {
+      "LanguageModel": 131,
+      "Fallback": 9
+    },
+    "fallbackPublishedRate": 0.06428571428571428,
+    "duplicateRateAllNonemptyRaw": 0.0,
+    "assistantPhraseProxyRows": [],
+    "averageCharactersAllRaw": 42.66428571428571,
+    "averageWordsAllRaw": 7.692857142857143,
+    "latencySeconds": {
+      "median": 0.3709425,
+      "p90": 0.5003518,
+      "p95": 0.5549502,
+      "max": 1.0682406
+    },
+    "promptCharacters": {
+      "mean": 3550.1785714285716,
+      "max": 4040
+    },
+    "repeatedFirstWords": [
+      {
+        "text": "да",
+        "count": 15
+      },
+      {
+        "text": "а",
+        "count": 11
+      },
+      {
+        "text": "ну",
+        "count": 10
+      },
+      {
+        "text": "ты",
+        "count": 6
+      },
+      {
+        "text": "я",
+        "count": 5
+      },
+      {
+        "text": "даже",
+        "count": 4
+      },
+      {
+        "text": "извините",
+        "count": 4
+      },
+      {
+        "text": "если",
+        "count": 2
+      }
+    ],
+    "repeatedTwoWordOpeners": [
+      {
+        "text": "а что",
+        "count": 3
+      },
+      {
+        "text": "а я",
+        "count": 3
+      },
+      {
+        "text": "ну и",
+        "count": 3
+      },
+      {
+        "text": "да вижу",
+        "count": 3
+      },
+      {
+        "text": "ну а",
+        "count": 2
+      },
+      {
+        "text": "я бы",
+        "count": 2
+      },
+      {
+        "text": "да ладно",
+        "count": 2
+      },
+      {
+        "text": "у меня",
+        "count": 2
+      }
+    ],
+    "plannedIntents": {
+      "Tease": 2,
+      "React": 24,
+      "Disagree": 6,
+      "Concern": 4,
+      "Question": 20,
+      "Answer": 51,
+      "TechnicalComment": 4,
+      "SilenceCheck": 9,
+      "ThankResponse": 10,
+      "Callback": 10
+    },
+    "callbackPlans": 10,
+    "callbackCandidates": 30,
+    "collisionPairsJaccard50": []
+  },
+  "relationshipAB": {
+    "attempts": 80,
+    "httpResponses": 80,
+    "rawGenerations": 80,
+    "malformedResponses": 0,
+    "accepted": 79,
+    "rejectedRate": 0.0125,
+    "rejectionReasons": {
+      "profanity above this viewer": 1
+    },
+    "publishedSources": {
+      "LanguageModel": 79,
+      "Fallback": 1
+    },
+    "fallbackPublishedRate": 0.0125,
+    "duplicateRateAllNonemptyRaw": 0.0,
+    "assistantPhraseProxyRows": [],
+    "averageCharactersAllRaw": 36.3,
+    "averageWordsAllRaw": 6.7875,
+    "latencySeconds": {
+      "median": 0.282895,
+      "p90": 0.3902391,
+      "p95": 0.4196642,
+      "max": 0.48448929999999996
+    },
+    "promptCharacters": {
+      "mean": 3585.775,
+      "max": 3717
+    },
+    "repeatedFirstWords": [
+      {
+        "text": "да",
+        "count": 10
+      },
+      {
+        "text": "ну",
+        "count": 9
+      },
+      {
+        "text": "а",
+        "count": 6
+      },
+      {
+        "text": "давай",
+        "count": 5
+      },
+      {
+        "text": "ты",
+        "count": 3
+      },
+      {
+        "text": "опять",
+        "count": 3
+      },
+      {
+        "text": "даже",
+        "count": 3
+      },
+      {
+        "text": "что",
+        "count": 2
+      }
+    ],
+    "repeatedTwoWordOpeners": [
+      {
+        "text": "ну как",
+        "count": 2
+      },
+      {
+        "text": "а что",
+        "count": 2
+      },
+      {
+        "text": "да как",
+        "count": 2
+      },
+      {
+        "text": "как ты",
+        "count": 2
+      },
+      {
+        "text": "ну и",
+        "count": 2
+      }
+    ],
+    "plannedIntents": {
+      "Answer": 29,
+      "Question": 20,
+      "React": 13,
+      "Tease": 18
+    },
+    "callbackPlans": 0,
+    "callbackCandidates": 0
+  },
+  "memoryAB": {
+    "attempts": 48,
+    "httpResponses": 48,
+    "rawGenerations": 48,
+    "malformedResponses": 0,
+    "accepted": 41,
+    "rejectedRate": 0.14583333333333334,
+    "rejectionReasons": {
+      "unsupported historical claim": 6,
+      "too long for this viewer": 1
+    },
+    "publishedSources": {
+      "LanguageModel": 41,
+      "Fallback": 7
+    },
+    "fallbackPublishedRate": 0.14583333333333334,
+    "duplicateRateAllNonemptyRaw": 0.0,
+    "assistantPhraseProxyRows": [],
+    "averageCharactersAllRaw": 49.5,
+    "averageWordsAllRaw": 8.645833333333334,
+    "latencySeconds": {
+      "median": 0.3702199,
+      "p90": 0.47300149999999996,
+      "p95": 0.5172888999999999,
+      "max": 0.7605516
+    },
+    "promptCharacters": {
+      "mean": 3595.6458333333335,
+      "max": 4030
+    },
+    "repeatedFirstWords": [
+      {
+        "text": "а",
+        "count": 9
+      },
+      {
+        "text": "давай",
+        "count": 4
+      },
+      {
+        "text": "какой",
+        "count": 3
+      },
+      {
+        "text": "у",
+        "count": 3
+      },
+      {
+        "text": "давайте",
+        "count": 2
+      },
+      {
+        "text": "как",
+        "count": 2
+      },
+      {
+        "text": "мне",
+        "count": 2
+      }
+    ],
+    "repeatedTwoWordOpeners": [
+      {
+        "text": "а вот",
+        "count": 3
+      },
+      {
+        "text": "а ты",
+        "count": 2
+      },
+      {
+        "text": "у вас",
+        "count": 2
+      },
+      {
+        "text": "а может",
+        "count": 2
+      },
+      {
+        "text": "мне кажется",
+        "count": 2
+      }
+    ],
+    "plannedIntents": {
+      "Callback": 9,
+      "Tease": 8,
+      "Answer": 18,
+      "Question": 13
+    },
+    "callbackPlans": 9,
+    "callbackCandidates": 16
+  }
+}

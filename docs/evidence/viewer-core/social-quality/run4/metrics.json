@@ -1,0 +1,306 @@
+{
+  "matrix": {
+    "attempts": 140,
+    "httpResponses": 140,
+    "rawGenerations": 140,
+    "malformedResponses": 0,
+    "accepted": 132,
+    "rejectedRate": 0.05714285714285714,
+    "rejectionReasons": {
+      "profanity above this viewer": 2,
+      "unsupported recurrence": 2,
+      "money claim": 1,
+      "not English": 1,
+      "ungrounded specific claim: полчаса": 1,
+      "ungrounded specific claim: 380": 1
+    },
+    "publishedSources": {
+      "Fallback": 8,
+      "LanguageModel": 132
+    },
+    "fallbackPublishedRate": 0.05714285714285714,
+    "duplicateRateAllNonemptyRaw": 0.0,
+    "assistantPhraseProxyRows": [],
+    "averageCharactersAllRaw": 40.92142857142857,
+    "averageWordsAllRaw": 7.242857142857143,
+    "latencySeconds": {
+      "median": 0.33770069999999996,
+      "p90": 0.4553732,
+      "p95": 0.4892299,
+      "max": 0.7032757
+    },
+    "promptCharacters": {
+      "mean": 3551.5214285714287,
+      "max": 3957
+    },
+    "repeatedFirstWords": [
+      {
+        "text": "а",
+        "count": 11
+      },
+      {
+        "text": "да",
+        "count": 7
+      },
+      {
+        "text": "как",
+        "count": 6
+      },
+      {
+        "text": "ну",
+        "count": 6
+      },
+      {
+        "text": "я",
+        "count": 5
+      },
+      {
+        "text": "мне",
+        "count": 4
+      },
+      {
+        "text": "всё",
+        "count": 4
+      },
+      {
+        "text": "извините",
+        "count": 4
+      }
+    ],
+    "repeatedTwoWordOpeners": [
+      {
+        "text": "я бы",
+        "count": 3
+      },
+      {
+        "text": "а может",
+        "count": 2
+      },
+      {
+        "text": "ух ты",
+        "count": 2
+      },
+      {
+        "text": "да ладно",
+        "count": 2
+      },
+      {
+        "text": "да я",
+        "count": 2
+      },
+      {
+        "text": "а у",
+        "count": 2
+      }
+    ],
+    "plannedIntents": {
+      "Tease": 2,
+      "React": 24,
+      "Disagree": 6,
+      "Concern": 4,
+      "Question": 20,
+      "Answer": 51,
+      "TechnicalComment": 4,
+      "SilenceCheck": 9,
+      "ThankResponse": 10,
+      "Callback": 10
+    },
+    "callbackPlans": 10,
+    "callbackCandidates": 30,
+    "collisionPairsJaccard50": [
+      [
+        55,
+        58
+      ]
+    ]
+  },
+  "relationshipAB": {
+    "attempts": 80,
+    "httpResponses": 80,
+    "rawGenerations": 80,
+    "malformedResponses": 0,
+    "accepted": 78,
+    "rejectedRate": 0.025,
+    "rejectionReasons": {
+      "unsupported historical claim": 1,
+      "unsupported recurrence": 1
+    },
+    "publishedSources": {
+      "LanguageModel": 78,
+      "Fallback": 2
+    },
+    "fallbackPublishedRate": 0.025,
+    "duplicateRateAllNonemptyRaw": 0.0,
+    "assistantPhraseProxyRows": [],
+    "averageCharactersAllRaw": 37.575,
+    "averageWordsAllRaw": 7.025,
+    "latencySeconds": {
+      "median": 0.288247,
+      "p90": 0.4190249,
+      "p95": 0.429027,
+      "max": 0.7314743
+    },
+    "promptCharacters": {
+      "mean": 3596.275,
+      "max": 3777
+    },
+    "repeatedFirstWords": [
+      {
+        "text": "да",
+        "count": 10
+      },
+      {
+        "text": "давно",
+        "count": 6
+      },
+      {
+        "text": "а",
+        "count": 6
+      },
+      {
+        "text": "ты",
+        "count": 5
+      },
+      {
+        "text": "даже",
+        "count": 4
+      },
+      {
+        "text": "как",
+        "count": 3
+      },
+      {
+        "text": "уже",
+        "count": 3
+      },
+      {
+        "text": "ну",
+        "count": 2
+      }
+    ],
+    "repeatedTwoWordOpeners": [
+      {
+        "text": "давно не",
+        "count": 5
+      },
+      {
+        "text": "даже не",
+        "count": 4
+      },
+      {
+        "text": "да ну",
+        "count": 3
+      },
+      {
+        "text": "а ты",
+        "count": 3
+      },
+      {
+        "text": "да как",
+        "count": 2
+      },
+      {
+        "text": "да ладно",
+        "count": 2
+      }
+    ],
+    "plannedIntents": {
+      "Answer": 29,
+      "Question": 20,
+      "React": 13,
+      "Tease": 18
+    },
+    "callbackPlans": 0,
+    "callbackCandidates": 0
+  },
+  "memoryAB": {
+    "attempts": 48,
+    "httpResponses": 48,
+    "rawGenerations": 48,
+    "malformedResponses": 0,
+    "accepted": 47,
+    "rejectedRate": 0.020833333333333332,
+    "rejectionReasons": {
+      "too long for this viewer": 1
+    },
+    "publishedSources": {
+      "LanguageModel": 47,
+      "Fallback": 1
+    },
+    "fallbackPublishedRate": 0.020833333333333332,
+    "duplicateRateAllNonemptyRaw": 0.0,
+    "assistantPhraseProxyRows": [],
+    "averageCharactersAllRaw": 44.354166666666664,
+    "averageWordsAllRaw": 7.729166666666667,
+    "latencySeconds": {
+      "median": 0.3107989,
+      "p90": 0.4361424,
+      "p95": 0.47958629999999997,
+      "max": 0.7240841
+    },
+    "promptCharacters": {
+      "mean": 3668.8125,
+      "max": 4123
+    },
+    "repeatedFirstWords": [
+      {
+        "text": "а",
+        "count": 4
+      },
+      {
+        "text": "у",
+        "count": 4
+      },
+      {
+        "text": "вчера",
+        "count": 3
+      },
+      {
+        "text": "ты",
+        "count": 3
+      },
+      {
+        "text": "вам",
+        "count": 3
+      },
+      {
+        "text": "в",
+        "count": 2
+      },
+      {
+        "text": "как",
+        "count": 2
+      },
+      {
+        "text": "мне",
+        "count": 2
+      }
+    ],
+    "repeatedTwoWordOpeners": [
+      {
+        "text": "ты что",
+        "count": 3
+      },
+      {
+        "text": "у меня",
+        "count": 3
+      },
+      {
+        "text": "а ты",
+        "count": 2
+      },
+      {
+        "text": "удачи вам",
+        "count": 2
+      }
+    ],
+    "plannedIntents": {
+      "Callback": 9,
+      "Tease": 8,
+      "Answer": 18,
+      "Question": 13
+    },
+    "callbackPlans": 9,
+    "callbackCandidates": 16
+  }
+}

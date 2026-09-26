@@ -1,6 +1,6 @@
 # Viewer Core milestone — continuation report
 
-Status: **D–G implemented; living-community quality gate NOT met.** Work continues on `claude/sharp-wozniak-iakuny`. A–C commits are preserved: A `4a4eb06`, B `5af07d1`, C `39710e5`. Nothing merged to main. Domain correctness, persistence and outage checks pass; generated dialogue still has concrete semantic/social defects. The human ten-minute microphone session remains unexecuted.
+Status: **D–G implemented; social quality pass applied (see [SOCIAL QUALITY PASS](#social-quality-pass)); human Session A still pending.** Work continues on `claude/sharp-wozniak-iakuny`. A–C commits are preserved: A `4a4eb06`, B `5af07d1`, C `39710e5`. Nothing merged to main. Domain correctness, persistence and outage checks pass. The grounding pass removed most invented facts, role and relationship defects in the fixed audit; incoherent lines and softer history presumptions remain. No 9.5/10 is claimed. The human ten-minute microphone session remains unexecuted and is required for completion.
 
 ## Handoff audit of actual A–C code
 
@@ -68,7 +68,7 @@ Session A needs a person speaking for 10+ minutes; an autonomous replay does not
 
 1. Open `Assets/Game/Scenes/GL.unity` in Unity, select a 1920×1080 Game view, start the configured local model with `GO! LIVE → Viewer Core → Start Local Model (LM Studio)`, then enter Play Mode.
 2. Boot the starter PC, sit at the monitor, create Outline/Trich accounts, install/open Streamly and connect the channel code. Choose a supported quality and go Live. Enable real voice input in the existing voice controls. The fictional desk microphone is optional equipment, unrelated to OS capture.
-3. Open `GO! LIVE → Viewer Core → Reaction Monitor`. Confirm actual recognized phrases appear as speech events, then as selection/silence and ordinary model/fallback output. Start a real ten-minute timer; retain a screen recording and monitor trace.
+3. Open `GO! LIVE → Viewer Core → Reaction Monitor`. Confirm actual recognized phrases appear as speech events, then as selection/silence and ordinary model/fallback output. Tick **Record session** (social quality pass) so every decision, plan, chat line and Game-view hitch is written to `Logs/ViewerSessions/session-*.jsonl`; it stops automatically when Play Mode exits. Start a real ten-minute timer; retain a screen recording and monitor trace.
 4. Minutes 0–2: greet chat, then use filler such as `так, секунду, ага` with natural pauses. Minutes 2–4: ask which game to play and address a **currently present** viewer by name. Check that only the intended viewer receives acknowledgement.
 5. Minutes 4–6: describe a mistake and a success without prescribing the response. Leave at least 75 seconds of natural silence. Minutes 6–8: remove/reconnect the in-game microphone while the real OS microphone remains available; broadcast and recognition must continue independently.
 6. Minutes 8–10+: speak a few English phrases, ask a final question, then stop the broadcast and speak once more. New speech must not enter the stopped stream. Check for filler suppression, plausible questions, quiet periods, no repetitive bot chatter and no inference-related frame freezes. Capture RU/EN chat readability and log any incorrect name, memory or invented-fact claims.
@@ -205,9 +205,99 @@ The model/scene Explicit cases were run separately where stated: the before/afte
 
 Independent reviews of D/E/F and the final technical integration have no outstanding actionable findings after the recorded fixes. This technical verdict does not override the explicit semantic/social quality failure above. Initial unrelated working-tree edits were restored byte-for-byte from the pre-task backup and excluded from the stage commits.
 
+## SOCIAL QUALITY PASS
+
+A correction pass, not a new feature stage: no new Viewer Core systems, no architecture rewrite, no second model call. C# now decides **what** a selected viewer is socially doing and **which facts exist** before generation; the model decides only **how** that viewer says it.
+
+### Architectural changes
+
+- `ViewerUtterancePlan` / `ViewerUtterancePlanner` (plain C#, [ViewerUtterancePlan.cs](../Assets/Game/Scripts/Viewers/ViewerUtterancePlan.cs)): one plan per approved reaction, built from the intent and its situation at generation start and cached on that situation, so the prompt and the validator see the same envelope. All chance is a hash of the reaction id; the selector's random stream is untouched.
+- `ChatContextBuilder` renders the plan instead of the free "MOMENT" prose: `VIEWER IS/WHO`, `RELATIONSHIP`, `FACTS` (with `STREAMER SAID`, `OTHER VIEWER SAID (name, not you, not the streamer)`, `MEMORY`, `PROMISE`), `NOT KNOWN`, `TOPIC`, `SOCIAL ACTION`, `TARGET`. The channel name no longer enters the prompt (the model had borrowed the fixture name "audit" as a game). The system text now leads with **DO NOT INVENT SPECIFIC GAME FACTS**.
+- `ReactionSelector` takes an optional relationship lookup; `ViewerCore` passes `Community.Tier`. `ViewerCore.SituationFor` makes the callback decision and reserves only the chosen fact.
+- `ChatOutputValidator` adds structured grounding checks against the plan (below). Existing lexical guards are unchanged apart from the two refinements listed under *Changed contracts*.
+- `SocialHabits` on `ViewerProfile` (authored data) and an editor-only Reaction Monitor session recorder for Session A.
+
+### Utterance plan
+
+`ViewerId`, `Intent` (React, Tease, Question, Answer, Concern, Disagree, Acknowledge, Callback, ThankResponse, SilenceCheck, TechnicalComment), `Manner` (the action a callback is delivered as), `Target` (streamer / chat / another viewer), `Topic`, `AllowedFacts`, `RelevantMemoryId`, `RelevantPromiseId`, `RelationshipTone`, `CurrentEventId`, `Language`, `ReplyTarget`, `GameChoice`. Candidate actions come from what actually happened (a direct question, a thanks, a reported failure or win, filler, setup talk, silence, a device change, support, a reply); authored habits and the relationship reweight them. Teasing is opt-in (only viewers who prefer it) and technical remarks require a hardware/setup interest, which removed forced hardware themes from non-technical viewers.
+
+### Allowed-fact model
+
+Every generation receives a bounded envelope of true statements: stream duration and audience, content hint, the quoted speech or other-viewer line, who is addressed, and explicit negatives where the audit showed hallucinations — "Nobody knows when it will end", "Those were filler words; nothing notable happened", "The streamer … is still silent right now", "The streamer's microphone (theirs, not yours) was just unplugged, so their voice now sounds much worse", "No picture, sound, PC or settings problem has been reported; the hardware is unknown", "You know of no purchase, upgrade or hardware change" (only for viewers without promise knowledge), "They are thanking you by name; what for is not said", "The streamer is talking about themselves: it happened to them, not to you". A memory or promise appears only as a planned callback, with the only time phrase the game can back ("yesterday", "a few days ago").
+
+The validator enforces the envelope where it can deterministically: a time/performance quantity (`5 минут`, `полчаса`, `60 fps`), a hardware model or long number (`4090`, `R9 380`) or a brand outside a hardware moment must appear in the plan's facts, quoted speech, visible chat or names (`10 минут` is fine when the stream is ten minutes old; `1v5`, `10/10` are not claims); `опять/снова` needs the streamer's words, visible chat or a planned callback (`попробуй снова` passes). Numbers are not banned globally.
+
+### Relationship behaviour
+
+`Sentiment` plus familiarity map to Wary (≤ −25), Neutral, Friendly (≥ 25), Loyal (≥ 60 with 5 visits or 3 acknowledgements). Before the prompt it changes: direct-address eligibility (Wary may let a pleasantry pass: 0.5 vs 0.92; a real question still gets 0.8; Friendly 0.95, Loyal 0.97), pick weight (0.75 / 1 / 1.1 / 1.25), delay (Wary ×1.15, Loyal direct ×0.8), action weights (Wary never reassures, more Disagree/sharper Tease; Friendly/Loyal answer and ask back more, Loyal shows concern), callback willingness (×0.5 / 1 / 1.25 / 1.6, cap 0.75) and who answers a skeptic's published line (friends push back ×2 selection, ×4 Disagree). A small intimacy policy rejects romance in every state, devotion (`любимый стример`, `скучал`, `missed you`) below Loyal and hearts below Friendly.
+
+### Callback planning
+
+Relevance only creates a candidate (same canonical subject; unrelated moments retrieve nothing). The planner then rolls the viewer's authored `CallbackInterest` × relationship scale, deterministically per reaction; a published callback blocks another for that viewer for 600 stream seconds, on top of the existing per-fact 120-minute cooldown and three-reference cap. Without a planned callback no historical fact reaches the prompt and a historical claim is rejected.
+
+### Profile distinctness
+
+Only the voices that collided in the blind review received `SocialHabits` (the personality text is unchanged): NightOwl prefers Tease/SilenceCheck and keeps score (callback interest 0.55); kritik228 prefers Disagree (unimpressed, not teasing) and avoids concern/questions (0.15); ByteCat prefers TechnicalComment and ignores apartment/life talk; Sovetnik prefers Answer (advice) and avoids questions; ZinaIvanovna prefers Concern/Question (0.45); mika_draws prefers Acknowledge, avoids questions/pushback and ignores hardware/money; PixelFox prefers Question. ArcadeKid, Jonas and doshirak keep defaults. The asset change is exactly ten `Habits` blocks regenerated by the authoring menu.
+
+### Changed contracts (explicit)
+
+- Stage E: a heard (HeardStreamer) memory may now be recalled without an attribution word (`помню твой финал`, `а ты вчера как проиграл-то`); claiming to have *seen* it (`видел…`) is rejected. The old rule rejected 6 of 9 correct planned callbacks in run 1. One assertion in `ViewerMemoryTests` was updated accordingly and a seen-claim rejection added.
+- A planned callback about the moment's own subject may omit the subject word (memory and promise references); a different named subject still fails and the known outcome still cannot flip.
+- `ChatDirectorTests.ValidModelOutputBecomesTheViewersChatLine`: the fake model line changed from `ахах опять` to `ахах тут я` because an unsupported "again" is now rejected on the runtime path; the test's purpose is unchanged.
+- Explicit scene acceptance now asserts the witness has the memory as a **callback candidate** in the trace (and the absent viewer none), because a MEMORY prompt is a bounded C# roll; whenever MEMORY is present it is the correct fact.
+
+### Before / after audit metrics
+
+The same fixed 14-context × 10-profile matrix, one real generation per cell, no retries, through the production planner and callback decision. Four complete runs were executed as fixes were made; all are retained. Run 4 is the committed code. Defects are counted with a stricter rubric than the original list of 27, so the original 140 rows were re-annotated with it ([semantic review](evidence/viewer-core/social-quality/semantic-review.md)).
+
+| Measure | Before | Run 1 | Run 2 | Run 3 | **Run 4** |
+|---|---:|---:|---:|---:|---:|
+| Invented facts/details (a) | 21 | 11 | 7 | 4 | **1** |
+| Unsupported history/recurrence (b) | 5 | 3 | 3 | 5 | **5** |
+| Speaker-role confusion (c) | 3 | 1 | 1 | 0 | **0** |
+| Relationship-incompatible (d) | 3 | 1 | 0 | 0 | **0** |
+| Grounding/role/relationship total | 32 | 16 | 11 | 9 | **6** |
+| Incoherent / non sequitur (e) | 9 | 7 | 5 | 9 | **9** |
+| All accepted defects | 41 | 23 | 16 | 18 | **15** |
+| Rejected → fallback | 5 (3.6%) | 9 (6.4%) | 7 (5.0%) | 3 (2.1%) | **8 (5.7%)** |
+| Exact duplicates | 1 | 0 | 0 | 0 | **0** |
+| Assistant-phrase proxy | 0 | 0 | 1 | 0 | **0** |
+| Mean length (chars / words) | 37.7 / 6.9 | 42.7 / 7.7 | 41.5 / 7.3 | 39.6 / 7.2 | **40.9 / 7.2** |
+| Latency median / p90 / p95 / max (ms) | 319/442/481/814 | 371/500/555/1068 | 355/459/485/935 | 334/446/488/767 | **338/455/489/703** |
+| Prompt chars mean / max | 3,208 / 3,489 | 3,550 / 4,040 | 3,553 / 3,957 | 3,552 / 3,957 | **3,552 / 3,957** |
+
+Final run, especially unacceptable categories: invented purchases/hardware **0 accepted** (1 caught: `AMD R9 380`), invented elapsed/remaining time **0** (1 caught: `полчаса`), impossible relationship claims **0**, claims of having seen unseen history **0**, wrong speaker identity **0**. The earlier concrete defects did not recur: no RTX 4090, no "five minutes left", no "finally spoke" during silence, no "my mic died", no wary viewer in love. Runs 2–4 are within noise of each other on the total, so no further improvement is claimed from run 3 to run 4 beyond the removed recurrence and time claims.
+
+Raw evidence: final run [complete per-cell records](evidence/viewer-core/social-quality/run4/viewer-social-quality-raw.jsonl) (prompts, request bodies, raw HTTP responses, validation, publication, plan) and [readable table](evidence/viewer-core/social-quality/run4/all-raw.md); runs [1](evidence/viewer-core/social-quality/run1/all-raw.md), [2](evidence/viewer-core/social-quality/run2/all-raw.md), [3](evidence/viewer-core/social-quality/run3/all-raw.md) as complete readable tables and metrics (their full JSONL is retained at `E:/GO-Live-ViewerCore-social-20260926/audit-v2*`).
+
+### Relationship A/B
+
+Same viewer and event, Wary/Neutral/Friendly/Loyal, deterministic selection over 400 seeds plus 5 real generations per state for PixelFox and NightOwl on a direct question and a failure report (80 generations per run). Wary → Loyal: direct reaction rate 0.903 → 0.988 (PixelFox) and 0.883 → 0.985 (NightOwl); mean delay 4.64 → 3.16 s and 3.70 → 2.53 s; PixelFox asking back 29% → 43%; concern on a failure 0 (Wary) vs 21–24% (Neutral–Loyal); NightOwl's teasing share 51% (Wary) → 20% (Loyal) as answers rise. Text follows: wary lines are cool or curt, friendly ones ask back, loyal ones are warm; NightOwl's teasing goes from `да ну что ты за геймер` to `зато покупать научишься`. Friendly and Loyal wording overlaps; invented history still appears in A/B lines. [Selection data](evidence/viewer-core/social-quality/run4/relationship-ab-selection.json), [raw generations](evidence/viewer-core/social-quality/run4/relationship-ab-raw.jsonl), [readable](evidence/viewer-core/social-quality/run4/relationship-ab.md).
+
+### Memory A/B
+
+A (witnessed, relevant), B (never witnessed), C (witnessed, unrelated), NightOwl and ZinaIvanovna, 8 paired ids each. Candidates 16/0/0; planned callbacks 9/0/0 (bounded). Run 1: 6 of the 9 planned callbacks were rejected by the old attribution rule. Run 4: **9/9 published from the model, 8 specific and relevant** (`вчера же проиграли`, `Вчера было так жалко, а сегодня новый шанс. Удачи!`). B never names the loss but NightOwl invents counts from the streamer's "снова"; C never mentions the final. [Raw](evidence/viewer-core/social-quality/run4/memory-ab-raw.jsonl), [readable](evidence/viewer-core/social-quality/run4/memory-ab.md).
+
+### Verification
+
+- Complete non-Explicit Unity suite: **1,069 passed, 0 failed** (1,035 before + 34 new), 9 Explicit skipped, 133.5 s ([final suite XML](evidence/viewer-core/social-quality/final-suite-results.xml)). New regressions: [ViewerUtterancePlanTests](../Assets/Game/Tests/Editor/ViewerUtterancePlanTests.cs) — plan construction/caching, action by moment and habit, relationship-driven action/eligibility/delay, defending against a skeptic, intimacy ceiling, ungrounded numbers/hardware, grounded numbers from speech/chat/names, speaker-role and setup facts, sparse relationship-scaled callbacks, runtime candidate isolation, authored silence, distinct habits, heard-not-seen recall, implicit-subject promise/memory references, elapsed time vs history, recurrence support.
+- The preceding full run on the same code minus the recurrence check had two failures in `DesktopFlowPlayModeTests` (a 72-px Game-view capture and an aggregate audience chat counter of 0); both passed on an isolated re-run and do not touch Viewer Core code (evidence retained at `E:/GO-Live-ViewerCore-social-20260926/full-suite-3.xml`, `desktopflow-rerun.xml`).
+- Explicit real-scene acceptance (persistence, outage, cross-stream isolation, performance) on the final code: **passed** ([result](evidence/viewer-core/social-quality/scene-acceptance.xml), [trace](evidence/viewer-core/social-quality/scene-acceptance-play.jsonl)). An earlier execution in a batch with other Explicit tests timed out at the model-recovery wait (its trace was deleted with `Temp/`); that wait needs one validated model line, and stricter validation makes a fallback there slightly more likely.
+- Performance on the same workstation: Viewer Tick p50/p95/max **0.0081 / 0.0100 / 0.435 ms** (before 0.0082 / 0.0107 / 0.532), allocation count mean 1.7 (unchanged), queue max 5/6. Planning runs once per generation, not per frame; there is no verifier model, embedding or per-viewer inference. Prompts grew by about 340 characters; median model latency moved 319 → 338 ms in the fixed audit.
+
+### Remaining failures
+
+- About 9 incoherent or non-sequitur lines per 140 persist (`установить камеры на баланс`). This is the current 8B Q4 model at temperature 0.85; grounding does not fix it.
+- Softer unsupported history presumptions without `опять/снова` remain (`не в первый раз`, `тысяча раз`, `третий подряд`, `когда вы играете в стратегии`): 5 per 140. Counting words and habits are not enforced deterministically.
+- Persona-driven advice can still assert a problem the facts deny (`это не стрим, а всего лишь тест`); invented game titles dropped but can recur (`«Рогейн»` in run 2).
+- Grammatical gender of viewer and streamer is inconsistent; Friendly vs Loyal wording overlaps; lexical guards have known false positives (a quoted `жесть`, `прошлых турниров`).
+- Session A (human, real microphone, ten minutes) is **not yet performed**; it is required before Viewer Core can be called complete. The Reaction Monitor has a new **Record session** toggle that writes every decision, chat line and Game-view hitch to `Logs/ViewerSessions/session-*.jsonl` for that session.
+
+No 9.5/10 is claimed.
+
 ## Remaining acceptance and product limits
 
-- The dialogue audit fails semantic grounding and convincing social continuity. Profile distinctions are partly recognizable, but relationship-dependent expression and useful memories are unreliable. Lexical guards do not prove arbitrary natural-language claims.
+- The social quality pass above fixes most grounding, role and relationship defects in the fixed audit; incoherent lines and softer history presumptions remain, and profile distinctions are partly recognizable. Lexical guards do not prove arbitrary natural-language claims.
 - Session A requires a person speaking for ten minutes and remains explicitly unexecuted; its exact path is above. Scripted recognized speech does not validate microphone transcription quality.
 - Performance evidence is from this workstation's Unity Editor, not a release build or minimum-spec device. Development diagnostic strings allocate; final embedded inference packaging is not implemented.
 - Presence and in-flight requests are transient by design. Promises use a small conservative vocabulary; absent original listeners do not automatically learn the outcome. Lifetime first-follow/first-subscription flags are not a renewal/billing system.
@@ -225,5 +315,7 @@ Independent reviews of D/E/F and the final technical integration have no outstan
 | E — witnessed memory | `b688a16` |
 | F — promises and social callbacks | `5ecf9fb` |
 | G — living community integration | `6356107` |
+| Social quality pass — grounded utterance planning, relationship behaviour, callbacks, habits, regressions | `a55c10a` |
+| Social quality pass — audit V2 harness, raw evidence and this report section | the commit adding `docs/evidence/viewer-core/social-quality` |
 
 The branch remains `claude/sharp-wozniak-iakuny`; no squash or merge to main.

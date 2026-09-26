@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 13:13:14Z" end-time="2026-09-26 13:14:18Z" duration="63.7149676">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-09-26 13:13:14Z" end-time="2026-09-26 13:14:18Z" duration="63.714968" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2219" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-09-26 13:13:14Z" end-time="2026-09-26 13:14:18Z" duration="63.708435" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="32964" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2220" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-09-26 13:13:14Z" end-time="2026-09-26 13:14:18Z" duration="63.707054" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2221" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-09-26 13:13:14Z" end-time="2026-09-26 13:14:18Z" duration="63.705752" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1008" name="DesktopFlowPlayModeTests" fullname="GoLive.Tests.DesktopFlowPlayModeTests" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-26 13:13:14Z" end-time="2026-09-26 13:14:18Z" duration="63.692698" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="DesktopVisualFlow" />
+            </properties>
+            <test-case id="1013" name="LivingCommunityPersistenceOutageAndBilingualChat" fullname="GoLive.Tests.DesktopFlowPlayModeTests.LivingCommunityPersistenceOutageAndBilingualChat" methodname="LivingCommunityPersistenceOutageAndBilingualChat" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Explicit" seed="2139445488" result="Passed" start-time="2026-09-26 13:13:14Z" end-time="2026-09-26 13:14:18Z" duration="63.325635" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="_SKIPREASON" value="Requires the configured local model" />
+                <property name="Category" value="ViewerCoreAcceptance" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Props/SM_Shelf_001"
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-social-20260926\scene-acceptance-a\viewer-community-ru-low.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-social-20260926\scene-acceptance-a\viewer-community-en-low.png
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-social-20260926\scene-acceptance-a\viewer-community-ru-donation.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-social-20260926\scene-acceptance-a\viewer-community-en-donation.png
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-social-20260926\scene-acceptance-a\viewer-community-ru-high.png
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+GAME_VIEW_CAPTURE E:\GO-Live-ViewerCore-social-20260926\scene-acceptance-a\viewer-community-en-high.png
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+The character with Unicode value \U0001F3AE was not found in the [Manrope-Medium SDF] font asset or any potential fallbacks. It was replaced by Unicode character \u25A1 in text object [Messages].
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
