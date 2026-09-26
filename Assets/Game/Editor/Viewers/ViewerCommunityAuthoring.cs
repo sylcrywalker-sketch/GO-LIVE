@@ -44,7 +44,7 @@ namespace GoLive.Editor.Viewers
         {
             new ViewerProfile
             {
-                Id = "viewer.nightowl", DisplayName = "NightOwl", Language = ViewerLanguage.Russian,
+                Id = "viewer.nightowl", DisplayName = "NightOwl", Language = ViewerLanguage.Russian, Gender = ViewerGender.Male,
                 SpokenNames = new[] { "night owl", "найт оул", "найтоул", "найт овл", "найтовл", "сова" },
                 Personality = "Night-shift security guard who watches from his phone between rounds. Dry and sarcastic, teases the streamer " +
                               "and keeps score of every fail; secretly likes the channel but would never admit it.",
@@ -62,15 +62,19 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .03f, FollowTendency = .6f, SocialTendency = .4f, InitialSentiment = 10,
                 DailyLife = new[]
                 {
-                    Day("owl.after-shift", "slept most of the day after last night's shift", "on a night shift, bored between rounds", DayActivityKind.Sleep, ViewerMood.Tired, ViewerEnergy.Low),
-                    Day("owl.errands", "ran errands before the shift", "on a night shift, watching from the phone", DayActivityKind.Errands, ViewerMood.Chill, ViewerEnergy.Normal),
-                    Day("owl.day-off", "had a night off and played games at home", "at home tonight, not on shift", DayActivityKind.Gaming, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("owl.tap", "fixed a leaking tap at home before work", "on a night shift, drinking tea in the guard booth", DayActivityKind.Housework, ViewerMood.Chill, ViewerEnergy.Normal)
+                    Day("owl.after-shift", "slept most of the day after last night's shift", "on a night shift, bored between rounds", DayActivityKind.Sleep, ViewerMood.Tired, ViewerEnergy.Low,
+                        "отсыпался после ночной смены", "на ночной смене, скучаю между обходами"),
+                    Day("owl.errands", "ran errands before the shift", "on a night shift, watching from the phone", DayActivityKind.Errands, ViewerMood.Chill, ViewerEnergy.Normal,
+                        "до смены по делам бегал", "на смене, смотрю с телефона"),
+                    Day("owl.day-off", "had a night off and played games at home", "at home tonight, not on shift", DayActivityKind.Gaming, ViewerMood.Good, ViewerEnergy.Normal,
+                        "выходной, дома в игры рубился", "дома сегодня, не на смене"),
+                    Day("owl.tap", "fixed a leaking tap at home before work", "on a night shift, drinking tea in the guard booth", DayActivityKind.Housework, ViewerMood.Chill, ViewerEnergy.Normal,
+                        "кран дома чинил перед работой", "на смене, пью чай в будке")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.pixelfox", DisplayName = "PixelFox", Language = ViewerLanguage.Russian,
+                Id = "viewer.pixelfox", DisplayName = "PixelFox", Language = ViewerLanguage.Russian, Gender = ViewerGender.Female,
                 SpokenNames = new[] { "pixel fox", "пиксель фокс", "пиксельфокс", "пикс", "пиксель" },
                 Personality = "Second-year design student who found the channel by accident and wants it to grow. Warm and curious, asks " +
                               "about everything, gets genuinely excited when the streamer answers her.",
@@ -88,15 +92,19 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .15f, FollowTendency = .9f, SocialTendency = .6f, InitialSentiment = 20,
                 DailyLife = new[]
                 {
-                    Day("fox.critique", "had classes and a long design critique", "finishing a poster for class with the stream on", DayActivityKind.Study, ViewerMood.Tired, ViewerEnergy.Normal),
-                    Day("fox.portfolio", "worked on a portfolio project most of the day", "taking a break from the project", DayActivityKind.Drawing, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("fox.library", "studied at the university library, then met a friend", "at home, relaxing", DayActivityKind.Study, ViewerMood.Upbeat, ViewerEnergy.High),
-                    Day("fox.photos", "walked around the city taking photos", "editing photos with the stream on", DayActivityKind.Walk, ViewerMood.Upbeat, ViewerEnergy.High)
+                    Day("fox.critique", "had classes and a long design critique", "finishing a poster for class with the stream on", DayActivityKind.Study, ViewerMood.Tired, ViewerEnergy.Normal,
+                        "весь день пары, потом долгий разбор работ", "доделываю постер к паре"),
+                    Day("fox.portfolio", "worked on a portfolio project most of the day", "taking a break from the project", DayActivityKind.Drawing, ViewerMood.Good, ViewerEnergy.Normal,
+                        "почти весь день сидела над портфолио", "отдыхаю от проекта"),
+                    Day("fox.library", "studied at the university library, then met a friend", "at home, relaxing", DayActivityKind.Study, ViewerMood.Upbeat, ViewerEnergy.High,
+                        "занималась в библиотеке, потом виделась с другом", "дома, отдыхаю"),
+                    Day("fox.photos", "walked around the city taking photos", "editing photos with the stream on", DayActivityKind.Walk, ViewerMood.Upbeat, ViewerEnergy.High,
+                        "гуляла по городу и фоткала", "обрабатываю фотки под стрим")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.bytecat", DisplayName = "ByteCat", Language = ViewerLanguage.Russian,
+                Id = "viewer.bytecat", DisplayName = "ByteCat", Language = ViewerLanguage.Russian, Gender = ViewerGender.Unspecified,
                 SpokenNames = new[] { "byte cat", "байт кэт", "байткэт", "байткат", "байт кот", "байт" },
                 Personality = "System administrator who builds PCs for fun. Notices frame drops, bitrate and every hardware choice, makes dry " +
                               "technical jokes; bored by apartment drama and small talk.",
@@ -114,15 +122,19 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .08f, FollowTendency = .5f, SocialTendency = .35f, InitialSentiment = 0,
                 DailyLife = new[]
                 {
-                    Day("cat.migration", "fought a server migration at work that failed twice", "finally home, unwinding", DayActivityKind.Work, ViewerMood.Stressed, ViewerEnergy.Low),
-                    Day("cat.psu", "replaced a colleague's broken power supply at work", "tinkering with an old laptop", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("cat.quiet", "had an ordinary shift at work where nothing broke", "watching streams", DayActivityKind.Work, ViewerMood.Chill, ViewerEnergy.Normal),
-                    Day("cat.homeserver", "spent the day off reinstalling the home server", "waiting for updates to finish", DayActivityKind.Tech, ViewerMood.Bored, ViewerEnergy.Normal)
+                    Day("cat.migration", "fought a server migration at work that failed twice", "finally home, unwinding", DayActivityKind.Work, ViewerMood.Stressed, ViewerEnergy.Low,
+                        "на работе переносили сервер, два раза всё падало", "наконец дома, отхожу"),
+                    Day("cat.psu", "replaced a colleague's broken power supply at work", "tinkering with an old laptop", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal,
+                        "на работе менял коллеге сгоревший блок питания", "ковыряю старый ноут"),
+                    Day("cat.quiet", "had an ordinary shift at work where nothing broke", "watching streams", DayActivityKind.Work, ViewerMood.Chill, ViewerEnergy.Normal,
+                        "обычная смена, ничего не сломалось", "смотрю стримы"),
+                    Day("cat.homeserver", "spent the day off reinstalling the home server", "waiting for updates to finish", DayActivityKind.Tech, ViewerMood.Bored, ViewerEnergy.Normal,
+                        "весь выходной переставлял домашний сервер", "жду, пока докатятся обновления")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.arcadekid", DisplayName = "ArcadeKid", Language = ViewerLanguage.English,
+                Id = "viewer.arcadekid", DisplayName = "ArcadeKid", Language = ViewerLanguage.English, Gender = ViewerGender.Male,
                 SpokenNames = new[] { "arcade kid", "аркейд кид", "аркейдкид", "аркейд", "аркадный" },
                 Personality = "Fifteen-year-old gamer from Ohio who found this Russian stream by accident at night and stays for the vibe. " +
                               "Understands almost none of the Russian and admits it; hypes anything loud.",
@@ -148,7 +160,7 @@ namespace GoLive.Editor.Viewers
             },
             new ViewerProfile
             {
-                Id = "viewer.zinaivanovna", DisplayName = "ZinaIvanovna", Language = ViewerLanguage.Russian,
+                Id = "viewer.zinaivanovna", DisplayName = "ZinaIvanovna", Language = ViewerLanguage.Russian, Gender = ViewerGender.Female,
                 SpokenNames = new[] { "зина ивановна", "зинаида ивановна", "зина", "zina" },
                 Personality = "Retired schoolteacher, 67, who watches for company while knitting. Kind and a little old-fashioned, worries " +
                               "whether the streamer eats, sleeps and pays his rent.",
@@ -166,15 +178,19 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .25f, FollowTendency = .7f, SocialTendency = .4f, InitialSentiment = 30,
                 DailyLife = new[]
                 {
-                    Day("zina.market", "went to the market and cooked soup", "knitting with the stream on", DayActivityKind.Errands, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("zina.clinic", "sat in a long queue at the clinic", "resting with tea and knitting", DayActivityKind.Errands, ViewerMood.Tired, ViewerEnergy.Low),
-                    Day("zina.flat", "cleaned the flat and watered the plants", "knitting a scarf", DayActivityKind.Housework, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("zina.daughter", "talked on the phone with her daughter for an hour", "knitting and listening to the stream", DayActivityKind.Rest, ViewerMood.Upbeat, ViewerEnergy.Normal)
+                    Day("zina.market", "went to the market and cooked soup", "knitting with the stream on", DayActivityKind.Errands, ViewerMood.Good, ViewerEnergy.Normal,
+                        "Сходила на рынок и сварила суп", "Вяжу под стрим"),
+                    Day("zina.clinic", "sat in a long queue at the clinic", "resting with tea and knitting", DayActivityKind.Errands, ViewerMood.Tired, ViewerEnergy.Low,
+                        "Долго сидела в очереди в поликлинике", "Отдыхаю с чаем и вяжу"),
+                    Day("zina.flat", "cleaned the flat and watered the plants", "knitting a scarf", DayActivityKind.Housework, ViewerMood.Good, ViewerEnergy.Normal,
+                        "Убралась в квартире и полила цветы", "Вяжу шарф"),
+                    Day("zina.daughter", "talked on the phone with her daughter for an hour", "knitting and listening to the stream", DayActivityKind.Rest, ViewerMood.Upbeat, ViewerEnergy.Normal,
+                        "Целый час говорила с дочкой по телефону", "Вяжу и слушаю стрим")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.kritik228", DisplayName = "kritik228", Language = ViewerLanguage.Russian,
+                Id = "viewer.kritik228", DisplayName = "kritik228", Language = ViewerLanguage.Russian, Gender = ViewerGender.Male,
                 SpokenNames = new[] { "критик", "критик228", "критик двести двадцать восемь", "kritik" },
                 Personality = "Bored teenager who drifts between small streams looking for something to mock. Thinks this channel is weak " +
                               "and says so, yet keeps coming back; can only be won over slowly.",
@@ -192,14 +208,17 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .01f, FollowTendency = .08f, SocialTendency = .5f, InitialSentiment = -35,
                 DailyLife = new[]
                 {
-                    Day("krit.school", "sat through boring school lessons", "lying on the bed hopping between streams", DayActivityKind.Study, ViewerMood.Bored, ViewerEnergy.Low),
-                    Day("krit.ranked", "played ranked games and kept losing", "hopping between small streams", DayActivityKind.Gaming, ViewerMood.Stressed, ViewerEnergy.Normal),
-                    Day("krit.nothing", "did nothing all day", "bored, looking for something to watch", DayActivityKind.Rest, ViewerMood.Bored, ViewerEnergy.Low)
+                    Day("krit.school", "sat through boring school lessons", "lying on the bed hopping between streams", DayActivityKind.Study, ViewerMood.Bored, ViewerEnergy.Low,
+                        "весь день на скучных уроках сидел", "валяюсь на кровати, стримы листаю"),
+                    Day("krit.ranked", "played ranked games and kept losing", "hopping between small streams", DayActivityKind.Gaming, ViewerMood.Stressed, ViewerEnergy.Normal,
+                        "весь день катал ранкед и сливал", "по мелким стримам прыгаю"),
+                    Day("krit.nothing", "did nothing all day", "bored, looking for something to watch", DayActivityKind.Rest, ViewerMood.Bored, ViewerEnergy.Low,
+                        "весь день ничего не делал", "скучаю, ищу что посмотреть")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.mika", DisplayName = "mika_draws", Language = ViewerLanguage.Russian,
+                Id = "viewer.mika", DisplayName = "mika_draws", Language = ViewerLanguage.Russian, Gender = ViewerGender.Female,
                 SpokenNames = new[] { "мика", "mika", "мика дроус", "мика рисует" },
                 Personality = "Quiet illustrator who keeps the stream on in the background while drawing. Rarely writes, notices small " +
                               "things, very gentle and loyal.",
@@ -217,15 +236,19 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .2f, FollowTendency = .95f, SocialTendency = .2f, InitialSentiment = 25,
                 DailyLife = new[]
                 {
-                    Day("mika.commission", "spent most of the day drawing a commission", "sketching with the stream on in the background", DayActivityKind.Drawing, ViewerMood.Tired, ViewerEnergy.Low),
-                    Day("mika.studies", "practised drawing hands for hours", "still drawing, the stream in the background", DayActivityKind.Drawing, ViewerMood.Chill, ViewerEnergy.Normal),
-                    Day("mika.shop", "went to an art supplies shop and took a walk", "trying out new brushes", DayActivityKind.Errands, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("mika.block", "had an art block and barely drew anything", "doodling a little", DayActivityKind.Drawing, ViewerMood.Bored, ViewerEnergy.Low)
+                    Day("mika.commission", "spent most of the day drawing a commission", "sketching with the stream on in the background", DayActivityKind.Drawing, ViewerMood.Tired, ViewerEnergy.Low,
+                        "почти весь день рисовала заказ", "скетчу, стрим фоном"),
+                    Day("mika.studies", "practised drawing hands for hours", "still drawing, the stream in the background", DayActivityKind.Drawing, ViewerMood.Chill, ViewerEnergy.Normal,
+                        "часами рисовала руки", "рисую дальше, стрим фоном"),
+                    Day("mika.shop", "went to an art supplies shop and took a walk", "trying out new brushes", DayActivityKind.Errands, ViewerMood.Good, ViewerEnergy.Normal,
+                        "сходила в художественный магазин и погуляла", "пробую новые кисти"),
+                    Day("mika.block", "had an art block and barely drew anything", "doodling a little", DayActivityKind.Drawing, ViewerMood.Bored, ViewerEnergy.Low,
+                        "творческий ступор, почти ничего не нарисовала", "чуть-чуть черкаю")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.jonas", DisplayName = "JonasFromBerlin", Language = ViewerLanguage.Mixed,
+                Id = "viewer.jonas", DisplayName = "JonasFromBerlin", Language = ViewerLanguage.Mixed, Gender = ViewerGender.Male,
                 SpokenNames = new[] { "jonas", "йонас", "ёнас", "джонас", "йонас из берлина" },
                 Personality = "German exchange student in Moscow who is learning Russian. Curious about everyday Russian life, rent and food, " +
                               "polite and a bit formal.",
@@ -243,15 +266,19 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .12f, FollowTendency = .6f, SocialTendency = .5f, InitialSentiment = 15,
                 DailyLife = new[]
                 {
-                    Day("jonas.class", "had Russian classes at the university", "practising Russian by watching streams", DayActivityKind.Study, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("jonas.metro", "got lost on the metro, then bought groceries", "cooking pelmeni for the first time", DayActivityKind.Errands, ViewerMood.Upbeat, ViewerEnergy.Normal),
-                    Day("jonas.essay", "wrote an essay for the university", "taking a break from the essay", DayActivityKind.Study, ViewerMood.Tired, ViewerEnergy.Low),
-                    Day("jonas.walk", "walked around the city centre with a classmate", "resting at the dormitory", DayActivityKind.Walk, ViewerMood.Good, ViewerEnergy.Normal)
+                    Day("jonas.class", "had Russian classes at the university", "practising Russian by watching streams", DayActivityKind.Study, ViewerMood.Good, ViewerEnergy.Normal,
+                        "были пары по русскому в универе", "учу русский по стримам"),
+                    Day("jonas.metro", "got lost on the metro, then bought groceries", "cooking pelmeni for the first time", DayActivityKind.Errands, ViewerMood.Upbeat, ViewerEnergy.Normal,
+                        "потерялся в метро, потом купил продукты", "первый раз варю пельмени"),
+                    Day("jonas.essay", "wrote an essay for the university", "taking a break from the essay", DayActivityKind.Study, ViewerMood.Tired, ViewerEnergy.Low,
+                        "писал эссе для университета", "отдыхаю от эссе"),
+                    Day("jonas.walk", "walked around the city centre with a classmate", "resting at the dormitory", DayActivityKind.Walk, ViewerMood.Good, ViewerEnergy.Normal,
+                        "гулял по центру с одногруппником", "отдыхаю в общежитии")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.doshirak", DisplayName = "doshirak_king", Language = ViewerLanguage.Russian,
+                Id = "viewer.doshirak", DisplayName = "doshirak_king", Language = ViewerLanguage.Russian, Gender = ViewerGender.Male,
                 SpokenNames = new[] { "доширак кинг", "доширак", "дошик", "дошик кинг", "doshirak" },
                 Personality = "Broke university student who lives on instant noodles and relates to every money problem on stream. " +
                               "Self-ironic about rent and cheap food; treats the streamer as a fellow survivor.",
@@ -268,15 +295,19 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .12f, FollowTendency = .6f, SocialTendency = .6f, InitialSentiment = 15,
                 DailyLife = new[]
                 {
-                    Day("dosh.delivery", "had lectures, then a shift as a delivery courier", "eating instant noodles with the stream on", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low),
-                    Day("dosh.exam", "tried to study for an exam and mostly procrastinated", "procrastinating some more", DayActivityKind.Study, ViewerMood.Stressed, ViewerEnergy.Normal),
-                    Day("dosh.payday", "counted money until payday and ate noodles again", "lying in the dorm", DayActivityKind.Rest, ViewerMood.Chill, ViewerEnergy.Low),
-                    Day("dosh.cafe", "worked a shift at a cafe", "home, too tired to cook", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low)
+                    Day("dosh.delivery", "had lectures, then a shift as a delivery courier", "eating instant noodles with the stream on", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low,
+                        "пары, потом смена курьером", "ем доширак под стрим"),
+                    Day("dosh.exam", "tried to study for an exam and mostly procrastinated", "procrastinating some more", DayActivityKind.Study, ViewerMood.Stressed, ViewerEnergy.Normal,
+                        "пытался готовиться к экзамену, в основном прокрастинировал", "прокрастинирую дальше"),
+                    Day("dosh.payday", "counted money until payday and ate noodles again", "lying in the dorm", DayActivityKind.Rest, ViewerMood.Chill, ViewerEnergy.Low,
+                        "считал деньги до зарплаты и ел одну лапшу", "лежу в общаге"),
+                    Day("dosh.cafe", "worked a shift at a cafe", "home, too tired to cook", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low,
+                        "отработал смену в кафе", "дома, сил нет даже приготовить")
                 }
             },
             new ViewerProfile
             {
-                Id = "viewer.sovetnik", DisplayName = "Sovetnik_Pro", Language = ViewerLanguage.Russian,
+                Id = "viewer.sovetnik", DisplayName = "Sovetnik_Pro", Language = ViewerLanguage.Russian, Gender = ViewerGender.Male,
                 SpokenNames = new[] { "советник", "советник про", "sovetnik" },
                 Personality = "Know-it-all who has never streamed but has an opinion on everything: settings, hardware, what to buy next. " +
                               "Gives unsolicited advice; a little annoying, means well.",
@@ -294,15 +325,20 @@ namespace GoLive.Editor.Viewers
                 DonationTendency = .06f, FollowTendency = .4f, SocialTendency = .55f, InitialSentiment = 0,
                 DailyLife = new[]
                 {
-                    Day("sov.laptop", "gave a relative long advice about buying a laptop", "watching streams, ready with advice", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal),
-                    Day("sov.forums", "read forum threads about streaming setups", "browsing forums with the stream on", DayActivityKind.Tech, ViewerMood.Chill, ViewerEnergy.Normal),
-                    Day("sov.office", "worked at the office, nothing interesting", "on the phone after work", DayActivityKind.Work, ViewerMood.Bored, ViewerEnergy.Normal),
-                    Day("sov.router", "helped a neighbour set up a router", "watching the stream", DayActivityKind.Tech, ViewerMood.Upbeat, ViewerEnergy.Normal)
+                    Day("sov.laptop", "gave a relative long advice about buying a laptop", "watching streams, ready with advice", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal,
+                        "долго объяснял родне, какой ноут купить", "смотрю стримы, советы наготове"),
+                    Day("sov.forums", "read forum threads about streaming setups", "browsing forums with the stream on", DayActivityKind.Tech, ViewerMood.Chill, ViewerEnergy.Normal,
+                        "читал форумы про стрим-сетапы", "листаю форумы под стрим"),
+                    Day("sov.office", "worked at the office, nothing interesting", "on the phone after work", DayActivityKind.Work, ViewerMood.Bored, ViewerEnergy.Normal,
+                        "в офисе работал, ничего интересного", "после работы сижу в телефоне"),
+                    Day("sov.router", "helped a neighbour set up a router", "watching the stream", DayActivityKind.Tech, ViewerMood.Upbeat, ViewerEnergy.Normal,
+                        "помог соседу настроить роутер", "смотрю стрим")
                 }
             }
         };
 
-        private static DailyActivity Day(string id, string today, string now, DayActivityKind kind, ViewerMood mood, ViewerEnergy energy) =>
-            new() { Id = id, Today = today, Now = now, Kind = kind, Mood = mood, Energy = energy };
+        private static DailyActivity Day(string id, string today, string now, DayActivityKind kind, ViewerMood mood, ViewerEnergy energy,
+            string sayToday = "", string sayNow = "") =>
+            new() { Id = id, Today = today, Now = now, Kind = kind, Mood = mood, Energy = energy, SayToday = sayToday, SayNow = sayNow };
     }
 }

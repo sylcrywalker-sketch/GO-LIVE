@@ -23,6 +23,11 @@ namespace GoLive.Viewers
         public DayActivityKind Kind;
         public ViewerMood Mood;
         public ViewerEnergy Energy = ViewerEnergy.Normal;
+        // The same two facts as this person would type them in Russian (first person, their grammatical gender):
+        // "весь день катал ранкед и сливал". Used for the answer prompt and the answer fallback of Russian-speaking
+        // viewers; empty = only the English description above.
+        public string SayToday = "";
+        public string SayNow = "";
     }
 
     // Soft personal present of one viewer for one game day (permanent viewers) or one broadcast (anonymous chatters):
@@ -65,19 +70,29 @@ namespace GoLive.Viewers
         private const ulong DaySalt = 0x4441594C494645UL;
 
         // Everyday options for anyone without an authored life (anonymous chatters, promoted viewers), grouped by what they
-        // are interested in. Ordinary and gender-neutral in meaning; the model picks the grammatical form.
+        // are interested in. Ordinary and gender-neutral, also in the Russian phrasing (no gendered past tense).
         private static readonly DailyActivity[] Generic =
         {
-            A("gen.work", "worked a long day and only just got home", "resting with the stream on", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low),
-            A("gen.study", "had classes most of the day", "procrastinating on homework with the stream on", DayActivityKind.Study, ViewerMood.Chill, ViewerEnergy.Normal),
-            A("gen.games", "played some games with friends in the evening", "taking a break and watching streams", DayActivityKind.Gaming, ViewerMood.Upbeat, ViewerEnergy.High),
-            A("gen.errands", "ran errands around the city all day", "finally sitting down", DayActivityKind.Errands, ViewerMood.Tired, ViewerEnergy.Low),
-            A("gen.rest", "had a lazy day off and did almost nothing", "lying around with the phone", DayActivityKind.Rest, ViewerMood.Chill, ViewerEnergy.Normal),
-            A("gen.house", "cleaned the apartment and did laundry", "eating something and watching the stream", DayActivityKind.Housework, ViewerMood.Good, ViewerEnergy.Normal),
-            A("gen.walk", "went for a long walk outside", "warming up at home", DayActivityKind.Walk, ViewerMood.Good, ViewerEnergy.Normal),
-            A("gen.tech", "spent the day fixing a friend's computer", "watching streams to unwind", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal),
-            A("gen.bored", "had a boring, uneventful day", "looking for something to watch", DayActivityKind.Rest, ViewerMood.Bored, ViewerEnergy.Normal),
-            A("gen.stress", "had a stressful day at work", "trying to switch off", DayActivityKind.Work, ViewerMood.Stressed, ViewerEnergy.Low)
+            A("gen.work", "worked a long day and only just got home", "resting with the stream on", DayActivityKind.Work, ViewerMood.Tired, ViewerEnergy.Low,
+                "весь день работа, только домой", "отдыхаю под стрим"),
+            A("gen.study", "had classes most of the day", "procrastinating on homework with the stream on", DayActivityKind.Study, ViewerMood.Chill, ViewerEnergy.Normal,
+                "почти весь день пары", "домашку откладываю, стрим смотрю"),
+            A("gen.games", "played some games with friends in the evening", "taking a break and watching streams", DayActivityKind.Gaming, ViewerMood.Upbeat, ViewerEnergy.High,
+                "вечером с друзьями в игры рубились", "перерыв, смотрю стримы"),
+            A("gen.errands", "ran errands around the city all day", "finally sitting down", DayActivityKind.Errands, ViewerMood.Tired, ViewerEnergy.Low,
+                "весь день по делам по городу", "наконец-то присесть получилось"),
+            A("gen.rest", "had a lazy day off and did almost nothing", "lying around with the phone", DayActivityKind.Rest, ViewerMood.Chill, ViewerEnergy.Normal,
+                "ленивый выходной, вообще ничего", "валяюсь с телефоном"),
+            A("gen.house", "cleaned the apartment and did laundry", "eating something and watching the stream", DayActivityKind.Housework, ViewerMood.Good, ViewerEnergy.Normal,
+                "уборка и стирка весь день", "ем и смотрю стрим"),
+            A("gen.walk", "went for a long walk outside", "warming up at home", DayActivityKind.Walk, ViewerMood.Good, ViewerEnergy.Normal,
+                "долгая прогулка сегодня", "дома, отогреваюсь"),
+            A("gen.tech", "spent the day fixing a friend's computer", "watching streams to unwind", DayActivityKind.Tech, ViewerMood.Good, ViewerEnergy.Normal,
+                "весь день другу комп чинить пришлось", "смотрю стримы, отхожу"),
+            A("gen.bored", "had a boring, uneventful day", "looking for something to watch", DayActivityKind.Rest, ViewerMood.Bored, ViewerEnergy.Normal,
+                "скучный день, ничего не происходило", "ищу, что посмотреть"),
+            A("gen.stress", "had a stressful day at work", "trying to switch off", DayActivityKind.Work, ViewerMood.Stressed, ViewerEnergy.Low,
+                "нервный день на работе", "пытаюсь отвлечься")
         };
 
         private static readonly Dictionary<StreamTopic, string[]> ByInterest = new()
@@ -135,7 +150,7 @@ namespace GoLive.Viewers
             (DayActivityKind.Errands, new[] { "errand", "market", "shop", "clinic", "groceries", "metro", "queue" }),
             (DayActivityKind.Housework, new[] { "clean", "laundry", "tap", "plants", "cook", "soup", "pelmeni" }),
             (DayActivityKind.Walk, new[] { "walk", "photos", "basketball", "outside" }),
-            (DayActivityKind.Tech, new[] { "computer", "server", "laptop", "router", "power supply", "forum", "setup" })
+            (DayActivityKind.Tech, new[] { "computer", "server", "laptop", "router", "power supply", "forum", "setup", "fix", "repair" })
         };
 
         internal static HashSet<DayActivityKind> Kinds(DailyActivity activity)
@@ -148,7 +163,8 @@ namespace GoLive.Viewers
             return kinds;
         }
 
-        private static DailyActivity A(string id, string today, string now, DayActivityKind kind, ViewerMood mood, ViewerEnergy energy) =>
-            new() { Id = id, Today = today, Now = now, Kind = kind, Mood = mood, Energy = energy };
+        private static DailyActivity A(string id, string today, string now, DayActivityKind kind, ViewerMood mood, ViewerEnergy energy,
+            string sayToday, string sayNow) =>
+            new() { Id = id, Today = today, Now = now, Kind = kind, Mood = mood, Energy = energy, SayToday = sayToday, SayNow = sayNow };
     }
 }

@@ -30,8 +30,9 @@ namespace GoLive.Viewers
                     return QuestionPurpose.OriginLocation;
                 if (AsksToday(phrase)) return QuestionPurpose.TodayActivity;
                 if (Has(phrase, " сейчас дела", " что делаешь ", " что делаете ", " чем занят", " чем занимаешься ",
-                    " чем занимаетесь ", " what are you doing ", " what are you up to ")) return QuestionPurpose.CurrentActivity;
-                if (Has(phrase, " устал", " вымотал", " tired ", " правда ", " серьезно ", " really ", " are you sure ",
+                    " чем занимаетесь ", " сейчас делаешь ", " сейчас делаете ", " what are you doing ", " what are you up to ") ||
+                    phrase.Contains(" чем ") && Has(phrase, " занят", " занимаешься ", " занимаетесь ")) return QuestionPurpose.CurrentActivity;
+                if (AsksPresence(phrase) || Has(phrase, " устал", " вымотал", " tired ", " правда ", " серьезно ", " really ", " are you sure ",
                     " согласен ", " согласны ")) return QuestionPurpose.Confirmation;
                 if (AsksMood(phrase)) return QuestionPurpose.Mood;
             }
@@ -53,8 +54,29 @@ namespace GoLive.Viewers
             QuestionPurpose.Mood or QuestionPurpose.ReasonForMood or QuestionPurpose.TodayActivity or QuestionPurpose.CurrentActivity => true,
             QuestionPurpose.Confirmation => MoodWords(Words(question)) || MoodWords(Words(previous)),
             QuestionPurpose.Explanation => DailyLine(Words(previous)) && RefersToPrevious(Words(question)),
+            // "часто играешь в ранкед?" inside a personal exchange: the day is context only when it covers that doing.
+            QuestionPurpose.GenericQuestion => AskedDoing(Words(question)) != null &&
+                (previous != null && DailyLine(Words(previous)) || Has(Words(question), " ты ", " тебя ", " you ")),
             _ => false
         };
+
+        // A question about one of the viewer's own doings ("играешь", "рисуешь"), not a meal, a price or someone else.
+        private static readonly (DayActivityKind kind, string[] stems)[] Doings =
+        {
+            (DayActivityKind.Gaming, new[] { " играешь", " играете", " играл", " поиграл", " катаешь", " катал", " ранкед", " выигрываешь", " выиграл", " play ", " playing " }),
+            (DayActivityKind.Drawing, new[] { " рисуешь", " рисовал", " draw ", " drawing " }),
+            (DayActivityKind.Study, new[] { " учишься", " учился", " училась", " в школе ", " в универе ", " на парах ", " study ", " school " }),
+            (DayActivityKind.Work, new[] { " работаешь", " работал", " на смене ", " на работе ", " work ", " working " }),
+            (DayActivityKind.Sleep, new[] { " спишь", " спал", " выспал", " sleep ", " slept " }),
+            (DayActivityKind.Walk, new[] { " гуляешь", " гулял", " walk ", " walking " })
+        };
+
+        private static DayActivityKind? AskedDoing(string phrase)
+        {
+            if (AboutSomeoneElse(phrase)) return null;
+            foreach (var (kind, stems) in Doings) if (Has(phrase, stems)) return kind;
+            return null;
+        }
 
         // These are separate soft facts, never authority for claims about the streamer or their equipment.
         internal static List<GroundedFact> Facts(QuestionPurpose purpose, string question, string previous, ViewerDailyState day)
@@ -63,36 +85,102 @@ namespace GoLive.Viewers
             if (day == null || !UsesDay(purpose, question, previous)) return facts;
             string phrase = Words(question);
             if (purpose == QuestionPurpose.Mood || purpose == QuestionPurpose.ReasonForMood ||
-                purpose == QuestionPurpose.Confirmation || purpose == QuestionPurpose.Explanation || AsksMood(phrase))
+                purpose == QuestionPurpose.Confirmation || purpose == QuestionPurpose.Explanation ||
+                purpose != QuestionPurpose.GenericQuestion && AsksMood(phrase))
                 Add(facts, "mood " + day.Mood.ToString().ToLowerInvariant() + ", energy " + day.Energy.ToString().ToLowerInvariant(), "Mood");
+            if (purpose == QuestionPurpose.GenericQuestion)
+            {
+                if (AskedDoing(phrase) is DayActivityKind doing && day.Allows(doing))
+                {
+                    Add(facts, "Today: " + day.Activity.Today, "Today");
+                    Add(facts, "Now: " + day.Activity.Now, "Now");
+                }
+                return facts;
+            }
             if (purpose == QuestionPurpose.TodayActivity || purpose == QuestionPurpose.ReasonForMood ||
                 purpose == QuestionPurpose.Explanation || AsksToday(phrase))
                 Add(facts, "Today: " + day.Activity.Today, "Today");
-            if (purpose == QuestionPurpose.CurrentActivity || purpose == QuestionPurpose.Mood || purpose == QuestionPurpose.ReasonForMood)
+            // What the viewer is doing now describes their state; it is not the reason for it.
+            if (purpose == QuestionPurpose.CurrentActivity || purpose == QuestionPurpose.Mood)
                 Add(facts, "Now: " + day.Activity.Now, "Now");
             return facts;
         }
 
+        // One semantic task per purpose. C# chooses what the message must say; the model chooses only the words.
         internal static string Task(ViewerUtterancePlan plan)
         {
+            bool supplied = plan.DirectAnswerFacts.Count > 0;
             string action = plan.QuestionPurpose switch
             {
-                QuestionPurpose.Mood => "Answer how you are, using the supplied mood and current state",
-                QuestionPurpose.ReasonForMood => "Answer why you feel that way, using the supplied day as the reason",
-                QuestionPurpose.TodayActivity => "Answer what you did today or how your day went",
-                QuestionPurpose.CurrentActivity => "Answer what you are doing right now",
-                QuestionPurpose.GamePreference => "Answer with a kind of game you prefer; do not invent a specific title",
-                QuestionPurpose.Opinion => "Answer with your opinion about the actual question",
-                QuestionPurpose.Explanation => "Explain the point the streamer asked about; use YOUR PREVIOUS MESSAGE only when relevant",
-                QuestionPurpose.Confirmation => "Confirm or correct what the streamer asked, using supplied facts",
-                QuestionPurpose.OriginLocation => "Answer about your origin or location only if supplied in WHO; otherwise say you have not said",
-                _ => "Answer the actual question directly using supplied facts; if unknown, say so briefly"
+                QuestionPurpose.Mood => "Say how you feel right now, from YOUR DAY; a few words about what you are doing are fine",
+                QuestionPurpose.ReasonForMood => "Answer why you feel this way: the reason is what happened today in YOUR DAY. Say that reason plainly",
+                QuestionPurpose.TodayActivity => "Say what you did today, from YOUR DAY" +
+                    (HasFact(plan.DirectAnswerFacts, "Mood") ? ", and how you feel" : ""),
+                QuestionPurpose.CurrentActivity => "Say what you are doing right now, from YOUR DAY",
+                QuestionPurpose.GamePreference => "Name the kind of game you would pick: a genre or style, never a specific title",
+                QuestionPurpose.Opinion => "Give your own short opinion about exactly what the streamer asked, as WHO and RELATIONSHIP would see it",
+                QuestionPurpose.Explanation => plan.PreviousViewerLine == null ? "Explain the thing the streamer asked about"
+                    : supplied ? "Explain what you meant by YOUR PREVIOUS MESSAGE, using YOUR DAY"
+                    : "Explain what you meant by YOUR PREVIOUS MESSAGE; if nothing you know explains it, say briefly it was just a joke or nothing important",
+                QuestionPurpose.Confirmation => supplied ? "Say yes or no to what the streamer asked, going by YOUR DAY"
+                    : "Confirm or correct what the streamer asked, briefly",
+                QuestionPurpose.OriginLocation => "Answer about your origin or location only if WHO says it; otherwise say you would rather not say",
+                _ => supplied ? "Answer the streamer's actual question directly; YOUR DAY is what you know about your own day"
+                    : "Answer the streamer's actual question directly; if you do not know, say so briefly"
             };
-            if (plan.QuestionPurpose == QuestionPurpose.TodayActivity &&
-                HasFact(plan.DirectAnswerFacts, "Mood")) action += ", including how you feel";
-            if (plan.Personal && plan.DirectAnswerFacts.Count == 0)
-                action += "; the relevant day facts are not supplied, so do not invent an activity or cause";
+            if (plan.Personal && !supplied) action += "; the relevant day facts are not supplied, so do not invent an activity or cause";
             return action + ". Do not change topic or add new causes, people or events.";
+        }
+
+        // What the final line of the prompt repeats: the one thing the message must answer.
+        internal static string Gist(QuestionPurpose purpose) => purpose switch
+        {
+            QuestionPurpose.Mood => "how you feel",
+            QuestionPurpose.ReasonForMood => "why you feel this way (the reason in YOUR DAY)",
+            QuestionPurpose.TodayActivity => "what you did today",
+            QuestionPurpose.CurrentActivity => "what you are doing now",
+            QuestionPurpose.GamePreference => "what kind of game you would pick",
+            QuestionPurpose.Opinion => "what you think about it",
+            QuestionPurpose.Explanation => "what you meant",
+            QuestionPurpose.Confirmation => "yes or no",
+            _ => "the streamer's question"
+        };
+
+        // The supplied facts as the viewer would think them: Russian phrasing for Russian-speaking viewers when the day
+        // has it, otherwise the canonical English. Presentation only; the plan keeps the canonical fact.
+        internal static string Say(GroundedFact fact, ViewerDailyState day, ViewerLanguage language, QuestionPurpose purpose)
+        {
+            bool russian = language != ViewerLanguage.English;
+            if (day == null) return fact.Text;
+            switch (fact.Label)
+            {
+                case "Mood": return "how you feel: " + Mood(day.Mood, day.Energy, russian);
+                case "Today":
+                    string today = russian && !string.IsNullOrWhiteSpace(day.Activity.SayToday) ? day.Activity.SayToday : day.Activity.Today;
+                    return (purpose == QuestionPurpose.ReasonForMood ? "the reason, what happened today: " : "today: ") + today;
+                case "Now":
+                    return "right now: " + (russian && !string.IsNullOrWhiteSpace(day.Activity.SayNow) ? day.Activity.SayNow : day.Activity.Now);
+                default: return fact.Text;
+            }
+        }
+
+        // Mood without grammatical gender ("усталость", not "устал/устала").
+        internal static string Mood(ViewerMood mood, ViewerEnergy energy, bool russian)
+        {
+            string feeling = russian
+                ? mood switch
+                {
+                    ViewerMood.Good => "настроение хорошее", ViewerMood.Tired => "усталость", ViewerMood.Chill => "спокойно, расслабленно",
+                    ViewerMood.Bored => "скучно", ViewerMood.Upbeat => "настроение отличное", _ => "на нервах, настроение плохое"
+                }
+                : mood switch
+                {
+                    ViewerMood.Good => "in a good mood", ViewerMood.Tired => "tired", ViewerMood.Chill => "chill, relaxed",
+                    ViewerMood.Bored => "bored", ViewerMood.Upbeat => "great, upbeat", _ => "stressed, bad mood"
+                };
+            string strength = energy == ViewerEnergy.Low ? russian ? ", сил мало" : ", low energy"
+                : energy == ViewerEnergy.High ? russian ? ", энергии много" : ", lots of energy" : "";
+            return feeling + strength;
         }
 
         private static bool HasFact(IReadOnlyList<GroundedFact> facts, string label)
@@ -104,10 +192,20 @@ namespace GoLive.Viewers
         private static void Add(List<GroundedFact> facts, string text, string label) =>
             facts.Add(new GroundedFact(FactSource.ViewerDay, ChatContextBuilder.Clean(text, ChatContextBuilder.QuoteLimit), label));
 
+        // "ты тут?": the one confirmation C# can always answer truthfully, since only a watching viewer is asked.
+        internal static bool AsksPresence(string question)
+        {
+            string phrase = question.StartsWith(" ", System.StringComparison.Ordinal) ? question : Words(question);
+            return Has(phrase, " ты тут ", " ты здесь ", " вы тут ", " вы здесь ", " есть кто ", " are you here ", " you there ",
+                " you still here ", " anyone here ");
+        }
+
         private static bool AsksToday(string phrase) =>
             Has(phrase, " сегодня дел", " сегодня занима", " сегодня игра", " делал сегодня ", " делали сегодня ",
                 " делала сегодня ", " день прош", " прошел день ", " прошел твой день ", " прошел ваш день ",
-                " как день ", " как твой день ", " как ваш день ", " what did you do ", " how was your day ");
+                " как день ", " как твой день ", " как ваш день ", " what did you do ", " how was your day ") ||
+            // Word order is free in Russian: "а чем занималась сегодня?".
+            phrase.Contains(" сегодня ") && Has(phrase, " делал", " занимал", " прошел ", " прошла ");
 
         private static bool AsksMood(string phrase) =>
             phrase.Contains(" как ") && Has(phrase, " дела ", " делишки ", " настроен", " самочувств", " пожива", " сам ") ||
@@ -126,7 +224,7 @@ namespace GoLive.Viewers
 
         private static bool DailyLine(string phrase) => MoodWords(phrase) ||
             Has(phrase, " в школе ", " урок", " учеб", " работ", " смен", " рисовал", " рисую ", " отдых", " спал", " гулял",
-                " играл", " проиграл", " катал", " school ", " class", " work", " shift ", " draw", " sketch", " rest", " slept ",
+                " играл", " играю ", " проиграл", " катал", " ранкед", " сливал", " school ", " class", " work", " shift ", " draw", " sketch", " rest", " slept ",
                 " walk", " played ", " gaming ");
 
         // The prior mood may fill in an omitted subject ("why?"); it must not replace an explicit new subject

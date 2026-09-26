@@ -8,6 +8,8 @@ namespace GoLive.Viewers
     public enum LetterCase { Lowercase, Normal, CapsWhenExcited }
     public enum Punctuation { None, Light, Full }
     public enum Profanity { None, Mild, Strong }
+    // Russian past tense and adjectives agree with the speaker ("устал" / "устала"); unspecified = not stated.
+    public enum ViewerGender { Unspecified, Male, Female }
 
     // How a permanent viewer types: structured, so C# can build the prompt style per message and enforce limits.
     [Serializable]
@@ -74,6 +76,7 @@ namespace GoLive.Viewers
         public string DisplayName = "";
         public string[] SpokenNames = Array.Empty<string>();
         public ViewerLanguage Language;
+        public ViewerGender Gender;
         [TextArea(2, 4)] public string Personality = "";
         public StreamTopic Interests;
         public ScheduleTendency Schedule = new();

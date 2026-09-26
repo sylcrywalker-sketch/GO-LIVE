@@ -52,7 +52,8 @@ namespace GoLive.Viewers
         private static readonly Regex OwnFollow = new(OwnRu + @"(?:зафолловил[аи]?|фолловнул[аи]?)\b|" + OwnEn + @"followed\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex OwnSubscription = new(OwnRu + @"(?:сабнул[аи]?|оформил[аи]? подписку)\b|" + OwnEn + @"(?:subscribed|subbed)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex OwnRussianSubscription = new(OwnRu + @"подписал(?:ся|ась)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        private static readonly Regex Markup = new(@"(```|\*\*|__|^#+\s|^\s*[-*•]\s|<\/?data>|[{}\[\]])", RegexOptions.Multiline | RegexOptions.CultureInvariant);
+        // Model formatting, including *emphasis* around invented titles, never appears in a viewer's chat line.
+        private static readonly Regex Markup = new(@"(```|\*\*|__|^#+\s|^\s*[-*•]\s|<\/?data>|[{}\[\]]|\*[^*\s][^*]*\*)", RegexOptions.Multiline | RegexOptions.CultureInvariant);
         // Word-start matches only ("рубля" and "корабля" are not "бля").
         private static readonly Regex StrongProfanity = new(@"\b(бля|сук[аи]|хуй|хуе|хуё|хуя|пизд|ебат|ебан|ебал|ёб|еби|ебу|нахуй|похуй|fuck|shit|bitch|cunt|dick)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -72,7 +73,7 @@ namespace GoLive.Viewers
         // Relationship claims above what game state supports. Romance is never a state of this game.
         private static readonly Regex Romance = new(@"(влюбил\w*|влюблен\w*|влюблён\w*|люблю тебя|тебя люблю|целую|in love|love you|luv u|marry me|женись на|😍|🥰|😘|💋|💕|💞|💖)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        private static readonly Regex Devotion = new(@"(любим\w* стрим\w*|обожаю тебя|скучал\w*|соскучил\w*|favou?rite streamer|missed you|miss you)",
+        private static readonly Regex Devotion = new(@"(любим\w* стрим\w*|обожаю тебя|скучал\w* по|соскучил\w*|favou?rite streamer|missed you|miss you)",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         private static readonly Regex Hearts = new(@"(❤|♥|💗|🫶)", RegexOptions.CultureInvariant);
         // "Again" asserts an earlier occurrence: the streamer's words, visible chat or a planned callback must back it.

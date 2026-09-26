@@ -23,6 +23,7 @@ MonoBehaviour:
     - "\u043D\u0430\u0439\u0442\u043E\u0432\u043B"
     - "\u0441\u043E\u0432\u0430"
     Language: 0
+    Gender: 1
     Personality: Night-shift security guard who watches from his phone between rounds. Dry and sarcastic, teases the streamer and keeps score of every fail; secretly likes the channel but would never admit it.
     Interests: 36
     Schedule:
@@ -78,24 +79,32 @@ MonoBehaviour:
       Kind: 7
       Mood: 1
       Energy: 0
+      SayToday: "\u043E\u0442\u0441\u044B\u043F\u0430\u043B\u0441\u044F \u043F\u043E\u0441\u043B\u0435 \u043D\u043E\u0447\u043D\u043E\u0439 \u0441\u043C\u0435\u043D\u044B"
+      SayNow: "\u043D\u0430 \u043D\u043E\u0447\u043D\u043E\u0439 \u0441\u043C\u0435\u043D\u0435, \u0441\u043A\u0443\u0447\u0430\u044E \u043C\u0435\u0436\u0434\u0443 \u043E\u0431\u0445\u043E\u0434\u0430\u043C\u0438"
     - Id: owl.errands
       Today: ran errands before the shift
       Now: on a night shift, watching from the phone
       Kind: 5
       Mood: 2
       Energy: 1
+      SayToday: "\u0434\u043E \u0441\u043C\u0435\u043D\u044B \u043F\u043E \u0434\u0435\u043B\u0430\u043C \u0431\u0435\u0433\u0430\u043B"
+      SayNow: "\u043D\u0430 \u0441\u043C\u0435\u043D\u0435, \u0441\u043C\u043E\u0442\u0440\u044E \u0441 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0430"
     - Id: owl.day-off
       Today: had a night off and played games at home
       Now: at home tonight, not on shift
       Kind: 3
       Mood: 0
       Energy: 1
+      SayToday: "\u0432\u044B\u0445\u043E\u0434\u043D\u043E\u0439, \u0434\u043E\u043C\u0430 \u0432 \u0438\u0433\u0440\u044B \u0440\u0443\u0431\u0438\u043B\u0441\u044F"
+      SayNow: "\u0434\u043E\u043C\u0430 \u0441\u0435\u0433\u043E\u0434\u043D\u044F, \u043D\u0435 \u043D\u0430 \u0441\u043C\u0435\u043D\u0435"
     - Id: owl.tap
       Today: fixed a leaking tap at home before work
       Now: on a night shift, drinking tea in the guard booth
       Kind: 6
       Mood: 2
       Energy: 1
+      SayToday: "\u043A\u0440\u0430\u043D \u0434\u043E\u043C\u0430 \u0447\u0438\u043D\u0438\u043B \u043F\u0435\u0440\u0435\u0434 \u0440\u0430\u0431\u043E\u0442\u043E\u0439"
+      SayNow: "\u043D\u0430 \u0441\u043C\u0435\u043D\u0435, \u043F\u044C\u044E \u0447\u0430\u0439 \u0432 \u0431\u0443\u0434\u043A\u0435"
   - Id: viewer.pixelfox
     DisplayName: PixelFox
     SpokenNames:
@@ -105,6 +114,7 @@ MonoBehaviour:
     - "\u043F\u0438\u043A\u0441"
     - "\u043F\u0438\u043A\u0441\u0435\u043B\u044C"
     Language: 0
+    Gender: 2
     Personality: Second-year design student who found the channel by accident and wants it to grow. Warm and curious, asks about everything, gets genuinely excited when the streamer answers her.
     Interests: 48
     Schedule:
@@ -159,24 +169,32 @@ MonoBehaviour:
       Kind: 1
       Mood: 1
       Energy: 1
+      SayToday: "\u0432\u0435\u0441\u044C \u0434\u0435\u043D\u044C \u043F\u0430\u0440\u044B, \u043F\u043E\u0442\u043E\u043C \u0434\u043E\u043B\u0433\u0438\u0439 \u0440\u0430\u0437\u0431\u043E\u0440 \u0440\u0430\u0431\u043E\u0442"
+      SayNow: "\u0434\u043E\u0434\u0435\u043B\u044B\u0432\u0430\u044E \u043F\u043E\u0441\u0442\u0435\u0440 \u043A \u043F\u0430\u0440\u0435"
     - Id: fox.portfolio
       Today: worked on a portfolio project most of the day
       Now: taking a break from the project
       Kind: 2
       Mood: 0
       Energy: 1
+      SayToday: "\u043F\u043E\u0447\u0442\u0438 \u0432\u0435\u0441\u044C \u0434\u0435\u043D\u044C \u0441\u0438\u0434\u0435\u043B\u0430 \u043D\u0430\u0434 \u043F\u043E\u0440\u0442\u0444\u043E\u043B\u0438\u043E"
+      SayNow: "\u043E\u0442\u0434\u044B\u0445\u0430\u044E \u043E\u0442 \u043F\u0440\u043E\u0435\u043A\u0442\u0430"
     - Id: fox.library
       Today: studied at the university library, then met a friend
       Now: at home, relaxing
       Kind: 1
       Mood: 4
       Energy: 2
+      SayToday: "\u0437\u0430\u043D\u0438\u043C\u0430\u043B\u0430\u0441\u044C \u0432 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0435, \u043F\u043E\u0442\u043E\u043C \u0432\u0438\u0434\u0435\u043B\u0430\u0441\u044C \u0441 \u0434\u0440\u0443\u0433\u043E\u043C"
+      SayNow: "\u0434\u043E\u043C\u0430, \u043E\u0442\u0434\u044B\u0445\u0430\u044E"
     - Id: fox.photos
       Today: walked around the city taking photos
       Now: editing photos with the stream on
       Kind: 10
       Mood: 4
       Energy: 2
+      SayToday: "\u0433\u0443\u043B\u044F\u043B\u0430 \u043F\u043E \u0433\u043E\u0440\u043E\u0434\u0443 \u0438 \u0444\u043E\u0442\u043A\u0430\u043B\u0430"
+      SayNow: "\u043E\u0431\u0440\u0430\u0431\u0430\u0442\u044B\u0432\u0430\u044E \u0444\u043E\u0442\u043A\u0438 \u043F\u043E\u0434 \u0441\u0442\u0440\u0438\u043C"
   - Id: viewer.bytecat
     DisplayName: ByteCat
     SpokenNames:
@@ -187,6 +205,7 @@ MonoBehaviour:
     - "\u0431\u0430\u0439\u0442 \u043A\u043E\u0442"
     - "\u0431\u0430\u0439\u0442"
     Language: 0
+    Gender: 0
     Personality: System administrator who builds PCs for fun. Notices frame drops, bitrate and every hardware choice, makes dry technical jokes; bored by apartment drama and small talk.
     Interests: 3
     Schedule:
@@ -240,24 +259,32 @@ MonoBehaviour:
       Kind: 0
       Mood: 5
       Energy: 0
+      SayToday: "\u043D\u0430 \u0440\u0430\u0431\u043E\u0442\u0435 \u043F\u0435\u0440\u0435\u043D\u043E\u0441\u0438\u043B\u0438 \u0441\u0435\u0440\u0432\u0435\u0440, \u0434\u0432\u0430 \u0440\u0430\u0437\u0430 \u0432\u0441\u0451 \u043F\u0430\u0434\u0430\u043B\u043E"
+      SayNow: "\u043D\u0430\u043A\u043E\u043D\u0435\u0446 \u0434\u043E\u043C\u0430, \u043E\u0442\u0445\u043E\u0436\u0443"
     - Id: cat.psu
       Today: replaced a colleague's broken power supply at work
       Now: tinkering with an old laptop
       Kind: 8
       Mood: 0
       Energy: 1
+      SayToday: "\u043D\u0430 \u0440\u0430\u0431\u043E\u0442\u0435 \u043C\u0435\u043D\u044F\u043B \u043A\u043E\u043B\u043B\u0435\u0433\u0435 \u0441\u0433\u043E\u0440\u0435\u0432\u0448\u0438\u0439 \u0431\u043B\u043E\u043A \u043F\u0438\u0442\u0430\u043D\u0438\u044F"
+      SayNow: "\u043A\u043E\u0432\u044B\u0440\u044F\u044E \u0441\u0442\u0430\u0440\u044B\u0439 \u043D\u043E\u0443\u0442"
     - Id: cat.quiet
       Today: had an ordinary shift at work where nothing broke
       Now: watching streams
       Kind: 0
       Mood: 2
       Energy: 1
+      SayToday: "\u043E\u0431\u044B\u0447\u043D\u0430\u044F \u0441\u043C\u0435\u043D\u0430, \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0441\u043B\u043E\u043C\u0430\u043B\u043E\u0441\u044C"
+      SayNow: "\u0441\u043C\u043E\u0442\u0440\u044E \u0441\u0442\u0440\u0438\u043C\u044B"
     - Id: cat.homeserver
       Today: spent the day off reinstalling the home server
       Now: waiting for updates to finish
       Kind: 8
       Mood: 3
       Energy: 1
+      SayToday: "\u0432\u0435\u0441\u044C \u0432\u044B\u0445\u043E\u0434\u043D\u043E\u0439 \u043F\u0435\u0440\u0435\u0441\u0442\u0430\u0432\u043B\u044F\u043B \u0434\u043E\u043C\u0430\u0448\u043D\u0438\u0439 \u0441\u0435\u0440\u0432\u0435\u0440"
+      SayNow: "\u0436\u0434\u0443, \u043F\u043E\u043A\u0430 \u0434\u043E\u043A\u0430\u0442\u044F\u0442\u0441\u044F \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F"
   - Id: viewer.arcadekid
     DisplayName: ArcadeKid
     SpokenNames:
@@ -267,6 +294,7 @@ MonoBehaviour:
     - "\u0430\u0440\u043A\u0435\u0439\u0434"
     - "\u0430\u0440\u043A\u0430\u0434\u043D\u044B\u0439"
     Language: 1
+    Gender: 1
     Personality: Fifteen-year-old gamer from Ohio who found this Russian stream by accident at night and stays for the vibe. Understands almost none of the Russian and admits it; hypes anything loud.
     Interests: 4
     Schedule:
@@ -323,24 +351,32 @@ MonoBehaviour:
       Kind: 1
       Mood: 1
       Energy: 0
+      SayToday: 
+      SayNow: 
     - Id: kid.friends
       Today: played games with friends after school
       Now: chilling on the phone
       Kind: 3
       Mood: 4
       Energy: 2
+      SayToday: 
+      SayNow: 
     - Id: kid.practice
       Today: had basketball practice after school
       Now: eating snacks and watching
       Kind: 10
       Mood: 0
       Energy: 2
+      SayToday: 
+      SayNow: 
     - Id: kid.lazy
       Today: had a lazy weekend day
       Now: up late watching streams
       Kind: 4
       Mood: 2
       Energy: 1
+      SayToday: 
+      SayNow: 
   - Id: viewer.zinaivanovna
     DisplayName: ZinaIvanovna
     SpokenNames:
@@ -349,6 +385,7 @@ MonoBehaviour:
     - "\u0437\u0438\u043D\u0430"
     - zina
     Language: 0
+    Gender: 2
     Personality: Retired schoolteacher, 67, who watches for company while knitting. Kind and a little old-fashioned, worries whether the streamer eats, sleeps and pays his rent.
     Interests: 24
     Schedule:
@@ -403,24 +440,32 @@ MonoBehaviour:
       Kind: 5
       Mood: 0
       Energy: 1
+      SayToday: "\u0421\u0445\u043E\u0434\u0438\u043B\u0430 \u043D\u0430 \u0440\u044B\u043D\u043E\u043A \u0438 \u0441\u0432\u0430\u0440\u0438\u043B\u0430 \u0441\u0443\u043F"
+      SayNow: "\u0412\u044F\u0436\u0443 \u043F\u043E\u0434 \u0441\u0442\u0440\u0438\u043C"
     - Id: zina.clinic
       Today: sat in a long queue at the clinic
       Now: resting with tea and knitting
       Kind: 5
       Mood: 1
       Energy: 0
+      SayToday: "\u0414\u043E\u043B\u0433\u043E \u0441\u0438\u0434\u0435\u043B\u0430 \u0432 \u043E\u0447\u0435\u0440\u0435\u0434\u0438 \u0432 \u043F\u043E\u043B\u0438\u043A\u043B\u0438\u043D\u0438\u043A\u0435"
+      SayNow: "\u041E\u0442\u0434\u044B\u0445\u0430\u044E \u0441 \u0447\u0430\u0435\u043C \u0438 \u0432\u044F\u0436\u0443"
     - Id: zina.flat
       Today: cleaned the flat and watered the plants
       Now: knitting a scarf
       Kind: 6
       Mood: 0
       Energy: 1
+      SayToday: "\u0423\u0431\u0440\u0430\u043B\u0430\u0441\u044C \u0432 \u043A\u0432\u0430\u0440\u0442\u0438\u0440\u0435 \u0438 \u043F\u043E\u043B\u0438\u043B\u0430 \u0446\u0432\u0435\u0442\u044B"
+      SayNow: "\u0412\u044F\u0436\u0443 \u0448\u0430\u0440\u0444"
     - Id: zina.daughter
       Today: talked on the phone with her daughter for an hour
       Now: knitting and listening to the stream
       Kind: 4
       Mood: 4
       Energy: 1
+      SayToday: "\u0426\u0435\u043B\u044B\u0439 \u0447\u0430\u0441 \u0433\u043E\u0432\u043E\u0440\u0438\u043B\u0430 \u0441 \u0434\u043E\u0447\u043A\u043E\u0439 \u043F\u043E \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0443"
+      SayNow: "\u0412\u044F\u0436\u0443 \u0438 \u0441\u043B\u0443\u0448\u0430\u044E \u0441\u0442\u0440\u0438\u043C"
   - Id: viewer.kritik228
     DisplayName: kritik228
     SpokenNames:
@@ -429,6 +474,7 @@ MonoBehaviour:
     - "\u043A\u0440\u0438\u0442\u0438\u043A \u0434\u0432\u0435\u0441\u0442\u0438 \u0434\u0432\u0430\u0434\u0446\u0430\u0442\u044C \u0432\u043E\u0441\u0435\u043C\u044C"
     - kritik
     Language: 0
+    Gender: 1
     Personality: Bored teenager who drifts between small streams looking for something to mock. Thinks this channel is weak and says so, yet keeps coming back; can only be won over slowly.
     Interests: 4
     Schedule:
@@ -485,18 +531,24 @@ MonoBehaviour:
       Kind: 1
       Mood: 3
       Energy: 0
+      SayToday: "\u0432\u0435\u0441\u044C \u0434\u0435\u043D\u044C \u043D\u0430 \u0441\u043A\u0443\u0447\u043D\u044B\u0445 \u0443\u0440\u043E\u043A\u0430\u0445 \u0441\u0438\u0434\u0435\u043B"
+      SayNow: "\u0432\u0430\u043B\u044F\u044E\u0441\u044C \u043D\u0430 \u043A\u0440\u043E\u0432\u0430\u0442\u0438, \u0441\u0442\u0440\u0438\u043C\u044B \u043B\u0438\u0441\u0442\u0430\u044E"
     - Id: krit.ranked
       Today: played ranked games and kept losing
       Now: hopping between small streams
       Kind: 3
       Mood: 5
       Energy: 1
+      SayToday: "\u0432\u0435\u0441\u044C \u0434\u0435\u043D\u044C \u043A\u0430\u0442\u0430\u043B \u0440\u0430\u043D\u043A\u0435\u0434 \u0438 \u0441\u043B\u0438\u0432\u0430\u043B"
+      SayNow: "\u043F\u043E \u043C\u0435\u043B\u043A\u0438\u043C \u0441\u0442\u0440\u0438\u043C\u0430\u043C \u043F\u0440\u044B\u0433\u0430\u044E"
     - Id: krit.nothing
       Today: did nothing all day
       Now: bored, looking for something to watch
       Kind: 4
       Mood: 3
       Energy: 0
+      SayToday: "\u0432\u0435\u0441\u044C \u0434\u0435\u043D\u044C \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0434\u0435\u043B\u0430\u043B"
+      SayNow: "\u0441\u043A\u0443\u0447\u0430\u044E, \u0438\u0449\u0443 \u0447\u0442\u043E \u043F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C"
   - Id: viewer.mika
     DisplayName: mika_draws
     SpokenNames:
@@ -505,6 +557,7 @@ MonoBehaviour:
     - "\u043C\u0438\u043A\u0430 \u0434\u0440\u043E\u0443\u0441"
     - "\u043C\u0438\u043A\u0430 \u0440\u0438\u0441\u0443\u0435\u0442"
     Language: 0
+    Gender: 2
     Personality: Quiet illustrator who keeps the stream on in the background while drawing. Rarely writes, notices small things, very gentle and loyal.
     Interests: 48
     Schedule:
@@ -559,24 +612,32 @@ MonoBehaviour:
       Kind: 2
       Mood: 1
       Energy: 0
+      SayToday: "\u043F\u043E\u0447\u0442\u0438 \u0432\u0435\u0441\u044C \u0434\u0435\u043D\u044C \u0440\u0438\u0441\u043E\u0432\u0430\u043B\u0430 \u0437\u0430\u043A\u0430\u0437"
+      SayNow: "\u0441\u043A\u0435\u0442\u0447\u0443, \u0441\u0442\u0440\u0438\u043C \u0444\u043E\u043D\u043E\u043C"
     - Id: mika.studies
       Today: practised drawing hands for hours
       Now: still drawing, the stream in the background
       Kind: 2
       Mood: 2
       Energy: 1
+      SayToday: "\u0447\u0430\u0441\u0430\u043C\u0438 \u0440\u0438\u0441\u043E\u0432\u0430\u043B\u0430 \u0440\u0443\u043A\u0438"
+      SayNow: "\u0440\u0438\u0441\u0443\u044E \u0434\u0430\u043B\u044C\u0448\u0435, \u0441\u0442\u0440\u0438\u043C \u0444\u043E\u043D\u043E\u043C"
     - Id: mika.shop
       Today: went to an art supplies shop and took a walk
       Now: trying out new brushes
       Kind: 5
       Mood: 0
       Energy: 1
+      SayToday: "\u0441\u0445\u043E\u0434\u0438\u043B\u0430 \u0432 \u0445\u0443\u0434\u043E\u0436\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439 \u043C\u0430\u0433\u0430\u0437\u0438\u043D \u0438 \u043F\u043E\u0433\u0443\u043B\u044F\u043B\u0430"
+      SayNow: "\u043F\u0440\u043E\u0431\u0443\u044E \u043D\u043E\u0432\u044B\u0435 \u043A\u0438\u0441\u0442\u0438"
     - Id: mika.block
       Today: had an art block and barely drew anything
       Now: doodling a little
       Kind: 2
       Mood: 3
       Energy: 0
+      SayToday: "\u0442\u0432\u043E\u0440\u0447\u0435\u0441\u043A\u0438\u0439 \u0441\u0442\u0443\u043F\u043E\u0440, \u043F\u043E\u0447\u0442\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0440\u0438\u0441\u043E\u0432\u0430\u043B\u0430"
+      SayNow: "\u0447\u0443\u0442\u044C-\u0447\u0443\u0442\u044C \u0447\u0435\u0440\u043A\u0430\u044E"
   - Id: viewer.jonas
     DisplayName: JonasFromBerlin
     SpokenNames:
@@ -586,6 +647,7 @@ MonoBehaviour:
     - "\u0434\u0436\u043E\u043D\u0430\u0441"
     - "\u0439\u043E\u043D\u0430\u0441 \u0438\u0437 \u0431\u0435\u0440\u043B\u0438\u043D\u0430"
     Language: 2
+    Gender: 1
     Personality: German exchange student in Moscow who is learning Russian. Curious about everyday Russian life, rent and food, polite and a bit formal.
     Interests: 24
     Schedule:
@@ -642,24 +704,32 @@ MonoBehaviour:
       Kind: 1
       Mood: 0
       Energy: 1
+      SayToday: "\u0431\u044B\u043B\u0438 \u043F\u0430\u0440\u044B \u043F\u043E \u0440\u0443\u0441\u0441\u043A\u043E\u043C\u0443 \u0432 \u0443\u043D\u0438\u0432\u0435\u0440\u0435"
+      SayNow: "\u0443\u0447\u0443 \u0440\u0443\u0441\u0441\u043A\u0438\u0439 \u043F\u043E \u0441\u0442\u0440\u0438\u043C\u0430\u043C"
     - Id: jonas.metro
       Today: got lost on the metro, then bought groceries
       Now: cooking pelmeni for the first time
       Kind: 5
       Mood: 4
       Energy: 1
+      SayToday: "\u043F\u043E\u0442\u0435\u0440\u044F\u043B\u0441\u044F \u0432 \u043C\u0435\u0442\u0440\u043E, \u043F\u043E\u0442\u043E\u043C \u043A\u0443\u043F\u0438\u043B \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u044B"
+      SayNow: "\u043F\u0435\u0440\u0432\u044B\u0439 \u0440\u0430\u0437 \u0432\u0430\u0440\u044E \u043F\u0435\u043B\u044C\u043C\u0435\u043D\u0438"
     - Id: jonas.essay
       Today: wrote an essay for the university
       Now: taking a break from the essay
       Kind: 1
       Mood: 1
       Energy: 0
+      SayToday: "\u043F\u0438\u0441\u0430\u043B \u044D\u0441\u0441\u0435 \u0434\u043B\u044F \u0443\u043D\u0438\u0432\u0435\u0440\u0441\u0438\u0442\u0435\u0442\u0430"
+      SayNow: "\u043E\u0442\u0434\u044B\u0445\u0430\u044E \u043E\u0442 \u044D\u0441\u0441\u0435"
     - Id: jonas.walk
       Today: walked around the city centre with a classmate
       Now: resting at the dormitory
       Kind: 10
       Mood: 0
       Energy: 1
+      SayToday: "\u0433\u0443\u043B\u044F\u043B \u043F\u043E \u0446\u0435\u043D\u0442\u0440\u0443 \u0441 \u043E\u0434\u043D\u043E\u0433\u0440\u0443\u043F\u043F\u043D\u0438\u043A\u043E\u043C"
+      SayNow: "\u043E\u0442\u0434\u044B\u0445\u0430\u044E \u0432 \u043E\u0431\u0449\u0435\u0436\u0438\u0442\u0438\u0438"
   - Id: viewer.doshirak
     DisplayName: doshirak_king
     SpokenNames:
@@ -669,6 +739,7 @@ MonoBehaviour:
     - "\u0434\u043E\u0448\u0438\u043A \u043A\u0438\u043D\u0433"
     - doshirak
     Language: 0
+    Gender: 1
     Personality: Broke university student who lives on instant noodles and relates to every money problem on stream. Self-ironic about rent and cheap food; treats the streamer as a fellow survivor.
     Interests: 24
     Schedule:
@@ -725,24 +796,32 @@ MonoBehaviour:
       Kind: 0
       Mood: 1
       Energy: 0
+      SayToday: "\u043F\u0430\u0440\u044B, \u043F\u043E\u0442\u043E\u043C \u0441\u043C\u0435\u043D\u0430 \u043A\u0443\u0440\u044C\u0435\u0440\u043E\u043C"
+      SayNow: "\u0435\u043C \u0434\u043E\u0448\u0438\u0440\u0430\u043A \u043F\u043E\u0434 \u0441\u0442\u0440\u0438\u043C"
     - Id: dosh.exam
       Today: tried to study for an exam and mostly procrastinated
       Now: procrastinating some more
       Kind: 1
       Mood: 5
       Energy: 1
+      SayToday: "\u043F\u044B\u0442\u0430\u043B\u0441\u044F \u0433\u043E\u0442\u043E\u0432\u0438\u0442\u044C\u0441\u044F \u043A \u044D\u043A\u0437\u0430\u043C\u0435\u043D\u0443, \u0432 \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u043C \u043F\u0440\u043E\u043A\u0440\u0430\u0441\u0442\u0438\u043D\u0438\u0440\u043E\u0432\u0430\u043B"
+      SayNow: "\u043F\u0440\u043E\u043A\u0440\u0430\u0441\u0442\u0438\u043D\u0438\u0440\u0443\u044E \u0434\u0430\u043B\u044C\u0448\u0435"
     - Id: dosh.payday
       Today: counted money until payday and ate noodles again
       Now: lying in the dorm
       Kind: 4
       Mood: 2
       Energy: 0
+      SayToday: "\u0441\u0447\u0438\u0442\u0430\u043B \u0434\u0435\u043D\u044C\u0433\u0438 \u0434\u043E \u0437\u0430\u0440\u043F\u043B\u0430\u0442\u044B \u0438 \u0435\u043B \u043E\u0434\u043D\u0443 \u043B\u0430\u043F\u0448\u0443"
+      SayNow: "\u043B\u0435\u0436\u0443 \u0432 \u043E\u0431\u0449\u0430\u0433\u0435"
     - Id: dosh.cafe
       Today: worked a shift at a cafe
       Now: home, too tired to cook
       Kind: 0
       Mood: 1
       Energy: 0
+      SayToday: "\u043E\u0442\u0440\u0430\u0431\u043E\u0442\u0430\u043B \u0441\u043C\u0435\u043D\u0443 \u0432 \u043A\u0430\u0444\u0435"
+      SayNow: "\u0434\u043E\u043C\u0430, \u0441\u0438\u043B \u043D\u0435\u0442 \u0434\u0430\u0436\u0435 \u043F\u0440\u0438\u0433\u043E\u0442\u043E\u0432\u0438\u0442\u044C"
   - Id: viewer.sovetnik
     DisplayName: Sovetnik_Pro
     SpokenNames:
@@ -750,6 +829,7 @@ MonoBehaviour:
     - "\u0441\u043E\u0432\u0435\u0442\u043D\u0438\u043A \u043F\u0440\u043E"
     - sovetnik
     Language: 0
+    Gender: 1
     Personality: 'Know-it-all who has never streamed but has an opinion on everything: settings, hardware, what to buy next. Gives unsolicited advice; a little annoying, means well.'
     Interests: 11
     Schedule:
@@ -804,21 +884,29 @@ MonoBehaviour:
       Kind: 8
       Mood: 0
       Energy: 1
+      SayToday: "\u0434\u043E\u043B\u0433\u043E \u043E\u0431\u044A\u044F\u0441\u043D\u044F\u043B \u0440\u043E\u0434\u043D\u0435, \u043A\u0430\u043A\u043E\u0439 \u043D\u043E\u0443\u0442 \u043A\u0443\u043F\u0438\u0442\u044C"
+      SayNow: "\u0441\u043C\u043E\u0442\u0440\u044E \u0441\u0442\u0440\u0438\u043C\u044B, \u0441\u043E\u0432\u0435\u0442\u044B \u043D\u0430\u0433\u043E\u0442\u043E\u0432\u0435"
     - Id: sov.forums
       Today: read forum threads about streaming setups
       Now: browsing forums with the stream on
       Kind: 8
       Mood: 2
       Energy: 1
+      SayToday: "\u0447\u0438\u0442\u0430\u043B \u0444\u043E\u0440\u0443\u043C\u044B \u043F\u0440\u043E \u0441\u0442\u0440\u0438\u043C-\u0441\u0435\u0442\u0430\u043F\u044B"
+      SayNow: "\u043B\u0438\u0441\u0442\u0430\u044E \u0444\u043E\u0440\u0443\u043C\u044B \u043F\u043E\u0434 \u0441\u0442\u0440\u0438\u043C"
     - Id: sov.office
       Today: worked at the office, nothing interesting
       Now: on the phone after work
       Kind: 0
       Mood: 3
       Energy: 1
+      SayToday: "\u0432 \u043E\u0444\u0438\u0441\u0435 \u0440\u0430\u0431\u043E\u0442\u0430\u043B, \u043D\u0438\u0447\u0435\u0433\u043E \u0438\u043D\u0442\u0435\u0440\u0435\u0441\u043D\u043E\u0433\u043E"
+      SayNow: "\u043F\u043E\u0441\u043B\u0435 \u0440\u0430\u0431\u043E\u0442\u044B \u0441\u0438\u0436\u0443 \u0432 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0435"
     - Id: sov.router
       Today: helped a neighbour set up a router
       Now: watching the stream
       Kind: 8
       Mood: 4
       Energy: 1
+      SayToday: "\u043F\u043E\u043C\u043E\u0433 \u0441\u043E\u0441\u0435\u0434\u0443 \u043D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u0440\u043E\u0443\u0442\u0435\u0440"
+      SayNow: "\u0441\u043C\u043E\u0442\u0440\u044E \u0441\u0442\u0440\u0438\u043C"

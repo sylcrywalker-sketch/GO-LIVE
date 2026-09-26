@@ -181,7 +181,9 @@ namespace GoLive.Tests
             chat.Add("b", viewer.ViewerId, viewer.DisplayName, "опять двадцать пять", 20, 0, ReactionSource.LanguageModel);
             ReactionIntent intent = ChatDirectorTests.Intent(viewer, "NightOwl ты тут?");
             string prompt = ChatContextBuilder.Build(intent, new ChatSituation("c", 60, 5, ViewerLanguage.Russian, chat.Messages, null), 64).User;
-            Assert.That(prompt, Does.Contain("YOUR LAST MESSAGES (do not repeat them or start the same way): «ну ты и тормоз», «опять двадцать пять»"));
+            // "ты тут?" is a direct question: the answer prompt shows the exchange with the viewer's own lines marked.
+            Assert.That(prompt, Does.Contain("do not repeat your own lines or start the same way"));
+            Assert.That(prompt, Does.Contain("NightOwl (you): «ну ты и тормоз»").And.Contain("NightOwl (you): «опять двадцать пять»"));
         }
 
         private static ChatSituation Situation() => new("channel", 600, 8, ViewerLanguage.Russian, Array.Empty<StreamChatMessage>(), null);

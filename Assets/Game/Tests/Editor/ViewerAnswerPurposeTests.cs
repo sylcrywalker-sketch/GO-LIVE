@@ -82,7 +82,8 @@ namespace GoLive.Tests
             var facts = AnswerFacts(plan);
             Assert.That(facts.All(f => f.Source == FactSource.ViewerDay), Is.True);
             var text = string.Join("\n", facts.Select(f => f.Text));
-            Assert.That(text, Does.Contain("bored").And.Contain(Today).And.Contain(Now));
+            Assert.That(text, Does.Contain("bored").And.Contain(Today));
+            Assert.That(text, Does.Not.Contain(Now), "what the viewer is doing now is not the reason for the mood");
             Assert.That(text, Does.Not.Contain("девочка").And.Not.Contain("Openness"));
         }
 
@@ -126,7 +127,8 @@ namespace GoLive.Tests
             var request = ChatContextBuilder.Build(intent, situation, 64);
             Assert.That(request.User, Does.Contain("YOUR PREVIOUS MESSAGE: «" + PreviousMood + "»"));
             Assert.That(request.User, Does.Contain("STREAMER REPLIED TO YOU: «Почему без настроения?»"));
-            Assert.That(request.User, Does.Contain("QUESTION PURPOSE: ReasonForMood").And.Contain("YOUR TASK:"));
+            // The purpose chooses the task text; its enum name is not natural-language context for the model.
+            Assert.That(request.User, Does.Contain("YOUR TASK:").And.Not.Contain("QUESTION PURPOSE"));
             Assert.That(request.User, Does.Contain("Answer why").And.Contain("Do not change topic"));
             Assert.That(request.System, Does.Contain("Personality changes wording, never replaces the answer"));
             Assert.That(request.System, Does.Not.Contain("with small harmless everyday details"));

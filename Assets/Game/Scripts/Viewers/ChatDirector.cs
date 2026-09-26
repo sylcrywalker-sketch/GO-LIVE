@@ -351,7 +351,7 @@ namespace GoLive.Viewers
 
         private void Fallback(Job job, string reason)
         {
-            string text = FallbackChat.Pick(job.Intent, _random, _chat.Messages);
+            string text = FallbackChat.Pick(job.Intent, _random, _chat.Messages, job.Situation);
             Resolve(job, text, text == null ? ReactionSource.None : ReactionSource.Fallback, reason);
         }
 
