@@ -24,10 +24,15 @@ namespace GoLive.Tests
          Category("ViewerCoreAcceptance"), Timeout(240000)]
         public IEnumerator SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline()
         {
+            // Predetermined before observing any outcomes: run exactly once each with states 1, 2 and 3.
+            string seedText = Environment.GetEnvironmentVariable("GO_LIVE_SHORT_ACCEPTANCE_SEED") ?? "1";
+            Assert.That(ulong.TryParse(seedText, System.Globalization.NumberStyles.None,
+                System.Globalization.CultureInfo.InvariantCulture, out ulong seed) && seed >= 1 && seed <= 3,
+                Is.True, "GO_LIVE_SHORT_ACCEPTANCE_SEED must be one of the predetermined states 1, 2 or 3");
             string take = Environment.GetEnvironmentVariable("GO_LIVE_VOICE_CORPUS") ??
                           Path.Combine(Directory.GetCurrentDirectory(), "Logs/VoiceCorpus/20260926-182411");
             string folder = Environment.GetEnvironmentVariable("GO_LIVE_SHORT_ACCEPTANCE_OUTPUT") ??
-                            Path.Combine(Directory.GetCurrentDirectory(), "Logs/ViewerShortReplay/" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff"));
+                            Path.Combine(Directory.GetCurrentDirectory(), "Logs/ViewerShortReplay/seed-" + seedText + "-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss-fff"));
             Assert.That(Directory.Exists(folder), Is.False, "preserve previous evidence; use a new output directory");
             float[] recorded = WavFile.Read(Path.Combine(take, "raw.wav"), out int rate);
             ShortMarks marks = JsonUtility.FromJson<ShortMarks>(File.ReadAllText(Path.Combine(take, "marks.json")));
@@ -37,8 +42,9 @@ namespace GoLive.Tests
             PlaceRecordedPhrase(timeline, recorded, rate, marks.phrases.Single(m => m.index == 8), 39);
             Directory.CreateDirectory(folder);
             using var evidence = new PlaySink(Path.Combine(folder, "raw.jsonl"));
-            WritePlay(evidence, "method", "Recorded real microphone audio, not fresh capture. 75 real seconds in GL; unchanged marks 1/4/8 placed at 2/25/39 seconds. Natural audience, scene-owned VoiceRecognition and StreamSpeechFeed, ordinary selection/planning/validation, actual configured local language model. No viewer seats, probabilities, daily state or total audience are injected.");
+            WritePlay(evidence, "method", "Recorded real microphone audio, not fresh capture. 75 real seconds in GL; unchanged marks 1/4/8 placed at 2/25/39 seconds. Three predetermined attempts use audience RNG states 1/2/3, one per run; the existing StreamSession RNG state is set via test-only reflection before starting. Natural audience, scene-owned VoiceRecognition and StreamSpeechFeed, ordinary selection/planning/validation, actual configured local language model. No viewer seats, probabilities, daily state or total audience are injected. Preserve every attempt, including failures; do not rerun or select seeds for a better outcome.");
             WritePlay(evidence, "source", take);
+            WritePlay(evidence, "audience-rng-state", seed.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
             ExpectShelfWarning();
             yield return new EnterPlayMode(false);
@@ -76,8 +82,11 @@ namespace GoLive.Tests
                 var row = new ShortSpeech { sequence = speech.Sequence, text = speech.Text, language = speech.Language,
                     realSeconds = SpeechClock.Now - started, audioEndSeconds = speech.Timestamp - started,
                     endToTextSeconds = SpeechClock.Now - speech.Timestamp, primaryAct = analysis.PrimaryAct.ToString(),
-                    acts = analysis.Acts.ToString(), viewers = core.Roster.AudienceSize,
+                    acts = analysis.Acts.ToString(), topics = analysis.Topics.ToString(), relevance = analysis.Relevance,
+                    singularAddress = analysis.SingularAddress, pluralAddress = analysis.PluralAddress,
+                    viewers = core.Roster.AudienceSize, streamSeconds = core.Events.Now,
                     threadViewerId = thread.ViewerId, threadTurns = thread.Turns, threadAge = thread.ViewerId == null ? -1 : core.Events.Now - thread.LastAt,
+                    threadLastLine = thread.LastLine,
                     threadWatching = core.Roster.IsWatching(thread.ViewerId), threadEpoch = thread.Epoch,
                     rosterEpoch = core.Roster.Epoch(thread.ViewerId) };
                 heard.Add(row);
@@ -97,8 +106,12 @@ namespace GoLive.Tests
                 yield return OpenLinkedStreamly();
                 var view = One<StreamlyView>();
                 // The ordinary helper advances fifteen simulated minutes; this test deliberately starts without it.
+                SetShortReplayAudienceSeed(_runtime.State.Stream, seed);
                 Click(Field<Button>(view, "startStop"));
                 yield return PlayModeWait.Until(() => _runtime.State.Stream.State == StreamState.Live, "the first stream to start");
+                ulong broadcastSeed = _runtime.State.Stream.Audience.Seed;
+                WritePlay(evidence, "broadcast-seed", broadcastSeed.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                Assert.That(broadcastSeed, Is.EqualTo(new AudienceRandom(seed).NextUInt64()), "the ordinary Start must consume the fixed RNG state");
                 Assert.That(_runtime.State.Stream.Audience.CurrentViewers, Is.InRange(1, 3));
                 recognition.BeginListening(rate);
                 yield return PlayModeWait.Until(() => { recognition.Update(); return recognition.IsListening; }, "the shipping speech model to load", 60);
@@ -137,9 +150,11 @@ namespace GoLive.Tests
                     "a bare greeting is not a personal answer; review actual content separately");
                 Assert.That(filler, Is.Empty, "filler causes no response; unrelated ambient activity is reported separately");
                 Assert.That(followup, Is.Not.Empty, "short personal follow-up continues the exchange");
-                Assert.That(followup[0].ViewerId, Is.EqualTo(opening[0].ViewerId));
+                Assert.That(heard[2].threadViewerId, Is.Not.Null.And.Not.Empty, "the follow-up needs a published conversation partner");
+                // A bounded second answer can become the current partner; the first opener is not always that partner.
+                Assert.That(followup[0].ViewerId, Is.EqualTo(heard[2].threadViewerId), "continue with the actual partner at recognition time");
                 Assert.That(followup[0].Plan, Does.Contain("follow-up"));
-                WritePlay(evidence, "accepted", "Opening personal answer, filler silence and same-viewer follow-up observed through the production scene. Semantic content and hard-fact safety still receive a separate review of the raw outputs.");
+                WritePlay(evidence, "accepted", "Opening personal answer, filler silence and follow-up from the active conversation partner observed through the production scene. The partner is sampled when the follow-up is recognized; a bounded second opening answer may own that thread. Semantic content and hard-fact safety still receive a separate review of the raw outputs.");
                 yield return CaptureApp("viewer-short-replay-ru", DesktopAppId.Streamly);
                 yield return StopBroadcast(view);
             }
@@ -156,6 +171,19 @@ namespace GoLive.Tests
             }
         }
 
+        private static void SetShortReplayAudienceSeed(StreamSession stream, ulong seed)
+        {
+            Assert.That(stream.State, Is.EqualTo(StreamState.Offline), "set the test seed before broadcasting");
+            FieldInfo seedsField = typeof(StreamSession).GetField("_seeds", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo stateField = typeof(AudienceRandom).GetField("_state", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(seedsField, Is.Not.Null, "the existing audience random stream must be available");
+            Assert.That(stateField, Is.Not.Null, "the existing audience RNG state must be available");
+            var random = (AudienceRandom)seedsField.GetValue(stream);
+            Assert.That(random, Is.Not.Null);
+            stateField.SetValue(random, seed);
+            Assert.That((ulong)stateField.GetValue(random), Is.EqualTo(seed));
+        }
+
         private static void PlaceRecordedPhrase(float[] target, float[] source, int rate, ShortMark mark, int atSeconds)
         {
             int from = (int)(mark.start * rate), count = (int)((mark.end - mark.start) * rate);
@@ -165,9 +193,10 @@ namespace GoLive.Tests
         [Serializable] private sealed class ShortMarks { public List<ShortMark> phrases = new(); }
         [Serializable] private sealed class ShortSpeech
         {
-            public long sequence, threadEpoch, rosterEpoch; public string text, language, primaryAct, acts, threadViewerId;
-            public double realSeconds, audioEndSeconds, endToTextSeconds; public int viewers;
-            public int threadTurns; public double threadAge; public bool threadWatching;
+            public long sequence, threadEpoch, rosterEpoch; public string text, language, primaryAct, acts, topics, threadViewerId, threadLastLine;
+            public double realSeconds, audioEndSeconds, endToTextSeconds, streamSeconds; public int viewers;
+            public float relevance; public int threadTurns; public double threadAge;
+            public bool threadWatching, singularAddress, pluralAddress;
         }
         [Serializable] private sealed class ShortRecognition
         {

@@ -219,7 +219,7 @@ namespace GoLive.Viewers
                         Set(w, UtteranceIntent.Answer, 5); Set(w, UtteranceIntent.Question, .4f);
                         topic = toYou ? "the streamer asking you personally how you are or what you did" : "the streamer asking the chat how they are and what they did today";
                     }
-                    else if (intent.FollowUp && SpeechRelevance.ContinuesConversation(speech) && speech.AsksForAnswer)
+                    else if (intent.FollowUp && SpeechRelevance.ConversationAsksForAnswer(speech))
                     {
                         Set(w, UtteranceIntent.Answer, 5); Set(w, UtteranceIntent.Tease, .3f);
                         topic = "the streamer's question in reply to your message";

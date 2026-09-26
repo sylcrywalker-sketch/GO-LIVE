@@ -1,0 +1,1 @@
+Baseline c8c5c3a. Fixed audience RNG states 1, 2, 3 selected before any scene replay for this correction. Run each once. Original corpus marks 1/4/8 at 2/25/39 seconds; 75 real seconds. Preserve all outcomes. No selected speech model, generation settings, audience size, viewer identity or reply probability tuning changes.

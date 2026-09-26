@@ -166,18 +166,49 @@ namespace GoLive.Viewers
         };
         private static readonly string[] ConversationAcknowledgements =
             { "понятно", "ясно", "жесть", "сочувствую", "отдыхай", "держись", "устаешь", "tired", "rough", "rest" };
+        private static readonly string[] OtherConversationSubjects =
+            { "я", "мы", "он", "она", "они", "i", "we", "he", "she", "they" };
 
         // Shared by selection and planning: a short reply about the listener or their day can continue an
         // exchange even when recognition omits '?'. A new gameplay/setup topic or streamer self-talk cannot.
         internal static bool ContinuesConversation(SpeechAnalysis speech)
         {
             if (speech == null || speech.Is(SpeechAct.Filler) || speech.PluralAddress) return false;
+            // Preserve already explicit personal questions, including "я нормально, а ты как дела".
             if (speech.Is(SpeechAct.PersonalQuestion)) return true;
+            List<string> tokens = Tokens(speech.Text);
+            if (Any(tokens, OtherConversationSubjects)) return false;
+            // Check the complete short form before broad topic stems: "долго" alone is a duration question,
+            // although the global money lexicon also matches its "долг" prefix. "долго копить деньги" is not.
+            if (ShortPersonalQuestion(tokens)) return true;
             if (speech.Is(SpeechAct.GameplayQuestion) || speech.Is(SpeechAct.OpinionRequest) ||
                 (speech.Topics & (StreamTopic.Games | StreamTopic.Hardware | StreamTopic.StreamSetup | StreamTopic.Money)) != 0) return false;
-            List<string> tokens = Tokens(speech.Text);
-            if (Contains(tokens, "я") || Contains(tokens, "мы") || Contains(tokens, "i")) return false;
             return Any(tokens, ActivityWords) || Any(tokens, ConversationAcknowledgements);
+        }
+
+        // Only selection of an active, present conversation partner (or planning an already selected FollowUp)
+        // may use this predicate. It never changes global acts or the recognized text. Whisper punctuation is optional.
+        internal static bool ConversationAsksForAnswer(SpeechAnalysis speech) =>
+            ContinuesConversation(speech) && (speech.AsksForAnswer || ShortPersonalQuestion(Tokens(speech.Text)));
+
+        private static bool ShortPersonalQuestion(List<string> tokens)
+        {
+            if (tokens.Count == 0 || tokens.Count > 8) return false;
+            int start = 0, end = tokens.Count;
+            // Discourse particles and an addressed "ты" may surround an elliptical personal question.
+            while (start < end && (tokens[start] == "а" || tokens[start] == "и" || tokens[start] == "ну" ||
+                tokens[start] == "жесть" || tokens[start] == "ого")) start++;
+            if (start + 1 < end && tokens[start] == "ты") start++;
+            if (end > start && (tokens[end - 1] == "наверное" || tokens[end - 1] == "видимо")) end--;
+            string form = string.Join(" ", tokens.GetRange(start, end - start));
+            return form switch
+            {
+                "устал" or "устала" or "устаешь" or "вымотался" or "вымоталась" => true,
+                "тяжело было" or "было тяжело" or "нормально там" or "там нормально" => true,
+                "серьезно" or "правда" or "ты" or "как" or "что потом" or "что дальше" => true,
+                "понравилось" or "долго" or "как прошло" or "как получилось" => true,
+                _ => false
+            };
         }
         private static readonly string[] OpinionPhrases =
         {

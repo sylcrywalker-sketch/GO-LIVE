@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 18:12:39Z" end-time="2026-09-26 18:14:02Z" duration="82.6847566">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-09-26 18:12:39Z" end-time="2026-09-26 18:14:02Z" duration="82.684757" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2398" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-09-26 18:12:39Z" end-time="2026-09-26 18:14:02Z" duration="82.673752" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33892" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2399" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-09-26 18:12:39Z" end-time="2026-09-26 18:14:02Z" duration="82.664616" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2400" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1224" result="Passed" start-time="2026-09-26 18:12:39Z" end-time="2026-09-26 18:14:02Z" duration="82.658822" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1008" name="DesktopFlowPlayModeTests" fullname="GoLive.Tests.DesktopFlowPlayModeTests" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-26 18:12:39Z" end-time="2026-09-26 18:14:02Z" duration="82.644130" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="DesktopVisualFlow" />
+            </properties>
+            <test-case id="1015" name="SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline" fullname="GoLive.Tests.DesktopFlowPlayModeTests.SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline" methodname="SeventyFiveSecondRecordedConversationUsesTheProductionScenePipeline" classname="GoLive.Tests.DesktopFlowPlayModeTests" runstate="Explicit" seed="995737568" result="Passed" start-time="2026-09-26 18:12:40Z" end-time="2026-09-26 18:14:02Z" duration="82.290312" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="_SKIPREASON" value="Requires the recorded microphone corpus and configured local chat model" />
+                <property name="Category" value="ViewerCoreAcceptance" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Props/SM_Shelf_001"
+MONITOR_AIM body=(11.13, 0.28, -13.08) camera=(11.12, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+MONITOR_AIM body=(11.11, 0.28, -13.08) camera=(11.10, 1.31, -13.08) forward=(0.94, 0.01, -0.34) target=(12.04, 1.32, -13.41) hit=SM_OldMonitorPC_001
+GAME_VIEW_CAPTURE E:\GO-Live-LowAudience-audit-20260926\attempt-2-captures\viewer-short-replay-ru.png
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

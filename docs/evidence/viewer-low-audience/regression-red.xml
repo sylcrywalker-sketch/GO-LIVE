@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="37" result="Failed(Child)" total="37" passed="20" failed="17" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.2574514">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.257451" total="37" passed="20" failed="17" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2395" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.237832" total="37" passed="20" failed="17" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2396" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.223448" total="37" passed="20" failed="17" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2397" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1222" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.209472" total="37" passed="20" failed="17" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2104" name="ViewerLowAudienceContinuationTests" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="37" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.196464" total="37" passed="20" failed="17" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2119" name="AcknowledgementStaysAProbabilisticStatement" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.AcknowledgementStaysAProbabilisticStatement" methodname="AcknowledgementStaysAProbabilisticStatement" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1538311995" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.036168" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2124" name="ContextualFormsDoNotBecomeGlobalQuestions" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualFormsDoNotBecomeGlobalQuestions" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.002663" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2120" name="ContextualFormsDoNotBecomeGlobalQuestions(&quot;устал наверное&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualFormsDoNotBecomeGlobalQuestions(&quot;устал наверное&quot;)" methodname="ContextualFormsDoNotBecomeGlobalQuestions" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1101449656" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000408" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2121" name="ContextualFormsDoNotBecomeGlobalQuestions(&quot;тяжело было&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualFormsDoNotBecomeGlobalQuestions(&quot;тяжело было&quot;)" methodname="ContextualFormsDoNotBecomeGlobalQuestions" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1822620854" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000147" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2122" name="ContextualFormsDoNotBecomeGlobalQuestions(&quot;серьезно&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualFormsDoNotBecomeGlobalQuestions(&quot;серьезно&quot;)" methodname="ContextualFormsDoNotBecomeGlobalQuestions" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="502600336" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000101" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2123" name="ContextualFormsDoNotBecomeGlobalQuestions(&quot;понравилось&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualFormsDoNotBecomeGlobalQuestions(&quot;понравилось&quot;)" methodname="ContextualFormsDoNotBecomeGlobalQuestions" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1748058511" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2130" name="ContextualQuestionCannotBypassThreadGuards" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualQuestionCannotBypassThreadGuards" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.005699" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2125" name="ContextualQuestionCannotBypassThreadGuards(&quot;expired&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualQuestionCannotBypassThreadGuards(&quot;expired&quot;)" methodname="ContextualQuestionCannotBypassThreadGuards" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="517330675" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001091" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2126" name="ContextualQuestionCannotBypassThreadGuards(&quot;absent&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualQuestionCannotBypassThreadGuards(&quot;absent&quot;)" methodname="ContextualQuestionCannotBypassThreadGuards" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="364900221" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001089" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2127" name="ContextualQuestionCannotBypassThreadGuards(&quot;new visit&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualQuestionCannotBypassThreadGuards(&quot;new visit&quot;)" methodname="ContextualQuestionCannotBypassThreadGuards" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1568448217" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000847" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2128" name="ContextualQuestionCannotBypassThreadGuards(&quot;limit&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualQuestionCannotBypassThreadGuards(&quot;limit&quot;)" methodname="ContextualQuestionCannotBypassThreadGuards" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="443703602" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001162" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2129" name="ContextualQuestionCannotBypassThreadGuards(&quot;cooldown&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ContextualQuestionCannotBypassThreadGuards(&quot;cooldown&quot;)" methodname="ContextualQuestionCannotBypassThreadGuards" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1766326449" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000914" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2140" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.011070" total="8" passed="6" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2132" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;Так, секунду.&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;Так, секунду.&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="971695414" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001682" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2133" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;я устал наверное&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;я устал наверное&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="2106074887" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001112" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2134" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;он устал наверное&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;он устал наверное&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="2095487137" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.003430" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  он устал наверное
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue (System.String phrase) [0x0006b] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:153
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2135" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;она устала наверное&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;она устала наверное&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="447470173" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000170" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  она устала наверное
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue (System.String phrase) [0x0006b] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:153
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2136" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;тяжело было играть&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;тяжело было играть&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="785099659" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000863" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2137" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;серьезно микрофон сломался&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;серьезно микрофон сломался&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1368844337" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000877" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2138" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;долго копить деньги&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;долго копить деньги&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="601001238" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000846" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2139" name="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;я думаю ты устал наверное но сейчас запущу игру&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue(&quot;я думаю ты устал наверное но сейчас запущу игру&quot;)" methodname="FillerAndUnrelatedOrThirdPersonSpeechDoNotContinue" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1930639530" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2147" name="FollowUpPlanningUsesTheSameQuestionSemantics" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FollowUpPlanningUsesTheSameQuestionSemantics" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.008073" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2144" name="FollowUpPlanningUsesTheSameQuestionSemantics(&quot;устал наверное&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FollowUpPlanningUsesTheSameQuestionSemantics(&quot;устал наверное&quot;)" methodname="FollowUpPlanningUsesTheSameQuestionSemantics" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="607090511" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.005510" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: String containing "question"
+  But was:  "the streamer's reply to your message"
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.FollowUpPlanningUsesTheSameQuestionSemantics (System.String phrase) [0x000f3] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:190
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2145" name="FollowUpPlanningUsesTheSameQuestionSemantics(&quot;и как&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FollowUpPlanningUsesTheSameQuestionSemantics(&quot;и как&quot;)" methodname="FollowUpPlanningUsesTheSameQuestionSemantics" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1218380169" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001376" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: greater than 20
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.FollowUpPlanningUsesTheSameQuestionSemantics (System.String phrase) [0x00142] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:194
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2146" name="FollowUpPlanningUsesTheSameQuestionSemantics(&quot;долго&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.FollowUpPlanningUsesTheSameQuestionSemantics(&quot;долго&quot;)" methodname="FollowUpPlanningUsesTheSameQuestionSemantics" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="538268803" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.000766" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: greater than 20
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.FollowUpPlanningUsesTheSameQuestionSemantics (System.String phrase) [0x00142] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:194
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2143" name="GroupOrDifferentViewerAddressLeavesCurrentExchange" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.GroupOrDifferentViewerAddressLeavesCurrentExchange" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.003848" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2141" name="GroupOrDifferentViewerAddressLeavesCurrentExchange(&quot;Парни, какую игру запустить?&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.GroupOrDifferentViewerAddressLeavesCurrentExchange(&quot;Парни, какую игру запустить?&quot;)" methodname="GroupOrDifferentViewerAddressLeavesCurrentExchange" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1751116739" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.002363" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2142" name="GroupOrDifferentViewerAddressLeavesCurrentExchange(&quot;Beta, как дела?&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.GroupOrDifferentViewerAddressLeavesCurrentExchange(&quot;Beta, как дела?&quot;)" methodname="GroupOrDifferentViewerAddressLeavesCurrentExchange" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="750951197" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001182" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2131" name="PendingAnswerCannotBeDuplicatedBySemanticQuestion" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.PendingAnswerCannotBeDuplicatedBySemanticQuestion" methodname="PendingAnswerCannotBeDuplicatedBySemanticQuestion" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1436796169" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.001447" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 20
+  But was:  20
+]]></message>
+                <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.PendingAnswerCannotBeDuplicatedBySemanticQuestion () [0x00107] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:133
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2118" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.116927" total="13" passed="2" failed="11" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2105" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;устал наверное&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;устал наверное&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1803774954" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.012532" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  117
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[устал наверное; audience=1; same-viewer replies=117/200
+]]></output>
+              </test-case>
+              <test-case id="2106" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;Жесть. Устал, наверное.&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;Жесть. Устал, наверное.&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="494027431" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.006380" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  117
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Жесть. Устал, наверное.; audience=1; same-viewer replies=117/200
+]]></output>
+              </test-case>
+              <test-case id="2107" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;Жесть. Устал, наверное?&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;Жесть. Устал, наверное?&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1230768072" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.021107" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Жесть. Устал, наверное?; audience=1; same-viewer replies=198/200
+Жесть. Устал, наверное?; audience=2; same-viewer replies=194/200
+Жесть. Устал, наверное?; audience=3; same-viewer replies=193/200
+]]></output>
+              </test-case>
+              <test-case id="2108" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;устал?&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;устал?&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="343703147" result="Passed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.016819" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[устал?; audience=1; same-viewer replies=198/200
+устал?; audience=2; same-viewer replies=194/200
+устал?; audience=3; same-viewer replies=193/200
+]]></output>
+              </test-case>
+              <test-case id="2109" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;тяжело было&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;тяжело было&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1489748811" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.008246" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[тяжело было; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2110" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;нормально там&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;нормально там&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1345401581" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.007993" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[нормально там; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2111" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;серьезно&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;серьезно&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1097091394" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.004725" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[серьезно; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2112" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;а ты&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;а ты&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="418093827" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.004573" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[а ты; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2113" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;и как&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;и как&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1156864604" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.005104" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[и как; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2114" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;что потом&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;что потом&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="117288351" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.011652" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[что потом; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2115" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;понравилось&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;понравилось&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="2053847387" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.005167" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[понравилось; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2116" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;долго&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;долго&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="1651815594" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.004484" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[долго; audience=1; same-viewer replies=0/200
+]]></output>
+              </test-case>
+              <test-case id="2117" name="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;ну ты устала наверное&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation(&quot;ну ты устала наверное&quot;)" methodname="ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="756241187" result="Failed" start-time="2026-09-26 17:59:09Z" end-time="2026-09-26 17:59:09Z" duration="0.006753" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Question-like continuations should normally get the existing .95 path.
+  Expected: in range (180,200)
+  But was:  117
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ShortPersonalFollowUpGetsQuestionReliabilityWithOrWithoutPunctuation (System.String phrase) [0x00137] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[ну ты устала наверное; audience=1; same-viewer replies=117/200
+Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

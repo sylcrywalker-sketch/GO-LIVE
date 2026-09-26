@@ -1,5 +1,7 @@
 # Viewer Core live-play correction — implementation and acceptance evidence
 
+Historical report for `c8c5c3a`. The subsequent punctuation-independent continuation correction and its new fixed attempts are documented separately in [Low-audience conversation correction](ViewerLowAudienceConversationReport.md); the failed evidence below is preserved.
+
 This continues the existing working tree at `a030b9f` on `claude/sharp-wozniak-iakuny`. Claude's corpus recorder, decoding controls, speech acts, conversation path and authored daily life are preserved. No main merge. This report does **not** declare Viewer Core complete.
 
 ## Recorded speech and selection gate

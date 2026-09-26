@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.1224169">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.122417" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2398" name="Assembly-CSharp-Editor.dll" fullname="E:/GO! Live/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.101464" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19244" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2399" name="GoLive" fullname="GoLive" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.080492" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2400" name="Tests" fullname="GoLive.Tests" runstate="Runnable" testcasecount="1224" result="Failed" site="Child" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.060234" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2104" name="ViewerLowAudienceContinuationTests" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="39" result="Failed" site="Child" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.039483" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2122" name="ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.036074" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2120" name="ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState(&quot;я нормально а ты как дела&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState(&quot;я нормально а ты как дела&quot;)" methodname="ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="2095121975" result="Failed" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.026590" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An explicit question to the listener must retain the existing thread and its turn count.
+  Expected: greater than or equal to 25
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState (System.String phrase) [0x000c4] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:93
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2121" name="ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState(&quot;я отдохнул а ты как сам&quot;)" fullname="GoLive.Tests.ViewerLowAudienceContinuationTests.ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState(&quot;я отдохнул а ты как сам&quot;)" methodname="ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState" classname="GoLive.Tests.ViewerLowAudienceContinuationTests" runstate="Runnable" seed="625889980" result="Failed" start-time="2026-09-26 18:06:05Z" end-time="2026-09-26 18:06:05Z" duration="0.001256" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An explicit question to the listener must retain the existing thread and its turn count.
+  Expected: greater than or equal to 25
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at GoLive.Tests.ViewerLowAudienceContinuationTests.ExplicitPersonalQuestionStillContinuesAfterStreamerSharesOwnState (System.String phrase) [0x000c4] in E:\GO! Live\Assets\Game\Tests\Editor\ViewerLowAudienceContinuationTests.cs:93
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/delus/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

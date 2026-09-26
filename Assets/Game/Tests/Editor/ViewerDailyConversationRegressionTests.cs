@@ -67,7 +67,7 @@ namespace GoLive.Tests
         }
 
         [Test]
-        public void EphemeralOneSeatLateStatementFollowUpKeepsConfiguredChanceWithEmptyBudget()
+        public void EphemeralOneSeatLateSemanticQuestionUsesQuestionChanceWithEmptyBudget()
         {
             int replies = 0;
             for (ulong seed = 1; seed <= 100; seed++)
@@ -90,8 +90,8 @@ namespace GoLive.Tests
                 var reactions = selector.Select(Said(roster, "Жесть. Устал, наверное.", 3, 43), 43, true, out _);
                 replies += reactions.Count(i => i.FollowUp && i.Viewer.ViewerId == viewer.ViewerId);
             }
-            TestContext.WriteLine("Exact late statement follow-ups across 100 seeds: " + replies);
-            Assert.That(replies, Is.GreaterThan(40), "The configured statement continuation chance is 0.6 inside the 40-second window.");
+            TestContext.WriteLine("Exact late semantic question follow-ups across 100 seeds: " + replies);
+            Assert.That(replies, Is.GreaterThanOrEqualTo(90), "The contextual question uses .95 inside the unchanged 40-second window.");
         }
 
         [Test]

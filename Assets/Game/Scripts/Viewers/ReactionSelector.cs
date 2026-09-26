@@ -252,7 +252,7 @@ namespace GoLive.Viewers
                 if (conversation && Thread.Exhausted(viewerId, _roster.Epoch(viewerId), now, _tuning)) continue;
                 if (Rhythm.SinceLast(viewerId, now) < (conversation ? _tuning.ConversationGapSeconds : _tuning.DirectGapSeconds)) continue;
                 TraceCandidate(viewerId);
-                double chance = continuing ? speech.AsksForAnswer ? .95 : .6 : DirectChance(streamEvent, viewer);
+                double chance = continuing ? (SpeechRelevance.ConversationAsksForAnswer(speech) ? .95 : .6) : DirectChance(streamEvent, viewer);
                 if (_random.NextDouble() >= chance) continue;
                 ReactionIntent intent = Schedule(streamEvent, viewer, true, intents.Count, now, conversation);
                 intents.Add(intent);
